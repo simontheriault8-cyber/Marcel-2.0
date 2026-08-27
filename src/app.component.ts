@@ -4353,7 +4353,7 @@ Thank you for your cooperation.`;
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-    if (hashHex === 'e451b183a1513d7363b47a72b705304d4d3f9c024fbc91f9d9594d0258b5af7a') {
+    if (hashHex === '4b65e209bce165f2be7ddc7a5347453f200afaca8c590dc411c3dc886bf02635') {
       this.isAuthenticated.set(true);
       this.authError.set(false);
       localStorage.setItem('marcel_auth', 'true');
