@@ -1,0 +1,6 @@
+{
+  "name": "Marcel 2.0",
+  "description": "Programme d\u0027aide à la vérification des dossiers de recrutement et génération de courriels pour les Forces armées canadiennes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
