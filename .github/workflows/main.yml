@@ -1,0 +1,56 @@
+name: Deploy Marcel 2.0 to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # ou 'master' selon le nom de votre branche principale
+
+  # Permet également de déclencher le déploiement manuellement depuis l'onglet Actions
+  workflow_dispatch:
+
+# Autorisations requises pour déployer sur GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permet d'annuler les déploiements concurrents pour ne garder que le plus récent
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        # Si votre base URL sur GitHub Pages est /Marcel-2.0/ (ou le nom exact du repo) :
+        run: npm run build -- --base=./
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Répertoire généré par Vite
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
