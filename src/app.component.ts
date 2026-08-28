@@ -583,10 +583,10 @@ function getTodayDateString(): string {
         class="min-h-screen w-full bg-slate-200 text-slate-800 p-4 flex flex-col gap-4 font-sans relative"
       >
         <!-- TOP HEADER ROW -->
-        <div class="flex items-start w-full shrink-0 gap-4">
+        <div class="flex items-stretch w-full shrink-0 gap-4">
           <!-- Role Title Panel (Top-Left 2x2 Pastilles) -->
           <div
-            class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col items-center gap-2 flex-1 min-w-[320px]"
+            class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between items-center gap-2 flex-1 min-w-[320px]"
           >
             <h1
               class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1"
@@ -596,11 +596,11 @@ function getTodayDateString(): string {
               {{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}
             </h1>
 
-            <div class="grid grid-cols-2 gap-2 w-full">
+            <div class="grid grid-cols-2 gap-2 w-full flex-1">
               <!-- Top-Left: Reset -->
               <button
                 (click)="restartApp()"
-                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full"
+                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
                 title="Relancer l'application (Reset)"
               >
                 <svg
@@ -622,7 +622,7 @@ function getTodayDateString(): string {
               <!-- Top-Right: Réo / Enrôlement -->
               <button
                 (click)="toggleJobSearch()"
-                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold border border-indigo-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full"
+                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold border border-indigo-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
                 [title]="selectedRole() === 'gestionnaire' ? 'Panneau d’Enrôlement et Métiers' : 'Panneau de Réorientation et Métiers (RÉO)'"
               >
                 <svg
@@ -645,7 +645,7 @@ function getTodayDateString(): string {
               <!-- Bottom-Left: Signature -->
               <button
                 (click)="toggleSignatureSettings()"
-                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full"
+                class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
                 title="Gestion de la signature"
               >
                 <svg
@@ -666,10 +666,10 @@ function getTodayDateString(): string {
               </button>
 
               <!-- Bottom-Right: Banque de courriels Dropdown -->
-              <div class="relative w-full email-bank-dropdown-container">
+              <div class="relative w-full h-full email-bank-dropdown-container">
                 <button
                   (click)="toggleEmailBankDropdown($event)"
-                  class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer w-full text-left"
+                  class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full text-left"
                   [class.bg-indigo-600]="selectedEmailBankTemplate() !== ''"
                   [class.text-white]="selectedEmailBankTemplate() !== ''"
                   [class.border-indigo-700]="selectedEmailBankTemplate() !== ''"
@@ -1153,9 +1153,9 @@ function getTodayDateString(): string {
         <div class="flex gap-4 items-start w-full">
           <!-- Panel 1: Navigation (Tasks) -->
           <nav
-            class="w-[340px] shrink-0 bg-white rounded-2xl shadow-xl flex flex-col border border-white/50 h-fit"
+            class="w-[340px] shrink-0 bg-white rounded-2xl shadow-xl flex flex-col border border-white/50 h-fit overflow-hidden"
           >
-            <div class="p-3 bg-slate-50 border-b border-slate-200 flex-none flex items-center justify-between">
+            <div class="p-3 bg-slate-50 border-b border-slate-200 flex-none flex items-center justify-between rounded-t-2xl">
               <h2
                 class="font-bold text-slate-700 uppercase text-xs sm:text-sm tracking-wider flex items-center gap-2"
               >
