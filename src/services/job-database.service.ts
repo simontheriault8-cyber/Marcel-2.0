@@ -57,8 +57,11 @@ export class JobDatabaseService {
     })
     .sort((a, b) => a.id.localeCompare(b.id));
 
+  // Signal for active SIP phase ('admission' for normal reorientations, 'traitement' for processing reorientations, 'both' for admission & traitement)
+  sipPhase = signal<'admission' | 'traitement' | 'both'>('admission');
+
   // Signal for sip programs status
-  sipStatus: WritableSignal<Record<string, Record<string, string>>> = signal(
+  sipStatus: WritableSignal<Record<string, Record<string, any>>> = signal(
     (SIP_DATA as any).programs || {}
   );
 
@@ -285,9 +288,35 @@ export class JobDatabaseService {
     }
   }
 
-  isJobClosed(jobId: string): boolean {
-    const jobPrograms = this.sipStatus()[jobId];
-    if (!jobPrograms) return false;
+  getJobPrograms(jobId: string, phase?: 'admission' | 'traitement' | 'both'): Record<string, string> {
+    const raw = this.sipStatus()[jobId] || {};
+    const targetPhase = phase || this.sipPhase();
+    const result: Record<string, string> = {};
+    for (const [prog, val] of Object.entries(raw)) {
+      if (typeof val === 'string') {
+        result[prog] = val;
+      } else if (val && typeof val === 'object') {
+        if (targetPhase === 'both') {
+          const adm = (val as any)['admission'];
+          const trt = (val as any)['traitement'];
+          if (adm === 'o' || trt === 'o') {
+            result[prog] = 'o';
+          } else if (adm === 'f' && trt === 'f') {
+            result[prog] = 'f';
+          } else {
+            result[prog] = trt || adm || 'o';
+          }
+        } else {
+          result[prog] = (val as any)[targetPhase] || (val as any)['admission'] || 'o';
+        }
+      }
+    }
+    return result;
+  }
+
+  isJobClosed(jobId: string, phase?: 'admission' | 'traitement' | 'both'): boolean {
+    const jobPrograms = this.getJobPrograms(jobId, phase);
+    if (!jobPrograms || Object.keys(jobPrograms).length === 0) return false;
 
     if (this.isOfficerJob(jobId)) {
       if (jobPrograms['EDO'] === 'f') return true;
@@ -302,27 +331,23 @@ export class JobDatabaseService {
     return false;
   }
 
-  isPforJobClosed(jobId: string): boolean {
-    const jobPrograms = this.sipStatus()[jobId];
+  isPforJobClosed(jobId: string, phase?: 'admission' | 'traitement' | 'both'): boolean {
+    const jobPrograms = this.getJobPrograms(jobId, phase);
     if (!jobPrograms || !jobPrograms['PFOR']) return true;
     return jobPrograms['PFOR'] === 'f';
   }
 
-  hasPforProgram(jobId: string): boolean {
-    const jobPrograms = this.sipStatus()[jobId];
+  hasPforProgram(jobId: string, phase?: 'admission' | 'traitement' | 'both'): boolean {
+    const jobPrograms = this.getJobPrograms(jobId, phase);
     return !!(jobPrograms && jobPrograms['PFOR']);
   }
 
-  isPforJob(jobIdOrEntry: string | JobEntry): boolean {
+  isPforJob(jobIdOrEntry: string | JobEntry, phase?: 'admission' | 'traitement' | 'both'): boolean {
     const job = typeof jobIdOrEntry === 'string' ? this.getJobById(jobIdOrEntry) : jobIdOrEntry;
     if (!job) return false;
-    if (this.hasPforProgram(job.id)) return true;
+    if (this.hasPforProgram(job.id, phase)) return true;
     if (job.contracts && job.contracts.some(c => (c.program || '').toUpperCase() === 'PFOR')) return true;
     return false;
-  }
-
-  getJobPrograms(jobId: string): Record<string, string> {
-    return this.sipStatus()[jobId] || {};
   }
 
   searchJobs(query: string): JobEntry[] {

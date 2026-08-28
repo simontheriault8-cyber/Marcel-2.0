@@ -7261,12 +7261,14 @@ Thank you for your cooperation.`;
         let res = `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.\n`;
         res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
         res += "Instruction union de fait : https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf\n";
-        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n\n\n\n";
+        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
         return res;
       } else {
         let res = `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.\n`;
         res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
-        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n\n\n\n";
+        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
         return res;
       }
     } else {
@@ -7274,12 +7276,14 @@ Thank you for your cooperation.`;
         let res = `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.\n`;
         res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
         res += "Common-Law partnership instruction : https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf\n";
-        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n\n\n\n";
+        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
         return res;
       } else {
         let res = `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.\n`;
         res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
-        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n\n\n\n";
+        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
         return res;
       }
     }
@@ -7293,12 +7297,14 @@ Thank you for your cooperation.`;
         let res = `<p>Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.<br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instruction union de fait</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a></p>`;
+        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a><br>`;
+        res += `Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
         return res;
       } else {
         let res = `<p>Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.<br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a></p>`;
+        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a><br>`;
+        res += `Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
         return res;
       }
     } else {
@@ -7306,12 +7312,14 @@ Thank you for your cooperation.`;
         let res = `<p>Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.<br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a></p>`;
+        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a><br>`;
+        res += `Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
         return res;
       } else {
         let res = `<p>Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.<br>`;
         res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a></p>`;
+        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a><br>`;
+        res += `Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
         return res;
       }
     }

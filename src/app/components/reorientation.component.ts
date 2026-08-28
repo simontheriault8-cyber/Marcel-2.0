@@ -219,6 +219,31 @@ const CMR_JOB_DOMAINS: Record<
               Postulant PFOR
             </span>
           </label>
+          <label
+            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
+          >
+            <input
+              type="checkbox"
+              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
+              [checked]="includeTraitement()"
+              (change)="toggleIncludeTraitement()"
+            />
+            <span class="relative">
+              <svg
+                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Inclure opération de traitement
+            </span>
+          </label>
         </div>
       </div>
 
@@ -2642,6 +2667,16 @@ export class ReorientationComponent {
   toggleIgnoreSip() {
     this.ignoreSip.update((v) => !v);
   }
+
+  includeTraitement = signal<boolean>(false);
+
+  toggleIncludeTraitement() {
+    this.includeTraitement.update((v) => !v);
+  }
+
+  currentSipPhase = computed<'admission' | 'both'>(() =>
+    this.includeTraitement() ? 'both' : 'admission'
+  );
 
   hasMedicalLimitation = signal<boolean>(false);
 
@@ -7100,7 +7135,7 @@ o Médecine d’urgence`,
         }
       } else {
         for (const j of this.jobService.getAllJobs()) {
-          if (this.jobService.hasPforProgram(j.id)) {
+          if (this.jobService.hasPforProgram(j.id, this.currentSipPhase())) {
             candidateJobIds.push(j.id);
           }
         }
@@ -7108,12 +7143,12 @@ o Médecine d’urgence`,
 
       const result = new Set<string>();
       for (const jId of candidateJobIds) {
-        if (!this.jobService.hasPforProgram(jId)) continue;
+        if (!this.jobService.hasPforProgram(jId, this.currentSipPhase())) continue;
         if (!this.isJobMedicalAdmissible(jId)) continue;
         if (!this.isJobExtraTestAdmissible(jId)) continue;
         if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId))
           continue;
-        if (!this.ignoreSip() && this.jobService.isPforJobClosed(jId))
+        if (!this.ignoreSip() && this.jobService.isPforJobClosed(jId, this.currentSipPhase()))
           continue;
 
         if (ageVal !== null && ageVal > 0) {
@@ -7205,7 +7240,7 @@ o Médecine d’urgence`,
           }
 
           // Exclude closed (SIP) jobs
-          if (!this.ignoreSip() && this.jobService.isJobClosed(jId)) {
+          if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
             continue;
           }
 
@@ -7275,7 +7310,7 @@ o Médecine d’urgence`,
         }
       } else {
         for (const j of this.jobService.getAllJobs()) {
-          if (this.jobService.hasPforProgram(j.id)) {
+          if (this.jobService.hasPforProgram(j.id, this.currentSipPhase())) {
             candidateJobIds.push(j.id);
           }
         }
@@ -7283,9 +7318,9 @@ o Médecine d’urgence`,
 
       const excluded = [];
       for (const jId of candidateJobIds) {
-        if (!this.jobService.hasPforProgram(jId)) continue;
+        if (!this.jobService.hasPforProgram(jId, this.currentSipPhase())) continue;
         if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) continue;
-        if (!this.ignoreSip() && this.jobService.isPforJobClosed(jId)) continue;
+        if (!this.ignoreSip() && this.jobService.isPforJobClosed(jId, this.currentSipPhase())) continue;
 
         const job = this.jobService.getAllJobs().find((j) => j.id === jId);
         if (job) {
@@ -7360,7 +7395,7 @@ o Médecine d’urgence`,
           }
 
           // Exclude closed (SIP) jobs
-          if (!this.ignoreSip() && this.jobService.isJobClosed(jId)) {
+          if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
             continue;
           }
 
@@ -7564,7 +7599,7 @@ o Médecine d’urgence`,
   filterJobsForSearch(query: string) {
     let jobs = this.allJobsList();
     if (this.isPforApplicant() || this.sharedState.isPostulantPfor()) {
-      jobs = jobs.filter((j) => this.jobService.isPforJob(j));
+      jobs = jobs.filter((j) => this.jobService.isPforJob(j, this.currentSipPhase()));
     }
     if (!query || query.trim() === "") {
       return jobs;
@@ -7900,7 +7935,7 @@ o Médecine d’urgence`,
     const job = this.jobService.getAllJobs().find((j) => j.id === jobId);
     if (!job) return false;
 
-    if (this.jobService.isJobClosed(jobId)) {
+    if (this.jobService.isJobClosed(jobId, this.currentSipPhase())) {
       return false;
     }
 
@@ -8068,8 +8103,8 @@ o Médecine d’urgence`,
     let educationReasonEn = "";
 
     if (this.isPforApplicant()) {
-      const hasPfor = this.jobService.hasPforProgram(jobId);
-      const isPforClosed = this.jobService.isPforJobClosed(jobId);
+      const hasPfor = this.jobService.hasPforProgram(jobId, this.currentSipPhase());
+      const isPforClosed = this.jobService.isPforJobClosed(jobId, this.currentSipPhase());
 
       if (this.pforType() === "cmr") {
         const cmrInfo = CMR_JOB_DOMAINS[jobId];
@@ -8191,7 +8226,7 @@ o Médecine d’urgence`,
       isEducationAdmissible &&
       isMedicalAdmissible &&
       isExtraTestAdmissible;
-    const isJobClosed = this.jobService.isJobClosed(jobId);
+    const isJobClosed = this.jobService.isJobClosed(jobId, this.currentSipPhase());
 
     return {
       job,
@@ -8220,6 +8255,7 @@ o Médecine d’urgence`,
     this.age.set(null);
     this.citizenship.set("Canadian Citizen");
     this.hasMedicalLimitation.set(false);
+    this.includeTraitement.set(false);
     this.isPforApplicant.set(false);
     this.sharedState.isPostulantPfor.set(false);
     this.pforType.set("cmr");
@@ -9490,7 +9526,7 @@ o Médecine d’urgence`,
     const renderHtmlList = (jobs: string[], isOfficer: boolean, isFrench: boolean) => {
       let out = "";
       const isPfor = this.isPforApplicant();
-      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j) : this.jobService.isJobClosed(j);
+      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j, this.currentSipPhase()) : this.jobService.isJobClosed(j, this.currentSipPhase());
 
       const openJobs = jobs.filter(j => !isJobClosed(j));
       const closedJobs = jobs.filter(j => isJobClosed(j));
@@ -9547,7 +9583,7 @@ o Médecine d’urgence`,
     const renderPlainList = (jobs: string[], isOfficer: boolean, isFrench: boolean) => {
       let out = "";
       const isPfor = this.isPforApplicant();
-      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j) : this.jobService.isJobClosed(j);
+      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j, this.currentSipPhase()) : this.jobService.isJobClosed(j, this.currentSipPhase());
 
       const openJobs = jobs.filter(j => !isJobClosed(j));
       const closedJobs = jobs.filter(j => isJobClosed(j));
