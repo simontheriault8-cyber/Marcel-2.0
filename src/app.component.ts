@@ -3119,7 +3119,7 @@ function getTodayDateString(): string {
                     </h3>
                   </div>
                   <div
-                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none overflow-y-auto max-h-[500px]"
+                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none"
                   >
                     <ol class="list-decimal list-inside space-y-2">
                       <li>
@@ -3170,11 +3170,9 @@ function getTodayDateString(): string {
                   </h3>
                 </div>
                 <div class="p-4 bg-slate-50">
-                  <textarea
-                    readonly
-                    class="w-full h-24 bg-transparent text-sm font-mono text-slate-600 resize-none focus:outline-none border-none p-0 leading-relaxed"
-                    >{{ displayedNote() }}</textarea
-                  >
+                  <div
+                    class="w-full bg-transparent text-sm font-mono text-slate-600 select-text leading-relaxed whitespace-pre-wrap break-words"
+                  >{{ displayedNote() }}</div>
                 </div>
               </div>
 
@@ -3207,7 +3205,7 @@ function getTodayDateString(): string {
                 </div>
                 <!-- Using innerHTML to render bold, yellow highlights and underlines -->
                 <div
-                  class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none overflow-y-auto max-h-[500px]"
+                  class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
                   [innerHTML]="generatedEmailHtml()"
                 ></div>
               </div>
@@ -3297,11 +3295,9 @@ function getTodayDateString(): string {
                     </div>
                   </div>
                   <div class="p-4 bg-slate-50">
-                    <textarea
-                      readonly
-                      class="w-full h-24 bg-transparent text-xs font-mono text-slate-600 resize-none focus:outline-none border-none p-0 leading-relaxed"
-                      [value]="displayedNote()"
-                    ></textarea>
+                    <div
+                      class="w-full bg-transparent text-xs font-mono text-slate-600 select-text leading-relaxed whitespace-pre-wrap break-words"
+                    >{{ displayedNote() }}</div>
                   </div>
                 </div>
 
@@ -3321,7 +3317,7 @@ function getTodayDateString(): string {
                     }
                   </div>
                   <div
-                    class="p-6 bg-white text-xs text-slate-800 leading-relaxed font-sans border-none focus:outline-none overflow-y-auto max-h-[500px]"
+                    class="p-6 bg-white text-xs text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
                     [innerHTML]="generatedEmailHtml()"
                   ></div>
                 </div>

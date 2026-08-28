@@ -2455,7 +2455,7 @@ const CMR_JOB_DOMAINS: Record<
 
         <!-- Colonne de droite: Résultat -->
         <div
-          class="flex flex-col lg:w-5/12 lg:sticky lg:top-4 h-fit max-h-[calc(100vh-3rem)] gap-4 overflow-y-auto pr-1"
+          class="flex flex-col lg:w-5/12 lg:sticky lg:top-4 h-fit gap-4 pr-1"
           *ngIf="showResultsPanel()"
         >
           <!-- Panneau de la note de registre -->
@@ -2537,7 +2537,7 @@ const CMR_JOB_DOMAINS: Record<
 
           <!-- Panneau du courriel -->
           <div
-            class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col overflow-hidden min-h-[300px] max-h-[calc(100vh-20rem)]"
+            class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col overflow-hidden shrink-0"
           >
             <div
               class="p-4 bg-slate-50 border-b border-slate-200 shrink-0 flex items-center justify-between flex-wrap gap-2"
@@ -2617,7 +2617,7 @@ const CMR_JOB_DOMAINS: Record<
                 </button>
               </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-4 bg-white shrink">
+            <div class="p-4 bg-white">
               <div
                 class="prose prose-slate prose-sm max-w-none text-xs leading-relaxed"
                 [innerHTML]="getReoContentHtmlFr()"
