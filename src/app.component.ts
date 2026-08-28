@@ -2069,7 +2069,7 @@ function getTodayDateString(): string {
                                     (change)="onOffreHeurePostulantChange($any($event.target).value)"
                                   >
                                     @for (h of enrolmentHoursList; track h) {
-                                      <option [value]="h">{{ h }}</option>
+                                      <option [value]="h" [selected]="h === offreHeureArriveePostulant()">{{ h }}</option>
                                     }
                                   </select>
                                 </div>
@@ -2087,7 +2087,7 @@ function getTodayDateString(): string {
                                     (change)="onOffreHeureInvitesChange($any($event.target).value)"
                                   >
                                     @for (h of enrolmentHoursList; track h) {
-                                      <option [value]="h">{{ h }}</option>
+                                      <option [value]="h" [selected]="h === offreHeureArriveeInvites()">{{ h }}</option>
                                     }
                                   </select>
                                 </div>
@@ -2123,7 +2123,7 @@ function getTodayDateString(): string {
                               (change)="onOffreLieuVilleChange($any($event.target).value)"
                             >
                               @for (center of recruitmentCentersList; track center.city) {
-                                <option [value]="center.city">{{ center.city }} : {{ center.name }}</option>
+                                <option [value]="center.city" [selected]="center.city === offreLieuVille()">{{ center.city }} : {{ center.name }}</option>
                               }
                             </select>
                           </div>
@@ -2461,7 +2461,7 @@ function getTodayDateString(): string {
                                 (change)="onRappelCeremonieHeurePostulantChange($any($event.target).value)"
                               >
                                 @for (h of enrolmentHoursList; track h) {
-                                  <option [value]="h">{{ h }}</option>
+                                  <option [value]="h" [selected]="h === rappelCeremonieHeurePostulant()">{{ h }}</option>
                                 }
                               </select>
                             </div>
@@ -2478,7 +2478,7 @@ function getTodayDateString(): string {
                                 (change)="onRappelCeremonieHeureInvitesChange($any($event.target).value)"
                               >
                                 @for (h of enrolmentHoursList; track h) {
-                                  <option [value]="h">{{ h }}</option>
+                                  <option [value]="h" [selected]="h === rappelCeremonieHeureInvites()">{{ h }}</option>
                                 }
                               </select>
                             </div>
@@ -2492,7 +2492,7 @@ function getTodayDateString(): string {
                               (change)="onRappelCeremonieLieuChange($any($event.target).value)"
                             >
                               @for (center of recruitmentCentersList; track center.city) {
-                                <option [value]="center.city">{{ center.city }} : {{ center.name }}</option>
+                                <option [value]="center.city" [selected]="center.city === rappelCeremonieLieu()">{{ center.city }} : {{ center.name }}</option>
                               }
                             </select>
                           </div>
@@ -4124,9 +4124,14 @@ Thank you for your cooperation.`;
     this.evaluationMedicalePartie2.set(snapshot.evaluationMedicalePartie2 || false);
     this.evaluationMedicalePartie1Et2.set(snapshot.evaluationMedicalePartie1Et2 || false);
 
+    const isOta = (snapshot.evaluationMedicaleType || this.evaluationMedicaleType()) === 'Dossier OTA';
+    const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
+    const villeToSet = isOta ? 'Montréal' : (snapshot.offreLieuVille || savedVille);
+    const centerObj = this.recruitmentCentersList.find(c => c.city === villeToSet) || this.recruitmentCentersList[0];
+
     this.offreNormaleChecked.set(snapshot.offreNormaleChecked || false);
     this.offreEtudesSubventionneesChecked.set(snapshot.offreEtudesSubventionneesChecked || false);
-    this.offreLieuVille.set(snapshot.offreLieuVille || 'Québec');
+    this.offreLieuVille.set(villeToSet);
     this.offreUniteAffectation.set(snapshot.offreUniteAffectation || 'st-jean');
     this.offreMetier.set(snapshot.offreMetier || '');
     this.offreMetierSearchQuery.set(snapshot.offreMetierSearchQuery || '');
@@ -4138,7 +4143,7 @@ Thank you for your cooperation.`;
     this.offreDateEnrolement.set(snapshot.offreDateEnrolement || '');
     this.offreHeureArriveePostulant.set(snapshot.offreHeureArriveePostulant || (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00');
     this.offreHeureArriveeInvites.set(snapshot.offreHeureArriveeInvites || (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || (snapshot.offreEtudesSubventionneesChecked ? '9h45' : '10h00'));
-    this.offreLieuEnrolement.set(snapshot.offreLieuEnrolement || this.recruitmentCentersList[0].fullFr);
+    this.offreLieuEnrolement.set(snapshot.offreLieuEnrolement || centerObj.fullFr);
     this.offreDateArriveeUnite.set(snapshot.offreDateArriveeUnite || '');
     this.offreElementsManquants.set(snapshot.offreElementsManquants || 'Spécimen de chèque');
     this.offreDateElementsManquants.set(snapshot.offreDateElementsManquants || '');
@@ -4217,7 +4222,7 @@ Thank you for your cooperation.`;
       evaluationMedicalePartie1Et2: false,
       offreNormaleChecked: false,
       offreEtudesSubventionneesChecked: false,
-      offreLieuVille: 'Québec',
+      offreLieuVille: (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec',
       offreUniteAffectation: 'st-jean',
       offreMetier: '',
       offreMetierSearchQuery: '',
@@ -4229,7 +4234,7 @@ Thank you for your cooperation.`;
       offreDateEnrolement: '',
       offreHeureArriveePostulant: (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00',
       offreHeureArriveeInvites: (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00',
-      offreLieuEnrolement: this.recruitmentCentersList[0].fullFr,
+      offreLieuEnrolement: (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || this.recruitmentCentersList[0].fullFr,
       offreDateArriveeUnite: '',
       offreElementsManquants: 'Spécimen de chèque',
       offreDateElementsManquants: '',
@@ -4796,14 +4801,17 @@ Thank you for your cooperation.`;
     this.copiedMedicalKey.set(null);
 
     // Reset Offer forms
-    const savedVille = localStorage.getItem('offre_lieu_ville') || 'Québec';
-    const savedPostulant = localStorage.getItem('offre_heure_postulant') || '8h00';
-    const savedInvites = localStorage.getItem('offre_heure_invites') || '10h00';
-    const savedLieuEnrolement = localStorage.getItem('offre_lieu_enrolement') || (this.recruitmentCentersList.find(c => c.city === savedVille)?.fullFr) || this.recruitmentCentersList[0].fullFr;
+    const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
+    const savedPostulant = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00';
+    const savedInvites = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00';
+    const villeToSet = isOta ? 'Montréal' : savedVille;
+    const centerObj = this.recruitmentCentersList.find(c => c.city === villeToSet) || this.recruitmentCentersList[0];
+    const savedLieuEnrolement = isOta ? centerObj.fullFr : ((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || centerObj.fullFr);
 
     this.offreNormaleChecked.set(false);
     this.offreEtudesSubventionneesChecked.set(false);
-    this.offreLieuVille.set(savedVille);
+    this.offreLieuVille.set(villeToSet);
     this.offreUniteAffectation.set('st-jean');
     this.offreMetier.set('');
     this.offreMetierSearchQuery.set('');
@@ -5359,6 +5367,16 @@ Thank you for your cooperation.`;
   // Action: GD user chooses dossier type (Local or OTA)
   selectGdDossierType(type: 'Local' | 'OTA') {
     this.evaluationMedicaleType.set(type === 'OTA' ? 'Dossier OTA' : 'Dossier régulier');
+    if (type === 'OTA') {
+      const mtl = this.recruitmentCentersList.find(c => c.city === 'Montréal') || this.recruitmentCentersList[0];
+      this.offreLieuVille.set('Montréal');
+      this.offreLieuEnrolement.set(mtl.fullFr);
+    } else {
+      const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
+      const centerObj = this.recruitmentCentersList.find(c => c.city === savedVille) || this.recruitmentCentersList[0];
+      this.offreLieuVille.set(savedVille);
+      this.offreLieuEnrolement.set((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || centerObj.fullFr);
+    }
     this.stage.set("main");
     const tasks = this.visibleTasks();
     if (tasks.length > 0) this.selectTask(tasks[0]);
@@ -5927,11 +5945,11 @@ Thank you for your cooperation.`;
   // Rappel cérémonie d'assermentation state
   rappelCeremonieChecked = signal(false);
   rappelCeremonieDate = signal<string>('');
-  rappelCeremonieHeurePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_postulant')) || '07:30');
-  rappelCeremonieHeureInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_invites')) || '10:15');
+  rappelCeremonieHeurePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_postulant')) || '7h30');
+  rappelCeremonieHeureInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_invites')) || '10h15');
   rappelCeremonieLieu = signal<string>('Québec');
 
-  offreLieuVille = signal<string>(localStorage.getItem('offre_lieu_ville') || 'Québec');
+  offreLieuVille = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec');
   offreUniteAffectation = signal<string>('3229');
   readonly unitesAffectation = UNITS_LIST;
   offreMetier = signal<string>('');
@@ -5943,10 +5961,10 @@ Thank you for your cooperation.`;
   offreEtudesSubventionnees = signal<string>('');
   offreDureeEtudesSubventionnees = signal<string>('');
   readonly enrolmentHoursList: string[] = ENROLMENT_HOURS;
-  offreHeureArriveePostulant = signal<string>(localStorage.getItem('offre_heure_postulant') || '8h00');
-  offreHeureArriveeInvites = signal<string>(localStorage.getItem('offre_heure_invites') || '10h00');
+  offreHeureArriveePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00');
+  offreHeureArriveeInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00');
   offreDateEnrolement = signal<string>('');
-  offreLieuEnrolement = signal<string>(localStorage.getItem('offre_lieu_enrolement') || RECRUITMENT_CENTERS[0].fullFr);
+  offreLieuEnrolement = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || RECRUITMENT_CENTERS[0].fullFr);
   offreDateArriveeUnite = signal<string>('');
   offreElementsManquants = signal<string>('Spécimen de chèque');
   offreDateElementsManquants = signal<string>('');
@@ -6066,19 +6084,29 @@ Thank you for your cooperation.`;
   }
 
   getUniteAffectationObj() {
-    const session = this.unitesAffectation.find(u => u.id === this.offreUniteAffectation()) || this.unitesAffectation[0];
-    if (!session) return { nom: 'N/A', adressePlain: '', adresseHtml: '' };
+    const target = this.offreUniteAffectation();
+    const session = this.unitesAffectation.find(u => u.id === target || u.uic === target)
+      || (target === 'st-jean' ? this.unitesAffectation.find(u => u.id === '3613' || u.uic === '3613') : null)
+      || this.unitesAffectation.find(u => u.id === '3613')
+      || this.unitesAffectation[0];
+    if (!session) return { nom: 'N/A', adressePlain: '', adresseHtml: '', uic: '' };
     
     let displayNom = session.officialName;
-    if (session.id === '3613') {
+    if (session.id === '3613' || session.uic === '3613' || target === 'st-jean') {
       displayNom = 'ÉCOLE DE LEADERSHIP ET DE RECRUES DES FORCES CANADIENNES';
     }
 
     return {
       nom: displayNom,
       adressePlain: session.addressPlain,
-      adresseHtml: session.addressHtml
+      adresseHtml: session.addressHtml,
+      uic: session.uic || session.id
     };
+  }
+
+  isUic3613Selected(): boolean {
+    const unitObj = this.getUniteAffectationObj();
+    return unitObj.uic === '3613' || this.offreUniteAffectation() === '3613' || this.offreUniteAffectation() === 'st-jean';
   }
 
   getOfferFormattedNote(): string {
@@ -6151,7 +6179,6 @@ Thank you for your cooperation.`;
 
   onNoteConjointTexteInput(val: string) {
     this.noteConjointTexte.set(val);
-    this.noteBeneficiaire.set(val);
     this.autoActivateOffreEmail();
   }
 
@@ -6160,10 +6187,12 @@ Thank you for your cooperation.`;
     const center = this.recruitmentCentersList.find(c => c.city === city);
     if (center) {
       this.offreLieuEnrolement.set(center.fullFr);
-      try {
-        localStorage.setItem('offre_lieu_ville', city);
-        localStorage.setItem('offre_lieu_enrolement', center.fullFr);
-      } catch {}
+      if (this.evaluationMedicaleType() !== 'Dossier OTA') {
+        try {
+          localStorage.setItem('offre_lieu_ville', city);
+          localStorage.setItem('offre_lieu_enrolement', center.fullFr);
+        } catch {}
+      }
     }
     this.autoActivateOffreEmail();
   }
@@ -7237,72 +7266,138 @@ Thank you for your cooperation.`;
   getOffreLinksBlockPlain(lang: 'fr' | 'en'): string {
     const isConjoint = this.isConjointDeFaitSelected();
     const uniteNom = this.getUniteAffectationObj().nom;
+    const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const isMontreal = this.offreLieuVille() === 'Montréal';
+    const showTenueDeVille = isOta || isMontreal;
+    const isUic3613 = this.isUic3613Selected();
+
     if (lang === 'fr') {
-      if (isConjoint) {
-        let res = `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.\n`;
-        res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
-        res += "Instruction union de fait : https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf\n";
-        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
-        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
-        return res;
+      let res = '';
+      if (isUic3613) {
+        if (isConjoint) {
+          res += `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
+          res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
+          res += "Instruction union de fait : https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf\n";
+          res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        } else {
+          res += `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
+          res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
+          res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        }
       } else {
-        let res = `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.\n`;
-        res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
-        res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
-        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
-        return res;
+        if (isConjoint) {
+          res += `Voici les liens vers votre instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
+          res += "Instruction union de fait : https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf\n";
+          res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        } else {
+          res += `Voici le lien vers votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
+          res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
+        }
       }
+
+      if (showTenueDeVille) {
+        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
+      }
+      res += "\n\n\n";
+      return res;
     } else {
-      if (isConjoint) {
-        let res = `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.\n`;
-        res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
-        res += "Common-Law partnership instruction : https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf\n";
-        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
-        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
-        return res;
+      let res = '';
+      if (isUic3613) {
+        if (isConjoint) {
+          res += `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
+          res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
+          res += "Common-Law partnership instruction : https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf\n";
+          res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        } else {
+          res += `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
+          res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
+          res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        }
       } else {
-        let res = `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.\n`;
-        res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
-        res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
-        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n\n\n\n";
-        return res;
+        if (isConjoint) {
+          res += `Here are the links to your common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
+          res += "Common-Law partnership instruction : https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf\n";
+          res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        } else {
+          res += `Here is the link to your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
+          res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
+        }
       }
+
+      if (showTenueDeVille) {
+        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
+      }
+      res += "\n\n\n";
+      return res;
     }
   }
 
   getOffreLinksBlockHtml(lang: 'fr' | 'en'): string {
     const isConjoint = this.isConjointDeFaitSelected();
     const uniteNom = this.getUniteAffectationObj().nom;
+    const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const isMontreal = this.offreLieuVille() === 'Montréal';
+    const showTenueDeVille = isOta || isMontreal;
+    const isUic3613 = this.isUic3613Selected();
+
     if (lang === 'fr') {
-      if (isConjoint) {
-        let res = `<p>Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.<br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instruction union de fait</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a><br>`;
-        res += `Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
-        return res;
+      let res = '<p>';
+      if (isUic3613) {
+        if (isConjoint) {
+          res += `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instruction union de fait</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
+        } else {
+          res += `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
+        }
       } else {
-        let res = `<p>Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : BFC ${uniteNom}.<br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a><br>`;
-        res += `Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
-        return res;
+        if (isConjoint) {
+          res += `Voici les liens vers votre instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instruction union de fait</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
+        } else {
+          res += `Voici le lien vers votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
+        }
       }
+
+      if (showTenueDeVille) {
+        res += `<br>Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
+      }
+      res += `</p>`;
+      return res;
     } else {
-      if (isConjoint) {
-        let res = `<p>Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.<br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a><br>`;
-        res += `Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
-        return res;
+      let res = '<p>';
+      if (isUic3613) {
+        if (isConjoint) {
+          res += `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
+        } else {
+          res += `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
+        }
       } else {
-        let res = `<p>Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : CFB ${uniteNom}.<br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
-        res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a><br>`;
-        res += `Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a></p>`;
-        return res;
+        if (isConjoint) {
+          res += `Here are the links to your common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
+        } else {
+          res += `Here is the link to your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
+        }
       }
+
+      if (showTenueDeVille) {
+        res += `<br>Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
+      }
+      res += `</p>`;
+      return res;
     }
   }
 
