@@ -9,6 +9,14 @@ export interface UnitSession {
 
 export const UNITS_LIST: UnitSession[] = [
   {
+    "id": "1126",
+    "uic": "1126",
+    "abbrevCFR": "U Sherbroo",
+    "officialName": "UNIVERSITE DE SHERBROOKE",
+    "addressHtml": "2500 BD DE L'UNIVERSITÉ SHERBROOKE<br>QC J1N 3C6<br>CAN",
+    "addressPlain": "2500 BD DE L'UNIVERSITÉ SHERBROOKE\\nQC J1N 3C6\\nCAN"
+  },
+  {
     "id": "1550",
     "uic": "1550",
     "abbrevCFR": "RPCNU REP",

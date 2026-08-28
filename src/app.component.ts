@@ -510,15 +510,15 @@ function getTodayDateString(): string {
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <!-- Enrôlement / Métiers Button (Intro) -->
+        <!-- Switch Role Button (Intro GD) -->
         <button
-          (click)="toggleJobSearch()"
-          class="absolute top-4 right-16 bg-indigo-100 border border-indigo-200 text-indigo-800 hover:bg-indigo-200 h-10 px-3.5 rounded-full shadow-md transition-all z-50 font-sans flex items-center justify-center text-xs font-bold gap-1.5 cursor-pointer"
-          title="Panneau d’Enrôlement et Métiers"
+          (click)="switchRole()"
+          class="absolute top-4 right-4 bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all z-50 font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+          title="Revenir à la page de sélection de rôle"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-3.5 w-3.5 shrink-0 text-indigo-600"
+            class="h-4 w-4 text-indigo-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -527,32 +527,10 @@ function getTodayDateString(): string {
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
             />
           </svg>
-          <span>Enrôlement</span>
-        </button>
-
-        <!-- Signature Management Button (Intro) -->
-        <button
-          (click)="toggleSignatureSettings()"
-          class="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all z-50 text-slate-600 cursor-pointer"
-          title="Gestion de la signature"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
+          <span>Changer de rôle</span>
         </button>
 
         <div
@@ -7157,6 +7135,7 @@ Thank you for your cooperation.`;
     const lieuEnrolEn = selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement();
     const dateArrivee = this.getOffreDateArriveeUniteFull();
     const datesCours = this.getOffreDatesCoursFull();
+    const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
     let fr = "English message will follow.\n\n";
     fr += "Bonjour,\n\n";
@@ -7171,7 +7150,10 @@ Thank you for your cooperation.`;
     fr += this.getTeamsLinkPlainFr();
     fr += `Unité d’affectation : ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
     fr += `Date d’arrivée à votre unité:  ${dateArrivee}\n`;
-    fr += `Vos dates de cours :      ${datesCours}\n\n\n`;
+    if (hasCourseDates) {
+      fr += `Vos dates de cours :      ${datesCours}\n`;
+    }
+    fr += `\n\n`;
     const { dateLimiteStr, elementsPlain } = this.getElementsManquantsBlocks('fr');
     fr += `Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
@@ -7192,7 +7174,10 @@ Thank you for your cooperation.`;
     en += this.getTeamsLinkPlainEn();
     en += `Posting unit: ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
     en += `Arrival date at your unit:  ${dateArrivee}\n`;
-    en += `Your course dates:      ${datesCours}\n\n\n`;
+    if (hasCourseDates) {
+      en += `Your course dates:      ${datesCours}\n`;
+    }
+    en += `\n\n`;
     const blocksEn = this.getElementsManquantsBlocks('en');
     en += `Please send me the following items no later than${blocksEn.dateLimiteStr}:\n\n`;
     en += blocksEn.elementsPlain;
@@ -7332,6 +7317,7 @@ Thank you for your cooperation.`;
     const lieuEnrolEn = (selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
     const dateArrivee = this.getOffreDateArriveeUniteFull();
     const datesCours = this.getOffreDatesCoursFull();
+    const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
 
@@ -7346,8 +7332,11 @@ Thank you for your cooperation.`;
     html += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
     html += this.getTeamsLinkHtmlFr();
     html += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}<br>`;
-    html += `<strong>Vos dates de cours :</strong> ${datesCours}</p>`;
+    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    if (hasCourseDates) {
+      html += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
+    }
+    html += `</p>`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
     html += `<p>Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
@@ -7368,8 +7357,11 @@ Thank you for your cooperation.`;
     html += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
     html += this.getTeamsLinkHtmlEn();
     html += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}<br>`;
-    html += `<strong>Your course dates:</strong> ${datesCours}</p>`;
+    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    if (hasCourseDates) {
+      html += `<br><strong>Your course dates:</strong> ${datesCours}`;
+    }
+    html += `</p>`;
     const blocksHtmlEn = this.getElementsManquantsBlocks('en');
     html += `<p>Please send me the following items no later than${blocksHtmlEn.dateLimiteStr}:</p>`;
     html += blocksHtmlEn.elementsHtmlList;
@@ -7396,6 +7388,7 @@ Thank you for your cooperation.`;
     const lieuEnrolEn = selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement();
     const dateArrivee = this.getOffreDateArriveeUniteFull();
     const datesCours = this.getOffreDatesCoursFull();
+    const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
     let fr = "English message will follow.\n\n";
     fr += "Bonjour,\n\n";
@@ -7413,7 +7406,10 @@ Thank you for your cooperation.`;
     fr += this.getTeamsLinkPlainFr();
     fr += `Unité d’affectation : ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
     fr += `Date d’arrivée à votre unité:  ${dateArrivee}\n`;
-    fr += `Vos dates de cours :    ${datesCours}\n\n\n`;
+    if (hasCourseDates) {
+      fr += `Vos dates de cours :    ${datesCours}\n`;
+    }
+    fr += `\n\n`;
     const { dateLimiteStr, elementsPlain } = this.getElementsManquantsBlocks('fr');
     fr += `Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
@@ -7437,7 +7433,10 @@ Thank you for your cooperation.`;
     en += this.getTeamsLinkPlainEn();
     en += `Posting unit: ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
     en += `Arrival date at your unit:  ${dateArrivee}\n`;
-    en += `Your course dates:    ${datesCours}\n\n\n`;
+    if (hasCourseDates) {
+      en += `Your course dates:    ${datesCours}\n`;
+    }
+    en += `\n\n`;
     const blocksSubEn = this.getElementsManquantsBlocks('en');
     en += `Please review the documents attached to this email and return the following documents to me no later than${blocksSubEn.dateLimiteStr}:\n\n`;
     en += blocksSubEn.elementsPlain;
@@ -7463,6 +7462,7 @@ Thank you for your cooperation.`;
     const lieuEnrolEn = (selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
     const dateArrivee = this.getOffreDateArriveeUniteFull();
     const datesCours = this.getOffreDatesCoursFull();
+    const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
 
@@ -7477,8 +7477,11 @@ Thank you for your cooperation.`;
     html += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
     html += this.getTeamsLinkHtmlFr();
     html += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}<br>`;
-    html += `<strong>Vos dates de cours :</strong> ${datesCours}</p>`;
+    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    if (hasCourseDates) {
+      html += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
+    }
+    html += `</p>`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
     html += `<p>Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
@@ -7499,8 +7502,11 @@ Thank you for your cooperation.`;
     html += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
     html += this.getTeamsLinkHtmlEn();
     html += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}<br>`;
-    html += `<strong>Your course dates:</strong> ${datesCours}</p>`;
+    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    if (hasCourseDates) {
+      html += `<br><strong>Your course dates:</strong> ${datesCours}`;
+    }
+    html += `</p>`;
     const blocksHtmlSubEn = this.getElementsManquantsBlocks('en');
     html += `<p>Please review the documents attached to this email and return the following documents to me no later than${blocksHtmlSubEn.dateLimiteStr}:</p>`;
     html += blocksHtmlSubEn.elementsHtmlList;
