@@ -63,15 +63,16 @@ const CMR_JOB_DOMAINS: Record<
   selector: "app-reorientation",
   standalone: true,
   imports: [CommonModule, FormsModule],
+  host: { "(document:click)": "onDocumentClick($event)" },
   template: `
     <div class="h-full flex flex-col min-h-0 bg-slate-50">
       <div
-        class="p-4 bg-white border-b border-slate-200 shrink-0 flex items-start justify-between"
+        class="p-4 bg-white border-b border-slate-200 shrink-0 flex items-start justify-between relative z-20"
       >
         <div class="flex items-start gap-4">
           <button
             (click)="resetAll()"
-            class="bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all text-slate-600 shrink-0 border border-slate-200 mt-1"
+            class="bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all text-slate-600 shrink-0 border border-slate-200 mt-1 cursor-pointer"
             title="Réinitialiser"
           >
             <svg
@@ -118,132 +119,178 @@ const CMR_JOB_DOMAINS: Record<
             </p>
           </div>
         </div>
-        <div class="flex flex-col gap-2 mt-1">
-          <label
-            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
+
+        <!-- Collapsible Options Dropdown -->
+        <div class="relative shrink-0 reo-options-dropdown-container">
+          <button
+            type="button"
+            (click)="showOptionsDropdown.set(!showOptionsDropdown())"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl border transition-all active:scale-95 cursor-pointer text-xs font-bold shadow-xs"
+            [class.bg-indigo-50]="activeHeaderOptionsCount() > 0"
+            [class.border-indigo-300]="activeHeaderOptionsCount() > 0"
+            [class.text-indigo-950]="activeHeaderOptionsCount() > 0"
+            [class.bg-white]="activeHeaderOptionsCount() === 0"
+            [class.border-slate-200]="activeHeaderOptionsCount() === 0"
+            [class.text-slate-700]="activeHeaderOptionsCount() === 0"
+            [class.hover:bg-slate-50]="activeHeaderOptionsCount() === 0"
+            title="Options supplémentaires"
           >
-            <input
-              type="checkbox"
-              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-              [checked]="sharedState.includeLinkedEmail()"
-              (change)="toggleIncludeReo()"
-            />
-            <span class="relative">
-              <svg
-                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
+            <svg
+              class="w-4 h-4"
+              [class.text-indigo-600]="activeHeaderOptionsCount() > 0"
+              [class.text-slate-500]="activeHeaderOptionsCount() === 0"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Fusion courriel de Tâche(s) et courriel de Réo
-            </span>
-          </label>
-          <label
-            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
-          >
-            <input
-              type="checkbox"
-              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-              [checked]="ignoreSip()"
-              (change)="toggleIgnoreSip()"
-            />
-            <span class="relative">
-              <svg
-                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Ignorer le SIP
-            </span>
-          </label>
-          <label
-            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
-          >
-            <input
-              type="checkbox"
-              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-              [checked]="hasMedicalLimitation()"
-              (change)="toggleMedicalLimitation()"
-            />
-            <span class="relative">
-              <svg
-                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Limitation médicale
-            </span>
-          </label>
-          <label
-            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
-          >
-            <input
-              type="checkbox"
-              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-              [checked]="isPforApplicant()"
-              (change)="togglePforApplicant()"
-            />
-            <span class="relative">
-              <svg
-                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Postulant PFOR
-            </span>
-          </label>
-          <label
-            class="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer select-none"
-          >
-            <input
-              type="checkbox"
-              class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-              [checked]="includeTraitement()"
-              (change)="toggleIncludeTraitement()"
-            />
-            <span class="relative">
-              <svg
-                class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Inclure opération de traitement
-            </span>
-          </label>
+                stroke-width="2"
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+              />
+            </svg>
+            <span>Options</span>
+            @if (activeHeaderOptionsCount() > 0) {
+              <span class="px-2 py-0.5 bg-indigo-600 text-white rounded-full text-[10px] font-extrabold shadow-xs">
+                {{ activeHeaderOptionsCount() }}
+              </span>
+            }
+            <svg
+              class="w-3.5 h-3.5 transition-transform duration-200"
+              [class.rotate-180]="showOptionsDropdown()"
+              [class.text-indigo-600]="activeHeaderOptionsCount() > 0"
+              [class.text-slate-400]="activeHeaderOptionsCount() === 0"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          @if (showOptionsDropdown()) {
+            <div
+              class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3.5 z-50 flex flex-col gap-2.5"
+            >
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-600">Options du volet</span>
+                @if (activeHeaderOptionsCount() > 0) {
+                  <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                    {{ activeHeaderOptionsCount() }} active(s)
+                  </span>
+                }
+              </div>
+
+              <div class="flex flex-col gap-2.5 pt-1">
+                <label
+                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
+                    [checked]="sharedState.includeLinkedEmail()"
+                    (change)="toggleIncludeReo()"
+                  />
+                  <span class="relative flex items-center">
+                    <svg
+                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Fusion courriel de Tâche(s) et courriel de Réo
+                  </span>
+                </label>
+
+                <label
+                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
+                    [checked]="ignoreSip()"
+                    (change)="toggleIgnoreSip()"
+                  />
+                  <span class="relative flex items-center">
+                    <svg
+                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Ignorer le SIP
+                  </span>
+                </label>
+
+                <label
+                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
+                    [checked]="hasMedicalLimitation()"
+                    (change)="toggleMedicalLimitation()"
+                  />
+                  <span class="relative flex items-center">
+                    <svg
+                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Limitation médicale
+                  </span>
+                </label>
+
+                <label
+                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
+                    [checked]="includeTraitement()"
+                    (change)="toggleIncludeTraitement()"
+                  />
+                  <span class="relative flex items-center">
+                    <svg
+                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Inclure opération de traitement
+                  </span>
+                </label>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
@@ -2633,6 +2680,24 @@ export class ReorientationComponent {
   jobService = inject(JobDatabaseService);
   sharedState = inject(SharedStateService);
   melService = inject(MelService);
+
+  showOptionsDropdown = signal<boolean>(false);
+
+  activeHeaderOptionsCount = computed<number>(() => {
+    let count = 0;
+    if (this.sharedState.includeLinkedEmail()) count++;
+    if (this.ignoreSip()) count++;
+    if (this.hasMedicalLimitation()) count++;
+    if (this.includeTraitement()) count++;
+    return count;
+  });
+
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement | null;
+    if (target && !target.closest('.reo-options-dropdown-container')) {
+      this.showOptionsDropdown.set(false);
+    }
+  }
 
   geographicLimitations = MEL_LIMITATIONS.filter(l => l.category === 'Geographic');
   occupationalLimitations = MEL_LIMITATIONS.filter(l => l.category === 'Occupational');
