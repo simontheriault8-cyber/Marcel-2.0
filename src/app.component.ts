@@ -3109,9 +3109,10 @@ function getTodayDateString(): string {
                         Attribuer la tâche : Planifiez votre séance d'information des FAC 101.
                       </li>
                       <li>
-                        Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse
+                        Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse.
                       </li>
                       <li>Ajouter la note au registre du postulant.</li>
+                      <li>Basculer le postulant dans Traitement initial.</li>
                       <li>
                         Envoyé le courriel au postulant contenant le lien vers
                         le Form et le CAF 101.
@@ -5736,17 +5737,13 @@ Thank you for your cooperation.`;
     const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
 
     if (isIdentity) {
-      const hasSelfie = task.documents.some(
-        (d) =>
-          d.nameFr.toLowerCase().includes("selfie") &&
-          this.isCompliant(task, d),
-      );
       const hasId = task.documents.some(
         (d) =>
           !d.nameFr.toLowerCase().includes("selfie") &&
+          !d.nameFr.toLowerCase().includes("invalide") &&
           this.isCompliant(task, d),
       );
-      return hasSelfie && hasId;
+      return hasId;
     }
 
     const isConsentement = task.nameFr.includes("Consentement du parent");
@@ -5767,6 +5764,12 @@ Thank you for your cooperation.`;
         return true;
       }
       if (task.nameFr.includes("Courriel d'offre")) {
+        return true;
+      }
+      if (
+        task.nameFr.includes("Formulaire de demande d'emploi notée") ||
+        task.nameFr.includes("Formulaire de demande d’emploi noté")
+      ) {
         return true;
       }
       return this.isTaskCompliant(task);
@@ -6733,6 +6736,60 @@ Thank you for your cooperation.`;
     return tasksMap;
   }
 
+  getRejectionReasonsForCompliantNote(): string {
+    const taskNotCompletedKeys = this.taskNotCompletedKeys();
+    const notes: string[] = [];
+    let hasNormalReassignment = false;
+
+    for (const task of this.allTasks()) {
+      const isVisible = this.visibleTasks().some(vt => vt.nameFr === task.nameFr);
+      const isNotCompleted = taskNotCompletedKeys.has(task.nameFr);
+      const hasRejections = task.documents.some(doc => 
+        doc.reasons.some(reason => this.isReasonSelected(doc, reason))
+      );
+
+      if (!isVisible && !hasRejections && !isNotCompleted) {
+        continue;
+      }
+
+      if (isNotCompleted) {
+        notes.push(`Tâche "${task.nameFr}" non complétée`);
+        hasNormalReassignment = true;
+      }
+      for (const doc of task.documents) {
+        for (const reason of doc.reasons) {
+          if (this.isReasonSelected(doc, reason)) {
+            notes.push(reason.logNoteFr);
+            if (!reason.isConfirmation) {
+              hasNormalReassignment = true;
+            }
+          }
+        }
+      }
+    }
+
+    if (notes.length === 0) return "";
+
+    const combinedReasons = notes.join(" / ");
+    const closureSuffix =
+      "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+
+    let noteTxt = "";
+    if (hasNormalReassignment) {
+      noteTxt = `${combinedReasons}, la/les tâches réattribuées et courriel explicatif envoyé.`;
+    } else {
+      noteTxt = `${combinedReasons}.`;
+    }
+
+    noteTxt = noteTxt.trim();
+    if (noteTxt.endsWith(".")) {
+      noteTxt = noteTxt.slice(0, -1);
+    }
+    noteTxt += ". " + closureSuffix;
+
+    return noteTxt;
+  }
+
   getBigAceCompliantNoteClean(): string {
     const jobSlots = [
       { index: 1, job: this.getDossierJob(1), failedCe: this.sharedState.dossierJobFailedCe1() },
@@ -6794,7 +6851,14 @@ Thank you for your cooperation.`;
       firstLine = `Étape 1 (En cours) - ${parts.join(" ")}`;
     }
 
-    return `${firstLine}\nQD complété, admissible. Webinaire CAF 101 à faire, tâche planifiez votre séance d'information des FAC 101 attribuée.`;
+    let note = `${firstLine}\nQD complété, admissible. Webinaire CAF 101 à faire, tâche planifiez votre séance d'information des FAC 101 attribuée.`;
+
+    const extraRejections = this.getRejectionReasonsForCompliantNote();
+    if (extraRejections) {
+      note += `\n${extraRejections}`;
+    }
+
+    return note;
   }
 
   getBigAceCompliantNote(): string {
@@ -6956,12 +7020,12 @@ Thank you for your cooperation.`;
     // 4. All tasks compliant Note
     if (this.allTasksCompliant()) {
       notes.push(this.getBigAceCompliantNoteClean());
-    }
-
-    // 5. Rejection / Incomplete tasks / Reminder Note
-    const rejectionNoteText = this.getRejectionAndReminderNoteText();
-    if (rejectionNoteText) {
-      notes.push(rejectionNoteText);
+    } else {
+      // 5. Rejection / Incomplete tasks / Reminder Note
+      const rejectionNoteText = this.getRejectionAndReminderNoteText();
+      if (rejectionNoteText) {
+        notes.push(rejectionNoteText);
+      }
     }
 
     if (notes.length === 0) return "";
@@ -7024,8 +7088,269 @@ Thank you for your cooperation.`;
     return null;
   });
 
+  private getCompliantNonMandatoryTasksPlain(lang: 'fr' | 'en' = 'fr'): string {
+    const structure = this.getStructuredRejections();
+    if (structure.size === 0) return "";
+
+    const relevantTasks: { task: Task; items: { doc: DocumentItem; reason: RejectionReason }[]; notCompleted: boolean }[] = [];
+
+    for (const [task, items] of structure.entries()) {
+      const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
+      const isFormNote = task.nameFr.includes("Formulaire de demande d'emploi notée") || task.nameFr.includes("Formulaire de demande d’emploi noté");
+      const isMdn2977 = task.nameFr.includes("MDN 2977");
+
+      if (isIdentity) {
+        const selfieItems = items.filter(i => i.doc.nameFr.toLowerCase().includes("selfie"));
+        if (selfieItems.length > 0) {
+          relevantTasks.push({ task, items: selfieItems, notCompleted: false });
+        }
+      } else if (isFormNote || isMdn2977) {
+        const notCompleted = this.taskNotCompletedKeys().has(task.nameFr);
+        if (items.length > 0 || notCompleted) {
+          relevantTasks.push({ task, items, notCompleted });
+        }
+      }
+    }
+
+    if (relevantTasks.length === 0) return "";
+
+    let text = "";
+    if (lang === 'fr') {
+      text += `Veuillez également compléter ou corriger la/les tâche(s) suivante(s) sur votre portail :`;
+      for (const { task, items, notCompleted } of relevantTasks) {
+        const taskName = task.nameFr;
+        text += `\n\n• ${taskName}`;
+        if (notCompleted) {
+          text += `\n    ◦ Vous n'avez pas complété cette tâche sur votre portail.`;
+          text += `\n      → Veuillez vous connecter à votre portail et la compléter.`;
+        }
+        const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
+        for (const item of items) {
+          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+          groupedItems.get(item.doc)!.push(item);
+        }
+        for (const [doc, docItems] of groupedItems.entries()) {
+          const labels = docItems.map((i) => i.reason.labelFr);
+          let labelsStr = "";
+          if (labels.length === 1) {
+            labelsStr = labels[0];
+          } else if (labels.length === 2) {
+            labelsStr = `${labels[0]} et ${labels[1]}`;
+          } else {
+            labelsStr = labels.slice(0, -1).join(', ') + ' et ' + labels[labels.length - 1];
+          }
+
+          text += `\n    ◦ ${doc.nameFr} : ${labelsStr}`;
+
+          const uniqueInstructions = new Set<string>();
+          for (const item of docItems) {
+            if (!uniqueInstructions.has(item.reason.instructionFr)) {
+              uniqueInstructions.add(item.reason.instructionFr);
+              text += `\n      → ${item.reason.instructionFr.replace(/\n/g, "\n        ")}`;
+            }
+          }
+          const uniqueLinks = new Set<string>();
+          for (const item of docItems) {
+            if (item.reason.linkFr && !uniqueLinks.has(item.reason.linkFr)) {
+              uniqueLinks.add(item.reason.linkFr);
+              const cleanLink = item.reason.linkFr.replace(/<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$2 ($1)');
+              text += `\n      🔗 ${cleanLink}`;
+            }
+          }
+        }
+      }
+    } else {
+      text += `Please also complete or correct the following task(s) on your portal:`;
+      for (const { task, items, notCompleted } of relevantTasks) {
+        const taskName = task.nameEn || task.nameFr;
+        text += `\n\n• ${taskName}`;
+        if (notCompleted) {
+          text += `\n    ◦ You have not completed this task on your portal.`;
+          text += `\n      → Please log in to your portal and complete it.`;
+        }
+        const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
+        for (const item of items) {
+          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+          groupedItems.get(item.doc)!.push(item);
+        }
+        for (const [doc, docItems] of groupedItems.entries()) {
+          const labels = docItems.map((i) => i.reason.labelEn || i.reason.labelFr);
+          let labelsStr = "";
+          if (labels.length === 1) {
+            labelsStr = labels[0];
+          } else if (labels.length === 2) {
+            labelsStr = `${labels[0]} and ${labels[1]}`;
+          } else {
+            labelsStr = labels.slice(0, -1).join(', ') + ' and ' + labels[labels.length - 1];
+          }
+
+          text += `\n    ◦ ${doc.nameEn || doc.nameFr} : ${labelsStr}`;
+
+          const uniqueInstructions = new Set<string>();
+          for (const item of docItems) {
+            const instr = item.reason.instructionEn || item.reason.instructionFr;
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              text += `\n      → ${instr.replace(/\n/g, "\n        ")}`;
+            }
+          }
+          const uniqueLinks = new Set<string>();
+          for (const item of docItems) {
+            const link = item.reason.linkEn || item.reason.linkFr;
+            if (link && !uniqueLinks.has(link)) {
+              uniqueLinks.add(link);
+              const cleanLink = link.replace(/<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '$2 ($1)');
+              text += `\n      🔗 ${cleanLink}`;
+            }
+          }
+        }
+      }
+    }
+
+    return text;
+  }
+
+  private getCompliantNonMandatoryTasksHtml(lang: 'fr' | 'en' = 'fr'): string {
+    const structure = this.getStructuredRejections();
+    if (structure.size === 0) return "";
+
+    const relevantTasks: { task: Task; items: { doc: DocumentItem; reason: RejectionReason }[]; notCompleted: boolean }[] = [];
+
+    for (const [task, items] of structure.entries()) {
+      const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
+      const isFormNote = task.nameFr.includes("Formulaire de demande d'emploi notée") || task.nameFr.includes("Formulaire de demande d’emploi noté");
+      const isMdn2977 = task.nameFr.includes("MDN 2977");
+
+      if (isIdentity) {
+        const selfieItems = items.filter(i => i.doc.nameFr.toLowerCase().includes("selfie"));
+        if (selfieItems.length > 0) {
+          relevantTasks.push({ task, items: selfieItems, notCompleted: false });
+        }
+      } else if (isFormNote || isMdn2977) {
+        const notCompleted = this.taskNotCompletedKeys().has(task.nameFr);
+        if (items.length > 0 || notCompleted) {
+          relevantTasks.push({ task, items, notCompleted });
+        }
+      }
+    }
+
+    if (relevantTasks.length === 0) return "";
+
+    let html = "";
+    if (lang === 'fr') {
+      html += `<p><strong>Veuillez également compléter ou corriger la/les tâche(s) suivante(s) sur votre portail :</strong></p>`;
+      html += `<ul style="margin-top: 0; padding-left: 20px;">`;
+      for (const { task, items, notCompleted } of relevantTasks) {
+        const taskName = task.nameFr;
+        html += `<li style="margin-bottom: 15px;"><span style="text-decoration: underline; font-weight: bold;">${taskName}</span>`;
+        html += `<ul style="margin-top: 5px; list-style-type: circle; padding-left: 20px;">`;
+        if (notCompleted) {
+          html += `<li style="margin-bottom: 10px;">`;
+          html += `<span style="color: #FF0000; font-weight: bold;">Vous n'avez pas complété cette tâche sur votre portail.</span>`;
+          html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; Veuillez vous connecter à votre portail et la compléter.</div>`;
+          html += `</li>`;
+        }
+        const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
+        for (const item of items) {
+          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+          groupedItems.get(item.doc)!.push(item);
+        }
+        for (const [doc, docItems] of groupedItems.entries()) {
+          const labels = docItems.map((i) => i.reason.labelFr);
+          let labelsStr = "";
+          if (labels.length === 1) {
+            labelsStr = labels[0];
+          } else if (labels.length === 2) {
+            labelsStr = `${labels[0]} et ${labels[1]}`;
+          } else {
+            labelsStr = labels.slice(0, -1).join(', ') + ' et ' + labels[labels.length - 1];
+          }
+
+          html += `<li style="margin-bottom: 10px;">`;
+          html += `<span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameFr} : <span style="color: #FF0000;">${labelsStr}</span></strong></span>`;
+
+          const uniqueInstructions = new Set<string>();
+          for (const item of docItems) {
+            if (!uniqueInstructions.has(item.reason.instructionFr)) {
+              uniqueInstructions.add(item.reason.instructionFr);
+              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+            }
+          }
+          const uniqueLinks = new Set<string>();
+          for (const item of docItems) {
+            if (item.reason.linkFr && !uniqueLinks.has(item.reason.linkFr)) {
+              uniqueLinks.add(item.reason.linkFr);
+              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${item.reason.linkFr}</div>`;
+            }
+          }
+          html += `</li>`;
+        }
+        html += `</ul></li>`;
+      }
+      html += `</ul>`;
+    } else {
+      html += `<p><strong>Please also complete or correct the following task(s) on your portal:</strong></p>`;
+      html += `<ul style="margin-top: 0; padding-left: 20px;">`;
+      for (const { task, items, notCompleted } of relevantTasks) {
+        const taskName = task.nameEn || task.nameFr;
+        html += `<li style="margin-bottom: 15px;"><span style="text-decoration: underline; font-weight: bold;">${taskName}</span>`;
+        html += `<ul style="margin-top: 5px; list-style-type: circle; padding-left: 20px;">`;
+        if (notCompleted) {
+          html += `<li style="margin-bottom: 10px;">`;
+          html += `<span style="color: #FF0000; font-weight: bold;">You have not completed this task on your portal.</span>`;
+          html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; Please log in to your portal and complete it.</div>`;
+          html += `</li>`;
+        }
+        const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
+        for (const item of items) {
+          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+          groupedItems.get(item.doc)!.push(item);
+        }
+        for (const [doc, docItems] of groupedItems.entries()) {
+          const labels = docItems.map((i) => i.reason.labelEn || i.reason.labelFr);
+          let labelsStr = "";
+          if (labels.length === 1) {
+            labelsStr = labels[0];
+          } else if (labels.length === 2) {
+            labelsStr = `${labels[0]} and ${labels[1]}`;
+          } else {
+            labelsStr = labels.slice(0, -1).join(', ') + ' and ' + labels[labels.length - 1];
+          }
+
+          html += `<li style="margin-bottom: 10px;">`;
+          html += `<span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameEn || doc.nameFr} : <span style="color: #FF0000;">${labelsStr}</span></strong></span>`;
+
+          const uniqueInstructions = new Set<string>();
+          for (const item of docItems) {
+            const instr = item.reason.instructionEn || item.reason.instructionFr;
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
+            }
+          }
+          const uniqueLinks = new Set<string>();
+          for (const item of docItems) {
+            const link = item.reason.linkEn || item.reason.linkFr;
+            if (link && !uniqueLinks.has(link)) {
+              uniqueLinks.add(link);
+              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${link}</div>`;
+            }
+          }
+          html += `</li>`;
+        }
+        html += `</ul></li>`;
+      }
+      html += `</ul>`;
+    }
+
+    return html;
+  }
+
   getCompliantEmailHtml(): string {
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+
+    const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
+    const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
 
     // --- FRENCH BLOCK ---
     html += `<p><strong>English message will follow.</strong></p>`;
@@ -7043,6 +7368,10 @@ Thank you for your cooperation.`;
     html += `<p><strong>2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.</span></p>`;
 
     html += `<p>Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.</p>`;
+
+    if (nonMandatoryTasksHtmlFr) {
+      html += nonMandatoryTasksHtmlFr;
+    }
 
     html += `<p>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</p>`;
     html += `<p>Merci encore et au plaisir de votre faire votre connaissance.</p>`;
@@ -7067,6 +7396,10 @@ Thank you for your cooperation.`;
 
     html += `<p>This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.</p>`;
 
+    if (nonMandatoryTasksHtmlEn) {
+      html += nonMandatoryTasksHtmlEn;
+    }
+
     html += `<p>If no action is taken, your file will be automatically deactivated after 30 days.</p>`;
     html += `<p>Thank you again, and we look forward to meeting you.</p>`;
 
@@ -7079,6 +7412,9 @@ Thank you for your cooperation.`;
   getCompliantEmailPlain(): string {
     let plain = "";
 
+    const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
+    const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
+
     // --- FRENCH ---
     plain += `English message will follow.\n\n`;
     plain += `Bonjour,\n\n`;
@@ -7090,6 +7426,9 @@ Thank you for your cooperation.`;
     plain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/instruction-de-base/)\n\n`;
     plain += `2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail. Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/) De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.\n\n`;
     plain += `Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.\n\n`;
+    if (nonMandatoryTasksFr) {
+      plain += `${nonMandatoryTasksFr}\n\n`;
+    }
     plain += `Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.\n\n`;
     plain += `Merci encore et au plaisir de votre faire votre connaissance.\n\n`;
     plain += this.sharedState.customSignatureFr();
@@ -7106,6 +7445,9 @@ Thank you for your cooperation.`;
     plain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/basic-training/)\n\n`;
     plain += `2-After viewing the video, Schedule an appointment for a consultation through your portal calendar. Canadian Armed Forces enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/) New time slots will open on your portal within 14 days.\n\n`;
     plain += `This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.\n\n`;
+    if (nonMandatoryTasksEn) {
+      plain += `${nonMandatoryTasksEn}\n\n`;
+    }
     plain += `If no action is taken, your file will be automatically deactivated after 30 days.\n\n`;
     plain += `Thank you again, and we look forward to meeting you.\n\n`;
     plain += this.sharedState.customSignatureEn();
@@ -8145,7 +8487,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
       return this.getRappelCeremonieEmailPlain();
     }
 
-    if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections() && !this.rappelCeremonieChecked()) {
+    if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.rappelCeremonieChecked()) {
       return this.getCompliantEmailPlain();
     }
 
@@ -8201,7 +8543,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     }
 
     // 5. Rejection / Incomplete tasks / Reminder
-    if (this.hasSelectedRejections() || (this.forceGeneralReminder() && this.selectedRejectionKeys().size === 0)) {
+    if (!this.allTasksCompliant() && (this.hasSelectedRejections() || (this.forceGeneralReminder() && this.selectedRejectionKeys().size === 0))) {
       const rejFr = this.getRejectionPlainBodyFr();
       const rejEn = this.getRejectionPlainBodyEn();
       if (rejFr) frBlocks.push(rejFr);
@@ -8673,7 +9015,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
       return this.getRappelCeremonieEmailHtml();
     }
 
-    if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections() && !this.rappelCeremonieChecked()) {
+    if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.rappelCeremonieChecked()) {
       return this.getCompliantEmailHtml();
     }
 
@@ -8729,7 +9071,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     }
 
     // 5. Rejections / Incomplete tasks / Reminder
-    if (this.hasSelectedRejections() || (this.forceGeneralReminder() && this.selectedRejectionKeys().size === 0)) {
+    if (!this.allTasksCompliant() && (this.hasSelectedRejections() || (this.forceGeneralReminder() && this.selectedRejectionKeys().size === 0))) {
       const rejFr = this.getRejectionHtmlFr();
       const rejEn = this.getRejectionHtmlEn();
       if (rejFr) frSections.push(rejFr);

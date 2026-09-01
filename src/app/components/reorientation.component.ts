@@ -337,21 +337,6 @@ const CMR_JOB_DOMAINS: Record<
                 </option>
               </select>
             </div>
-            @if (isPforApplicant()) {
-              <div class="col-span-1 md:col-span-2 pt-3 border-t border-slate-200">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">
-                  Type de PFOR
-                </label>
-                <select
-                  [ngModel]="pforType()"
-                  (ngModelChange)="pforType.set($event)"
-                  class="w-full md:w-64 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow text-sm"
-                >
-                  <option value="cmr">PFOR CMR</option>
-                  <option value="civil">PFOR Civil</option>
-                </select>
-              </div>
-            }
           </div>
 
           <!-- Panneau Cote médicale (affiché seulement si limitation médicale est coché) -->
@@ -507,102 +492,6 @@ const CMR_JOB_DOMAINS: Record<
               </p>
             </div>
           </div>
-
-          <!-- Panneau: Admissibilité du CMR (si PFOR CMR) -->
-          @if (isPforApplicant() && pforType() === 'cmr') {
-            <div
-              class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow shrink-0 flex flex-col gap-3"
-            >
-              <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
-                <svg
-                  class="w-5 h-5 text-indigo-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
-                Admissibilité du CMR
-              </h3>
-              <p class="text-xs text-slate-600">
-                Sélectionnez le ou les domaines d'étude du CMR pour le candidat :
-              </p>
-              <div class="flex flex-wrap gap-6 pt-1">
-                <label class="flex items-center gap-2 cursor-pointer select-none text-sm font-semibold text-slate-700 hover:text-slate-900">
-                  <input
-                    type="checkbox"
-                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-                    [checked]="cmrArts()"
-                    (change)="cmrArts.set(!cmrArts())"
-                  />
-                  <span class="relative">
-                    <svg
-                      class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Arts
-                  </span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer select-none text-sm font-semibold text-slate-700 hover:text-slate-900">
-                  <input
-                    type="checkbox"
-                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-                    [checked]="cmrScience()"
-                    (change)="cmrScience.set(!cmrScience())"
-                  />
-                  <span class="relative">
-                    <svg
-                      class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Science
-                  </span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer select-none text-sm font-semibold text-slate-700 hover:text-slate-900">
-                  <input
-                    type="checkbox"
-                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-                    [checked]="cmrGenie()"
-                    (change)="cmrGenie.set(!cmrGenie())"
-                  />
-                  <span class="relative">
-                    <svg
-                      class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Génie
-                  </span>
-                </label>
-              </div>
-            </div>
-          }
 
           <!-- Panneau: Métiers déjà au dossier du postulant -->
           <div
@@ -2688,6 +2577,7 @@ export class ReorientationComponent {
     if (this.sharedState.includeLinkedEmail()) count++;
     if (this.ignoreSip()) count++;
     if (this.hasMedicalLimitation()) count++;
+    if (this.isPforApplicant()) count++;
     if (this.includeTraitement()) count++;
     return count;
   });
@@ -4751,7 +4641,7 @@ o Médecine d’urgence`,
       allowPR: true,
     },
     {
-      requiredCriteriaIds: ["des_12e_annee", "base_math_10_app"],
+      requiredCriteriaIds: ["des_12e_annee", "base_math_10_adv"],
       jobs: ["00019"],
       allowPR: true,
     },
