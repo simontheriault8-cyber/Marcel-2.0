@@ -331,7 +331,7 @@
     },
     "00178": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -341,7 +341,7 @@
     },
     "00179": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -355,13 +355,13 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
     "00181": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -379,14 +379,14 @@
         "traitement": "f"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
     "00183": {
       "PFOR": {
         "admission": "f",
-        "traitement": "f"
+        "traitement": "o"
       },
       "PFOEP": {
         "admission": "f",
@@ -399,7 +399,7 @@
     },
     "00184": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFOEP": {
@@ -417,13 +417,13 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
     "00187": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -433,7 +433,7 @@
     },
     "00189": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -485,7 +485,7 @@
     },
     "00195": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFOS": {
@@ -523,7 +523,7 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
@@ -539,7 +539,7 @@
     },
     "00207": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -553,13 +553,13 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
     "00211": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -569,7 +569,7 @@
     },
     "00213": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -587,7 +587,7 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
@@ -735,7 +735,7 @@
     },
     "00328": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -775,7 +775,7 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFOEP": {
@@ -789,13 +789,13 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
     "00344": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -805,7 +805,7 @@
     },
     "00345": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -967,7 +967,7 @@
     },
     "00389": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "EDO": {
@@ -1027,7 +1027,7 @@
         "traitement": "o"
       },
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },

@@ -870,6 +870,28 @@ export class RecruitmentDataService {
               logNoteFr:
                 "L'acte de naissance étranger ne prouve pas la citoyenneté. Doit fournir un certificat/carte de citoyenneté ou carte RP",
             },
+            {
+              id: "cit_invalide_visa",
+              labelFr: "Visa",
+              labelEn: "Visa",
+              instructionFr:
+                "Le visa ne prouve pas la citoyenneté canadienne ni le statut de résident permanent. Vous devez fournir soit un certificat de naissance d'une province canadienne, un certificat de citoyenneté, une carte de citoyenneté ou une carte de résident permanent.",
+              instructionEn:
+                "A visa does not prove Canadian citizenship or permanent resident status. You must provide either a birth certificate from a Canadian province, a citizenship certificate, a citizenship card, or a permanent resident card.",
+              logNoteFr:
+                "Le visa ne prouve pas la citoyenneté. Doit fournir un certificat de naissance, certificat/carte de citoyenneté ou carte RP",
+            },
+            {
+              id: "cit_invalide_permis_travail",
+              labelFr: "Permis de travail",
+              labelEn: "Work permit",
+              instructionFr:
+                "Le permis de travail ne prouve pas la citoyenneté canadienne ni le statut de résident permanent. Vous devez fournir soit un certificat de naissance d'une province canadienne, un certificat de citoyenneté, une carte de citoyenneté ou une carte de résident permanent.",
+              instructionEn:
+                "A work permit does not prove Canadian citizenship or permanent resident status. You must provide either a birth certificate from a Canadian province, a citizenship certificate, a citizenship card, or a permanent resident card.",
+              logNoteFr:
+                "Le permis de travail ne prouve pas la citoyenneté. Doit fournir un certificat de naissance, certificat/carte de citoyenneté ou carte RP",
+            },
           ],
         },
       ],
