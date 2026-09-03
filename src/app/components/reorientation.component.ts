@@ -9683,6 +9683,16 @@ o Médecine d’urgence`,
         }
 
         if (taskPartHtml) {
+          taskPartHtml = taskPartHtml
+            .replace(
+              /<p[^>]*>\s*Nous avons procédé à l'évaluation de vos documents.*?pour nous permettre de poursuivre le traitement\.\s*<\/p>/gis,
+              ""
+            )
+            .replace(
+              /Nous avons procédé à l'évaluation de vos documents\. Bien que votre dossier progresse, certains éléments ne sont pas conformes et nécessitent des corrections de votre part pour nous permettre de poursuivre le traitement\.\s*/gis,
+              ""
+            )
+            .trim();
           h +=
             '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
           h +=
@@ -9907,6 +9917,16 @@ o Médecine d’urgence`,
         }
 
         if (taskPartHtmlEn) {
+          taskPartHtmlEn = taskPartHtmlEn
+            .replace(
+              /<p[^>]*>\s*We have evaluated your documents.*?to allow us to continue processing\.\s*<\/p>/gis,
+              ""
+            )
+            .replace(
+              /We have evaluated your documents\. While your application is progressing, some items are not compliant and require corrections on your part to allow us to continue processing\.\s*/gis,
+              ""
+            )
+            .trim();
           h +=
             '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
           h +=
@@ -10119,10 +10139,17 @@ o Médecine d’urgence`,
             frBodyPart = frParts[1].split("\n\nEn raison du volume");
           }
           if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
+            let taskTextFr = frBodyPart[0].trim();
+            taskTextFr = taskTextFr
+              .replace(
+                /Nous avons procédé à l'évaluation de vos documents.*?pour nous permettre de poursuivre le traitement\.\s*/gis,
+                ""
+              )
+              .trim();
             p += "==================================================\n";
             p += "1. TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
             p += "==================================================\n\n";
-            p += frBodyPart[0].trim() + "\n\n";
+            p += taskTextFr + "\n\n";
           }
         }
         p += "==================================================\n";
@@ -10310,10 +10337,17 @@ o Médecine d’urgence`,
             enBodyPart = enParts[1].split("\n\nDue to the high volume");
           }
           if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+            let taskTextEn = enBodyPart[0].trim();
+            taskTextEn = taskTextEn
+              .replace(
+                /We have evaluated your documents.*?to allow us to continue processing\.\s*/gis,
+                ""
+              )
+              .trim();
             p += "==================================================\n";
             p += "1. TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL :\n";
             p += "==================================================\n\n";
-            p += enBodyPart[0].trim() + "\n\n";
+            p += taskTextEn + "\n\n";
           }
         }
         p += "==================================================\n";

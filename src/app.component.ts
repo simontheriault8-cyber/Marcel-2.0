@@ -5,6 +5,7 @@ import {
   signal,
   ViewChild,
   effect,
+  untracked,
   OnInit,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -4569,10 +4570,19 @@ Thank you for your cooperation.`;
   constructor() {
     // No task selected initially, waiting for stage selection
     effect(() => {
-      this.sharedState.taskNote.set(this.generatedNote());
-      this.sharedState.taskEmailHtmlFr.set(this.getRawHtmlString());
-      this.sharedState.taskEmailFr.set(this.generatedEmailPlain());
-      this.sharedState.hasReassignedTasks.set(!this.allTasksCompliant());
+      const note = this.generatedNote();
+      const rawHtml = this.getCombinedRawHtmlString(true);
+      const rawPlain = this.getCombinedPlainString(true);
+      const hasReassigned =
+        !this.allTasksCompliant() &&
+        (this.hasSelectedRejections() || this.forceGeneralReminder());
+
+      untracked(() => {
+        this.sharedState.taskNote.set(note);
+        this.sharedState.taskEmailHtmlFr.set(rawHtml);
+        this.sharedState.taskEmailFr.set(rawPlain);
+        this.sharedState.hasReassignedTasks.set(hasReassigned);
+      });
     });
   }
 
@@ -8452,8 +8462,8 @@ If you fail to attend without notifying us, you risk having your file closed.</p
   }
 
   // Consolidated Plain Text Email
-  getCombinedPlainString(): string {
-    if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailPlain()) {
+  getCombinedPlainString(ignoreMerge: boolean = false): string {
+    if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailPlain()) {
       return this.sharedState.reoMergedEmailPlain();
     }
 
@@ -8980,8 +8990,8 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     return `${emailFr}\n\n______________________________________________________________________________\n\n${emailEn}`;
   }
 
-  getCombinedRawHtmlString(): string {
-    if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
+  getCombinedRawHtmlString(ignoreMerge: boolean = false): string {
+    if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
       return this.sharedState.reoMergedEmailHtml();
     }
 
