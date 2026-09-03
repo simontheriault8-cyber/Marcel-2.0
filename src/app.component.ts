@@ -7098,6 +7098,19 @@ Thank you for your cooperation.`;
     return null;
   });
 
+  cleanInstructionForText(instruction: string, indent: string = '        '): string {
+    if (!instruction) return '';
+    let clean = instruction.replace(/<a\s+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, (_match, url, text) => {
+      const trimmedText = text.trim();
+      if (trimmedText === url.trim() || trimmedText === url.replace(/^https?:\/\//, '')) {
+        return url;
+      }
+      return `${trimmedText} (${url})`;
+    });
+    clean = clean.replace(/<[^>]+>/g, '');
+    return clean.replace(/\n/g, `\n${indent}`);
+  }
+
   private getCompliantNonMandatoryTasksPlain(lang: 'fr' | 'en' = 'fr'): string {
     const structure = this.getStructuredRejections();
     if (structure.size === 0) return "";
@@ -7156,7 +7169,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              text += `\n      → ${item.reason.instructionFr.replace(/\n/g, "\n        ")}`;
+              text += `\n      → ${this.cleanInstructionForText(item.reason.instructionFr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -7201,7 +7214,7 @@ Thank you for your cooperation.`;
             const instr = item.reason.instructionEn || item.reason.instructionFr;
             if (!uniqueInstructions.has(instr)) {
               uniqueInstructions.add(instr);
-              text += `\n      → ${instr.replace(/\n/g, "\n        ")}`;
+              text += `\n      → ${this.cleanInstructionForText(instr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -7257,7 +7270,7 @@ Thank you for your cooperation.`;
         if (notCompleted) {
           html += `<li style="margin-bottom: 10px;">`;
           html += `<span style="color: #FF0000; font-weight: bold;">Vous n'avez pas complété cette tâche sur votre portail.</span>`;
-          html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; Veuillez vous connecter à votre portail et la compléter.</div>`;
+          html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; Veuillez vous connecter à votre portail et la compléter.</div>`;
           html += `</li>`;
         }
         const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
@@ -7283,7 +7296,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -7308,7 +7321,7 @@ Thank you for your cooperation.`;
         if (notCompleted) {
           html += `<li style="margin-bottom: 10px;">`;
           html += `<span style="color: #FF0000; font-weight: bold;">You have not completed this task on your portal.</span>`;
-          html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; Please log in to your portal and complete it.</div>`;
+          html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; Please log in to your portal and complete it.</div>`;
           html += `</li>`;
         }
         const groupedItems = new Map<DocumentItem, { doc: DocumentItem; reason: RejectionReason }[]>();
@@ -7335,7 +7348,7 @@ Thank you for your cooperation.`;
             const instr = item.reason.instructionEn || item.reason.instructionFr;
             if (!uniqueInstructions.has(instr)) {
               uniqueInstructions.add(instr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8027,7 +8040,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n      → ${item.reason.instructionFr.replace(/\n/g, "\n        ")}`;
+              emailFr += `\n      → ${this.cleanInstructionForText(item.reason.instructionFr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8071,7 +8084,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${item.reason.instructionFr.replace(/\n/g, "\n    ")}`;
+              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8117,7 +8130,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${item.reason.instructionFr.replace(/\n/g, "\n    ")}`;
+              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8229,7 +8242,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n      → ${item.reason.instructionEn.replace(/\n/g, "\n        ")}`;
+              emailEn += `\n      → ${this.cleanInstructionForText(item.reason.instructionEn, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8273,7 +8286,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${item.reason.instructionEn.replace(/\n/g, "\n    ")}`;
+              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8319,7 +8332,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${item.reason.instructionEn.replace(/\n/g, "\n    ")}`;
+              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8665,7 +8678,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n      → ${item.reason.instructionFr.replace(/\n/g, "\n        ")}`;
+              emailFr += `\n      → ${this.cleanInstructionForText(item.reason.instructionFr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8710,7 +8723,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${item.reason.instructionFr.replace(/\n/g, "\n    ")}`;
+              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8757,7 +8770,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${item.reason.instructionFr.replace(/\n/g, "\n    ")}`;
+              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8843,7 +8856,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n      → ${item.reason.instructionEn.replace(/\n/g, "\n        ")}`;
+              emailEn += `\n      → ${this.cleanInstructionForText(item.reason.instructionEn, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8888,7 +8901,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${item.reason.instructionEn.replace(/\n/g, "\n    ")}`;
+              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -8935,7 +8948,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${item.reason.instructionEn.replace(/\n/g, "\n    ")}`;
+              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9172,7 +9185,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9222,7 +9235,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9272,7 +9285,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9393,7 +9406,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9443,7 +9456,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9493,7 +9506,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionEn)) {
               uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9637,7 +9650,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9686,7 +9699,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9735,7 +9748,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           for (const item of docItems) {
             if (!uniqueInstructions.has(item.reason.instructionFr)) {
               uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -9833,109 +9846,109 @@ If you fail to attend without notifying us, you risk having your file closed.</p
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
-            }
-          }
-          const uniqueLinks = new Set<string>();
-          for (const item of docItems) {
-            if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
-              uniqueLinks.add(item.reason.linkEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${item.reason.linkEn}</div>`;
-            }
-          }
-          html += `</li>`;
-        }
-        html += `</ul></li>`;
-      }
-      html += `</ul>`;
-      html += `<p>Due to the high volume of applications, we must prioritize the processing of files where all tasks are complete.</p>`;
-      html += `<p>Please log in to your portal to complete them: <a href="https://www.cafoap-pclfac.forces.gc.ca/">https://www.cafoap-pclfac.forces.gc.ca/</a></p>`;
-    }
-
-    if (confirmationTasks.size > 0) {
-      if (normalTasks.size > 0) {
-        html += `<p>Furthermore, we require confirmation from you. Please reply directly to this email with the requested information for the following item:</p>`;
-      } else {
-        html += `<p>To continue processing your application, we require confirmation from you. Please reply directly to this email with the requested information for the following item:</p>`;
-      }
-      html += `<ul style="margin-top: 0; list-style-type: disc; padding-left: 20px;">`;
-      for (const [task, items] of confirmationTasks.entries()) {
-        const groupedItems = new Map<any, any[]>();
-        for (const item of items) {
-          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
-          groupedItems.get(item.doc).push(item);
-        }
-        for (const [doc, docItems] of groupedItems.entries()) {
-          const labels = docItems.map((i: any) => i.reason.labelEn);
-          let labelsStr = "";
-          if (labels.length === 1) {
-            labelsStr = labels[0];
-          } else if (labels.length === 2) {
-            labelsStr = `${labels[0]} and ${labels[1]}`;
-          } else {
-            labelsStr = labels.slice(0, -1).join(', ') + ' and ' + labels[labels.length - 1];
-          }
-          
-          html += `<li style="margin-bottom: 15px;"><span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameEn} : <span style="color: #d97706;">${labelsStr}</span></strong></span>`;
-          
-          const uniqueInstructions = new Set<string>();
-          for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
-            }
-          }
-          const uniqueLinks = new Set<string>();
-          for (const item of docItems) {
-            if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
-              uniqueLinks.add(item.reason.linkEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${item.reason.linkEn}</div>`;
-            }
-          }
-          html += `</li>`;
-        }
-      }
-      html += `</ul>`;
-    }
-
-    if (additionalDocTasks.size > 0) {
-      const dossierJobsEn = this.getDossierJobsSummaryTextEn();
-      const generalAddDocs: { doc: any; docItems: any[] }[] = [];
-      const occupSpecificDocs: { doc: any; docItems: any[] }[] = [];
-
-      for (const [task, items] of additionalDocTasks.entries()) {
-        const groupedItems = new Map<any, any[]>();
-        for (const item of items) {
-          if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
-          groupedItems.get(item.doc).push(item);
-        }
-        for (const [doc, docItems] of groupedItems.entries()) {
-          if (this.isSubsidizedDoc(doc) || this.isTaskBasedAdditionalDoc(doc)) {
-            generalAddDocs.push({ doc, docItems });
-          } else {
-            occupSpecificDocs.push({ doc, docItems });
-          }
-        }
-      }
-
-      if (normalTasks.size > 0 || confirmationTasks.size > 0) {
-        html += `<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 25px 0;">`;
-      }
-
-      if (generalAddDocs.length > 0) {
-        html += `<p style="margin-top: 15px;"><strong>In order to complete the evaluation of your employment application, we will need additional document(s):</strong></p>`;
-        html += `<ul style="margin-top: 5px; list-style-type: disc; padding-left: 20px;">`;
-        for (const { doc, docItems } of generalAddDocs) {
-          html += `<li style="margin-bottom: 15px;"><span style="background-color: yellow; padding: 0 2px;"><strong><span style="color: #2563eb;">${doc.nameEn}</span></strong></span>`;
-          const uniqueInstructions = new Set<string>();
-          for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
-            }
-          }
+             if (!uniqueInstructions.has(item.reason.instructionEn)) {
+               uniqueInstructions.add(item.reason.instructionEn);
+               html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+             }
+           }
+           const uniqueLinks = new Set<string>();
+           for (const item of docItems) {
+             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
+               uniqueLinks.add(item.reason.linkEn);
+               html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${item.reason.linkEn}</div>`;
+             }
+           }
+           html += `</li>`;
+         }
+         html += `</ul></li>`;
+       }
+       html += `</ul>`;
+       html += `<p>Due to the high volume of applications, we must prioritize the processing of files where all tasks are complete.</p>`;
+       html += `<p>Please log in to your portal to complete them: <a href="https://www.cafoap-pclfac.forces.gc.ca/">https://www.cafoap-pclfac.forces.gc.ca/</a></p>`;
+     }
+ 
+     if (confirmationTasks.size > 0) {
+       if (normalTasks.size > 0) {
+         html += `<p>Furthermore, we require confirmation from you. Please reply directly to this email with the requested information for the following item:</p>`;
+       } else {
+         html += `<p>To continue processing your application, we require confirmation from you. Please reply directly to this email with the requested information for the following item:</p>`;
+       }
+       html += `<ul style="margin-top: 0; list-style-type: disc; padding-left: 20px;">`;
+       for (const [task, items] of confirmationTasks.entries()) {
+         const groupedItems = new Map<any, any[]>();
+         for (const item of items) {
+           if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+           groupedItems.get(item.doc).push(item);
+         }
+         for (const [doc, docItems] of groupedItems.entries()) {
+           const labels = docItems.map((i: any) => i.reason.labelEn);
+           let labelsStr = "";
+           if (labels.length === 1) {
+             labelsStr = labels[0];
+           } else if (labels.length === 2) {
+             labelsStr = `${labels[0]} and ${labels[1]}`;
+           } else {
+             labelsStr = labels.slice(0, -1).join(', ') + ' and ' + labels[labels.length - 1];
+           }
+           
+           html += `<li style="margin-bottom: 15px;"><span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameEn} : <span style="color: #d97706;">${labelsStr}</span></strong></span>`;
+           
+           const uniqueInstructions = new Set<string>();
+           for (const item of docItems) {
+             if (!uniqueInstructions.has(item.reason.instructionEn)) {
+               uniqueInstructions.add(item.reason.instructionEn);
+               html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+             }
+           }
+           const uniqueLinks = new Set<string>();
+           for (const item of docItems) {
+             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
+               uniqueLinks.add(item.reason.linkEn);
+               html += `<div style="margin-left: 20px; margin-top: 4px; color: #000000;">&#128279; ${item.reason.linkEn}</div>`;
+             }
+           }
+           html += `</li>`;
+         }
+       }
+       html += `</ul>`;
+     }
+ 
+     if (additionalDocTasks.size > 0) {
+       const dossierJobsEn = this.getDossierJobsSummaryTextEn();
+       const generalAddDocs: { doc: any; docItems: any[] }[] = [];
+       const occupSpecificDocs: { doc: any; docItems: any[] }[] = [];
+ 
+       for (const [task, items] of additionalDocTasks.entries()) {
+         const groupedItems = new Map<any, any[]>();
+         for (const item of items) {
+           if (!groupedItems.has(item.doc)) groupedItems.set(item.doc, []);
+           groupedItems.get(item.doc).push(item);
+         }
+         for (const [doc, docItems] of groupedItems.entries()) {
+           if (this.isSubsidizedDoc(doc) || this.isTaskBasedAdditionalDoc(doc)) {
+             generalAddDocs.push({ doc, docItems });
+           } else {
+             occupSpecificDocs.push({ doc, docItems });
+           }
+         }
+       }
+ 
+       if (normalTasks.size > 0 || confirmationTasks.size > 0) {
+         html += `<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 25px 0;">`;
+       }
+ 
+       if (generalAddDocs.length > 0) {
+         html += `<p style="margin-top: 15px;"><strong>In order to complete the evaluation of your employment application, we will need additional document(s):</strong></p>`;
+         html += `<ul style="margin-top: 5px; list-style-type: disc; padding-left: 20px;">`;
+         for (const { doc, docItems } of generalAddDocs) {
+           html += `<li style="margin-bottom: 15px;"><span style="background-color: yellow; padding: 0 2px;"><strong><span style="color: #2563eb;">${doc.nameEn}</span></strong></span>`;
+           const uniqueInstructions = new Set<string>();
+           for (const item of docItems) {
+             if (!uniqueInstructions.has(item.reason.instructionEn)) {
+               uniqueInstructions.add(item.reason.instructionEn);
+               html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+             }
+           }
           const uniqueLinks = new Set<string>();
           for (const item of docItems) {
             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
