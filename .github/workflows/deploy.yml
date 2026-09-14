@@ -4,19 +4,24 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  pull-requests: write
 
 concurrency:
-  group: 'pages'
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy-main:
+    name: Déploiement Production (main)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
@@ -31,25 +36,58 @@ jobs:
         run: npm install
 
       - name: Build de l'application
-        run: npm run build -- --base=/Marcel-2.0/
+        run: npm run build
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
 
-      - name: Dupliquer index.html vers 404.html (gestion SPA)
-        run: cp dist/index.html dist/404.html
+      - name: Préparer les fichiers SPA et nojekyll
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
 
-      - name: Upload de l'artefact pour GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+      - name: Déploiement sur la branche gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: 'dist'
+          folder: dist
+          branch: gh-pages
+          clean-exclude: |
+            pr-preview
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  deploy-preview:
+    name: Déploiement Preview (Pull Request)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Déploiement sur GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installation des dépendances
+        if: github.event.action != 'closed'
+        run: npm install
+
+      - name: Build de l'application
+        if: github.event.action != 'closed'
+        run: npm run build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Préparer les fichiers SPA et nojekyll
+        if: github.event.action != 'closed'
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+
+      - name: Déployer ou supprimer la preview sur GitHub Pages
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./dist/
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          token: ${{ secrets.GITHUB_TOKEN }}
+
