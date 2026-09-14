@@ -72,11 +72,12 @@ export const UNITES_AFFECTATION: UniteAffectation[] = [
 ];
 
 
-type AppStage = "intro" | "minor-check" | "main";
+type AppStage = "intro" | "minor-check" | "recruiter-dossier-type" | "main";
 
 interface RoleSnapshot {
   stage: AppStage;
   isUnderAge: boolean;
+  recruiterDossierType?: 'normal' | 'pfor';
   allTasks: Task[];
   selectedTask: Task | null;
   selectedRejectionKeys: Set<string>;
@@ -121,6 +122,7 @@ interface RoleSnapshot {
   avisFermeturePsps?: boolean;
   annexeQCourriel?: boolean;
   annexeQAlphaPostulant?: string;
+  pforMatricule?: string;
   evaluationMedicaleType?: 'Dossier régulier' | 'Dossier OTA';
   evaluationMedicalePartie1?: boolean;
   evaluationMedicalePartie2?: boolean;
@@ -502,10 +504,94 @@ function getTodayDateString(): string {
               Oui
             </button>
             <button
-              (click)="startMainProgram()"
+              (click)="onRecruiterMinorCheckNon()"
               class="py-4 px-6 bg-white text-slate-800 border-2 border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition-colors shadow-sm active:scale-95 cursor-pointer"
             >
               Non
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else if (stage() === "recruiter-dossier-type" && selectedRole() === "recruiter") {
+      <div
+        class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
+      >
+        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <button
+            (click)="backToRecruiterMinorCheck()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            title="Revenir à l'étape précédente"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Retour</span>
+          </button>
+
+          <!-- Switch Role Button -->
+          <button
+            (click)="switchRole()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            title="Revenir à la page de sélection de rôle"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-indigo-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            <span>Changer de rôle</span>
+          </button>
+        </div>
+
+        <div
+          class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/50 relative z-0"
+        >
+          <div class="mb-8">
+            <div
+              class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">
+              Type de dossier
+            </h1>
+            <p class="text-lg text-slate-600">Le dossier est-il Normal ou PFOR ?</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              (click)="selectRecruiterDossierType('normal')"
+              class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
+            >
+              <span>Normal</span>
+            </button>
+            <button
+              (click)="selectRecruiterDossierType('pfor')"
+              class="py-4 px-6 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
+            >
+              <span>PFOR</span>
             </button>
           </div>
         </div>
@@ -796,6 +882,39 @@ function getTodayDateString(): string {
               </h2>
 
               <div class="flex items-center gap-3">
+                @if (selectedRole() === 'recruiter') {
+                  @if (recruiterDossierType() === 'pfor') {
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-[11px] font-black uppercase tracking-wider select-none shadow-2xs"
+                      title="Dossier configuré comme Postulant PFOR"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Postulant PFOR</span>
+                    </span>
+                  }
+                } @else {
+                  <label
+                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[11px] font-bold cursor-pointer transition-all select-none shadow-2xs"
+                    [class.bg-indigo-50]="sharedState.isPostulantPfor()"
+                    [class.border-indigo-300]="sharedState.isPostulantPfor()"
+                    [class.text-indigo-900]="sharedState.isPostulantPfor()"
+                    [class.bg-slate-50]="!sharedState.isPostulantPfor()"
+                    [class.border-slate-200]="!sharedState.isPostulantPfor()"
+                    [class.text-slate-600]="!sharedState.isPostulantPfor()"
+                    title="Filtrer les métiers admissibles au programme PFOR (CMR / Civil)"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="sharedState.isPostulantPfor()"
+                      (change)="sharedState.isPostulantPfor.set(!sharedState.isPostulantPfor())"
+                      class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                    />
+                    <span>Postulant PFOR</span>
+                  </label>
+                }
+
                 <button
                   (click)="switchRole()"
                   class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
@@ -3086,6 +3205,25 @@ function getTodayDateString(): string {
                   </label>
                 }
 
+                @if (sharedState.isPostulantPfor()) {
+                  <div class="flex items-center gap-1.5 mr-1">
+                    <label
+                      for="pforMatriculeInput"
+                      class="text-xs font-semibold text-slate-700 whitespace-nowrap"
+                    >
+                      Matricule du postulant :
+                    </label>
+                    <input
+                      id="pforMatriculeInput"
+                      type="text"
+                      class="text-xs border border-slate-300 rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white font-medium text-slate-800 shadow-sm w-36"
+                      placeholder="ex: 123456789"
+                      [value]="pforMatricule()"
+                      (input)="onPforMatriculeChange($any($event.target).value)"
+                    />
+                  </div>
+                }
+
                 <button
                   (click)="copyNote()"
                   class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5"
@@ -3123,45 +3261,129 @@ function getTodayDateString(): string {
                   }
                 </button>
 
-                <button
-                  (click)="exportToOutlook()"
-                  class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2"
-                  [class.bg-slate-800]="!copiedEmail()"
-                  [class.hover:bg-slate-700]="!copiedEmail()"
-                  [class.bg-green-600]="copiedEmail()"
-                >
-                  @if (copiedEmail()) {
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    Copié ! Ouverture d'Outlook...
-                  } @else {
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                    Exporter vers Outlook
-                  }
-                </button>
+                @if (isPforCompliant()) {
+                  <button
+                    (click)="exportToOutlookCaf101()"
+                    class="text-xs text-white px-3.5 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+                    [class.bg-slate-800]="!copiedEmailCaf101()"
+                    [class.hover:bg-slate-700]="!copiedEmailCaf101()"
+                    [class.bg-green-600]="copiedEmailCaf101()"
+                    title="Exporter vers Outlook - CAF 101"
+                  >
+                    @if (copiedEmailCaf101()) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Copié ! Ouverture d'Outlook...
+                    } @else {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                      Exporter vers Outlook-CAF 101
+                    }
+                  </button>
+
+                  <button
+                    (click)="exportToOutlookLienPa()"
+                    class="text-xs text-white px-3.5 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+                    [class.bg-indigo-600]="!copiedEmailLienPa()"
+                    [class.hover:bg-indigo-700]="!copiedEmailLienPa()"
+                    [class.bg-green-600]="copiedEmailLienPa()"
+                    title="Exporter vers Outlook - Lien PA"
+                  >
+                    @if (copiedEmailLienPa()) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Copié ! Ouverture d'Outlook...
+                    } @else {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                      Exporter vers Outlook-Lien PA
+                    }
+                  </button>
+                } @else {
+                  <button
+                    (click)="exportToOutlook()"
+                    class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2"
+                    [class.bg-slate-800]="!copiedEmail()"
+                    [class.hover:bg-slate-700]="!copiedEmail()"
+                    [class.bg-green-600]="copiedEmail()"
+                  >
+                    @if (copiedEmail()) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Copié ! Ouverture d'Outlook...
+                    } @else {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                      Exporter vers Outlook
+                    }
+                  </button>
+                }
               </div>
             </div>
 
@@ -3197,24 +3419,47 @@ function getTodayDateString(): string {
                   <div
                     class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none"
                   >
-                    <ol class="list-decimal list-inside space-y-2">
-                      <li>
-                        S'assurer que la liste de vérification A1 à A35 est bien
-                        rempli.
-                      </li>
-                      <li>
-                        Attribuer la tâche : Planifiez votre séance d'information des FAC 101.
-                      </li>
-                      <li>
-                        Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse.
-                      </li>
-                      <li>Ajouter la note au registre du postulant.</li>
-                      <li>Basculer le postulant dans Traitement initial.</li>
-                      <li>
-                        Envoyé le courriel au postulant contenant le lien vers
-                        le Form et le CAF 101.
-                      </li>
-                    </ol>
+                    @if (isPforCompliant()) {
+                      <ol class="list-decimal list-inside space-y-2">
+                        <li>
+                          S'assurer que la liste de Vérification A1 à A35 est bien rempli
+                        </li>
+                        <li>
+                          Marquer la tâche "Planifier votre consultation CAF 101" comme complétée
+                        </li>
+                        <li>
+                          Ajouter la note au registre du Postulant
+                        </li>
+                        <li>
+                          Tag CCM et Recruteur BPR appropriés
+                        </li>
+                        <li>
+                          Basculer vers la Gestion des admissions
+                        </li>
+                        <li>
+                          Envoyer les 2 courriels au Postulant : CAF 101 PFOR et Lien PA
+                        </li>
+                      </ol>
+                    } @else {
+                      <ol class="list-decimal list-inside space-y-2">
+                        <li>
+                          S'assurer que la liste de vérification A1 à A35 est bien
+                          rempli.
+                        </li>
+                        <li>
+                          Attribuer la tâche : Planifiez votre séance d'information des FAC 101.
+                        </li>
+                        <li>
+                          Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse.
+                        </li>
+                        <li>Ajouter la note au registre du postulant.</li>
+                        <li>Basculer le postulant dans Traitement initial.</li>
+                        <li>
+                          Envoyé le courriel au postulant contenant le lien vers
+                          le Form et le CAF 101.
+                        </li>
+                      </ol>
+                    }
                   </div>
                 </div>
               }
@@ -3254,38 +3499,162 @@ function getTodayDateString(): string {
               </div>
 
               <!-- Email Section -->
-              <div
-                class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-              >
+              @if (isPforCompliant()) {
+                <!-- Email 1: CAF 101 -->
                 <div
-                  class="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm"
+                  class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <h3
-                    class="font-bold text-slate-700 text-sm flex items-center gap-2"
+                  <div
+                    class="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4 text-slate-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                    <h3
+                      class="font-bold text-slate-700 text-sm flex items-center gap-2"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Courriel au Postulant
-                  </h3>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 text-slate-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      1er Courriel au Postulant : CAF 101
+                    </h3>
+
+                    <button
+                      (click)="exportToOutlookCaf101()"
+                      class="text-xs text-white px-3 py-1 rounded shadow-sm font-medium transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                      [class.bg-slate-800]="!copiedEmailCaf101()"
+                      [class.hover:bg-slate-700]="!copiedEmailCaf101()"
+                      [class.bg-green-600]="copiedEmailCaf101()"
+                    >
+                      @if (copiedEmailCaf101()) {
+                        <span>Copié !</span>
+                      } @else {
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3.5 w-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                        <span>Exporter vers Outlook-CAF 101</span>
+                      }
+                    </button>
+                  </div>
+                  <div
+                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
+                    [innerHTML]="generatedPforCaf101EmailHtml()"
+                  ></div>
                 </div>
-                <!-- Using innerHTML to render bold, yellow highlights and underlines -->
+
+                <!-- Email 2: Lien PA -->
                 <div
-                  class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
-                  [innerHTML]="generatedEmailHtml()"
-                ></div>
-              </div>
+                  class="bg-white rounded-xl border border-indigo-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div
+                    class="bg-indigo-50/80 px-4 py-3 border-b border-indigo-200 flex justify-between items-center backdrop-blur-sm"
+                  >
+                    <h3
+                      class="font-bold text-indigo-900 text-sm flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 text-indigo-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      2e Courriel au Postulant : Lien PA (Documents scolaires CMC/CMR)
+                    </h3>
+
+                    <button
+                      (click)="exportToOutlookLienPa()"
+                      class="text-xs text-white px-3 py-1 rounded shadow-sm font-medium transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                      [class.bg-indigo-600]="!copiedEmailLienPa()"
+                      [class.hover:bg-indigo-700]="!copiedEmailLienPa()"
+                      [class.bg-green-600]="copiedEmailLienPa()"
+                    >
+                      @if (copiedEmailLienPa()) {
+                        <span>Copié !</span>
+                      } @else {
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3.5 w-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                        <span>Exporter vers Outlook-Lien PA</span>
+                      }
+                    </button>
+                  </div>
+                  <div
+                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
+                    [innerHTML]="generatedPforLienPaEmailHtml()"
+                  ></div>
+                </div>
+              } @else {
+                <div
+                  class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div
+                    class="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm"
+                  >
+                    <h3
+                      class="font-bold text-slate-700 text-sm flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 text-slate-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Courriel au Postulant
+                    </h3>
+                  </div>
+                  <!-- Using innerHTML to render bold, yellow highlights and underlines -->
+                  <div
+                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
+                    [innerHTML]="generatedEmailHtml()"
+                  ></div>
+                </div>
+              }
             </div>
           </section>
         }
@@ -3444,6 +3813,9 @@ export class AppComponent implements OnInit {
   // Annexe Q State
   annexeQCourriel = signal<boolean>(false);
   annexeQAlphaPostulant = signal<string>('');
+
+  // PFOR State
+  pforMatricule = signal<string>('');
 
   // Évaluation Médicale State
   evaluationMedicaleType = signal<'Dossier régulier' | 'Dossier OTA'>('Dossier régulier');
@@ -4149,6 +4521,7 @@ Thank you for your cooperation.`;
       avisFermeturePsps: this.avisFermeturePsps(),
       annexeQCourriel: this.annexeQCourriel(),
       annexeQAlphaPostulant: this.annexeQAlphaPostulant(),
+      pforMatricule: this.pforMatricule(),
       evaluationMedicaleType: this.evaluationMedicaleType(),
       evaluationMedicalePartie1: this.evaluationMedicalePartie1(),
       evaluationMedicalePartie2: this.evaluationMedicalePartie2(),
@@ -4189,12 +4562,14 @@ Thank you for your cooperation.`;
       noteSvcMilAnt: this.noteSvcMilAnt(),
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
+      recruiterDossierType: this.recruiterDossierType(),
     };
   }
 
   private applySnapshot(snapshot: RoleSnapshot) {
     this.stage.set(snapshot.stage);
     this.isUnderAge.set(snapshot.isUnderAge);
+    this.recruiterDossierType.set(snapshot.recruiterDossierType || 'normal');
     this.allTasks.set(snapshot.allTasks);
     this.selectedTask.set(snapshot.selectedTask);
     this.selectedRejectionKeys.set(new Set(snapshot.selectedRejectionKeys));
@@ -4224,6 +4599,7 @@ Thank you for your cooperation.`;
 
     this.annexeQCourriel.set(snapshot.annexeQCourriel || false);
     this.annexeQAlphaPostulant.set(snapshot.annexeQAlphaPostulant || '');
+    this.pforMatricule.set(snapshot.pforMatricule || '');
 
     this.evaluationMedicalePartie1.set(snapshot.evaluationMedicalePartie1 || false);
     this.evaluationMedicalePartie2.set(snapshot.evaluationMedicalePartie2 || false);
@@ -4297,6 +4673,7 @@ Thank you for your cooperation.`;
     return {
       stage: 'intro',
       isUnderAge: false,
+      recruiterDossierType: 'normal',
       allTasks: this.dataService.getTasks(role),
       selectedTask: null,
       selectedRejectionKeys: new Set(),
@@ -4322,6 +4699,7 @@ Thank you for your cooperation.`;
       avisFermeturePsps: false,
       annexeQCourriel: false,
       annexeQAlphaPostulant: '',
+      pforMatricule: '',
       evaluationMedicalePartie1: false,
       evaluationMedicalePartie2: false,
       evaluationMedicalePartie1Et2: false,
@@ -4449,6 +4827,7 @@ Thank you for your cooperation.`;
   // App Stage Management
   stage = signal<AppStage>("intro");
   isUnderAge = signal<boolean>(false);
+  recruiterDossierType = signal<'normal' | 'pfor'>('normal');
 
   // Signature Settings State
   showSignaturePage = signal<boolean>(false);
@@ -4665,6 +5044,8 @@ Thank you for your cooperation.`;
 
   // UI States for copy feedback
   copiedEmail = signal(false);
+  copiedEmailCaf101 = signal(false);
+  copiedEmailLienPa = signal(false);
   copiedNote = signal(false);
 
   @ViewChild(JobSearchModalComponent) jobSearchModal!: JobSearchModalComponent;
@@ -4884,6 +5265,9 @@ Thank you for your cooperation.`;
   restartApp() {
     this.stage.set("intro");
     this.isUnderAge.set(false);
+    this.recruiterDossierType.set("normal");
+    this.sharedState.isPostulantPfor.set(false);
+    this.pforMatricule.set('');
     this.selectedTask.set(null);
     this.selectedRejectionKeys.set(new Set());
     this.taskNotCompletedKeys.set(new Set());
@@ -4916,6 +5300,7 @@ Thank you for your cooperation.`;
 
     this.annexeQCourriel.set(false);
     this.annexeQAlphaPostulant.set('');
+    this.pforMatricule.set('');
 
     this.evaluationMedicalePartie1.set(false);
     this.evaluationMedicalePartie2.set(false);
@@ -5431,7 +5816,7 @@ Thank you for your cooperation.`;
     const currentStage = this.stage();
     const tasks = this.allTasks();
 
-    if (currentStage === "intro") {
+    if (currentStage === "intro" || currentStage === "recruiter-dossier-type") {
       return [];
     }
 
@@ -5476,8 +5861,40 @@ Thank you for your cooperation.`;
     if (tasks.length > 0) this.selectTask(tasks[0]);
   }
 
+  // Recruiter actions for Minor Check -> Dossier Type flow
+  onRecruiterMinorCheckNon() {
+    this.isUnderAge.set(false);
+    this.stage.set("recruiter-dossier-type");
+  }
+
+  backToRecruiterMinorCheck() {
+    if (this.isUnderAge()) {
+      this.stage.set("minor-check");
+      const tasks = this.visibleTasks();
+      if (tasks.length > 0) this.selectTask(tasks[0]);
+    } else {
+      this.stage.set("intro");
+    }
+  }
+
+  selectRecruiterDossierType(type: 'normal' | 'pfor') {
+    this.recruiterDossierType.set(type);
+    if (type === 'pfor') {
+      this.sharedState.isPostulantPfor.set(true);
+    } else {
+      this.sharedState.isPostulantPfor.set(false);
+    }
+    this.stage.set("main");
+    const tasks = this.visibleTasks();
+    if (tasks.length > 0) this.selectTask(tasks[0]);
+  }
+
   // Action: User clicks "Non" (Adult) or finishes minor check
   startMainProgram() {
+    if (this.selectedRole() === "recruiter") {
+      this.stage.set("recruiter-dossier-type");
+      return;
+    }
     if (this.stage() === "intro") {
       this.isUnderAge.set(false);
     }
@@ -6703,6 +7120,21 @@ Thank you for your cooperation.`;
     }
   }
 
+  onPforMatriculeChange(val: string) {
+    this.pforMatricule.set(val);
+  }
+
+  getFormattedPforMatricule(): string {
+    let raw = this.pforMatricule()?.trim() || '';
+    if (raw) {
+      if (raw.startsWith('(') && raw.endsWith(')')) {
+        raw = raw.substring(1, raw.length - 1).trim();
+      }
+      return raw || '(xxxxxxxxx)';
+    }
+    return '(xxxxxxxxx)';
+  }
+
   autoActivateOffreEmail() {
     const isSub = this.selectedTask()?.nameFr.toLowerCase().includes('subventionn') || false;
     if (isSub) {
@@ -7028,6 +7460,41 @@ Thank you for your cooperation.`;
     return noteTxt;
   }
 
+  getPforCompliantNoteClean(): string {
+    const jobSlots = [
+      { index: 1, job: this.getDossierJob(1), failedCe: this.sharedState.dossierJobFailedCe1() },
+      { index: 2, job: this.getDossierJob(2), failedCe: this.sharedState.dossierJobFailedCe2() },
+      { index: 3, job: this.getDossierJob(3), failedCe: this.sharedState.dossierJobFailedCe3() },
+    ].filter((s): s is { index: number; job: JobEntry; failedCe: boolean } => !!s.job);
+
+    let jobsText = "le métier XXX";
+    if (jobSlots.length > 0) {
+      const admissibleJobIds: string[] = [];
+      for (const slot of jobSlots) {
+        if (!slot.failedCe && !this.isJobClosed(slot.job.id)) {
+          admissibleJobIds.push(slot.job.id);
+        }
+      }
+      if (admissibleJobIds.length > 0) {
+        const label = admissibleJobIds.length > 1 ? "les métiers" : "le métier";
+        jobsText = `${label} ${admissibleJobIds.join(", ")}`;
+      } else {
+        const allJobIds = jobSlots.map(s => s.job.id);
+        const label = allJobIds.length > 1 ? "les métiers" : "le métier";
+        jobsText = `${label} ${allJobIds.join(", ")}`;
+      }
+    }
+
+    let note = `Étape 1 (Terminée) - Courriel FAC101 PFOR et courriel contenant le lien PA envoyés pour ${jobsText}, Tag CCM pour suite du traitement : -Cpl Plourde (DML) - Civ Anglehart (DRI) - Cpl Larouche (DCI) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Sgt-Recruteur : Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`;
+
+    const extraRejections = this.getRejectionReasonsForCompliantNote();
+    if (extraRejections) {
+      note += `\n${extraRejections}`;
+    }
+
+    return note;
+  }
+
   getBigAceCompliantNoteClean(): string {
     const jobSlots = [
       { index: 1, job: this.getDossierJob(1), failedCe: this.sharedState.dossierJobFailedCe1() },
@@ -7100,7 +7567,7 @@ Thank you for your cooperation.`;
   }
 
   getBigAceCompliantNote(): string {
-    let note = this.getBigAceCompliantNoteClean();
+    let note = this.sharedState.isPostulantPfor() ? this.getPforCompliantNoteClean() : this.getBigAceCompliantNoteClean();
     if (this.triageMedicalRequis()) {
       note += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
     }
@@ -7257,7 +7724,7 @@ Thank you for your cooperation.`;
 
     // 4. All tasks compliant Note
     if (this.allTasksCompliant()) {
-      notes.push(this.getBigAceCompliantNoteClean());
+      notes.push(this.sharedState.isPostulantPfor() ? this.getPforCompliantNoteClean() : this.getBigAceCompliantNoteClean());
     } else {
       // 5. Rejection / Incomplete tasks / Reminder Note
       const rejectionNoteText = this.getRejectionAndReminderNoteText();
@@ -7613,7 +8080,7 @@ Thank you for your cooperation.`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://youtu.be/hYzMRYYBnag" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
     html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Explorer et bien comprendre la section <a href="https://forces.ca/fr/centre-dassistance/#/searchResults" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Instruction de base</a> du site Forces.ca</li>`;
+    html += `  <li style="margin-bottom: 5px;">Explorer et bien comprendre la section <a href="https://forces.ca/fr/instruction-de-base/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Instruction de base</a> du site Forces.ca</li>`;
     html += `</ul>`;
 
     html += `<p><strong>2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.</span></p>`;
@@ -7640,7 +8107,7 @@ Thank you for your cooperation.`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://youtu.be/oKuX_ROtASw" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
     html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Explore and fully understand the <a href="https://forces.ca/en/help-centre/#/searchResults" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Basic Training</a> section of the Forces.ca website.</li>`;
+    html += `  <li style="margin-bottom: 5px;">Explore and fully understand the <a href="https://forces.ca/en/basic-training/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Basic Training</a> section of the Forces.ca website.</li>`;
     html += `</ul>`;
 
     html += `<p><strong>2-After viewing the video, <span style="font-weight: bold;">Schedule an appointment</span> for a consultation through your portal calendar.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces enrolment Portal link</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">New time slots will open on your portal within 14 days.</span></p>`;
@@ -7674,7 +8141,7 @@ Thank you for your cooperation.`;
     plain += `1-Vous informer :\n`;
     plain += `•\tRegarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://youtu.be/hYzMRYYBnag)\n`;
     plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
-    plain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/centre-dassistance/#/searchResults)\n\n`;
+    plain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/instruction-de-base/)\n\n`;
     plain += `2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail. Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/) De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.\n\n`;
     plain += `Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.\n\n`;
     if (nonMandatoryTasksFr) {
@@ -7693,7 +8160,7 @@ Thank you for your cooperation.`;
     plain += `1- Inform yourself :\n`;
     plain += `•\tWatch and understand the content of the following presentation: Forces 101 Presentation (https://youtu.be/oKuX_ROtASw)\n`;
     plain += `•\tWatch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
-    plain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/help-centre/#/searchResults)\n\n`;
+    plain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/basic-training/)\n\n`;
     plain += `2-After viewing the video, Schedule an appointment for a consultation through your portal calendar. Canadian Armed Forces enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/) New time slots will open on your portal within 14 days.\n\n`;
     plain += `This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.\n\n`;
     if (nonMandatoryTasksEn) {
@@ -7701,6 +8168,224 @@ Thank you for your cooperation.`;
     }
     plain += `If no action is taken, your file will be automatically deactivated after 30 days.\n\n`;
     plain += `Thank you again, and we look forward to meeting you.\n\n`;
+    plain += this.getSignatureEn();
+
+    return plain;
+  }
+
+  getCompliantPforEmailHtml(): string {
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+
+    const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
+    const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
+
+    // --- FRENCH BLOCK ---
+    html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+    html += `<p>Bonjour,</p>`;
+    html += `<p>Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.<br>`;
+    html += `Afin de pouvoir continuer votre processus, vous devrez <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">OBLIGATOIREMENT</span> :</p>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>1- Vous informer :</strong></p>`;
+    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://www.youtube.com/watch?v=UaCQUp-_ZUc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège Militaire Canadien de St-Jean</li>`;
+    html += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège Militaire Canadien de St-Jean</li>`;
+    html += `</ul>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>2- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
+    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    html += `  <li style="margin-bottom: 5px;">Équipes du CMC St-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Équipes du CMC Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    html += `</ul>`;
+
+    html += `<p>Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.</p>`;
+
+    if (nonMandatoryTasksHtmlFr) {
+      html += nonMandatoryTasksHtmlFr;
+    }
+
+    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+
+    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+
+    // --- ENGLISH BLOCK ---
+    html += `<p>Hello,</p>`;
+    html += `<p>Thank you very much for providing your documents and selecting your preferred occupation.<br>`;
+    html += `In order to continue your application process, You will be <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">REQUIRED</span> to:</p>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>1- Inform yourself :</strong></p>`;
+    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=pG_HGCUT9Yc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
+    html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
+    html += `</ul>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>2- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
+    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    html += `  <li style="margin-bottom: 5px;">CMC St-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">CMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    html += `</ul>`;
+
+    html += `<p>If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.</p>`;
+
+    if (nonMandatoryTasksHtmlEn) {
+      html += nonMandatoryTasksHtmlEn;
+    }
+
+    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+
+    html += `</div>`;
+    return html;
+  }
+
+  getCompliantPforEmailPlain(): string {
+    let plain = "";
+
+    const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
+    const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
+
+    // --- FRENCH ---
+    plain += `English message will follow.\n\n`;
+    plain += `Bonjour,\n\n`;
+    plain += `Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.\n`;
+    plain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
+    plain += `1- Vous informer :\n`;
+    plain += `• Regarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://www.youtube.com/watch?v=UaCQUp-_ZUc)\n`;
+    plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+    plain += `• Explorer la section Foire aux Questions du site internet du Collège Militaire Canadien de St-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
+    plain += `• Explorer la chaîne Youtube du Collège Militaire Canadien de St-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    plain += `2- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
+    plain += `• Équipes du CMC St-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    plain += `• Équipes du CMC Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    plain += `Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.\n\n`;
+
+    if (nonMandatoryTasksFr) {
+      plain += `${nonMandatoryTasksFr}\n\n`;
+    }
+
+    plain += this.getSignatureFr();
+
+    plain += `\n\n______________________________________________________________________________\n\n`;
+
+    // --- ENGLISH ---
+    plain += `Hello,\n\n`;
+    plain += `Thank you very much for providing your documents and selecting your preferred occupation.\n`;
+    plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
+    plain += `1- Inform yourself :\n`;
+    plain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=pG_HGCUT9Yc)\n`;
+    plain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+    plain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
+    plain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    plain += `2- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
+    plain += `• CMC St-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    plain += `• CMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    plain += `If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.\n\n`;
+
+    if (nonMandatoryTasksEn) {
+      plain += `${nonMandatoryTasksEn}\n\n`;
+    }
+
+    plain += this.getSignatureEn();
+
+    return plain;
+  }
+
+  getCompliantPforLienPaEmailHtml(): string {
+    const matricule = this.getFormattedPforMatricule();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+
+    // --- FRENCH BLOCK ---
+    html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+    html += `<p>Bonjour,</p>`;
+    html += `<p>Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
+    html += `<p>Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. <strong>Voici comment procéder pour nous les transmettre :</strong></p>`;
+
+    html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
+    html += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
+    html += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule <span style="background-color: #00FF00; font-weight: bold;">${matricule}</span>.</li>`;
+    html += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. <strong>(Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</strong></li>`;
+    html += `</ol>`;
+
+    html += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
+
+    html += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. <strong>(Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</strong></p>`;
+
+    html += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
+
+    html += `<p>Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
+
+    html += `<p>Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.</p>`;
+
+    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+
+    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+
+    // --- ENGLISH BLOCK ---
+    html += `<p>Hello,</p>`;
+    html += `<p>Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).</p>`;
+    html += `<p>To continue processing your application, we need supporting academic documentation. <strong>Here's how to proceed to submit it:</strong></p>`;
+
+    html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
+    html += `  <li style="margin-bottom: 10px;">Visit the Canadian Military College (CMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
+    html += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number <span style="background-color: #00FF00; font-weight: bold;">${matricule}</span>.</li>`;
+    html += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. <strong>(Even if you have already done so on your portal when you begin your online application)</strong></li>`;
+    html += `</ol>`;
+
+    html += `<p><strong>***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
+
+    html += `<p>Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. <strong>(Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</strong></p>`;
+
+    html += `<p>If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.</p>`;
+
+    html += `<p>For any questions, please feel free to contact us by email to: <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
+
+    html += `<p>Thank you for your interest in joining the Canadian Armed Forces.</p>`;
+
+    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+
+    html += `</div>`;
+    return html;
+  }
+
+  getCompliantPforLienPaEmailPlain(): string {
+    const matricule = this.getFormattedPforMatricule();
+    let plain = "";
+
+    // --- FRENCH ---
+    plain += `English message will follow.\n\n`;
+    plain += `Bonjour,\n\n`;
+    plain += `Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
+    plain += `Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. Voici comment procéder pour nous les transmettre :\n\n`;
+    plain += `1. Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :\n`;
+    plain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
+    plain += `Remarque : Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).\n\n`;
+    plain += `2. Vous devrez remplir le formulaire à l’aide de votre numéro de matricule ${matricule}.\n\n`;
+    plain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
+    plain += `***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***\n\n`;
+    plain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
+    plain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
+    plain += `Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
+    plain += `Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.\n\n`;
+    plain += this.getSignatureFr();
+
+    plain += `\n\n______________________________________________________________________________\n\n`;
+
+    // --- ENGLISH ---
+    plain += `Hello,\n\n`;
+    plain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
+    plain += `To continue processing your application, we need supporting academic documentation. Here's how to proceed to submit it:\n\n`;
+    plain += `1. Visit the Canadian Military College (CMC) website at the following link:\n`;
+    plain += `Royal Military College of Canada (RMC) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
+    plain += `Note: You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).\n\n`;
+    plain += `2. You will need to fill in the form using your service number ${matricule}.\n\n`;
+    plain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)\n\n`;
+    plain += `***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
+    plain += `Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
+    plain += `If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.\n\n`;
+    plain += `For any questions, please feel free to contact us by email to: PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
+    plain += `Thank you for your interest in joining the Canadian Armed Forces.\n\n`;
     plain += this.getSignatureEn();
 
     return plain;
@@ -9199,7 +9884,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     }
 
     if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.rappelCeremonieChecked()) {
-      return this.getCompliantEmailPlain();
+      return this.sharedState.isPostulantPfor() ? this.getCompliantPforEmailPlain() : this.getCompliantEmailPlain();
     }
 
     const frBlocks: string[] = [];
@@ -9250,7 +9935,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
 
     // 4. All tasks compliant
     if (this.allTasksCompliant()) {
-      frBlocks.push(this.getCompliantEmailPlain());
+      frBlocks.push(this.sharedState.isPostulantPfor() ? this.getCompliantPforEmailPlain() : this.getCompliantEmailPlain());
     }
 
     // 5. Rejection / Incomplete tasks / Reminder
@@ -9288,7 +9973,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     }
 
     if (this.allTasksCompliant()) {
-      return this.getCompliantEmailPlain();
+      return this.sharedState.isPostulantPfor() ? this.getCompliantPforEmailPlain() : this.getCompliantEmailPlain();
     }
 
     // 1. Check if scenario is active
@@ -9727,7 +10412,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     }
 
     if (this.allTasksCompliant() && !this.isMedicalEvaluationActive() && !this.isPremierContactActive() && !this.isAvisFermetureActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.rappelCeremonieChecked()) {
-      return this.getCompliantEmailHtml();
+      return this.sharedState.isPostulantPfor() ? this.getCompliantPforEmailHtml() : this.getCompliantEmailHtml();
     }
 
     const frSections: string[] = [];
@@ -9778,7 +10463,7 @@ If you fail to attend without notifying us, you risk having your file closed.</p
 
     // 4. All tasks compliant
     if (this.allTasksCompliant()) {
-      frSections.push(this.getCompliantEmailHtml());
+      frSections.push(this.sharedState.isPostulantPfor() ? this.getCompliantPforEmailHtml() : this.getCompliantEmailHtml());
     }
 
     // 5. Rejections / Incomplete tasks / Reminder
@@ -9808,6 +10493,18 @@ If you fail to attend without notifying us, you risk having your file closed.</p
   generatedEmailHtml = computed((): SafeHtml => {
     const rawHtml = this.getCombinedRawHtmlString();
     return this.sanitizer.bypassSecurityTrustHtml(rawHtml);
+  });
+
+  isPforCompliant = computed(() => {
+    return this.selectedRole() === 'recruiter' && this.sharedState.isPostulantPfor() && this.allTasksCompliant();
+  });
+
+  generatedPforCaf101EmailHtml = computed((): SafeHtml => {
+    return this.sanitizer.bypassSecurityTrustHtml(this.getCompliantPforEmailHtml());
+  });
+
+  generatedPforLienPaEmailHtml = computed((): SafeHtml => {
+    return this.sanitizer.bypassSecurityTrustHtml(this.getCompliantPforLienPaEmailHtml());
   });
 
   getRejectionHtmlFr(): string {
@@ -10736,6 +11433,76 @@ If you fail to attend without notifying us, you risk having your file closed.</p
       window.location.href = mailtoLink;
     } catch (err) {
       console.error("Failed to copy", err);
+    }
+  }
+
+  async exportToOutlookCaf101() {
+    try {
+      const htmlContent = this.getCompliantPforEmailHtml();
+      const textContent = this.getCompliantPforEmailPlain();
+      const subject = "(1/2) Collège militaire canadien - Séance d'information virtuelle/ Canadian Military College - Virtual information session";
+
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const typeHtml = "text/html";
+        const typeText = "text/plain";
+
+        const blobHtml = new Blob([htmlContent], { type: typeHtml });
+        const blobText = new Blob([textContent], { type: typeText });
+
+        const data = [
+          new ClipboardItem({
+            [typeHtml]: blobHtml,
+            [typeText]: blobText,
+          }),
+        ];
+
+        await navigator.clipboard.write(data);
+      } else {
+        await navigator.clipboard.writeText(textContent);
+      }
+
+      this.copiedEmailCaf101.set(true);
+      setTimeout(() => this.copiedEmailCaf101.set(false), 3000);
+
+      const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}`;
+      window.location.href = mailtoLink;
+    } catch (err) {
+      console.error("Failed to copy CAF 101 email", err);
+    }
+  }
+
+  async exportToOutlookLienPa() {
+    try {
+      const htmlContent = this.getCompliantPforLienPaEmailHtml();
+      const textContent = this.getCompliantPforLienPaEmailPlain();
+      const subject = "(2/2)Collège militaire canadien - Portail d'admission / Canadian Military College - Admission Portal";
+
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const typeHtml = "text/html";
+        const typeText = "text/plain";
+
+        const blobHtml = new Blob([htmlContent], { type: typeHtml });
+        const blobText = new Blob([textContent], { type: typeText });
+
+        const data = [
+          new ClipboardItem({
+            [typeHtml]: blobHtml,
+            [typeText]: blobText,
+          }),
+        ];
+
+        await navigator.clipboard.write(data);
+      } else {
+        await navigator.clipboard.writeText(textContent);
+      }
+
+      this.copiedEmailLienPa.set(true);
+      setTimeout(() => this.copiedEmailLienPa.set(false), 3000);
+
+      const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}`;
+      window.location.href = mailtoLink;
+    } catch (err) {
+      console.error("Failed to copy Lien PA email", err);
     }
   }
 

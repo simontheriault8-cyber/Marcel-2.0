@@ -89,6 +89,16 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
               >
                 Réorientation
               </button>
+              <button
+                (click)="activeTab.set('pfor')"
+                class="px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer"
+                [class.bg-slate-700]="activeTab() === 'pfor'"
+                [class.text-white]="activeTab() === 'pfor'"
+                [class.text-slate-400]="activeTab() !== 'pfor'"
+                [class.hover:text-white]="activeTab() !== 'pfor'"
+              >
+                PFOR
+              </button>
             }
             <button
               (click)="activeTab.set('catalogue')"
@@ -169,21 +179,30 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
       </div>
 
       <!-- Mobile Tabs (visible only on small screens) -->
-      <div class="sm:hidden bg-slate-800 p-2 flex gap-2 shrink-0">
+      <div class="sm:hidden bg-slate-800 p-2 flex gap-1.5 shrink-0 flex-wrap">
         @if (_showReorientationTab()) {
           <button
             (click)="activeTab.set('reorientation')"
-            class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            class="flex-1 min-w-[70px] px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
             [class.bg-slate-700]="activeTab() === 'reorientation'"
             [class.text-white]="activeTab() === 'reorientation'"
             [class.text-slate-400]="activeTab() !== 'reorientation'"
           >
             Réorientation
           </button>
+          <button
+            (click)="activeTab.set('pfor')"
+            class="flex-1 min-w-[70px] px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
+            [class.bg-slate-700]="activeTab() === 'pfor'"
+            [class.text-white]="activeTab() === 'pfor'"
+            [class.text-slate-400]="activeTab() !== 'pfor'"
+          >
+            PFOR
+          </button>
         }
         <button
           (click)="activeTab.set('catalogue')"
-          class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+          class="flex-1 min-w-[60px] px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
           [class.bg-slate-700]="activeTab() === 'catalogue'"
           [class.text-white]="activeTab() === 'catalogue'"
           [class.text-slate-400]="activeTab() !== 'catalogue'"
