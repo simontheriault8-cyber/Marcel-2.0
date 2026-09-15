@@ -77,18 +77,26 @@ export class SharedStateService {
   isOtaDossier = signal<boolean>(false);
 
   customSignatureFr = signal<string>(
-    localStorage.getItem("custom_signature_fr") || DEFAULT_SIG_FR
+    localStorage.getItem("custom_signature_fr") !== null
+      ? (localStorage.getItem("custom_signature_fr") ?? "")
+      : DEFAULT_SIG_FR
   );
   customSignatureEn = signal<string>(
-    localStorage.getItem("custom_signature_en") || DEFAULT_SIG_EN
+    localStorage.getItem("custom_signature_en") !== null
+      ? (localStorage.getItem("custom_signature_en") ?? "")
+      : DEFAULT_SIG_EN
   );
 
   // Custom Signatures Signals (OTA)
   customSignatureOtaFr = signal<string>(
-    localStorage.getItem("custom_signature_ota_fr") || DEFAULT_SIG_OTA_FR
+    localStorage.getItem("custom_signature_ota_fr") !== null
+      ? (localStorage.getItem("custom_signature_ota_fr") ?? "")
+      : DEFAULT_SIG_OTA_FR
   );
   customSignatureOtaEn = signal<string>(
-    localStorage.getItem("custom_signature_ota_en") || DEFAULT_SIG_OTA_EN
+    localStorage.getItem("custom_signature_ota_en") !== null
+      ? (localStorage.getItem("custom_signature_ota_en") ?? "")
+      : DEFAULT_SIG_OTA_EN
   );
 
   getSignatureFr(isOta = this.isOtaDossier()): string {
@@ -101,6 +109,9 @@ export class SharedStateService {
 
   getHtmlSignatureFr(isOta = this.isOtaDossier()): string {
     const sig = this.getSignatureFr(isOta);
+    if (!sig || !sig.trim()) {
+      return "";
+    }
     let html = this.getHtmlSignature(sig);
     html = html.replace(
       "Centre d’assistance | Forces armées canadiennes",
@@ -111,6 +122,9 @@ export class SharedStateService {
 
   getHtmlSignatureEn(isOta = this.isOtaDossier()): string {
     const sig = this.getSignatureEn(isOta);
+    if (!sig || !sig.trim()) {
+      return "";
+    }
     let html = this.getHtmlSignature(sig);
     html = html.replace(
       "Help Centre | Canadian Armed Forces",
@@ -120,6 +134,9 @@ export class SharedStateService {
   }
 
   getHtmlSignature(sig: string): string {
+    if (!sig || !sig.trim()) {
+      return "";
+    }
     // 1. Convert newlines to <br>
     let html = sig.replace(/\n/g, "<br>");
 
@@ -164,25 +181,31 @@ export class SharedStateService {
 
   getCustomizedScenarioText(bodyText: string, isOta = this.isOtaDossier()): string {
     let text = bodyText;
+    const sigFr = this.getSignatureFr(isOta);
+    const sigEn = this.getSignatureEn(isOta);
     
     let regexFr = new RegExp("Cordialement,[\\s\\S]*?Centre d’assistance \\| Forces armées canadiennes", "g");
-    text = text.replace(regexFr, this.getSignatureFr(isOta));
+    text = text.replace(regexFr, sigFr ? sigFr : "");
     
     let regexEn = new RegExp("Sincerely,[\\s\\S]*?Help Centre \\| Canadian Armed Forces", "g");
-    text = text.replace(regexEn, this.getSignatureEn(isOta));
+    text = text.replace(regexEn, sigEn ? sigEn : "");
     
     return text;
   }
 
   getCustomizedScenarioHtml(bodyHtml: string, isOta = this.isOtaDossier()): string {
     let html = bodyHtml;
-    // Basic string replace for HTML
+    const htmlSigFr = this.getHtmlSignatureFr(isOta);
+    const htmlSigEn = this.getHtmlSignatureEn(isOta);
     
-    let regexFr = new RegExp("<p>Cordialement,<\\/p>[\\s\\S]*?Forces armées canadiennes(?:<\\/a>)?<\\/p>", "g");
-    html = html.replace(regexFr, "<p>" + this.getHtmlSignatureFr(isOta) + "</p>");
+    let regexFr = new RegExp("<p>Cordialement,<\\/p>\\s*<p>L’équipe de recrutement[\\s\\S]*?Forces armées canadiennes(?:<\\/a>)?<\\/p>", "g");
+    html = html.replace(regexFr, htmlSigFr ? "<p>" + htmlSigFr + "</p>" : "");
+
+    let fallbackRegexFr = new RegExp("<p>Cordialement,<\\/p>[\\s\\S]*?Forces armées canadiennes(?:<\\/a>)?<\\/p>", "g");
+    html = html.replace(fallbackRegexFr, htmlSigFr ? "<p>" + htmlSigFr + "</p>" : "");
     
     let regexEn = new RegExp("<p>Sincerely,<\\/p>[\\s\\S]*?Canadian Armed Forces(?:<\\/a>)?<\\/p>", "g");
-    html = html.replace(regexEn, "<p>" + this.getHtmlSignatureEn(isOta) + "</p>");
+    html = html.replace(regexEn, htmlSigEn ? "<p>" + htmlSigEn + "</p>" : "");
     
     return html;
   }
