@@ -5374,6 +5374,10 @@ Thank you for your cooperation.`;
     }
   }
 
+  isPforDossier(): boolean {
+    return this.sharedState.isPostulantPfor() || this.recruiterDossierType() === 'pfor';
+  }
+
   areAllDocsCompliant = computed(() => {
     const tasks = this.visibleTasks().filter((t) => !t.nameFr.includes("Documents Supplémentaires"));
     if (tasks.length === 0) return false;
@@ -5390,24 +5394,28 @@ Thank you for your cooperation.`;
 
   setAllCompliant() {
     if (this.areAllDocsCompliant()) {
-      // Toggle OFF: désactiver la conformité de toutes les tâches standard visibles (sauf Documents Supplémentaires)
+      // Toggle OFF: désactiver la conformité de toutes les tâches standard visibles
       const currentKeys = new Set(this.compliantDocKeys());
       this.visibleTasks().forEach((task) => {
         if (!task.nameFr.includes("Documents Supplémentaires")) {
           task.documents.forEach((doc) => {
             currentKeys.delete(this.getDocKey(task, doc));
           });
+        } else {
+          currentKeys.delete(`${task.nameFr}::metiers_docs`);
         }
       });
       this.compliantDocKeys.set(currentKeys);
     } else {
-      // Toggle ON: marquer toutes les tâches standard visibles conformes (sans cocher Documents Supplémentaires pour forcer la vérification manuelle)
+      // Toggle ON: marquer toutes les tâches standard visibles conformes
       const currentKeys = new Set(this.compliantDocKeys());
       this.visibleTasks().forEach((task) => {
         if (!task.nameFr.includes("Documents Supplémentaires")) {
           task.documents.forEach((doc) => {
             currentKeys.add(this.getDocKey(task, doc));
           });
+        } else {
+          currentKeys.add(`${task.nameFr}::metiers_docs`);
         }
       });
       this.compliantDocKeys.set(currentKeys);
@@ -5467,6 +5475,12 @@ Thank you for your cooperation.`;
     if (this.isSubsidizedDoc(doc)) return true;
     if (this.isTaskBasedAdditionalDoc(doc)) return true;
 
+    // Pour un postulant PFOR, les documents professionnels spécifiques aux métiers
+    // (permis d'exercice, membre en règle, etc.) ne s'appliquent pas car il s'agit d'un programme d'études universitaires.
+    if (this.isPforDossier()) {
+      return false;
+    }
+
     const jobs = this.getDossierJobObjects();
     if (jobs.length === 0) return false;
 
@@ -5507,6 +5521,10 @@ Thank you for your cooperation.`;
   }
 
   isAdditionalDocRequiredForJob(docNameFr: string, jobId: string): boolean {
+    if (this.isPforDossier()) {
+      return false;
+    }
+
     const cvJobIds = [
       "00152", "00155", "00335", "00372", "00378", "00406", "00190", "00194",
       "00195", "00198", "00204", "00374", "00153", "00191", "00349", "00390", "00398"
@@ -5778,6 +5796,7 @@ Thank you for your cooperation.`;
 
   hasVisibleAdditionalDocs(task: Task): boolean {
     if (!task || !task.documents) return false;
+    if (this.isPforDossier()) return false;
     const dossierJobs = this.getDossierJobObjects();
     if (dossierJobs.length === 0) return false;
     return dossierJobs.some((j) => this.hasJobAdditionalDocs(task, j));
@@ -5785,6 +5804,7 @@ Thank you for your cooperation.`;
 
   hasJobAdditionalDocs(task: Task, job: JobEntry): boolean {
     if (!task || !task.documents || !job) return false;
+    if (this.isPforDossier()) return false;
     return task.documents.some(
       (d) =>
         !this.isSubsidizedDoc(d) &&
@@ -6266,6 +6286,9 @@ Thank you for your cooperation.`;
     if (task.nameFr.includes("Documents Supplémentaires")) {
       if (this.hasTaskRejections(task)) {
         return false;
+      }
+      if (this.isPforDossier()) {
+        return true;
       }
       if (this.hasVisibleAdditionalDocs(task)) {
         return this.isAdditionalJobDocsCompliant(task);

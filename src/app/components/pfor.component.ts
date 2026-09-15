@@ -97,86 +97,117 @@ export const CMR_JOB_DOMAINS: Record<
           </div>
         </div>
 
-        <!-- Options Dropdown -->
-        <div class="relative shrink-0 pfor-options-dropdown-container">
-          <button
-            (click)="showOptionsDropdown.set(!showOptionsDropdown())"
-            class="px-3.5 py-2 rounded-lg border text-xs font-semibold flex items-center gap-2 transition cursor-pointer shadow-xs"
-            [class.bg-indigo-50]="activeHeaderOptionsCount() > 0"
-            [class.border-indigo-300]="activeHeaderOptionsCount() > 0"
-            [class.text-indigo-900]="activeHeaderOptionsCount() > 0"
-            [class.bg-white]="activeHeaderOptionsCount() === 0"
-            [class.border-slate-300]="activeHeaderOptionsCount() === 0"
-            [class.text-slate-700]="activeHeaderOptionsCount() === 0"
-          >
-            <svg class="w-4 h-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            <span>Options</span>
-            @if (activeHeaderOptionsCount() > 0) {
-              <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">
-                {{ activeHeaderOptionsCount() }}
-              </span>
-            }
-          </button>
-
-          @if (showOptionsDropdown()) {
-            <div
-              class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-50 flex flex-col gap-2"
+        <!-- Header Actions: Toggle Switch above Options Dropdown -->
+        <div class="flex flex-col items-end gap-2 shrink-0">
+          <!-- Toggle Switch: Gestion des attentes / Réorientation -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-xs">
+            <button
+              type="button"
+              (click)="pforEmailMode.set('attentes')"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              [class.bg-white]="pforEmailMode() === 'attentes'"
+              [class.text-indigo-700]="pforEmailMode() === 'attentes'"
+              [class.shadow-xs]="pforEmailMode() === 'attentes'"
+              [class.text-slate-600]="pforEmailMode() !== 'attentes'"
+              [class.hover:text-slate-900]="pforEmailMode() !== 'attentes'"
             >
-              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
-                <input
-                  type="checkbox"
-                  [checked]="sharedState.includeLinkedEmail()"
-                  (change)="toggleIncludeReo()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                />
-                <div class="flex flex-col">
-                  <span class="font-bold text-slate-800">Fusionner tâches & réorientation</span>
-                  <span class="text-[11px] text-slate-500">Intègre les tâches de l'onglet Dossier au courriel</span>
-                </div>
-              </label>
+              <span>Gestion des attentes</span>
+            </button>
+            <button
+              type="button"
+              (click)="pforEmailMode.set('reorientation')"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              [class.bg-white]="pforEmailMode() === 'reorientation'"
+              [class.text-indigo-700]="pforEmailMode() === 'reorientation'"
+              [class.shadow-xs]="pforEmailMode() === 'reorientation'"
+              [class.text-slate-600]="pforEmailMode() !== 'reorientation'"
+              [class.hover:text-slate-900]="pforEmailMode() !== 'reorientation'"
+            >
+              <span>Réorientation</span>
+            </button>
+          </div>
 
-              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
-                <input
-                  type="checkbox"
-                  [checked]="ignoreSip()"
-                  (change)="toggleIgnoreSip()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                />
-                <div class="flex flex-col">
-                  <span class="font-bold text-slate-800">Inclure les métiers fermés (SIP)</span>
-                  <span class="text-[11px] text-slate-500">Affiche tous les métiers PFOR</span>
-                </div>
-              </label>
+          <!-- Options Dropdown -->
+          <div class="relative shrink-0 pfor-options-dropdown-container">
+            <button
+              (click)="showOptionsDropdown.set(!showOptionsDropdown())"
+              class="px-3.5 py-2 rounded-lg border text-xs font-semibold flex items-center gap-2 transition cursor-pointer shadow-xs"
+              [class.bg-indigo-50]="activeHeaderOptionsCount() > 0"
+              [class.border-indigo-300]="activeHeaderOptionsCount() > 0"
+              [class.text-indigo-900]="activeHeaderOptionsCount() > 0"
+              [class.bg-white]="activeHeaderOptionsCount() === 0"
+              [class.border-slate-300]="activeHeaderOptionsCount() === 0"
+              [class.text-slate-700]="activeHeaderOptionsCount() === 0"
+            >
+              <svg class="w-4 h-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span>Options</span>
+              @if (activeHeaderOptionsCount() > 0) {
+                <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">
+                  {{ activeHeaderOptionsCount() }}
+                </span>
+              }
+            </button>
 
-              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
-                <input
-                  type="checkbox"
-                  [checked]="includeTraitement()"
-                  (change)="toggleIncludeTraitement()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                />
-                <div class="flex flex-col">
-                  <span class="font-bold text-slate-800">Inclure SIP Traitement</span>
-                  <span class="text-[11px] text-slate-500">Prend en compte les quotas de traitement</span>
-                </div>
-              </label>
+            @if (showOptionsDropdown()) {
+              <div
+                class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-50 flex flex-col gap-2"
+              >
+                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="sharedState.includeLinkedEmail()"
+                    (change)="toggleIncludeReo()"
+                    class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-800">Fusionner tâches & réorientation</span>
+                    <span class="text-[11px] text-slate-500">Intègre les tâches de l'onglet Dossier au courriel</span>
+                  </div>
+                </label>
 
-              <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
-                <input
-                  type="checkbox"
-                  [checked]="hasMedicalLimitation()"
-                  (change)="toggleMedicalLimitation()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                />
-                <div class="flex flex-col">
-                  <span class="font-bold text-slate-800">Limitations médicales (V, CV, H)</span>
-                  <span class="text-[11px] text-slate-500">Filtrer selon le profil médical</span>
-                </div>
-              </label>
-            </div>
-          }
+                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="ignoreSip()"
+                    (change)="toggleIgnoreSip()"
+                    class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-800">Inclure les métiers fermés (SIP)</span>
+                    <span class="text-[11px] text-slate-500">Affiche tous les métiers PFOR</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="includeTraitement()"
+                    (change)="toggleIncludeTraitement()"
+                    class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-800">Inclure SIP Traitement</span>
+                    <span class="text-[11px] text-slate-500">Prend en compte les quotas de traitement</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="hasMedicalLimitation()"
+                    (change)="toggleMedicalLimitation()"
+                    class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="font-bold text-slate-800">Limitations médicales (V, CV, H)</span>
+                    <span class="text-[11px] text-slate-500">Filtrer selon le profil médical</span>
+                  </div>
+                </label>
+              </div>
+            }
+          </div>
         </div>
       </div>
 
@@ -532,7 +563,7 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2">
                   <h3 class="text-sm font-bold text-slate-800">
-                    Courriel de réorientation
+                    {{ pforEmailMode() === 'attentes' ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation' }}
                   </h3>
                   @if (eligiblePforJobs().length > 0) {
                     <div class="flex gap-2">
@@ -629,6 +660,7 @@ export class PforComponent {
   sanitizer = inject(DomSanitizer);
 
   // Inputs & Signals
+  pforEmailMode = signal<"attentes" | "reorientation">("attentes");
   age = signal<number | null>(18);
   citizenship = signal<string>("Canadian Citizen");
   pforType = signal<"cmr" | "civil">("cmr");
@@ -893,6 +925,7 @@ export class PforComponent {
   }
 
   resetAll() {
+    this.pforEmailMode.set("attentes");
     this.age.set(18);
     this.citizenship.set("Canadian Citizen");
     this.pforType.set("cmr");

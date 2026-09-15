@@ -72,6 +72,16 @@ export class RecruitmentDataService {
                 "The document is not in your file. Please take a photo and upload it. Ensure the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Aucun relevé d’apprentissage au dossier",
             },
+            {
+              id: "relev_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour du relevé d’apprentissage",
+            },
           ],
         },
         {
@@ -117,6 +127,16 @@ export class RecruitmentDataService {
               instructionEn:
                 "The document is incomplete in the photo, pages are missing, or it is not fully visible. Please upload one or more photos of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Diplômes et certificats incomplets",
+            },
+            {
+              id: "dipl_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour des diplômes et certificats",
             },
           ],
         },
@@ -185,6 +205,16 @@ export class RecruitmentDataService {
               instructionEn:
                 "Please provide an official copy of your comparative evaluation. To help you find resources for this step, please visit the following site: https://canalliance.org/en/",
               logNoteFr: "Évaluation comparative non officielle",
+            },
+            {
+              id: "eval_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de l'évaluation comparative",
             },
           ],
         },
@@ -345,6 +375,16 @@ export class RecruitmentDataService {
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Permis de conduire incomplet",
             },
+            {
+              id: "pc_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour du permis de conduire",
+            },
           ],
         },
         {
@@ -412,6 +452,16 @@ export class RecruitmentDataService {
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Carte d'assurance maladie incomplète",
             },
+            {
+              id: "ramq_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la carte d'assurance maladie",
+            },
           ],
         },
         {
@@ -457,6 +507,16 @@ export class RecruitmentDataService {
               instructionEn:
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Passeport incomplet",
+            },
+            {
+              id: "pass_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour du passeport",
             },
           ],
         },
@@ -525,6 +585,16 @@ export class RecruitmentDataService {
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Pièce d'identité incomplète",
             },
+            {
+              id: "autre_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la pièce d'identité",
+            },
           ],
         },
         {
@@ -581,6 +651,16 @@ export class RecruitmentDataService {
               linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
               logNoteFr:
                 "Égoportrait (Selfie) avec pièce d’identité incomplet",
+            },
+            {
+              id: "selfie_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de l'égoportrait (Selfie)",
             },
           ],
         },
@@ -664,6 +744,16 @@ export class RecruitmentDataService {
                 "The photocopy of the birth certificate makes it invalid. You must take a photo of your document and upload this photo to your online portal. Ensure the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Certificat de naissance est une photocopie",
             },
+            {
+              id: "naiss_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour du certificat de naissance",
+            },
           ],
         },
         {
@@ -716,6 +806,16 @@ export class RecruitmentDataService {
                 "The document is incomplete in the photo, pages are missing, or it is not fully visible. Please upload a full photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Certificat de citoyenneté incomplet",
             },
+            {
+              id: "cit_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour du certificat de citoyenneté",
+            },
           ],
         },
         {
@@ -751,6 +851,16 @@ export class RecruitmentDataService {
               instructionEn:
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Carte de citoyenneté incomplète",
+            },
+            {
+              id: "cc_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la carte de citoyenneté",
             },
           ],
         },
@@ -797,6 +907,16 @@ export class RecruitmentDataService {
               instructionEn:
                 "The document is incomplete in the photo, or it is not fully visible. Please upload a photo of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Carte de résident permanent incomplète",
+            },
+            {
+              id: "pr_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la carte de résident permanent",
             },
           ],
         },
@@ -964,6 +1084,16 @@ export class RecruitmentDataService {
               logNoteFr:
                 "Aucune pièce d’identité du parent ou tuteur légal n’est au dossier",
             },
+            {
+              id: "par_id_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la pièce d'identité du parent",
+            },
           ],
         },
         {
@@ -1008,6 +1138,16 @@ export class RecruitmentDataService {
               linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
               logNoteFr:
                 "Aucune photo du parent ou tuteur légal tenant sa pièce d’identité n’est au dossier",
+            },
+            {
+              id: "par_selfie_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de l'égoportrait (Selfie) du parent",
             },
           ],
         },
