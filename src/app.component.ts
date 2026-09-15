@@ -720,7 +720,7 @@ function getTodayDateString(): string {
                   >
                     <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1 flex items-center justify-between">
                       <span>Banque de courriels</span>
-                      @if (selectedRole() === 'recruiter' && selectedEmailBankTemplate() !== '') {
+                      @if (selectedEmailBankTemplate() !== '') {
                         <button
                           (click)="selectEmailBankTemplate('')"
                           class="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer text-[10px]"
@@ -761,10 +761,20 @@ function getTodayDateString(): string {
                         }
                       </button>
                     } @else {
-                      <div class="px-4 py-4 text-center">
-                        <p class="text-xs font-semibold text-slate-600">Aucun modèle pour le volet GD</p>
-                        <p class="text-[11px] text-slate-400 mt-1 italic">Des modèles de courriels propres au gestionnaire de dossier y seront ajoutés prochainement.</p>
-                      </div>
+                      <button
+                        (click)="selectEmailBankTemplate('tentative_offre_gd')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
+                      >
+                        <span class="truncate">Tentative de communication - Offre d'emploi</span>
+                        @if (selectedEmailBankTemplate() === 'tentative_offre_gd') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
                     }
                   </div>
                 }
@@ -7255,6 +7265,11 @@ Thank you for your cooperation.`;
       notes.push(`Transmission d'un courriel de rappel pour la cérémonie d'assermentation du ${this.rappelCeremonieDate() || '____'}.`);
     }
 
+    // 3.6 Tentative communication pour offre Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'tentative_offre_gd') {
+      notes.push("Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD");
+    }
+
     // 4. All tasks compliant Note
     if (this.allTasksCompliant()) {
       notes.push(this.getBigAceCompliantNoteClean());
@@ -8232,6 +8247,7 @@ Thank you for your cooperation.`;
     fr += `Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
     fr += this.getOffreLinksBlockPlain('fr');
+    fr += this.getOffreEvenementsParticuliersPlainFr();
     fr += "Pour toute autre question, n’hésitez pas à communiquer avec moi. \n\n\n";
     fr += "Merci, bonne journée\n\n";
     fr += this.getSignatureFr();
@@ -8256,6 +8272,7 @@ Thank you for your cooperation.`;
     en += `Please send me the following items no later than${blocksEn.dateLimiteStr}:\n\n`;
     en += blocksEn.elementsPlain;
     en += this.getOffreLinksBlockPlain('en');
+    en += this.getOffreEvenementsParticuliersPlainEn();
     en += "If you have any further questions, please do not hesitate to contact me. \n\n\n";
     en += "Thank you, have a nice day\n\n";
     en += this.getSignatureEn();
@@ -8311,9 +8328,6 @@ Thank you for your cooperation.`;
   getOffreLinksBlockPlain(lang: 'fr' | 'en'): string {
     const isConjoint = this.isConjointDeFaitSelected();
     const uniteNom = this.getUniteAffectationObj().nom;
-    const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
-    const isMontreal = this.offreLieuVille() === 'Montréal';
-    const showTenueDeVille = isOta || isMontreal;
     const isUic3613 = this.isUic3613Selected();
 
     if (lang === 'fr') {
@@ -8340,9 +8354,7 @@ Thank you for your cooperation.`;
         }
       }
 
-      if (showTenueDeVille) {
-        res += "Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
-      }
+      res += "Voici un exemple de tenue de ville, tenue vestimentaire pour la cérémonie : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
       res += "\n\n\n";
       return res;
     } else {
@@ -8369,9 +8381,7 @@ Thank you for your cooperation.`;
         }
       }
 
-      if (showTenueDeVille) {
-        res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
-      }
+      res += "Here is an example of business casual / dress code for the ceremony : https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf\n";
       res += "\n\n\n";
       return res;
     }
@@ -8380,9 +8390,6 @@ Thank you for your cooperation.`;
   getOffreLinksBlockHtml(lang: 'fr' | 'en'): string {
     const isConjoint = this.isConjointDeFaitSelected();
     const uniteNom = this.getUniteAffectationObj().nom;
-    const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
-    const isMontreal = this.offreLieuVille() === 'Montréal';
-    const showTenueDeVille = isOta || isMontreal;
     const isUic3613 = this.isUic3613Selected();
 
     if (lang === 'fr') {
@@ -8409,9 +8416,7 @@ Thank you for your cooperation.`;
         }
       }
 
-      if (showTenueDeVille) {
-        res += `<br>Voici un exemples de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
-      }
+      res += `<br>Voici un exemple de tenue de ville, tenue vestimentaire pour la cérémonie : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
       res += `</p>`;
       return res;
     } else {
@@ -8429,7 +8434,7 @@ Thank you for your cooperation.`;
         }
       } else {
         if (isConjoint) {
-          res += `Here are the links to your common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
+          res += `Here are the links to your common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
         } else {
@@ -8438,12 +8443,48 @@ Thank you for your cooperation.`;
         }
       }
 
-      if (showTenueDeVille) {
-        res += `<br>Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
-      }
+      res += `<br>Here is an example of business casual / dress code for the ceremony : <a href="https://simontheriault8-cyber.github.io/Documents/Exemples - Tenue de ville.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Tenue de ville</a>`;
       res += `</p>`;
       return res;
     }
+  }
+
+  getOffreEvenementsParticuliersPlainFr(): string {
+    let res = "Information à communiquer si des événements particuliers se produisent avant la journée de votre enrôlement :\n\n";
+    res += "•\tSi vous recevez une contravention avant votre enrôlement, vous devez la payer et apporter la preuve de paiement. Si vous êtes dans l’impossibilité de la payer, veuillez nous contacter avant votre enrôlement;\n\n";
+    res += "•\tSi vous avez des obligations envers la justice qui n’ont pas été déclarées lors de votre entrevue avec le conseiller en carrière militaire;\n\n";
+    res += "•\tSi vous changez d’adresse ou d’état civil, vous devez nous aviser immédiatement afin que la bonne information se retrouve sur vos documents d’enrôlement;\n\n";
+    res += "•\tSi vous avez un changement au niveau médical, veuillez aviser votre gestionnaire de dossier le plus tôt possible avant votre enrôlement.\n\n\n";
+    return res;
+  }
+
+  getOffreEvenementsParticuliersPlainEn(): string {
+    let res = "Information to report if specific events occur before the day of your enrolment:\n\n";
+    res += "•\tIf you receive a ticket/fine before your enrolment, you must pay it and bring proof of payment. If you are unable to pay it, please contact us before your enrolment;\n\n";
+    res += "•\tIf you have legal obligations that were not declared during your interview with the military career counsellor;\n\n";
+    res += "•\tIf you change your address or marital status, you must notify us immediately so that the correct information appears on your enrolment documents;\n\n";
+    res += "•\tIf you experience any medical changes, please notify your file manager as soon as possible before your enrolment.\n\n\n";
+    return res;
+  }
+
+  getOffreEvenementsParticuliersHtmlFr(): string {
+    return `<p style="margin-top: 10px; margin-bottom: 6px;"><strong>Information à communiquer si des événements particuliers se produisent avant la journée de votre enrôlement :</strong></p>
+<ul style="list-style-type: disc; margin-top: 5px; margin-bottom: 15px; padding-left: 20px;">
+  <li style="margin-bottom: 6px;">Si vous recevez une contravention avant votre enrôlement, vous devez la payer et apporter la preuve de paiement. Si vous êtes dans l’impossibilité de la payer, veuillez nous contacter avant votre enrôlement;</li>
+  <li style="margin-bottom: 6px;">Si vous avez des obligations envers la justice qui n’ont pas été déclarées lors de votre entrevue avec le conseiller en carrière militaire;</li>
+  <li style="margin-bottom: 6px;">Si vous changez d’adresse ou d’état civil, vous devez nous aviser immédiatement afin que la bonne information se retrouve sur vos documents d’enrôlement;</li>
+  <li style="margin-bottom: 6px;">Si vous avez un changement au niveau médical, veuillez aviser votre gestionnaire de dossier le plus tôt possible avant votre enrôlement.</li>
+</ul>`;
+  }
+
+  getOffreEvenementsParticuliersHtmlEn(): string {
+    return `<p style="margin-top: 10px; margin-bottom: 6px;"><strong>Information to report if specific events occur before the day of your enrolment:</strong></p>
+<ul style="list-style-type: disc; margin-top: 5px; margin-bottom: 15px; padding-left: 20px;">
+  <li style="margin-bottom: 6px;">If you receive a ticket/fine before your enrolment, you must pay it and bring proof of payment. If you are unable to pay it, please contact us before your enrolment;</li>
+  <li style="margin-bottom: 6px;">If you have legal obligations that were not declared during your interview with the military career counsellor;</li>
+  <li style="margin-bottom: 6px;">If you change your address or marital status, you must notify us immediately so that the correct information appears on your enrolment documents;</li>
+  <li style="margin-bottom: 6px;">If you experience any medical changes, please notify your file manager as soon as possible before your enrolment.</li>
+</ul>`;
   }
 
   getOffreNormaleEmailHtml(): string {
@@ -8484,6 +8525,7 @@ Thank you for your cooperation.`;
     html += `<p>Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
     html += this.getOffreLinksBlockHtml('fr');
+    html += this.getOffreEvenementsParticuliersHtmlFr();
     html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
     html += `<p>Merci, bonne journée</p>`;
     html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
@@ -8509,6 +8551,7 @@ Thank you for your cooperation.`;
     html += `<p>Please send me the following items no later than${blocksHtmlEn.dateLimiteStr}:</p>`;
     html += blocksHtmlEn.elementsHtmlList;
     html += this.getOffreLinksBlockHtml('en');
+    html += this.getOffreEvenementsParticuliersHtmlEn();
     html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
     html += `<p>Thank you, have a nice day</p>`;
     html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
@@ -8560,6 +8603,7 @@ Thank you for your cooperation.`;
     fr += `Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
     fr += this.getOffreLinksBlockPlain('fr');
+    fr += this.getOffreEvenementsParticuliersPlainFr();
     fr += "Pour toute autre question, n’hésitez pas à communiquer avec moi. \n\n\n";
     fr += "Cordialement,\n\n";
     fr += this.getSignatureFr();
@@ -8587,6 +8631,7 @@ Thank you for your cooperation.`;
     en += `Please review the documents attached to this email and return the following documents to me no later than${blocksSubEn.dateLimiteStr}:\n\n`;
     en += blocksSubEn.elementsPlain;
     en += this.getOffreLinksBlockPlain('en');
+    en += this.getOffreEvenementsParticuliersPlainEn();
     en += "If you have any further questions, please do not hesitate to contact me. \n\n\n";
     en += "Sincerely,\n\n";
     en += this.getSignatureEn();
@@ -8635,6 +8680,7 @@ Thank you for your cooperation.`;
     html += `<p>Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
     html += this.getOffreLinksBlockHtml('fr');
+    html += this.getOffreEvenementsParticuliersHtmlFr();
     html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
     html += `<p>Cordialement,</p>`;
     html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
@@ -8660,6 +8706,7 @@ Thank you for your cooperation.`;
     html += `<p>Please review the documents attached to this email and return the following documents to me no later than${blocksHtmlSubEn.dateLimiteStr}:</p>`;
     html += blocksHtmlSubEn.elementsHtmlList;
     html += this.getOffreLinksBlockHtml('en');
+    html += this.getOffreEvenementsParticuliersHtmlEn();
     html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
     html += `<p>Sincerely,</p>`;
     html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
@@ -9074,6 +9121,46 @@ Thank you for your cooperation.`;
     return emailEn;
   }
 
+  getRappelCeremonieTeamsPlainFr(): string {
+    const city = this.rappelCeremonieLieu();
+    if (city === 'Montréal') {
+      return "Voici le lien Teams pour les invités à distance : Cérémonie d'assermentation 27 août 2026 | Rencontre-Participation | Microsoft Teams : https://teams.microsoft.com/meet/269424678350987?p=U8W17Q49zAsTGFVtrn";
+    } else if (city === 'Québec') {
+      return "Voici le lien Teams pour les invités à distance : https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U";
+    }
+    return "";
+  }
+
+  getRappelCeremonieTeamsPlainEn(): string {
+    const city = this.rappelCeremonieLieu();
+    if (city === 'Montréal') {
+      return "Here is the Teams link for remote guests: Cérémonie d'assermentation 27 août 2026 | Rencontre-Participation | Microsoft Teams : https://teams.microsoft.com/meet/269424678350987?p=U8W17Q49zAsTGFVtrn";
+    } else if (city === 'Québec') {
+      return "Here is the Teams link for remote guests: https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U";
+    }
+    return "";
+  }
+
+  getRappelCeremonieTeamsHtmlFr(): string {
+    const city = this.rappelCeremonieLieu();
+    if (city === 'Montréal') {
+      return `Voici le lien Teams pour les invités à distance : <a href="https://teams.microsoft.com/meet/269424678350987?p=U8W17Q49zAsTGFVtrn" target="_blank" style="color: #2563eb; text-decoration: underline;">Cérémonie d'assermentation 27 août 2026 | Rencontre-Participation | Microsoft Teams</a>`;
+    } else if (city === 'Québec') {
+      return `Voici le lien Teams pour les invités à distance : <a href="https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U" target="_blank" style="color: #2563eb; text-decoration: underline;">https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U</a>`;
+    }
+    return "";
+  }
+
+  getRappelCeremonieTeamsHtmlEn(): string {
+    const city = this.rappelCeremonieLieu();
+    if (city === 'Montréal') {
+      return `Here is the Teams link for remote guests: <a href="https://teams.microsoft.com/meet/269424678350987?p=U8W17Q49zAsTGFVtrn" target="_blank" style="color: #2563eb; text-decoration: underline;">Cérémonie d'assermentation 27 août 2026 | Rencontre-Participation | Microsoft Teams</a>`;
+    } else if (city === 'Québec') {
+      return `Here is the Teams link for remote guests: <a href="https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U" target="_blank" style="color: #2563eb; text-decoration: underline;">https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U</a>`;
+    }
+    return "";
+  }
+
   getRappelCeremonieAddress(): string {
     const city = this.rappelCeremonieLieu();
     const center = this.recruitmentCentersList.find(c => c.city === city);
@@ -9083,59 +9170,135 @@ Thank you for your cooperation.`;
   getRappelCeremonieSectionPlainFr(): string {
     const address = this.getRappelCeremonieAddress();
     const date = this.rappelCeremonieDate() || '___________________';
+    const city = this.rappelCeremonieLieu();
+    const isMontreal = city === 'Montréal';
 
-    return `Bonjour,\n\nCe message est un rappel pour votre cérémonie d'assermentation.\n\nDate : ${date}\nHeure : ${this.rappelCeremonieHeurePostulant()} - veuillez arriver 15 minutes à l'avance\nLieu : ${address}\nHeure d'arrivée des invités : ${this.rappelCeremonieHeureInvites()}\n\nVous aurez droit à 2 invités sur place.\nLien pour assister à la cérémonie par Teams : \n\nVeuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).\nVous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.\n\nSi jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.\nSi vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.\n\nSi vous avez des questions, n'hésitez pas à me faire suivre un courriel.\n\nMerci, bonne journée !`;
+    const blocks: string[] = [
+      `Bonjour,`,
+      `Ce message est un rappel pour votre cérémonie d'assermentation.`,
+      `Date : ${date}\nHeure : ${this.rappelCeremonieHeurePostulant()} - veuillez arriver 15 minutes à l'avance\nLieu : ${address}\nHeure d'arrivée des invités : ${this.rappelCeremonieHeureInvites()}`
+    ];
+
+    if (!isMontreal) {
+      blocks.push(`Vous aurez droit à 2 invités sur place.`);
+    }
+
+    const teamsLine = this.getRappelCeremonieTeamsPlainFr().trim();
+    if (teamsLine) {
+      blocks.push(teamsLine);
+    }
+
+    blocks.push(`Si vous êtes dans une Union de fait, votre conjoint ou conjointe doit être présent avec vous dès votre arrivé au centre de recrutement la journée de votre cérémonie d'assermentation.`);
+
+    blocks.push(`Veuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).`);
+    blocks.push(`Vous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.`);
+    blocks.push(`Si jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.`);
+    blocks.push(`Si vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.`);
+    blocks.push(`Si vous avez des questions, n'hésitez pas à me faire suivre un courriel.`);
+    blocks.push(`Merci, bonne journée !`);
+
+    return blocks.join('\n\n');
   }
 
   getRappelCeremonieSectionPlainEn(): string {
     const address = this.getRappelCeremonieAddress();
     const date = this.rappelCeremonieDate() || '___________________';
+    const city = this.rappelCeremonieLieu();
+    const isMontreal = city === 'Montréal';
 
-    return `Hello,\n\nThis message is a reminder for your swearing-in ceremony.\n\nDate: ${date}\nTime: ${this.rappelCeremonieHeurePostulant()} - please arrive 15 minutes in advance\nLocation: ${address}\nGuest arrival time: ${this.rappelCeremonieHeureInvites()}\n\nYou will be allowed 2 guests on site.\nLink to attend the ceremony via Teams: \n\nPlease bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).\nAttached you will find your joining instructions and additional information regarding your basic military qualifications.\n\nIf you are unable to attend, please notify us as soon as possible by replying to this email.\nIf you fail to attend without notifying us, you risk having your file closed.\n\nIf you have any questions, please do not hesitate to email me.\n\nThank you, have a nice day!`;
+    const blocks: string[] = [
+      `Hello,`,
+      `This message is a reminder for your swearing-in ceremony.`,
+      `Date: ${date}\nTime: ${this.rappelCeremonieHeurePostulant()} - please arrive 15 minutes in advance\nLocation: ${address}\nGuest arrival time: ${this.rappelCeremonieHeureInvites()}`
+    ];
+
+    if (!isMontreal) {
+      blocks.push(`You will be allowed 2 guests on site.`);
+    }
+
+    const teamsLine = this.getRappelCeremonieTeamsPlainEn().trim();
+    if (teamsLine) {
+      blocks.push(teamsLine);
+    }
+
+    blocks.push(`If you are in a common-law relationship, your spouse or common-law partner must be present with you upon arrival at the recruitment centre on the day of your swearing-in ceremony.`);
+
+    blocks.push(`Please bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).`);
+    blocks.push(`Attached you will find your joining instructions and additional information regarding your basic military qualifications.`);
+    blocks.push(`If you are unable to attend, please notify us as soon as possible by replying to this email.`);
+    blocks.push(`If you fail to attend without notifying us, you risk having your file closed.`);
+    blocks.push(`If you have any questions, please do not hesitate to email me.`);
+    blocks.push(`Thank you, have a nice day!`);
+
+    return blocks.join('\n\n');
   }
 
   getRappelCeremonieSectionHtmlFr(): string {
     const address = this.getRappelCeremonieAddress();
     const date = this.rappelCeremonieDate() || '___________________';
+    const city = this.rappelCeremonieLieu();
+    const isMontreal = city === 'Montréal';
 
-    return `<p>Bonjour,</p>
-<p>Ce message est un rappel pour votre cérémonie d'assermentation.</p>
-<ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
+    const pInvites = !isMontreal ? `<p>Vous aurez droit à 2 invités sur place.</p>` : '';
+    const teamsHtml = this.getRappelCeremonieTeamsHtmlFr();
+    const pTeams = teamsHtml ? `<p>${teamsHtml}</p>` : '';
+    const pUnion = `<p>Si vous êtes dans une Union de fait, votre conjoint ou conjointe doit être présent avec vous dès votre arrivé au centre de recrutement la journée de votre cérémonie d'assermentation.</p>`;
+
+    const htmlParts = [
+      `<p>Bonjour,</p>`,
+      `<p>Ce message est un rappel pour votre cérémonie d'assermentation.</p>`,
+      `<ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
   <li><strong>Date :</strong> ${date}</li>
   <li><strong>Heure :</strong> ${this.rappelCeremonieHeurePostulant()} - veuillez arriver 15 minutes à l'avance</li>
   <li><strong>Lieu :</strong> ${address}</li>
   <li><strong>Heure d'arrivée des invités :</strong> ${this.rappelCeremonieHeureInvites()}</li>
-</ul>
-<p>Vous aurez droit à 2 invités sur place.<br>
-Lien pour assister à la cérémonie par Teams : </p>
-<p>Veuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).</p>
-<p>Vous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.</p>
-<p>Si jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.<br>
-Si vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.</p>
-<p>Si vous avez des questions, n'hésitez pas à me faire suivre un courriel.</p>
-<p>Merci, bonne journée !</p>`;
+</ul>`,
+      pInvites,
+      pTeams,
+      pUnion,
+      `<p>Veuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).</p>`,
+      `<p>Vous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.</p>`,
+      `<p>Si jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.</p>`,
+      `<p>Si vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.</p>`,
+      `<p>Si vous avez des questions, n'hésitez pas à me faire suivre un courriel.</p>`,
+      `<p>Merci, bonne journée !</p>`
+    ].filter(Boolean);
+
+    return htmlParts.join('\n');
   }
 
   getRappelCeremonieSectionHtmlEn(): string {
     const address = this.getRappelCeremonieAddress();
     const date = this.rappelCeremonieDate() || '___________________';
+    const city = this.rappelCeremonieLieu();
+    const isMontreal = city === 'Montréal';
 
-    return `<p>Hello,</p>
-<p>This message is a reminder for your swearing-in ceremony.</p>
-<ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
+    const pInvites = !isMontreal ? `<p>You will be allowed 2 guests on site.</p>` : '';
+    const teamsHtml = this.getRappelCeremonieTeamsHtmlEn();
+    const pTeams = teamsHtml ? `<p>${teamsHtml}</p>` : '';
+    const pUnion = `<p>If you are in a common-law relationship, your spouse or common-law partner must be present with you upon arrival at the recruitment centre on the day of your swearing-in ceremony.</p>`;
+
+    const htmlParts = [
+      `<p>Hello,</p>`,
+      `<p>This message is a reminder for your swearing-in ceremony.</p>`,
+      `<ul style="margin-top: 10px; margin-bottom: 15px; padding-left: 20px;">
   <li><strong>Date:</strong> ${date}</li>
   <li><strong>Time:</strong> ${this.rappelCeremonieHeurePostulant()} - please arrive 15 minutes in advance</li>
   <li><strong>Location:</strong> ${address}</li>
   <li><strong>Guest arrival time:</strong> ${this.rappelCeremonieHeureInvites()}</li>
-</ul>
-<p>You will be allowed 2 guests on site.<br>
-Link to attend the ceremony via Teams: </p>
-<p>Please bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).</p>
-<p>Attached you will find your joining instructions and additional information regarding your basic military qualifications.</p>
-<p>If you are unable to attend, please notify us as soon as possible by replying to this email.<br>
-If you fail to attend without notifying us, you risk having your file closed.</p>
-<p>If you have any questions, please do not hesitate to email me.</p>
-<p>Thank you, have a nice day!</p>`;
+</ul>`,
+      pInvites,
+      pTeams,
+      pUnion,
+      `<p>Please bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).</p>`,
+      `<p>Attached you will find your joining instructions and additional information regarding your basic military qualifications.</p>`,
+      `<p>If you are unable to attend, please notify us as soon as possible by replying to this email.</p>`,
+      `<p>If you fail to attend without notifying us, you risk having your file closed.</p>`,
+      `<p>If you have any questions, please do not hesitate to email me.</p>`,
+      `<p>Thank you, have a nice day!</p>`
+    ].filter(Boolean);
+
+    return htmlParts.join('\n');
   }
 
   getRappelCeremonieEmailPlain(): string {
@@ -9162,10 +9325,63 @@ If you fail to attend without notifying us, you risk having your file closed.</p
     return html;
   }
 
+  // Tentative de communication pour offre d'emploi (Volet GD)
+  getTentativeOffreGdSectionPlainFr(): string {
+    return `Bonjour,\n\nNous avons tenté de vous joindre par téléphone afin de vous faire une offre d’emploi. Veuillez nous rappeler le plus rapidement possible.\n\nSi vous connaissez le nom et le poste de votre gestionnaire de dossier, vous pouvez le contacter directement.\n\nDans le cas contraire, veuillez communiquer avec le centre de recrutement en charge de votre dossier à l’intérieur des heures d’ouverture.\n\nMerci et au plaisir de vous parler.`;
+  }
+
+  getTentativeOffreGdSectionPlainEn(): string {
+    return `Hello,\n\nWe attempted to reach you by phone to make you a job offer. Please call us back as soon as possible.\n\nIf you know the name and extension of your file manager, you can contact them directly.\n\nOtherwise, please contact the recruiting centre in charge of your file during business hours.\n\nThank you and we look forward to speaking with you.`;
+  }
+
+  getTentativeOffreGdEmailPlain(): string {
+    const fr = this.getTentativeOffreGdSectionPlainFr();
+    const en = this.getTentativeOffreGdSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getTentativeOffreGdSectionHtmlFr(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Nous avons tenté de vous joindre par téléphone afin de vous faire une offre d’emploi. Veuillez nous rappeler le plus rapidement possible.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Si vous connaissez le nom et le poste de votre gestionnaire de dossier, vous pouvez le contacter directement.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Dans le cas contraire, veuillez communiquer avec le centre de recrutement en charge de votre dossier à l’intérieur des heures d’ouverture.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Merci et au plaisir de vous parler.</p>`;
+  }
+
+  getTentativeOffreGdSectionHtmlEn(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">We attempted to reach you by phone to make you a job offer. Please call us back as soon as possible.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">If you know the name and extension of your file manager, you can contact them directly.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Otherwise, please contact the recruiting centre in charge of your file during business hours.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Thank you and we look forward to speaking with you.</p>`;
+  }
+
+  getTentativeOffreGdEmailHtml(): string {
+    const fr = this.getTentativeOffreGdSectionHtmlFr();
+    const en = this.getTentativeOffreGdSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
   // Consolidated Plain Text Email
   getCombinedPlainString(ignoreMerge: boolean = false): string {
     if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailPlain()) {
       return this.sharedState.reoMergedEmailPlain();
+    }
+
+    if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
+      return this.getTentativeOffreGdEmailPlain();
     }
 
     const scenario = this.activeEmailScenario();
@@ -9694,6 +9910,10 @@ If you fail to attend without notifying us, you risk having your file closed.</p
   getCombinedRawHtmlString(ignoreMerge: boolean = false): string {
     if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
       return this.sharedState.reoMergedEmailHtml();
+    }
+
+    if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
+      return this.getTentativeOffreGdEmailHtml();
     }
 
     const scenario = this.activeEmailScenario();
