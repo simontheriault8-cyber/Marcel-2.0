@@ -8243,6 +8243,10 @@ Thank you for your cooperation.`;
       html += nonMandatoryTasksHtmlFr;
     }
 
+    html += this.getPforCaf101HighDemandWarningHtml('fr');
+
+    html += `<p>Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.</p>`;
+
     html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
     html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
@@ -8254,7 +8258,7 @@ Thank you for your cooperation.`;
 
     html += `<p style="margin-bottom: 5px;"><strong>1- Inform yourself :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=pG_HGCUT9Yc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
+    html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=nGGLc_Ynr-I" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
     html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
     html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
     html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
@@ -8272,10 +8276,74 @@ Thank you for your cooperation.`;
       html += nonMandatoryTasksHtmlEn;
     }
 
+    html += this.getPforCaf101HighDemandWarningHtml('en');
+
+    html += `<p>If no action is taken in your portal, your file will automatically close within 30 days.</p>`;
+
     html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
     html += `</div>`;
     return html;
+  }
+
+  getPforCaf101HighDemandWarningHtml(lang: 'fr' | 'en'): string {
+    const dossierJobs = this.getDossierJobObjects().filter(
+      (j) => j.id !== '00003' && this.jobService.isJobInGestionDesAttentes(j.id)
+    );
+    if (dossierJobs.length === 0) return '';
+    let html = '';
+    if (lang === 'fr') {
+      html += `<p>Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :</p>`;
+      html += `<ul style="margin-top: 5px; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+      for (const j of dossierJobs) {
+        html += `  <li style="margin-bottom: 5px;"><strong>${j.title} (${j.id})</strong></li>`;
+      }
+      html += `</ul>`;
+      html += `<p>Nous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, il est possible que votre dossier ne soit pas traité pour ces choix en raison de la forte concurrence et des dossiers déjà actuellement en traitement.</p>`;
+      html += `<p>En tenant compte de cette situation, vous pouvez soit maintenir ce ou ces choix, soit consulter les autres possibilités offertes par les Collèges militaires du Canada en utilisant le lien suivant :<br>`;
+      html += `<a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-fra.asp#occu" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Liste des programmes admissibles par métier</a></p>`;
+      html += `<p style="margin-bottom: 20px;">Nous vous invitons à nous faire part de votre décision dans les meilleurs délais afin de poursuivre le traitement de votre dossier.</p>`;
+    } else {
+      html += `<p>Please be aware that among the occupations you have selected in your enrolment application are the following:</p>`;
+      html += `<ul style="margin-top: 5px; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+      for (const j of dossierJobs) {
+        html += `  <li style="margin-bottom: 5px;"><strong>${j.titleEn || j.title} (${j.id})</strong></li>`;
+      }
+      html += `</ul>`;
+      html += `<p>We would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, it is possible that your file may not be processed for these choices due to strong competition and the files currently in processing.</p>`;
+      html += `<p>Considering this situation, you may either maintain this choice / these choices or explore the other opportunities offered by the Canadian Military Colleges using the following link:<br>`;
+      html += `<a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-eng.asp#occu" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">List of Eligible Programs by Occupation</a></p>`;
+      html += `<p style="margin-bottom: 20px;">We invite you to let us know your decision as soon as possible in order to continue processing your application.</p>`;
+    }
+    return html;
+  }
+
+  getPforCaf101HighDemandWarningPlain(lang: 'fr' | 'en'): string {
+    const dossierJobs = this.getDossierJobObjects().filter(
+      (j) => j.id !== '00003' && this.jobService.isJobInGestionDesAttentes(j.id)
+    );
+    if (dossierJobs.length === 0) return '';
+    let plain = '';
+    if (lang === 'fr') {
+      plain += `Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :\n`;
+      for (const j of dossierJobs) {
+        plain += `• ${j.title} (${j.id})\n`;
+      }
+      plain += `\nNous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, il est possible que votre dossier ne soit pas traité pour ces choix en raison de la forte concurrence et des dossiers déjà actuellement en traitement.\n\n`;
+      plain += `En tenant compte de cette situation, vous pouvez soit maintenir ce ou ces choix, soit consulter les autres possibilités offertes par les Collèges militaires du Canada en utilisant le lien suivant :\n`;
+      plain += `Liste des programmes admissibles par métier (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-fra.asp#occu)\n\n`;
+      plain += `Nous vous invitons à nous faire part de votre décision dans les meilleurs délais afin de poursuivre le traitement de votre dossier.\n\n`;
+    } else {
+      plain += `Please be aware that among the occupations you have selected in your enrolment application are the following:\n`;
+      for (const j of dossierJobs) {
+        plain += `• ${j.titleEn || j.title} (${j.id})\n`;
+      }
+      plain += `\nWe would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, it is possible that your file may not be processed for these choices due to strong competition and the files currently in processing.\n\n`;
+      plain += `Considering this situation, you may either maintain this choice / these choices or explore the other opportunities offered by the Canadian Military Colleges using the following link:\n`;
+      plain += `List of Eligible Programs by Occupation (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-eng.asp#occu)\n\n`;
+      plain += `We invite you to let us know your decision as soon as possible in order to continue processing your application.\n\n`;
+    }
+    return plain;
   }
 
   getCompliantPforEmailPlain(): string {
@@ -8303,6 +8371,10 @@ Thank you for your cooperation.`;
       plain += `${nonMandatoryTasksFr}\n\n`;
     }
 
+    plain += this.getPforCaf101HighDemandWarningPlain('fr');
+
+    plain += `Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.\n\n`;
+
     plain += this.getSignatureFr();
 
     plain += `\n\n______________________________________________________________________________\n\n`;
@@ -8312,7 +8384,7 @@ Thank you for your cooperation.`;
     plain += `Thank you very much for providing your documents and selecting your preferred occupation.\n`;
     plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
     plain += `1- Inform yourself :\n`;
-    plain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=pG_HGCUT9Yc)\n`;
+    plain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=nGGLc_Ynr-I)\n`;
     plain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
     plain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
     plain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
@@ -8324,6 +8396,10 @@ Thank you for your cooperation.`;
     if (nonMandatoryTasksEn) {
       plain += `${nonMandatoryTasksEn}\n\n`;
     }
+
+    plain += this.getPforCaf101HighDemandWarningPlain('en');
+
+    plain += `If no action is taken in your portal, your file will automatically close within 30 days.\n\n`;
 
     plain += this.getSignatureEn();
 

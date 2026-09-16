@@ -1364,6 +1364,16 @@ export class RecruitmentDataService {
               logNoteFr:
                 "Le SEAF a été complété mais il n'y a pas de résultat au dossier",
             },
+            {
+              id: "seaf_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, vous devez refaire le formulaire de demande d'emploi notée puisque votre score peux changer selon votre expérience dans la vie. Veuillez vous rendre sur votre portail du postulant afin de le compléter.",
+              instructionEn:
+                "For the reopening of your file, you must redo the rated employment application form as your score may change based on your life experience. Please go to your applicant portal to complete it.",
+              logNoteFr: "Mise à jour du formulaire de demande d'emploi notée",
+            },
           ],
         },
         {

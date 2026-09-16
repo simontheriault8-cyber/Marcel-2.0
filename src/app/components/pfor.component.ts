@@ -97,36 +97,8 @@ export const CMR_JOB_DOMAINS: Record<
           </div>
         </div>
 
-        <!-- Header Actions: Toggle Switch above Options Dropdown -->
-        <div class="flex flex-col items-end gap-2 shrink-0">
-          <!-- Toggle Switch: Gestion des attentes / Réorientation -->
-          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-xs">
-            <button
-              type="button"
-              (click)="pforEmailMode.set('attentes')"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-              [class.bg-white]="pforEmailMode() === 'attentes'"
-              [class.text-indigo-700]="pforEmailMode() === 'attentes'"
-              [class.shadow-xs]="pforEmailMode() === 'attentes'"
-              [class.text-slate-600]="pforEmailMode() !== 'attentes'"
-              [class.hover:text-slate-900]="pforEmailMode() !== 'attentes'"
-            >
-              <span>Gestion des attentes</span>
-            </button>
-            <button
-              type="button"
-              (click)="pforEmailMode.set('reorientation')"
-              class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-              [class.bg-white]="pforEmailMode() === 'reorientation'"
-              [class.text-indigo-700]="pforEmailMode() === 'reorientation'"
-              [class.shadow-xs]="pforEmailMode() === 'reorientation'"
-              [class.text-slate-600]="pforEmailMode() !== 'reorientation'"
-              [class.hover:text-slate-900]="pforEmailMode() !== 'reorientation'"
-            >
-              <span>Réorientation</span>
-            </button>
-          </div>
-
+        <!-- Header Actions: Options Dropdown -->
+        <div class="flex items-center gap-2 shrink-0">
           <!-- Options Dropdown -->
           <div class="relative shrink-0 pfor-options-dropdown-container">
             <button
@@ -390,7 +362,14 @@ export const CMR_JOB_DOMAINS: Record<
             <div class="space-y-3">
               <!-- Métier 1 -->
               <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Choix 1 (Principal)</label>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-semibold text-slate-600">Choix 1 (Principal)</label>
+                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId1())) {
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId1()) }})
+                    </span>
+                  }
+                </div>
                 <select
                   [ngModel]="selectedDossierJobId1()"
                   (ngModelChange)="selectedDossierJobId1.set($event)"
@@ -408,7 +387,14 @@ export const CMR_JOB_DOMAINS: Record<
 
               <!-- Métier 2 -->
               <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Choix 2</label>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-semibold text-slate-600">Choix 2</label>
+                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId2())) {
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId2()) }})
+                    </span>
+                  }
+                </div>
                 <select
                   [ngModel]="selectedDossierJobId2()"
                   (ngModelChange)="selectedDossierJobId2.set($event)"
@@ -425,7 +411,14 @@ export const CMR_JOB_DOMAINS: Record<
 
               <!-- Métier 3 -->
               <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Choix 3</label>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-semibold text-slate-600">Choix 3</label>
+                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId3())) {
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId3()) }})
+                    </span>
+                  }
+                </div>
                 <select
                   [ngModel]="selectedDossierJobId3()"
                   (ngModelChange)="selectedDossierJobId3.set($event)"
@@ -561,10 +554,23 @@ export const CMR_JOB_DOMAINS: Record<
               <div
                 class="p-4 bg-slate-50 border-b border-slate-200 shrink-0 flex items-center justify-between flex-wrap gap-2"
               >
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ pforEmailMode() === 'attentes' ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation' }}
+                    {{ isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation' }}
                   </h3>
+                  @if (isAttentesMode()) {
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full border"
+                      [class.bg-purple-100]="attentesSituation() === 1"
+                      [class.text-purple-700]="attentesSituation() === 1"
+                      [class.border-purple-200]="attentesSituation() === 1"
+                      [class.bg-amber-100]="attentesSituation() === 2"
+                      [class.text-amber-800]="attentesSituation() === 2"
+                      [class.border-amber-200]="attentesSituation() === 2"
+                    >
+                      {{ attentesSituationsSummary() }}
+                    </span>
+                  }
                   @if (eligiblePforJobs().length > 0) {
                     <div class="flex gap-2">
                       <span
@@ -586,13 +592,14 @@ export const CMR_JOB_DOMAINS: Record<
 
                 <div class="flex gap-2 w-full sm:w-auto">
                   <button
-                    (click)="copyBilingualEmail()"
+                    (click)="exportToOutlook()"
                     [disabled]="!showResultsPanel()"
                     class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-white rounded-lg transition flex items-center gap-1.5 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     [class.bg-emerald-600]="copied()"
                     [class.hover:bg-emerald-700]="copied()"
                     [class.bg-blue-600]="!copied()"
                     [class.hover:bg-blue-700]="!copied()"
+                    title="Exporter vers Outlook"
                   >
                     @if (copied()) {
                       <svg
@@ -609,7 +616,7 @@ export const CMR_JOB_DOMAINS: Record<
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      Courriel copié !
+                      Copié ! Ouverture d'Outlook...
                     } @else {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -622,19 +629,13 @@ export const CMR_JOB_DOMAINS: Record<
                         stroke-linecap="round"
                         stroke-linejoin="round"
                       >
-                        <rect
-                          x="9"
-                          y="9"
-                          width="13"
-                          height="13"
-                          rx="2"
-                          ry="2"
-                        ></rect>
                         <path
-                          d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                          d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"
                         ></path>
+                        <polyline points="14 4 20 4 20 10"></polyline>
+                        <line x1="14" y1="10" x2="20" y2="4"></line>
                       </svg>
-                      Copier le courriel
+                      Exporter vers Outlook
                     }
                   </button>
                 </div>
@@ -660,7 +661,6 @@ export class PforComponent {
   sanitizer = inject(DomSanitizer);
 
   // Inputs & Signals
-  pforEmailMode = signal<"attentes" | "reorientation">("attentes");
   age = signal<number | null>(18);
   citizenship = signal<string>("Canadian Citizen");
   pforType = signal<"cmr" | "civil">("cmr");
@@ -672,6 +672,173 @@ export class PforComponent {
   selectedDossierJobId1 = signal<string>("");
   selectedDossierJobId2 = signal<string>("");
   selectedDossierJobId3 = signal<string>("");
+
+  attentesJobsInDossier = computed(() => {
+    const dossierIds = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean).filter((id) => id !== "00003");
+    return dossierIds.filter((id) => this.jobService.isJobInGestionDesAttentes(id));
+  });
+
+  isAttentesMode = computed(() => {
+    return this.attentesJobsInDossier().length > 0;
+  });
+
+  attentesSituation = computed<1 | 2>(() => {
+    const jobs = this.attentesJobsInDossier();
+    for (const jId of jobs) {
+      const pforStatus = this.jobService.getJobPforStatus(jId);
+      // Situation 2: operation de traitement est ferme ('f')
+      if (pforStatus && pforStatus.traitement === "f") {
+        return 2;
+      }
+    }
+    // Situation 1: operation d'admission est ouvert ou ferme et operation de traitement est ouvert ('o')
+    return 1;
+  });
+
+  attentesSituationsNoteLabel = computed<string>(() => {
+    const jobs = this.attentesJobsInDossier();
+    const sits = Array.from(new Set(jobs.map((j) => this.getJobAttentesSituation(j))));
+    if (sits.length === 0) return "Situation 1";
+    if (sits.length === 1) return `Situation ${sits[0]}`;
+    return `Situations ${sits.sort().join(" et ")}`;
+  });
+
+  attentesSituationsSummary = computed<string>(() => {
+    const jobs = this.attentesJobsInDossier();
+    const sits = Array.from(new Set(jobs.map((j) => this.getJobAttentesSituation(j))));
+    if (sits.length === 0) return "Situation 1 : Traitement ouvert";
+    if (sits.length === 1) {
+      const s = sits[0];
+      return `Situation ${s} : ${s === 1 ? "Traitement ouvert" : "Traitement fermé"}`;
+    }
+    return `Situations ${sits.sort().join(" & ")}`;
+  });
+
+  getJobAttentesSituation(jobId: string): 1 | 2 {
+    const pforStatus = this.jobService.getJobPforStatus(jobId);
+    if (pforStatus && pforStatus.traitement === "f") {
+      return 2;
+    }
+    return 1;
+  }
+
+  getJobGestionDesAttentesReasonsFr(id: string): string[] {
+    const reasons: string[] = [];
+    if (this.jobService.isJobInGestionDesAttentes(id)) {
+      const sit = this.getJobAttentesSituation(id);
+      if (sit === 1) {
+        reasons.push(
+          "Malheureusement, toutes les places disponibles de ce métier ont été comblées. Bien que certaines places puissent se libérer si des candidats refusent leur offre, cela demeure peu probable en raison du nombre de candidats déjà admis.",
+        );
+      } else {
+        reasons.push(
+          "À l’heure actuelle, nous avons reçu suffisamment de candidatures pour combler les positions restantes de ce métier. Votre candidature ne peut donc pas progresser davantage pour le moment.",
+        );
+      }
+      const s = this.evaluateJobAdmissibility(id);
+      if (s && !s.isEducationAdmissible && s.educationReason) {
+        reasons.push(s.educationReason);
+      }
+    } else {
+      const s = this.evaluateJobAdmissibility(id);
+      if (s) {
+        if (s.isJobClosed) {
+          reasons.push(
+            "Il n'y a plus de postes disponibles pour ce métier dans le cadre du Programme de formation des officiers de la force régulière (PFOR).",
+          );
+        }
+        if (!s.isAgeAdmissible) {
+          reasons.push(
+            `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
+          );
+        }
+        if (!s.isCitizenshipAdmissible) {
+          reasons.push(
+            "Pour diverses raisons, ce métier n'est pas accessible aux résidents permanents.",
+          );
+        }
+        if (!s.isEducationAdmissible) {
+          reasons.push(s.educationReason);
+        }
+        if (!s.isMedicalAdmissible) {
+          reasons.push(s.medicalReason);
+        }
+      }
+    }
+    return reasons;
+  }
+
+  getJobGestionDesAttentesReasonsEn(id: string): string[] {
+    const reasons: string[] = [];
+    if (this.jobService.isJobInGestionDesAttentes(id)) {
+      const sit = this.getJobAttentesSituation(id);
+      if (sit === 1) {
+        reasons.push(
+          "Unfortunately, all available positions in this occupation have been filled. While some positions may become available if candidates decline their offers, this remains unlikely given the number of applicants who have already been selected.",
+        );
+      } else {
+        reasons.push(
+          "At this time, we have received a sufficient number of applications to fill the remaining positions for this occupation. As a result, your application cannot proceed any further at this time.",
+        );
+      }
+      const s = this.evaluateJobAdmissibility(id);
+      if (s && !s.isEducationAdmissible && s.educationReasonEn) {
+        reasons.push(s.educationReasonEn);
+      }
+    } else {
+      const s = this.evaluateJobAdmissibility(id);
+      if (s) {
+        if (s.isJobClosed) {
+          reasons.push(
+            "There are no longer positions available for this occupation under the Regular Officer Training Plan (ROTP).",
+          );
+        }
+        if (!s.isAgeAdmissible) {
+          reasons.push(
+            `Your age does not allow completing the initial contract (${s.durationYears} years) before age 60.`,
+          );
+        }
+        if (!s.isCitizenshipAdmissible) {
+          reasons.push(
+            "For various reasons, this occupation is not open to permanent residents.",
+          );
+        }
+        if (!s.isEducationAdmissible) {
+          reasons.push(s.educationReasonEn);
+        }
+        if (!s.isMedicalAdmissible) {
+          reasons.push(s.medicalReasonEn);
+        }
+      }
+    }
+    return reasons;
+  }
+
+  getCmrAdmittedDomainsAttentesFr(): string {
+    const parts: string[] = [];
+    if (this.cmrArts()) parts.push("Sciences humaines et sociales");
+    if (this.cmrGenie()) parts.push("Génie");
+    if (this.cmrScience()) parts.push("Sciences");
+    if (parts.length === 0) return "aucun domaine sélectionné";
+    if (parts.length === 1) return parts[0];
+    if (parts.length === 2) return `${parts[0]} et ${parts[1]}`;
+    return `${parts[0]}, ${parts[1]} et ${parts[2]}`;
+  }
+
+  getCmrAdmittedDomainsAttentesEn(): string {
+    const parts: string[] = [];
+    if (this.cmrArts()) parts.push("Social Sciences and Humanities");
+    if (this.cmrGenie()) parts.push("Engineering");
+    if (this.cmrScience()) parts.push("Science");
+    if (parts.length === 0) return "no field selected";
+    if (parts.length === 1) return parts[0];
+    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+    return `${parts[0]}, ${parts[1]} and ${parts[2]}`;
+  }
 
   // Options
   showOptionsDropdown = signal<boolean>(false);
@@ -855,7 +1022,7 @@ export class PforComponent {
     return choices.some((c) => !c.isEligible);
   });
 
-  getCmrAdmittedDomainsFr(): string {
+  getCmrAdmittedDomainsNoteFr(): string {
     const domains: string[] = [];
     if (this.cmrArts()) domains.push("Arts");
     if (this.cmrScience()) domains.push("Sciences");
@@ -866,9 +1033,20 @@ export class PforComponent {
     return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
   }
 
+  getCmrAdmittedDomainsFr(): string {
+    const domains: string[] = [];
+    if (this.cmrArts()) domains.push("Sciences humaines et sociales");
+    if (this.cmrScience()) domains.push("Sciences");
+    if (this.cmrGenie()) domains.push("Génie");
+    if (domains.length === 0) return "";
+    if (domains.length === 1) return domains[0];
+    if (domains.length === 2) return `${domains[0]} et ${domains[1]}`;
+    return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
+  }
+
   getCmrAdmittedDomainsEn(): string {
     const domains: string[] = [];
-    if (this.cmrArts()) domains.push("Arts");
+    if (this.cmrArts()) domains.push("Social Sciences and Humanities");
     if (this.cmrScience()) domains.push("Science");
     if (this.cmrGenie()) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -881,7 +1059,7 @@ export class PforComponent {
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Sciences humaines et sociales");
     if (cmrInfo.science) domains.push("Sciences");
     if (cmrInfo.genie) domains.push("Génie");
     if (domains.length === 1) return domains[0];
@@ -893,7 +1071,7 @@ export class PforComponent {
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Social Sciences and Humanities");
     if (cmrInfo.science) domains.push("Science");
     if (cmrInfo.genie) domains.push("Engineering");
     if (domains.length === 1) return domains[0];
@@ -925,7 +1103,6 @@ export class PforComponent {
   }
 
   resetAll() {
-    this.pforEmailMode.set("attentes");
     this.age.set(18);
     this.citizenship.set("Canadian Citizen");
     this.pforType.set("cmr");
@@ -1065,41 +1242,74 @@ export class PforComponent {
       this.selectedDossierJobId3(),
     ].filter(Boolean);
 
-    let metierRaison = "";
+    let reoNote = "";
 
-    if (dossierIds.length === 0) {
-      metierRaison = "aucun métier sélectionné au dossier";
-    } else {
-      const parts: string[] = [];
-      const choices = this.analyzedDossierChoices();
-      for (const c of choices) {
-        if (c.job.id === "00003") {
-          parts.push(`00003 : Sans métier`);
-          continue;
+    if (this.isAttentesMode()) {
+      let admissionPart = "";
+      if (this.pforType() === "cmr") {
+        const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
+        if (cmrDomains) {
+          admissionPart = `Admis CMR (${cmrDomains})`;
+        } else {
+          admissionPart = "PFOR CMR";
         }
-        parts.push(`(${c.job.id} : ${c.isEligible ? "Admissible" : c.reasonFr})`);
-      }
-      metierRaison = parts.join(", ");
-    }
-
-    const isPRAdmissible = this.citizenship() === "PR > 3 years";
-    const prDemandText = isPRAdmissible
-      ? " et relevés de notes du pays d'origine demandés"
-      : "";
-
-    let reoPrefix = "Réorientation nécessaire car";
-    if (this.pforType() === "cmr") {
-      const cmrDomains = this.getCmrAdmittedDomainsFr();
-      if (cmrDomains) {
-        reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
       } else {
-        reoPrefix = "PFOR CMR - Réorientation nécessaire car";
+        admissionPart = "PFOR Civil";
       }
-    } else {
-      reoPrefix = "PFOR Civil - Réorientation nécessaire car";
-    }
 
-    const reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+      const jobParts: string[] = [];
+      for (const id of dossierIds) {
+        if (id === "00003") {
+          jobParts.push("00003 - Sans métier");
+        } else {
+          const sit = this.getJobAttentesSituation(id);
+          const sitLabel = sit === 1 ? "Intake fermé" : "Traitement fermé";
+          jobParts.push(`${id} - ${sitLabel}`);
+        }
+      }
+      const jobsFormatted =
+        jobParts.length > 0 ? jobParts.join(", ") : "aucun métier sélectionné";
+
+      reoNote = `Étape 1 (En cours) - ${admissionPart} - Courriel de gestion des attentes envoyé, ${jobsFormatted}. Traitement continu, possible changement de métier selon choix du postulant.`;
+    } else {
+      let metierRaison = "";
+
+      if (dossierIds.length === 0) {
+        metierRaison = "aucun métier sélectionné au dossier";
+      } else {
+        const parts: string[] = [];
+        const choices = this.analyzedDossierChoices();
+        for (const c of choices) {
+          if (c.job.id === "00003") {
+            parts.push(`00003 : Sans métier`);
+            continue;
+          }
+          parts.push(
+            `(${c.job.id} : ${c.isEligible ? "Admissible" : c.reasonFr})`,
+          );
+        }
+        metierRaison = parts.join(", ");
+      }
+
+      const isPRAdmissible = this.citizenship() === "PR > 3 years";
+      const prDemandText = isPRAdmissible
+        ? " et relevés de notes du pays d'origine demandés"
+        : "";
+
+      let reoPrefix = "Réorientation nécessaire car";
+      if (this.pforType() === "cmr") {
+        const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
+        if (cmrDomains) {
+          reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
+        } else {
+          reoPrefix = "PFOR CMR - Réorientation nécessaire car";
+        }
+      } else {
+        reoPrefix = "PFOR Civil - Réorientation nécessaire car";
+      }
+
+      reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+    }
 
     if (this.sharedState.includeLinkedEmail() && this.sharedState.taskNote()) {
       const taskNoteRaw = this.sharedState.taskNote();
@@ -1111,8 +1321,9 @@ export class PforComponent {
       }
 
       const prefixRegex = /^Étape 1 \((En cours|en cours)\)\s*-\s*/i;
-      const suffixString =
-        "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+      const suffixString = this.isAttentesMode()
+        ? "Traitement continu, possible changement de métier selon choix du postulant."
+        : "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
 
       const taskHasPrefix = prefixRegex.test(taskNoteRaw);
       let taskClean = taskNoteRaw.replace(prefixRegex, "").trim();
@@ -1173,7 +1384,384 @@ export class PforComponent {
     }
   }
 
+  buildGestionDesAttentesEmail(isHtml: boolean): string {
+    const dossierChoices = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean);
+    const realDossierIds = dossierChoices.filter((id) => id !== "00003");
+
+    if (!this.showResultsPanel() && realDossierIds.length === 0) {
+      return isHtml
+        ? '<p class="text-slate-500 italic">Veuillez renseigner les critères d\'admission du postulant PFOR pour générer le courriel de gestion des attentes.</p>'
+        : "Veuillez renseigner les critères d'admission du postulant PFOR pour générer le courriel de gestion des attentes.";
+    }
+
+    const situation = this.attentesSituation();
+    const cmrAdmittedFr = this.getCmrAdmittedDomainsAttentesFr();
+    const cmrAdmittedEn = this.getCmrAdmittedDomainsAttentesEn();
+
+    const rawHtml = this.sharedState.taskEmailHtmlFr();
+    const rawTxt = this.sharedState.taskEmailFr();
+    const hasTasks =
+      !!rawHtml &&
+      this.sharedState.hasReassignedTasks() &&
+      rawHtml.includes("Bonjour,");
+    const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
+
+    const allEligibleJobs = this.eligiblePforJobs().filter(
+      (j) => !dossierChoices.includes(j.id),
+    );
+    let listOFF: JobEntry[] = [];
+    let listClosedOFF: JobEntry[] = [];
+
+    if (this.ignoreSip()) {
+      for (const j of allEligibleJobs) {
+        if (this.jobService.isPforJobClosed(j.id, this.currentSipPhase())) {
+          listClosedOFF.push(j);
+        } else {
+          listOFF.push(j);
+        }
+      }
+    } else {
+      listOFF = allEligibleJobs;
+    }
+
+    if (isHtml) {
+      let h = "";
+      h +=
+        '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+
+      // FRENCH SECTION
+      h += '<p class="mt-4">Bonjour,</p>\n';
+      h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMC dans le(s) domaine(s) d'études suivant(s): ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+
+      if (mergeTasks) {
+        let taskPartHtml = "";
+        if (rawHtml.includes("<!-- START_TASK_BODY_FR -->")) {
+          const frParts = rawHtml.split("<!-- START_TASK_BODY_FR -->");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
+            if (frBodyPart.length > 0) {
+              taskPartHtml = frBodyPart[0].trim();
+            }
+          }
+        } else {
+          const frParts = rawHtml.split("<p>Bonjour,</p>");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<p>En raison du volume");
+            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
+              taskPartHtml = frBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtml) {
+          h +=
+            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :</p>\n';
+          h += taskPartHtml + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      h +=
+        '<p class="mt-4">Toutefois, suite à l\'analyse de vos choix de métiers actuels, nous constatons qu\'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n';
+
+      h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
+      for (const id of realDossierIds) {
+        const link = this.getJobLinkMarkup(id, true, true);
+        const name = `${id} - ${link}`;
+        const reasons = this.getJobGestionDesAttentesReasonsFr(id);
+        let reasonMarkup = "";
+        if (reasons.length > 0) {
+          reasonMarkup = `\n    <ul class="list-disc pl-5 mt-1 text-sm text-slate-600">\n      <li>${reasons.join("</li>\n      <li>")}</li>\n    </ul>`;
+        }
+        h += `  <li class="mt-1"><strong>${name}</strong>${reasonMarkup}</li>\n`;
+      }
+      h += '</ul>\n';
+
+      h +=
+        '<p class="mt-4 font-semibold text-slate-800">Voici les options qui s\'offrent à vous:</p>\n';
+      h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
+      h +=
+        '  <li><strong>Conserver le métier actuel.</strong> Vous pouvez garder ce choix de métier, des positions pourraient de nouveau être disponibles dans les prochaines semaines, mais rien n’est garantie.</li>\n';
+      h +=
+        '  <li><strong>Choisir un autre métier.</strong> Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d\'enrôlement. Il faut comprendre que la situation évolue rapidement et que les métiers de la liste suivante peuvent également se voir être fermés dans les prochains jours/semaines.</li>\n';
+      h += '</ul>\n';
+
+      h +=
+        '<p class="mt-4 font-semibold text-slate-800">Veuillez consulter la liste des métiers pour lesquels vous rencontrez les critères d\'admissibilité :</p>\n';
+
+      h += '<div class="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h += '  <p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">Officiers:</p>\n';
+      if (listOFF.length === 0 && listClosedOFF.length === 0) {
+        h += '  <p class="mt-2 text-slate-700 italic">Aucun métier PFOR ouvert correspondant n\'est disponible actuellement pour la sélection effectuée.</p>\n';
+      } else {
+        h += '  <ul class="list-disc pl-5 space-y-1">\n';
+        for (const j of listOFF) {
+          const link = this.getJobLinkMarkup(j.id, true, true);
+          h += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+        }
+        for (const j of listClosedOFF) {
+          const link = this.getJobLinkMarkup(j.id, true, true);
+          h += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(FERMÉ)</span></li>\n`;
+        }
+        h += '  </ul>\n';
+      }
+      h += '</div>\n';
+
+      h +=
+        '<p class="mt-4">Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.</p>\n';
+
+      h += '<p class="mt-4">Cordialement,</p>\n';
+      h += '<p>' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+
+      h += '<hr class="my-6 border-slate-200" />\n';
+
+      // ENGLISH SECTION
+      h += '<p class="mt-4">Hello,</p>\n';
+      h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Canadian Military College (CMC) for the Regular Officer Training Plan (ROTP), you have been admitted to CMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.</p>\n`;
+
+      if (mergeTasks) {
+        const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
+        let taskPartHtmlEn = "";
+        if (rawHtmlEn.includes("<!-- START_TASK_BODY_EN -->")) {
+          const enParts = rawHtmlEn.split("<!-- START_TASK_BODY_EN -->");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
+            if (enBodyPart.length > 0) {
+              taskPartHtmlEn = enBodyPart[0].trim();
+            }
+          }
+        } else {
+          const enParts = rawHtmlEn.split("<p>Hello,</p>");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<p>Due to a high volume");
+            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+              taskPartHtmlEn = enBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtmlEn) {
+          h +=
+            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:</p>\n';
+          h += taskPartHtmlEn + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      h +=
+        '<p class="mt-4">However, following the review of your current occupation choices, a reorientation is required.<br>Here is the current status of the occupations in your file:</p>\n';
+
+      h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
+      for (const id of realDossierIds) {
+        const link = this.getJobLinkMarkup(id, false, true);
+        const name = `${id} - ${link}`;
+        const reasons = this.getJobGestionDesAttentesReasonsEn(id);
+        let reasonMarkup = "";
+        if (reasons.length > 0) {
+          reasonMarkup = `\n    <ul class="list-disc pl-5 mt-1 text-sm text-slate-600">\n      <li>${reasons.join("</li>\n      <li>")}</li>\n    </ul>`;
+        }
+        h += `  <li class="mt-1"><strong>${name}</strong>${reasonMarkup}</li>\n`;
+      }
+      h += '</ul>\n';
+
+      h +=
+        '<p class="mt-4 font-semibold text-slate-800">Here are the options available to you:</p>\n';
+      h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
+      h +=
+        '  <li><strong>Maintain Your Current Occupation Choice.</strong> You may keep your current occupation choice, as positions could become available again in the coming weeks. However, there is no guarantee that vacancies will reopen.</li>\n';
+      h +=
+        '  <li><strong>Choose Another Occupation.</strong> You must redirect your application to an occupation for which you are eligible in order to continue the enrolment process. Please note that the situation changes rapidly, and occupations listed below may also close within the coming days or weeks.</li>\n';
+      h += '</ul>\n';
+
+      h += '<div class="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h += '  <p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 uppercase">ELIGIBLE OCCUPATIONS:</p>\n';
+      h += '  <p class="font-bold text-slate-800 mt-2 mb-1">Officers:</p>\n';
+      if (listOFF.length === 0 && listClosedOFF.length === 0) {
+        h += '  <p class="mt-2 text-slate-700 italic">No matching open ROTP occupations are currently available for the selected options.</p>\n';
+      } else {
+        h += '  <ul class="list-disc pl-5 space-y-1">\n';
+        for (const j of listOFF) {
+          const link = this.getJobLinkMarkup(j.id, false, true);
+          h += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+        }
+        for (const j of listClosedOFF) {
+          const link = this.getJobLinkMarkup(j.id, false, true);
+          h += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(CLOSED)</span></li>\n`;
+        }
+        h += '  </ul>\n';
+      }
+      h += '</div>\n';
+
+      h +=
+        '<p class="mt-4">We thank you for your interest in the Canadian Armed Forces. Please let us know your decision by replying directly to this email so that we can update your file.</p>\n';
+
+      h +=
+        '<p class="mt-4">Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.</p>\n';
+
+      h += '<p class="mt-4">Sincerely,</p>\n';
+      h += '<p>' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+
+      return h;
+    } else {
+      // PLAIN TEXT VERSION
+      let t = "";
+      t += "English message will follow.\n\n";
+
+      // FRENCH PLAIN
+      t += "Bonjour,\n\n";
+      t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMC dans le(s) domaine(s) d'études suivant(s): ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+
+      if (mergeTasks && rawTxt) {
+        let taskPartTxt = "";
+        if (rawTxt.includes("--- DÉBUT DES TÂCHES ---")) {
+          const parts = rawTxt.split("--- DÉBUT DES TÂCHES ---");
+          if (parts.length > 1) {
+            const body = parts[1].split("--- FIN DES TÂCHES ---");
+            if (body.length > 0) {
+              taskPartTxt = body[0].trim();
+            }
+          }
+        }
+        if (taskPartTxt) {
+          t += "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
+          t += "----------------------------------------------------------------------\n";
+          t += taskPartTxt + "\n\n";
+        }
+      }
+
+      t +=
+        "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+      for (const id of realDossierIds) {
+        const link = this.getJobLinkMarkup(id, true, false);
+        const name = `${id} - ${link}`;
+        const reasons = this.getJobGestionDesAttentesReasonsFr(id);
+        let reasonTxt = "";
+        if (reasons.length > 0) {
+          reasonTxt = `\n    - ${reasons.join("\n    - ")}`;
+        }
+        t += `- ${name}${reasonTxt}\n`;
+      }
+      t += "\n";
+
+      t += "Voici les options qui s'offrent à vous:\n";
+      t +=
+        "• Conserver le métier actuel. Vous pouvez garder ce choix de métier, des positions pourraient de nouveau être disponibles dans les prochaines semaines, mais rien n’est garantie.\n";
+      t +=
+        "• Choisir un autre métier. Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d'enrôlement. Il faut comprendre que la situation évolue rapidement et que les métiers de la liste suivante peuvent également se voir être fermés dans les prochains jours/semaines.\n\n";
+
+      t +=
+        "Veuillez consulter la liste des métiers pour lesquels vous rencontrez les critères d'admissibilité :\n";
+      t += "Officiers:\n";
+      if (listOFF.length === 0 && listClosedOFF.length === 0) {
+        t +=
+          "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.\n\n";
+      } else {
+        for (const j of listOFF) {
+          const link = this.getJobLinkMarkup(j.id, true, false);
+          t += `• ${j.id} - ${link}\n`;
+        }
+        for (const j of listClosedOFF) {
+          const link = this.getJobLinkMarkup(j.id, true, false);
+          t += `• ${j.id} - ${link} (FERMÉ)\n`;
+        }
+        t += "\n";
+      }
+
+      t +=
+        "Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.\n\n";
+
+      t += "Cordialement,\n\n";
+      t += this.sharedState.getSignatureFr() + "\n\n";
+
+      t += "========================================\n\n";
+
+      // ENGLISH PLAIN
+      t += "Hello,\n\n";
+      t += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Canadian Military College (CMC) for the Regular Officer Training Plan (ROTP), you have been admitted to CMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
+
+      if (mergeTasks) {
+        const rawTxtEn = this.sharedState.taskEmailEn();
+        let taskPartTxtEn = "";
+        if (rawTxtEn.includes("--- START OF TASKS ---")) {
+          const parts = rawTxtEn.split("--- START OF TASKS ---");
+          if (parts.length > 1) {
+            const body = parts[1].split("--- END OF TASKS ---");
+            if (body.length > 0) {
+              taskPartTxtEn = body[0].trim();
+            }
+          }
+        }
+        if (taskPartTxtEn) {
+          t += "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:\n";
+          t += "----------------------------------------------------------------------\n";
+          t += taskPartTxtEn + "\n\n";
+        }
+      }
+
+      t +=
+        "However, following the review of your current occupation choices, a reorientation is required.\n";
+      t += "Here is the current status of the occupations in your file:\n";
+      for (const id of realDossierIds) {
+        const link = this.getJobLinkMarkup(id, false, false);
+        const name = `${id} - ${link}`;
+        const reasons = this.getJobGestionDesAttentesReasonsEn(id);
+        let reasonTxt = "";
+        if (reasons.length > 0) {
+          reasonTxt = `\n    - ${reasons.join("\n    - ")}`;
+        }
+        t += `- ${name}${reasonTxt}\n`;
+      }
+      t += "\n";
+
+      t += "Here are the options available to you:\n";
+      t +=
+        "• Maintain Your Current Occupation Choice. You may keep your current occupation choice, as positions could become available again in the coming weeks. However, there is no guarantee that vacancies will reopen.\n";
+      t +=
+        "• Choose Another Occupation. You must redirect your application to an occupation for which you are eligible in order to continue the enrolment process. Please note that the situation changes rapidly, and occupations listed below may also close within the coming days or weeks.\n\n";
+
+      t += "ELIGIBLE OCCUPATIONS:\n";
+      t += "Officers:\n";
+      if (listOFF.length === 0 && listClosedOFF.length === 0) {
+        t +=
+          "No matching open ROTP occupations are currently available for the selected options.\n\n";
+      } else {
+        for (const j of listOFF) {
+          const link = this.getJobLinkMarkup(j.id, false, false);
+          t += `• ${j.id} - ${link}\n`;
+        }
+        for (const j of listClosedOFF) {
+          const link = this.getJobLinkMarkup(j.id, false, false);
+          t += `• ${j.id} - ${link} (CLOSED)\n`;
+        }
+        t += "\n";
+      }
+
+      t +=
+        "We thank you for your interest in the Canadian Armed Forces. Please let us know your decision by replying directly to this email so that we can update your file.\n\n";
+
+      t +=
+        "Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.\n\n";
+
+      t += "Sincerely,\n\n";
+      t += this.sharedState.getSignatureEn() + "\n";
+
+      return t;
+    }
+  }
+
   buildBilingualEmail(isHtml: boolean): string {
+    if (this.isAttentesMode()) {
+      return this.buildGestionDesAttentesEmail(isHtml);
+    }
+
     const jobIds = this.eligiblePforJobs().map((j) => j.id);
 
     if (!this.showResultsPanel() && jobIds.length === 0) {
@@ -2111,9 +2699,10 @@ export class PforComponent {
     );
   }
 
-  async copyBilingualEmail() {
+  async exportToOutlook() {
     const html = this.buildBilingualEmail(true);
     const plain = this.buildBilingualEmail(false);
+    const subject = "Forces armées canadiennes/Canadian Armed Forces";
 
     try {
       if (navigator.clipboard && window.ClipboardItem) {
@@ -2133,8 +2722,16 @@ export class PforComponent {
       }
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2000);
+
+      // Open email client (Outlook)
+      const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}`;
+      window.location.href = mailtoLink;
     } catch (err) {
-      console.error("Failed to copy email", err);
+      console.error("Failed to export PFOR email to Outlook", err);
     }
+  }
+
+  async copyBilingualEmail() {
+    return this.exportToOutlook();
   }
 }

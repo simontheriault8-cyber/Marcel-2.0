@@ -2679,13 +2679,14 @@ const CMR_JOB_DOMAINS: Record<
 
               <div class="flex gap-2 w-full sm:w-auto">
                 <button
-                  (click)="copyBilingualEmail()"
+                  (click)="exportToOutlook()"
                   [disabled]="!showResultsPanel()"
                   class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-white rounded-lg transition flex items-center gap-1.5 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   [class.bg-emerald-600]="copied()"
                   [class.hover:bg-emerald-700]="copied()"
                   [class.bg-blue-600]="!copied()"
                   [class.hover:bg-blue-700]="!copied()"
+                  title="Exporter vers Outlook"
                 >
                   @if (copied()) {
                     <svg
@@ -2702,7 +2703,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Courriel copié !
+                    Copié ! Ouverture d'Outlook...
                   } @else {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -2715,19 +2716,13 @@ const CMR_JOB_DOMAINS: Record<
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     >
-                      <rect
-                        x="9"
-                        y="9"
-                        width="13"
-                        height="13"
-                        rx="2"
-                        ry="2"
-                      ></rect>
                       <path
-                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                        d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"
                       ></path>
+                      <polyline points="14 4 20 4 20 10"></polyline>
+                      <line x1="14" y1="10" x2="20" y2="4"></line>
                     </svg>
-                    Copier le courriel
+                    Exporter vers Outlook
                   }
                 </button>
               </div>
@@ -8109,7 +8104,7 @@ o Médecine d’urgence`,
     return true;
   }
 
-  getCmrAdmittedDomainsFr(): string {
+  getCmrAdmittedDomainsNoteFr(): string {
     const domains: string[] = [];
     if (this.cmrArts()) domains.push("Arts");
     if (this.cmrScience()) domains.push("Sciences");
@@ -8120,9 +8115,20 @@ o Médecine d’urgence`,
     return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
   }
 
+  getCmrAdmittedDomainsFr(): string {
+    const domains: string[] = [];
+    if (this.cmrArts()) domains.push("Sciences humaines et sociales");
+    if (this.cmrScience()) domains.push("Sciences");
+    if (this.cmrGenie()) domains.push("Génie");
+    if (domains.length === 0) return "";
+    if (domains.length === 1) return domains[0];
+    if (domains.length === 2) return `${domains[0]} et ${domains[1]}`;
+    return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
+  }
+
   getCmrAdmittedDomainsEn(): string {
     const domains: string[] = [];
-    if (this.cmrArts()) domains.push("Arts");
+    if (this.cmrArts()) domains.push("Social Sciences and Humanities");
     if (this.cmrScience()) domains.push("Science");
     if (this.cmrGenie()) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -8135,7 +8141,7 @@ o Médecine d’urgence`,
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Sciences humaines et sociales");
     if (cmrInfo.science) domains.push("Sciences");
     if (cmrInfo.genie) domains.push("Génie");
     if (domains.length === 0) return "";
@@ -8148,7 +8154,7 @@ o Médecine d’urgence`,
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Social Sciences and Humanities");
     if (cmrInfo.science) domains.push("Science");
     if (cmrInfo.genie) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -9009,7 +9015,7 @@ o Médecine d’urgence`,
     if (this.isPforApplicant()) {
       text += "Programme PFOR :\n";
       if (this.pforType() === "cmr") {
-        text += `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${this.getCmrAdmittedDomainsFr() || "Non spécifié"}\n`;
+        text += `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${this.getCmrAdmittedDomainsNoteFr() || "Non spécifié"}\n`;
       } else {
         text += "- Universités civiles\n";
       }
@@ -9148,7 +9154,7 @@ o Médecine d’urgence`,
 
     let reoPrefix = "Réorientation nécessaire car inadmissible pour";
     if (this.isPforApplicant() && this.pforType() === "cmr") {
-      const cmrDomains = this.getCmrAdmittedDomainsFr();
+      const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
       if (cmrDomains) {
         reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
       } else {
@@ -10623,6 +10629,10 @@ o Médecine d’urgence`,
     } catch (err) {
       console.error("Failed to copy reorientation email", err);
     }
+  }
+
+  exportToOutlook() {
+    return this.copyBilingualEmail();
   }
 
   getReoContentPlainFr() {

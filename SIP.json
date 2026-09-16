@@ -1,5 +1,5 @@
 {
-  "date": "09/09/2026",
+ "date": "15/09/2026",
   "programs": {
     "00003": {
       "aucun": {
@@ -389,7 +389,7 @@
     },
     "00183": {
       "PFOR": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFOEP": {
@@ -441,7 +441,7 @@
         "traitement": "o"
       },
       "EDO": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
@@ -663,8 +663,8 @@
         "traitement": "o"
       },
       "PFS-MR": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       },
       "Semi-qual": {
         "admission": "f",
@@ -695,7 +695,7 @@
         "traitement": "o"
       },
       "PFS-MR": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -709,7 +709,7 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "Semi-qual": {
@@ -985,8 +985,8 @@
     },
     "00390": {
       "PIMM": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       },
       "PFOS": {
         "admission": "o",
@@ -1007,8 +1007,8 @@
         "traitement": "o"
       },
       "PIMM": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       }
     },
     "00394": {
@@ -1101,5 +1101,8 @@
         "traitement": "o"
       }
     }
-  }
+  },
+  "gestionDesAttentes": [
+    "00183"
+  ]
 }
