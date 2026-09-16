@@ -68,6 +68,36 @@ export class JobDatabaseService {
   // Date when SIP was last updated
   sipDate = signal<string>(SIP_DATA.date || "");
 
+  // Signal for jobs in gestion des attentes from SIP.json
+  gestionDesAttentes: WritableSignal<string[]> = signal(
+    (
+      (SIP_DATA as any).gestionDesAttentes ||
+      (SIP_DATA as any).gestion_des_attentes ||
+      (SIP_DATA as any)["gestion des attentes"] ||
+      []
+    ).map((id: any) => String(id).trim().padStart(5, "0"))
+  );
+
+  isJobInGestionDesAttentes(jobId: string): boolean {
+    if (!jobId) return false;
+    const padded = jobId.trim().padStart(5, "0");
+    return this.gestionDesAttentes().includes(padded);
+  }
+
+  getJobPforStatus(jobId: string): { admission: "o" | "f"; traitement: "o" | "f" } | null {
+    const padded = jobId.trim().padStart(5, "0");
+    const raw = this.sipStatus()[padded] || {};
+    const pfor = raw["PFOR"];
+    if (!pfor) return null;
+    if (typeof pfor === "string") {
+      return { admission: pfor as any, traitement: pfor as any };
+    }
+    return {
+      admission: pfor.admission || "o",
+      traitement: pfor.traitement || "o",
+    };
+  }
+
   isOfficerJob(jobId: string): boolean {
     return this.OFFICER_JOBS.has(jobId);
   }

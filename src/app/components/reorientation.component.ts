@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
 import { MelService, MEL_LIMITATIONS } from "../../services/mel.service";
+import { JOB_URLS } from "../data/job-urls.data";
 
 interface ManualCriterion {
   id: string;
@@ -2398,6 +2399,172 @@ const CMR_JOB_DOMAINS: Record<
               </div>
             </div>
           </div>
+          } @else {
+            <!-- Volet PFOR lorsque Postulant PFOR est activé -->
+            <div class="p-5 bg-white border border-indigo-200 rounded-xl shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                  <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded tracking-wider leading-none">PFOR</span>
+                  <h3 class="text-sm font-bold text-slate-800">
+                    Configuration du Postulant PFOR
+                  </h3>
+                </div>
+              </div>
+
+              <!-- Type de PFOR -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-2">
+                  Volet PFOR sélectionné
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    (click)="pforType.set('cmr')"
+                    class="p-3 rounded-xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
+                    [class.bg-indigo-50]="pforType() === 'cmr'"
+                    [class.border-indigo-400]="pforType() === 'cmr'"
+                    [class.text-indigo-950]="pforType() === 'cmr'"
+                    [class.bg-white]="pforType() !== 'cmr'"
+                    [class.border-slate-200]="pforType() !== 'cmr'"
+                    [class.text-slate-700]="pforType() !== 'cmr'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">PFOR CMR</span>
+                      @if (pforType() === 'cmr') {
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                      }
+                    </div>
+                    <span class="text-xs text-slate-500">Collège militaire royal du Canada (Kingston / Saint-Jean)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="pforType.set('civil')"
+                    class="p-3 rounded-xl border text-left flex flex-col gap-1 transition-all cursor-pointer"
+                    [class.bg-indigo-50]="pforType() === 'civil'"
+                    [class.border-indigo-400]="pforType() === 'civil'"
+                    [class.text-indigo-950]="pforType() === 'civil'"
+                    [class.bg-white]="pforType() !== 'civil'"
+                    [class.border-slate-200]="pforType() !== 'civil'"
+                    [class.text-slate-700]="pforType() !== 'civil'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">PFOR Civil</span>
+                      @if (pforType() === 'civil') {
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                      }
+                    </div>
+                    <span class="text-xs text-slate-500">Universités civiles canadiennes subventionnées</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Domaines CMR -->
+              @if (pforType() === 'cmr') {
+                <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                  <label class="block text-xs font-bold text-slate-700">
+                    Domaines d'études admis au CMR (cochez les domaines rencontrés) :
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <label
+                      class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all"
+                      [class.bg-indigo-50]="cmrArts()"
+                      [class.border-indigo-300]="cmrArts()"
+                      [class.text-indigo-950]="cmrArts()"
+                      [class.bg-white]="!cmrArts()"
+                      [class.border-slate-200]="!cmrArts()"
+                      [class.text-slate-700]="!cmrArts()"
+                    >
+                      <input
+                        type="checkbox"
+                        class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all cursor-pointer"
+                        [checked]="cmrArts()"
+                        (change)="cmrArts.set(!cmrArts())"
+                      />
+                      <span class="relative flex items-center font-bold text-sm">
+                        <svg
+                          class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Arts
+                      </span>
+                    </label>
+
+                    <label
+                      class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all"
+                      [class.bg-indigo-50]="cmrScience()"
+                      [class.border-indigo-300]="cmrScience()"
+                      [class.text-indigo-950]="cmrScience()"
+                      [class.bg-white]="!cmrScience()"
+                      [class.border-slate-200]="!cmrScience()"
+                      [class.text-slate-700]="!cmrScience()"
+                    >
+                      <input
+                        type="checkbox"
+                        class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all cursor-pointer"
+                        [checked]="cmrScience()"
+                        (change)="cmrScience.set(!cmrScience())"
+                      />
+                      <span class="relative flex items-center font-bold text-sm">
+                        <svg
+                          class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Sciences
+                      </span>
+                    </label>
+
+                    <label
+                      class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all"
+                      [class.bg-indigo-50]="cmrGenie()"
+                      [class.border-indigo-300]="cmrGenie()"
+                      [class.text-indigo-950]="cmrGenie()"
+                      [class.bg-white]="!cmrGenie()"
+                      [class.border-slate-200]="!cmrGenie()"
+                      [class.text-slate-700]="!cmrGenie()"
+                    >
+                      <input
+                        type="checkbox"
+                        class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all cursor-pointer"
+                        [checked]="cmrGenie()"
+                        (change)="cmrGenie.set(!cmrGenie())"
+                      />
+                      <span class="relative flex items-center font-bold text-sm">
+                        <svg
+                          class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Génie
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              }
+            </div>
           }
         </div>
 
@@ -2512,13 +2679,14 @@ const CMR_JOB_DOMAINS: Record<
 
               <div class="flex gap-2 w-full sm:w-auto">
                 <button
-                  (click)="copyBilingualEmail()"
+                  (click)="exportToOutlook()"
                   [disabled]="!showResultsPanel()"
                   class="flex-1 sm:flex-none justify-center px-3 py-1.5 text-white rounded-lg transition flex items-center gap-1.5 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   [class.bg-emerald-600]="copied()"
                   [class.hover:bg-emerald-700]="copied()"
                   [class.bg-blue-600]="!copied()"
                   [class.hover:bg-blue-700]="!copied()"
+                  title="Exporter vers Outlook"
                 >
                   @if (copied()) {
                     <svg
@@ -2535,7 +2703,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Courriel copié !
+                    Copié ! Ouverture d'Outlook...
                   } @else {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -2548,19 +2716,13 @@ const CMR_JOB_DOMAINS: Record<
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     >
-                      <rect
-                        x="9"
-                        y="9"
-                        width="13"
-                        height="13"
-                        rx="2"
-                        ry="2"
-                      ></rect>
                       <path
-                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                        d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"
                       ></path>
+                      <polyline points="14 4 20 4 20 10"></polyline>
+                      <line x1="14" y1="10" x2="20" y2="4"></line>
                     </svg>
-                    Copier le courriel
+                    Exporter vers Outlook
                   }
                 </button>
               </div>
@@ -7942,7 +8104,7 @@ o Médecine d’urgence`,
     return true;
   }
 
-  getCmrAdmittedDomainsFr(): string {
+  getCmrAdmittedDomainsNoteFr(): string {
     const domains: string[] = [];
     if (this.cmrArts()) domains.push("Arts");
     if (this.cmrScience()) domains.push("Sciences");
@@ -7953,9 +8115,20 @@ o Médecine d’urgence`,
     return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
   }
 
+  getCmrAdmittedDomainsFr(): string {
+    const domains: string[] = [];
+    if (this.cmrArts()) domains.push("Sciences humaines et sociales");
+    if (this.cmrScience()) domains.push("Sciences");
+    if (this.cmrGenie()) domains.push("Génie");
+    if (domains.length === 0) return "";
+    if (domains.length === 1) return domains[0];
+    if (domains.length === 2) return `${domains[0]} et ${domains[1]}`;
+    return `${domains[0]}, ${domains[1]} et ${domains[2]}`;
+  }
+
   getCmrAdmittedDomainsEn(): string {
     const domains: string[] = [];
-    if (this.cmrArts()) domains.push("Arts");
+    if (this.cmrArts()) domains.push("Social Sciences and Humanities");
     if (this.cmrScience()) domains.push("Science");
     if (this.cmrGenie()) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -7968,7 +8141,7 @@ o Médecine d’urgence`,
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Sciences humaines et sociales");
     if (cmrInfo.science) domains.push("Sciences");
     if (cmrInfo.genie) domains.push("Génie");
     if (domains.length === 0) return "";
@@ -7981,7 +8154,7 @@ o Médecine d’urgence`,
     const cmrInfo = CMR_JOB_DOMAINS[jobId];
     if (!cmrInfo) return "";
     const domains: string[] = [];
-    if (cmrInfo.arts) domains.push("Arts");
+    if (cmrInfo.arts) domains.push("Social Sciences and Humanities");
     if (cmrInfo.science) domains.push("Science");
     if (cmrInfo.genie) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -8842,7 +9015,7 @@ o Médecine d’urgence`,
     if (this.isPforApplicant()) {
       text += "Programme PFOR :\n";
       if (this.pforType() === "cmr") {
-        text += `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${this.getCmrAdmittedDomainsFr() || "Non spécifié"}\n`;
+        text += `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${this.getCmrAdmittedDomainsNoteFr() || "Non spécifié"}\n`;
       } else {
         text += "- Universités civiles\n";
       }
@@ -8981,7 +9154,7 @@ o Médecine d’urgence`,
 
     let reoPrefix = "Réorientation nécessaire car inadmissible pour";
     if (this.isPforApplicant() && this.pforType() === "cmr") {
-      const cmrDomains = this.getCmrAdmittedDomainsFr();
+      const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
       if (cmrDomains) {
         reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
       } else {
@@ -9078,388 +9251,7 @@ o Médecine d’urgence`,
     }
   }
 
-  readonly JOB_URLS: { [key: string]: { fr: string; en: string } } = {
-    "00005": {
-      fr: "https://forces.ca/fr/carriere/arme-blindee/",
-      en: "https://forces.ca/en/career/armour-soldier/",
-    },
-    "00010": {
-      fr: "https://forces.ca/fr/carriere/fantassin/",
-      en: "https://forces.ca/en/career/infanteer/",
-    },
-    "00019": {
-      fr: "https://forces.ca/fr/carriere/operateur-detecteurs-electroniques-aeroportes/",
-      en: "https://forces.ca/en/career/airborne-electronic-sensor-operator/",
-    },
-    "00099": {
-      fr: "https://forces.ca/fr/carriere/specialiste-renseignement/",
-      en: "https://forces.ca/en/career/intelligence-operator/",
-    },
-    "00100": {
-      fr: "https://forces.ca/fr/carriere/technicien-meteorologie/",
-      en: "https://forces.ca/en/career/meteorological-technician/",
-    },
-    "00105": {
-      fr: "https://forces.ca/fr/carriere/manoeuvrier/",
-      en: "https://forces.ca/en/career/boatswain/",
-    },
-    "00109": {
-      fr: "https://forces.ca/fr/carriere/technicien-systemes-aerospatiales/",
-      en: "https://forces.ca/en/career/aerospace-telecommunications-and-information-systems-technician/",
-    },
-    "00114": {
-      fr: "https://forces.ca/fr/carriere/operateur-equipement-information-combat/",
-      en: "https://forces.ca/en/career/naval-combat-information-operator/",
-    },
-    "00115": {
-      fr: "https://forces.ca/fr/carriere/operateur-detecteurs-etectroniques/",
-      en: "https://forces.ca/en/career/naval-electronic-sensor-operator/",
-    },
-    "00120": {
-      fr: "https://forces.ca/fr/carriere/specialistes-du-renseignement-origine-electromagnetique/",
-      en: "https://forces.ca/en/career/signals-intelligence-specialist/",
-    },
-    "00129": {
-      fr: "https://forces.ca/fr/carriere/technicien-de-vehicule/",
-      en: "https://forces.ca/en/career/vehicle-technician/",
-    },
-    "00130": {
-      fr: "https://forces.ca/fr/carriere/technicien-armement/",
-      en: "https://forces.ca/en/career/weapons-technician/",
-    },
-    "00134": {
-      fr: "https://forces.ca/fr/carriere/technicien-materiaux/",
-      en: "https://forces.ca/en/career/materials-technician/",
-    },
-    "00135": {
-      fr: "https://forces.ca/fr/carriere/technicien-systemes-aeronautiques/",
-      en: "https://forces.ca/en/career/aviation-systems-technician/",
-    },
-    "00136": {
-      fr: "https://forces.ca/fr/carriere/technicien-systeme-avionique/",
-      en: "https://forces.ca/en/career/avionics-systems-technician/",
-    },
-    "00137": {
-      fr: "https://forces.ca/fr/carriere/technicien-imagerie/",
-      en: "https://forces.ca/en/career/imagery-technician/",
-    },
-    "00138": {
-      fr: "https://forces.ca/fr/carriere/technicien-structure-aeronefs/",
-      en: "https://forces.ca/en/career/aircraft-structures-technician/",
-    },
-    "00149": {
-      fr: "https://forces.ca/fr/carriere/pompier/",
-      en: "https://forces.ca/en/career/firefighter/",
-    },
-    "00152": {
-      fr: "https://forces.ca/fr/carriere/technologue-laboratoire-medical/",
-      en: "https://forces.ca/en/career/medical-laboratory-technologist/",
-    },
-    "00153": {
-      fr: "https://forces.ca/fr/carriere/technologue-radiologie-medicale/",
-      en: "https://forces.ca/en/career/medical-radiation-technologist/",
-    },
-    "00155": {
-      fr: "https://forces.ca/fr/carriere/technologue-electronique-biomedicale/",
-      en: "https://forces.ca/en/career/biomedical-electronics-technologist/",
-    },
-    "00161": {
-      fr: "https://forces.ca/fr/carriere/police-militaire/",
-      en: "https://forces.ca/en/career/military-police/",
-    },
-    "00164": {
-      fr: "https://forces.ca/fr/carriere/cuisinier/",
-      en: "https://forces.ca/en/career/cook/",
-    },
-    "00166": {
-      fr: "https://forces.ca/fr/carriere/musicien/",
-      en: "https://forces.ca/en/career/musician/",
-    },
-    "00167": {
-      fr: "https://forces.ca/fr/carriere/commis-postes/",
-      en: "https://forces.ca/en/career/postal-clerk/",
-    },
-    "00168": {
-      fr: "https://forces.ca/fr/carriere/technicien-gestion-materiel/",
-      en: "https://forces.ca/en/career/materiel-management-technician/",
-    },
-    "00169": {
-      fr: "https://forces.ca/fr/carriere/technicien-de-munitions/",
-      en: "https://forces.ca/en/career/ammunition-technician/",
-    },
-    "00170": {
-      fr: "https://forces.ca/fr/carriere/technicien-mouvements/",
-      en: "https://forces.ca/en/career/traffic-technician/",
-    },
-    "00171": {
-      fr: "https://forces.ca/fr/carriere/conducteur-materiel-mobile-soutien/",
-      en: "https://forces.ca/en/career/mobile-support-equipment-operator/",
-    },
-    "00178": {
-      fr: "https://forces.ca/fr/carriere/officier-blindes/",
-      en: "https://forces.ca/en/career/armour-officer/",
-    },
-    "00179": {
-      fr: "https://forces.ca/fr/carriere/officier-artillerie/",
-      en: "https://forces.ca/en/career/artillery-officer/",
-    },
-    "00180": {
-      fr: "https://forces.ca/fr/carriere/officier-infanterie/",
-      en: "https://forces.ca/en/career/infantry-officer/",
-    },
-    "00181": {
-      fr: "https://forces.ca/fr/carriere/officier-genie/",
-      en: "https://forces.ca/en/career/engineer-officer/",
-    },
-    "00182": {
-      fr: "https://forces.ca/fr/carriere/officier-systemes-combat/",
-      en: "https://forces.ca/en/career/air-combat-systems-officer/",
-    },
-    "00183": {
-      fr: "https://forces.ca/fr/carriere/pilote/",
-      en: "https://forces.ca/en/career/pilot/",
-    },
-    "00184": {
-      fr: "https://forces.ca/fr/carriere/officier-controle-aerospatial/",
-      en: "https://forces.ca/en/career/aerospace-control-officer/",
-    },
-    "00185": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-aerospatial/",
-      en: "https://forces.ca/en/career/aerospace-engineering-officer/",
-    },
-    "00187": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-electrique-mecanique/",
-      en: "https://forces.ca/en/career/electrical-and-mechanical-engineering-officer/",
-    },
-    "00189": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-construction/",
-      en: "https://forces.ca/en/career/construction-engineering-officer/",
-    },
-    "00190": {
-      fr: "https://forces.ca/fr/carriere/officier-physiotherapie/",
-      en: "https://forces.ca/en/career/physiotherapy-officer/",
-    },
-    "00191": {
-      fr: "https://forces.ca/fr/carriere/dentiste-militaire/",
-      en: "https://forces.ca/en/career/dental-officer/",
-    },
-    "00194": {
-      fr: "https://forces.ca/fr/carriere/pharmacien/",
-      en: "https://forces.ca/en/career/pharmacy-officer/",
-    },
-    "00195": {
-      fr: "https://forces.ca/fr/carriere/soins-infirmiers/",
-      en: "https://forces.ca/en/career/nursing-officer/",
-    },
-    "00197": {
-      fr: "https://forces.ca/fr/carriere/officier-sciences-biologiques/",
-      en: "https://forces.ca/en/career/bioscience-officer/",
-    },
-    "00198": {
-      fr: "https://forces.ca/fr/carriere/travail-social/",
-      en: "https://forces.ca/en/career/social-work-officer/",
-    },
-    "00203": {
-      fr: "https://forces.ca/fr/carriere/officier-affaires-publiques/",
-      en: "https://forces.ca/en/career/public-affairs-officer/",
-    },
-    "00204": {
-      fr: "https://forces.ca/fr/carriere/avocat/",
-      en: "https://forces.ca/en/career/legal-officer/",
-    },
-    "00207": {
-      fr: "https://forces.ca/fr/carriere/officier-guerre-navale/",
-      en: "https://forces.ca/en/career/naval-warfare-officer/",
-    },
-    "00208": {
-      fr: "https://forces.ca/fr/carriere/officier-selection-personnel/",
-      en: "https://forces.ca/en/career/personnel-selection-officer/",
-    },
-    "00211": {
-      fr: "https://forces.ca/fr/carriere/officier-developpement-instruction/",
-      en: "https://forces.ca/en/career/training-development-officer/",
-    },
-    "00213": {
-      fr: "https://forces.ca/fr/carriere/officier-renseignement/",
-      en: "https://forces.ca/en/career/intelligence-officer/",
-    },
-    "00214": {
-      fr: "https://forces.ca/fr/carriere/officier-police-militaire/",
-      en: "https://forces.ca/en/career/military-police-officer/",
-    },
-    "00238": {
-      fr: "https://forces.ca/fr/carriere/technicien-geomatique/",
-      en: "https://forces.ca/en/career/geomatics-technician/",
-    },
-    "00261": {
-      fr: "https://forces.ca/fr/carriere/technicien-systemes-armement/",
-      en: "https://forces.ca/en/career/air-weapons-systems-technician/",
-    },
-    "00299": {
-      fr: "https://forces.ca/fr/carriere/specialiste-communication-navales/",
-      en: "https://forces.ca/en/career/naval-communicator/",
-    },
-    "00301": {
-      fr: "https://forces.ca/fr/carriere/technicien-en-refrigeration-et-mecanique/",
-      en: "https://forces.ca/en/career/refrigeration-and-mechanical-technician/",
-    },
-    "00302": {
-      fr: "https://forces.ca/fr/carriere/technicien-distribution-electrique/",
-      en: "https://forces.ca/en/career/electrical-distribution-technician/",
-    },
-    "00303": {
-      fr: "https://forces.ca/fr/carriere/technicien-des-groupes-electrogenes/",
-      en: "https://forces.ca/en/career/electrical-generation-systems-technician/",
-    },
-    "00304": {
-      fr: "https://forces.ca/fr/carriere/technicien-plomberie-chauffage/",
-      en: "https://forces.ca/en/career/plumbing-heat-technician/",
-    },
-    "00305": {
-      fr: "https://forces.ca/fr/carriere/technicien-eau-produits-petroliers-environnement/",
-      en: "https://forces.ca/en/career/water-fuels-and-environment-technician/",
-    },
-    "00306": {
-      fr: "https://forces.ca/fr/carriere/technicien-construction/",
-      en: "https://forces.ca/en/career/construction-technician/",
-    },
-    "00324": {
-      fr: "https://forces.ca/fr/carriere/operateur-sonar/",
-      en: "https://forces.ca/en/career/sonar-operator/",
-    },
-    "00327": {
-      fr: "https://forces.ca/fr/carriere/technicien-elec-opto/",
-      en: "https://forces.ca/en/career/electronic-optronic-technician/",
-    },
-    "00328": {
-      fr: "https://forces.ca/fr/carriere/officier-logistique/",
-      en: "https://forces.ca/en/career/logistics-officer/",
-    },
-    "00335": {
-      fr: "https://forces.ca/fr/carriere/technicien-dentaire/",
-      en: "https://forces.ca/en/career/dental-technician/",
-    },
-    "00337": {
-      fr: "https://forces.ca/fr/carriere/operateur-controle-aerospatial/",
-      en: "https://forces.ca/en/career/aerospace-control-operator/",
-    },
-    "00339": {
-      fr: "https://forces.ca/fr/carriere/sapeur-combat/",
-      en: "https://forces.ca/en/career/combat-engineer/",
-    },
-    "00340": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-electronique-communications/",
-      en: "https://forces.ca/en/career/communication-and-electronics-engineering-officer/",
-    },
-    "00341": {
-      fr: "https://forces.ca/fr/carriere/officier-transmissions/",
-      en: "https://forces.ca/en/career/signals-officer/",
-    },
-    "00344": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-systemes-combat-maritime/",
-      en: "https://forces.ca/en/career/naval-combat-systems-engineering-officer/",
-    },
-    "00345": {
-      fr: "https://forces.ca/fr/carriere/officier-genie-systemes-marine/",
-      en: "https://forces.ca/en/career/marine-systems-engineering-officer/",
-    },
-    "00349": {
-      fr: "https://forces.ca/fr/carriere/aumonier/",
-      en: "https://forces.ca/en/career/chaplain/",
-    },
-    "00366": {
-      fr: "https://forces.ca/fr/carriere/technicien-genie-armes/",
-      en: "https://forces.ca/en/career/weapons-engineering-technician/",
-    },
-    "00368": {
-      fr: "https://forces.ca/fr/carriere/artilleur/",
-      en: "https://forces.ca/en/career/gunner/",
-    },
-    "00370": {
-      fr: "https://forces.ca/fr/carriere/technicien-dessin-arpentage/",
-      en: "https://forces.ca/en/career/drafting-and-survey-technician/",
-    },
-    "00372": {
-      fr: "https://forces.ca/fr/carriere/technicien-bloc-operatoire/",
-      en: "https://forces.ca/en/career/operating-room-technician/",
-    },
-    "00374": {
-      fr: "https://forces.ca/fr/carriere/adjoint-au-medecin/",
-      en: "https://forces.ca/en/career/physician-assistant/",
-    },
-    "00375": {
-      fr: "https://forces.ca/fr/carriere/administrateur-ressources-humaines/",
-      en: "https://forces.ca/en/career/human-resources-administrator/",
-    },
-    "00376": {
-      fr: "https://forces.ca/fr/carriere/administrateur-services-financiers/",
-      en: "https://forces.ca/en/career/financial-services-administrator/",
-    },
-    "00378": {
-      fr: "https://forces.ca/fr/carriere/cyber-operateur/",
-      en: "https://forces.ca/en/career/cyber-operator/",
-    },
-    "00383": {
-      fr: "https://forces.ca/fr/carriere/operateur-des-transmissions/",
-      en: "https://forces.ca/en/career/signal-operator/",
-    },
-    "00384": {
-      fr: "https://forces.ca/fr/carriere/technicien-des-lignes/",
-      en: "https://forces.ca/en/career/line-technician/",
-    },
-    "00385": {
-      fr: "https://forces.ca/fr/carriere/technicien-des-transmissions/",
-      en: "https://forces.ca/en/career/signal-technician/",
-    },
-    "00386": {
-      fr: "https://forces.ca/fr/carriere/techniciens-de-soutien-des-operations-aeriennes/",
-      en: "https://forces.ca/en/career/air-operations-support-technician/",
-    },
-    "00387": {
-      fr: "https://forces.ca/fr/carriere/Technicien-des-Systemes-de-Largage/",
-      en: "https://forces.ca/en/career/air-drop-systems-technician/",
-    },
-    "00389": {
-      fr: "https://forces.ca/fr/carriere/Officier-des-operations-aeriennes/",
-      en: "https://forces.ca/en/career/Air-Operations-Officer/",
-    },
-    "00390": {
-      fr: "https://forces.ca/fr/carriere/specialiste-en-medecine-interne/",
-      en: "https://forces.ca/en/career/internal-medicine-specialist/",
-    },
-    "00393": {
-      fr: "https://forces.ca/fr/carriere/medecin/",
-      en: "https://forces.ca/en/career/medical-officer/",
-    },
-    "00394": {
-      fr: "https://forces.ca/fr/carriere/technicien-en-systemes-information/",
-      en: "https://forces.ca/en/career/information-systems-technician/",
-    },
-    "00398": {
-      fr: "https://forces.ca/fr/carriere/officier-gestion-services-sante/",
-      en: "https://forces.ca/en/career/health-services-management-officer/",
-    },
-    "00402": {
-      fr: "https://forces.ca/fr/programme-experience-de-la-marine/",
-      en: "https://forces.ca/en/naval-experience-program/?slug=nep",
-    },
-    "00404": {
-      fr: "https://forces.ca/fr/carriere/technicien-electricite-systemes/",
-      en: "https://forces.ca/en/career/marine-systems-electrical-technician/",
-    },
-    "00405": {
-      fr: "https://forces.ca/fr/carriere/technicien-mecanique-systemes/",
-      en: "https://forces.ca/en/career/marine-systems-mechanical-technician/",
-    },
-    "00406": {
-      fr: "https://forces.ca/fr/carriere/paramedicaux/",
-      en: "https://forces.ca/en/career/paramedic/",
-    },
-    "00407": {
-      fr: "https://forces.ca/fr/carriere/personnel-medical-au-combat/",
-      en: "https://forces.ca/en/career/combat-medic/",
-    },
-  };
+  readonly JOB_URLS = JOB_URLS;
 
   getJobLinkMarkup(jobId: string, isFrench: boolean, isHtml: boolean): string {
     const job = this.jobService.getAllJobs().find((j) => j.id === jobId);
@@ -10837,6 +10629,10 @@ o Médecine d’urgence`,
     } catch (err) {
       console.error("Failed to copy reorientation email", err);
     }
+  }
+
+  exportToOutlook() {
+    return this.copyBilingualEmail();
   }
 
   getReoContentPlainFr() {
