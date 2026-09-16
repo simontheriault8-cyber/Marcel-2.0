@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OCCUPATIONS, CMP_OCCUPATIONS, MelOccupation } from '../../services/mel.service';
+import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OCCUPATIONS, CMP_OCCUPATIONS } from '../../services/mel.service';
 
 @Component({
   selector: 'app-mel',

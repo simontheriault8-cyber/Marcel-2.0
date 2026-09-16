@@ -9447,7 +9447,6 @@ o Médecine d’urgence`,
     const closedButAdmissibleJobs = [...closedTraitementJobs, ...closedAdmissionOnlyJobs];
     const allRealDossierJobsAreClosedTraitement = realDossierIds.length > 0 && closedTraitementJobs.length === realDossierIds.length;
     const allRealDossierJobsAreClosedAdmissionOnly = realDossierIds.length > 0 && closedAdmissionOnlyJobs.length === realDossierIds.length;
-    const allRealDossierJobsAreClosedButAdmissible = realDossierIds.length > 0 && closedButAdmissibleJobs.length === realDossierIds.length;
 
     // Split eligible jobs into NCM and Officer
     const listNCM: string[] = [];
@@ -9461,7 +9460,7 @@ o Médecine d’urgence`,
     }
 
     const rawHtml = this.sharedState.taskEmailHtmlFr();
-    const rawTxt = this.sharedState.taskEmailFr();
+    
     const hasTasks =
       !!rawHtml &&
       this.sharedState.hasReassignedTasks() &&
