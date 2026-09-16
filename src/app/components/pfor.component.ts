@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
-import { MelService, MEL_LIMITATIONS } from "../../services/mel.service";
+import { MelService } from "../../services/mel.service";
 import { JobEntry } from "../../services/jobs-data";
 import { JOB_URLS } from "../data/job-urls.data";
 
@@ -1516,7 +1516,6 @@ export class PforComponent {
       h +=
         '<p class="mt-4">Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.</p>\n';
 
-      h += '<p class="mt-4">Cordialement,</p>\n';
       h += '<p>' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
 
       h += '<hr class="my-6 border-slate-200" />\n';
@@ -1606,7 +1605,6 @@ export class PforComponent {
       h +=
         '<p class="mt-4">Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.</p>\n';
 
-      h += '<p class="mt-4">Sincerely,</p>\n';
       h += '<p>' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
 
       return h;
@@ -1678,7 +1676,6 @@ export class PforComponent {
       t +=
         "Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.\n\n";
 
-      t += "Cordialement,\n\n";
       t += this.sharedState.getSignatureFr() + "\n\n";
 
       t += "========================================\n\n";
@@ -1750,7 +1747,6 @@ export class PforComponent {
       t +=
         "Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.\n\n";
 
-      t += "Sincerely,\n\n";
       t += this.sharedState.getSignatureEn() + "\n";
 
       return t;
@@ -1891,7 +1887,7 @@ export class PforComponent {
     const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
 
     const isPforCmr = this.pforType() === "cmr";
-    const isPforCivil = this.pforType() === "civil";
+    
     const cmrAdmittedFr = this.getCmrAdmittedDomainsFr();
     const cmrAdmittedEn = this.getCmrAdmittedDomainsEn();
 
