@@ -123,6 +123,7 @@ interface RoleSnapshot {
   annexeQCourriel?: boolean;
   annexeQAlphaPostulant?: string;
   pforMatricule?: string;
+  sgtCheckedInstructions?: string[];
   evaluationMedicaleType?: 'Dossier régulier' | 'Dossier OTA';
   evaluationMedicalePartie1?: boolean;
   evaluationMedicalePartie2?: boolean;
@@ -3385,6 +3386,10 @@ function getTodayDateString(): string {
                 <div
                   class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
+                  @let currentInstructions = isPforCompliant() ? sgtPforInstructions : sgtStandardInstructions;
+                  @let completedCount = getCompletedSgtInstructionsCount(currentInstructions);
+                  @let isAllDone = completedCount === currentInstructions.length && currentInstructions.length > 0;
+
                   <div
                     class="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm"
                   >
@@ -3402,55 +3407,68 @@ function getTodayDateString(): string {
                           stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                         />
                       </svg>
                       Instructions pour le sgt recruteur
                     </h3>
+                    <div class="flex items-center gap-2.5">
+                      <span
+                        class="text-xs px-2.5 py-1 rounded-full font-medium transition-colors"
+                        [class.bg-emerald-100]="isAllDone"
+                        [class.text-emerald-800]="isAllDone"
+                        [class.bg-slate-200/80]="!isAllDone"
+                        [class.text-slate-600]="!isAllDone"
+                      >
+                        @if (isAllDone) {
+                          ✓ {{ completedCount }}/{{ currentInstructions.length }} complétées
+                        } @else {
+                          {{ completedCount }}/{{ currentInstructions.length }} complétées
+                        }
+                      </span>
+                      <button
+                        type="button"
+                        (click)="toggleAllSgtInstructions(currentInstructions)"
+                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors cursor-pointer"
+                        title="Tout cocher / décocher"
+                      >
+                        {{ isAllDone ? 'Tout décocher' : 'Tout cocher' }}
+                      </button>
+                    </div>
                   </div>
                   <div
-                    class="p-8 bg-white text-sm text-slate-800 leading-relaxed font-sans border-none"
+                    class="p-4 bg-white text-sm text-slate-800 font-sans border-none space-y-2"
                   >
-                    @if (isPforCompliant()) {
-                      <ol class="list-decimal list-inside space-y-2">
-                        <li>
-                          S'assurer que la liste de Vérification A1 à A35 est bien rempli
-                        </li>
-                        <li>
-                          Marquer la tâche "Planifier votre consultation CAF 101" comme complétée
-                        </li>
-                        <li>
-                          Ajouter la note au registre du Postulant
-                        </li>
-                        <li>
-                          Tag CCM et Recruteur BPR appropriés
-                        </li>
-                        <li>
-                          Basculer vers la Gestion des admissions
-                        </li>
-                        <li>
-                          Envoyer les 2 courriels au Postulant : CAF 101 PFOR et Lien PA
-                        </li>
-                      </ol>
-                    } @else {
-                      <ol class="list-decimal list-inside space-y-2">
-                        <li>
-                          S'assurer que la liste de vérification A1 à A35 est bien
-                          rempli.
-                        </li>
-                        <li>
-                          Attribuer la tâche : Planifiez votre séance d'information des FAC 101.
-                        </li>
-                        <li>
-                          Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse.
-                        </li>
-                        <li>Ajouter la note au registre du postulant.</li>
-                        <li>Basculer le postulant dans Traitement initial.</li>
-                        <li>
-                          Envoyé le courriel au postulant contenant le lien vers
-                          le Form et le CAF 101.
-                        </li>
-                      </ol>
+                    @for (item of currentInstructions; track item.id; let idx = $index) {
+                      @let isChecked = isSgtInstructionChecked(item.id);
+                      <label
+                        (click)="toggleSgtInstruction(item.id)"
+                        class="flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer select-none"
+                        [class.bg-emerald-50/50]="isChecked"
+                        [class.border-emerald-200]="isChecked"
+                        [class.bg-slate-50/60]="!isChecked"
+                        [class.border-slate-200]="!isChecked"
+                        [class.hover:bg-slate-100/80]="!isChecked"
+                      >
+                        <div class="pt-0.5 flex-shrink-0">
+                          <input
+                            type="checkbox"
+                            [checked]="isChecked"
+                            (click)="$event.stopPropagation()"
+                            (change)="toggleSgtInstruction(item.id)"
+                            class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                          />
+                        </div>
+                        <span
+                          class="flex-1 text-sm leading-snug transition-colors"
+                          [class.line-through]="isChecked"
+                          [class.text-slate-400]="isChecked"
+                          [class.text-slate-800]="!isChecked"
+                          [class.font-medium]="!isChecked"
+                        >
+                          <span class="text-xs font-semibold mr-1.5 opacity-60">{{ idx + 1 }}.</span>{{ item.text }}
+                        </span>
+                      </label>
                     }
                   </div>
                 </div>
@@ -3808,6 +3826,65 @@ export class AppComponent implements OnInit {
 
   // PFOR State
   pforMatricule = signal<string>('');
+
+  // Instructions Sgt Recruteur Checkboxes
+  sgtPforInstructions = [
+    { id: 'pfor_1', text: "S'assurer que la liste de Vérification A1 à A35 est bien rempli" },
+    { id: 'pfor_2', text: 'Marquer la tâche "Planifier votre consultation CAF 101" comme complétée' },
+    { id: 'pfor_3', text: 'Réattribuer la tâche "relevés de notes et Diplômes" pour le dépôt de la capture d\'écran de confirmation des documents déposés sur le PA' },
+    { id: 'pfor_4', text: 'Ajouter la note au registre du Postulant' },
+    { id: 'pfor_5', text: 'Tag CCM et Recruteur BPR appropriés' },
+    { id: 'pfor_6', text: 'Basculer vers la Gestion des admissions' },
+    { id: 'pfor_7', text: 'Envoyer les 2 courriels au Postulant : CAF 101 PFOR et Lien PA' },
+  ];
+
+  sgtStandardInstructions = [
+    { id: 'std_1', text: "S'assurer que la liste de vérification A1 à A35 est bien rempli." },
+    { id: 'std_2', text: "Attribuer la tâche : Planifiez votre séance d'information des FAC 101." },
+    { id: 'std_3', text: "Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse." },
+    { id: 'std_4', text: "Ajouter la note au registre du postulant." },
+    { id: 'std_5', text: "Basculer le postulant dans Traitement initial." },
+    { id: 'std_6', text: "Envoyé le courriel au postulant contenant le lien vers le Form et le CAF 101." },
+  ];
+
+  sgtCheckedInstructions = signal<Set<string>>(new Set<string>());
+
+  toggleSgtInstruction(id: string) {
+    this.sgtCheckedInstructions.update(set => {
+      const next = new Set(set);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  isSgtInstructionChecked(id: string): boolean {
+    return this.sgtCheckedInstructions().has(id);
+  }
+
+  resetSgtInstructions() {
+    this.sgtCheckedInstructions.set(new Set<string>());
+  }
+
+  toggleAllSgtInstructions(items: { id: string; text: string }[]) {
+    const allChecked = items.every(item => this.isSgtInstructionChecked(item.id));
+    this.sgtCheckedInstructions.update(set => {
+      const next = new Set(set);
+      if (allChecked) {
+        items.forEach(item => next.delete(item.id));
+      } else {
+        items.forEach(item => next.add(item.id));
+      }
+      return next;
+    });
+  }
+
+  getCompletedSgtInstructionsCount(items: { id: string; text: string }[]): number {
+    return items.filter(item => this.isSgtInstructionChecked(item.id)).length;
+  }
 
   // Évaluation Médicale State
   evaluationMedicaleType = signal<'Dossier régulier' | 'Dossier OTA'>('Dossier régulier');
@@ -4552,6 +4629,7 @@ Thank you for your cooperation.`;
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
       recruiterDossierType: this.recruiterDossierType(),
+      sgtCheckedInstructions: Array.from(this.sgtCheckedInstructions()),
     };
   }
 
@@ -4571,6 +4649,7 @@ Thank you for your cooperation.`;
     if (snapshot.evaluationMedicaleType) {
       this.evaluationMedicaleType.set(snapshot.evaluationMedicaleType);
     }
+    this.sgtCheckedInstructions.set(new Set(snapshot.sgtCheckedInstructions || []));
     this.premierContactCourriel.set(snapshot.premierContactCourriel || false);
     this.premierContactMedical.set(snapshot.premierContactMedical || false);
     this.premierContactEntrevue.set(snapshot.premierContactEntrevue || false);
@@ -4689,6 +4768,7 @@ Thank you for your cooperation.`;
       annexeQCourriel: false,
       annexeQAlphaPostulant: '',
       pforMatricule: '',
+      sgtCheckedInstructions: [],
       evaluationMedicalePartie1: false,
       evaluationMedicalePartie2: false,
       evaluationMedicalePartie1Et2: false,
@@ -5257,6 +5337,7 @@ Thank you for your cooperation.`;
     this.recruiterDossierType.set("normal");
     this.sharedState.isPostulantPfor.set(false);
     this.pforMatricule.set('');
+    this.resetSgtInstructions();
     this.selectedTask.set(null);
     this.selectedRejectionKeys.set(new Set());
     this.taskNotCompletedKeys.set(new Set());
