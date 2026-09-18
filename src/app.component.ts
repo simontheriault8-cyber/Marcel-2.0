@@ -6484,6 +6484,12 @@ Thank you for your cooperation.`;
       return doc.nameFr === "Certificat de naissance";
     }
 
+    // PFOR Admission Letter: Only visible for PFOR dossiers
+    if (doc.nameFr.includes("Lettre d'admission sans condition")) {
+      if (this.isDocActive(task, doc)) return true;
+      return this.isPforDossier();
+    }
+
     // 1. If this specific document is active (being worked on), always show it.
     if (this.isDocActive(task, doc)) return true;
 
@@ -7865,7 +7871,6 @@ Thank you for your cooperation.`;
       return this.emailScenariosService.getScenario("general_reminder") || null;
     }
 
-    
     const keysArray = Array.from(this.selectedRejectionKeys()) as string[];
 
     // Trigger for "File Closed due to Basic Academic Criteria"
@@ -9623,7 +9628,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkFr && !uniqueLinks.has(item.reason.linkFr)) {
               uniqueLinks.add(item.reason.linkFr);
-              emailFr += `\n      🔗 ${item.reason.linkFr}`;
+              emailFr += `\n      🔗 ${this.cleanInstructionForText(item.reason.linkFr, '        ')}`;
             }
           }
         }
@@ -9667,7 +9672,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkFr && !uniqueLinks.has(item.reason.linkFr)) {
               uniqueLinks.add(item.reason.linkFr);
-              emailFr += `\n  🔗 ${item.reason.linkFr}`;
+              emailFr += `\n  🔗 ${this.cleanInstructionForText(item.reason.linkFr, '  ')}`;
             }
           }
         }
@@ -9713,7 +9718,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkFr && !uniqueLinks.has(item.reason.linkFr)) {
               uniqueLinks.add(item.reason.linkFr);
-              emailFr += `\n  🔗 ${item.reason.linkFr}`;
+              emailFr += `\n  🔗 ${this.cleanInstructionForText(item.reason.linkFr, '  ')}`;
             }
           }
         }
@@ -9825,7 +9830,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
               uniqueLinks.add(item.reason.linkEn);
-              emailEn += `\n      🔗 ${item.reason.linkEn}`;
+              emailEn += `\n      🔗 ${this.cleanInstructionForText(item.reason.linkEn, '        ')}`;
             }
           }
         }
@@ -9869,7 +9874,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
               uniqueLinks.add(item.reason.linkEn);
-              emailEn += `\n  🔗 ${item.reason.linkEn}`;
+              emailEn += `\n  🔗 ${this.cleanInstructionForText(item.reason.linkEn, '  ')}`;
             }
           }
         }
@@ -9915,7 +9920,7 @@ Thank you for your cooperation.`;
           for (const item of docItems) {
             if (item.reason.linkEn && !uniqueLinks.has(item.reason.linkEn)) {
               uniqueLinks.add(item.reason.linkEn);
-              emailEn += `\n  🔗 ${item.reason.linkEn}`;
+              emailEn += `\n  🔗 ${this.cleanInstructionForText(item.reason.linkEn, '  ')}`;
             }
           }
         }

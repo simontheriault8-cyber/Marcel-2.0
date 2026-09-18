@@ -406,6 +406,108 @@ Help Centre | Canadian Armed Forces`;
       bodyHtml: verificationEdoVsPforHtml,
       bodyText: verificationEdoVsPforText,
     });
+
+    // SCENARIO: Demande de documents - PFOR Université civile
+    const demandeDocsPforCivilHtml = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><span style="background-color: yellow;">English version will follow</span></p>
+        <p>Bonjour,</p>
+        <p>À la suite de l’analyse préliminaire de votre dossier de candidature, il semble que vous souhaitez présenter une demande au <strong>Programme de formation des officiers de la Force régulière (PFOR)</strong> par l’entremise d’un établissement universitaire civil.</p>
+        <p>Afin de poursuivre le traitement et l’évaluation de votre candidature, nous devons obtenir certains documents supplémentaires permettant de confirmer votre admissibilité au programme.</p>
+        <p><strong>Afin de compléter l'évaluation de votre demande d'emploi, nous aurons besoin de document(s) supplémentaire(s) :</strong><br>
+        • <strong>Lettre d'admission dans un établissement scolaire</strong><br>
+        → Veuillez nous fournir votre lettre d'admission officielle sans conditions confirmant votre inscription ou une preuve de fréquentation dans un établissement scolaire agréé pour votre programme d'études subventionnées. Il doit être mentionné que vous étudier à temps plein et avoir la date de fin prévu de vos études.</p>
+        <p>La réception de ce document est nécessaire pour permettre la poursuite de votre dossier et confirmer votre admissibilité au programme d’études subventionnées.</p>
+        <p>En consultant le lien ci-dessous, vous trouverez la liste des programmes d’études admissibles selon les différents métiers offerts :</p>
+        <p><a href="https://forces.ca/fr/programmes-admissibles/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Liste des programmes admissibles par métier</a></p>
+        <p>Si vous avez des questions concernant les documents requis ou le processus de candidature, n’hésitez pas à communiquer avec notre équipe. Nous demeurons disponibles pour vous accompagner tout au long de votre démarche.</p>
+        <p>Cordialement,</p>
+        <p>L’équipe de recrutement des Forces armées canadiennes<br>
+        Centre de recrutement des Forces canadiennes Québec<br>
+        Commandement du Personnel militaire / Forces armées canadiennes<br>
+        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
+        
+        <br><p>______________________________________________________________________________</p><br>
+
+        <p>Hello,</p>
+        <p>Following the preliminary review of your application, it appears that you are interested in applying to the <strong>Regular Officer Training Plan (ROTP)</strong> through a civilian university program.</p>
+        <p>In order to continue processing and evaluating your application, we require additional documentation to confirm your eligibility for the program.</p>
+        <p><strong>In order to complete the evaluation of your employment application, we will need additional document(s):</strong><br>
+        • <strong>Letter of admission from an educational institution</strong><br>
+        → Please provide your official letter of admission without conditions confirming your enrollment or a proof of attendance in an accredited educational institution for your subsidized study program by replying to this email. The document must indicate that you are studying on a full-time basis and include the expected completion date of your studies.</p>
+        <p>This documentation is required to allow us to proceed with the assessment of your application and confirm your eligibility for the subsidized education program.</p>
+        <p>By following the link below, you will find a list of eligible academic programs associated with the various occupations available through the ROTP:</p>
+        <p><a href="https://forces.ca/en/eligible-programmes/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">List of Eligible Programs by Occupation</a></p>
+        <p>If you have any questions regarding the required documentation or the application process, please do not hesitate to contact us. We remain available to assist you throughout your application process.</p>
+        <p>Sincerely,</p>
+        <p>The Canadian Armed Forces Recruiting Team<br>
+        Canadian Forces Recruiting Centre Quebec<br>
+        Military Personnel Command / Canadian Armed Forces<br>
+        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
+      </div>
+    `;
+
+    const demandeDocsPforCivilText = `English version will follow
+
+Bonjour,
+
+À la suite de l’analyse préliminaire de votre dossier de candidature, il semble que vous souhaitez présenter une demande au Programme de formation des officiers de la Force régulière (PFOR) par l’entremise d’un établissement universitaire civil.
+
+Afin de poursuivre le traitement et l’évaluation de votre candidature, nous devons obtenir certains documents supplémentaires permettant de confirmer votre admissibilité au programme.
+
+Afin de compléter l'évaluation de votre demande d'emploi, nous aurons besoin de document(s) supplémentaire(s) :
+• Lettre d'admission dans un établissement scolaire
+→ Veuillez nous fournir votre lettre d'admission officielle sans conditions confirmant votre inscription ou une preuve de fréquentation dans un établissement scolaire agréé pour votre programme d'études subventionnées. Il doit être mentionné que vous étudier à temps plein et avoir la date de fin prévu de vos études.
+
+La réception de ce document est nécessaire pour permettre la poursuite de votre dossier et confirmer votre admissibilité au programme d’études subventionnées.
+
+En consultant le lien ci-dessous, vous trouverez la liste des programmes d’études admissibles selon les différents métiers offerts :
+
+Liste des programmes admissibles par métier (https://forces.ca/fr/programmes-admissibles/)
+
+Si vous avez des questions concernant les documents requis ou le processus de candidature, n’hésitez pas à communiquer avec notre équipe. Nous demeurons disponibles pour vous accompagner tout au long de votre démarche.
+
+Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes
+
+______________________________________________________________________________
+
+Hello,
+
+Following the preliminary review of your application, it appears that you are interested in applying to the Regular Officer Training Plan (ROTP) through a civilian university program.
+
+In order to continue processing and evaluating your application, we require additional documentation to confirm your eligibility for the program.
+
+In order to complete the evaluation of your employment application, we will need additional document(s):
+• Letter of admission from an educational institution
+→ Please provide your official letter of admission without conditions confirming your enrollment or a proof of attendance in an accredited educational institution for your subsidized study program by replying to this email. The document must indicate that you are studying on a full-time basis and include the expected completion date of your studies.
+
+This documentation is required to allow us to proceed with the assessment of your application and confirm your eligibility for the subsidized education program.
+
+By following the link below, you will find a list of eligible academic programs associated with the various occupations available through the ROTP:
+
+List of Eligible Programs by Occupation (https://forces.ca/en/eligible-programmes/)
+
+If you have any questions regarding the required documentation or the application process, please do not hesitate to contact us. We remain available to assist you throughout your application process.
+
+Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+    this.scenarios.set("demande_docs_pfor_civil", {
+      id: "demande_docs_pfor_civil",
+      subjectFr: "Forces armées canadiennes/Canadian Armed Forces",
+      subjectEn: "Forces armées canadiennes/Canadian Armed Forces",
+      bodyHtml: demandeDocsPforCivilHtml,
+      bodyText: demandeDocsPforCivilText,
+    });
   }
 
   getScenario(id: string): EmailScenario | undefined {

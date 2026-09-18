@@ -85,6 +85,56 @@ export class RecruitmentDataService {
           ],
         },
         {
+          nameFr: "Lettre d'admission sans condition Université civil canadienne",
+          nameEn: "Unconditional admission letter Canadian civilian university",
+          reasons: [
+            {
+              id: "lettre_adm_civil_flou",
+              labelFr: "Floue / illisible",
+              labelEn: "Blurred / Illegible",
+              instructionFr:
+                "Le document est floue et illisible. Veuillez prendre une nouvelle photo et la téléverser à nouveau. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+              instructionEn:
+                "The document is blurred and illegible. Please take a new photo and upload it again. Ensure the image is sharp, without glare, and all information is clearly visible.",
+              logNoteFr: "Lettre d'admission sans condition Université civile floue",
+            },
+            {
+              id: "lettre_adm_civil_incomp",
+              labelFr: "Document incomplet sur la photo",
+              labelEn: "Incomplete document in the photo",
+              instructionFr:
+                "Le document est incomplet sur la photo, il manque des pages ou le document n’est pas totalement visible. Veuillez téléverser une ou plusieurs photos du document en vous assurant que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+              instructionEn:
+                "The document is incomplete in the photo, pages are missing, or it is not fully visible. Please upload one or more photos of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
+              logNoteFr: "Lettre d'admission sans condition Université civile incomplète",
+            },
+            {
+              id: "lettre_adm_civil_inexist",
+              labelFr: "Inexistant au dossier",
+              labelEn: "Missing from file",
+              instructionFr:
+                "Veuillez nous fournir votre lettre d'admission officielle sans conditions confirmant votre inscription ou une preuve de fréquentation dans un établissement scolaire agréé pour votre programme d'études subventionnées. Il doit être mentionné que vous étudier à temps plein et avoir la date de fin prévu de vos études.\n\nLa réception de ce document est nécessaire pour permettre la poursuite de votre dossier et confirmer votre admissibilité au programme d’études subventionnées.\n\nEn consultant le lien ci-dessous, vous trouverez la liste des programmes d’études admissibles selon les différents métiers offerts :",
+              instructionEn:
+                "Please provide your official letter of admission without conditions confirming your enrollment or a proof of attendance in an accredited educational institution for your subsidized study program by replying to this email. The document must indicate that you are studying on a full-time basis and include the expected completion date of your studies.\n\nThis documentation is required to allow us to proceed with the assessment of your application and confirm your eligibility for the subsidized education program.\n\nBy following the link below, you will find a list of eligible academic programs associated with the various occupations available through the ROTP:",
+              linkFr:
+                'Voici un lien vers la <a href="https://forces.ca/fr/programmes-admissibles/" target="_blank" style="color: #2563eb; text-decoration: underline;">Liste des programmes admissibles par métier</a>.',
+              linkEn:
+                'Here is a link to the <a href="https://forces.ca/en/eligible-programmes/" target="_blank" style="color: #2563eb; text-decoration: underline;">List of Eligible Programs by Occupation</a>.',
+              logNoteFr: "Aucune lettre d'admission sans condition Université civile au dossier",
+            },
+            {
+              id: "lettre_adm_civil_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de la lettre d'admission sans condition Université civile",
+            },
+          ],
+        },
+        {
           nameFr: "Diplômes et certificats",
           nameEn: "Diplomas and Certificates",
           reasons: [
