@@ -5,6 +5,8 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
 import { MelService } from "../../services/mel.service";
+import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
+import { ScolariteExperienceComponent } from "./scolarite-experience.component";
 import { JobEntry } from "../../services/jobs-data";
 import { JOB_URLS } from "../data/job-urls.data";
 
@@ -39,7 +41,7 @@ export const CMR_JOB_DOMAINS: Record<
 @Component({
   selector: "app-pfor",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScolariteExperienceComponent],
   host: { "(document:click)": "onDocumentClick($event)" },
   template: `
     <div class="h-full flex flex-col min-h-0 bg-slate-50">
@@ -271,83 +273,179 @@ export const CMR_JOB_DOMAINS: Record<
 
             <!-- Si PFOR CMR : Sélection des domaines d'admission -->
             @if (pforType() === 'cmr') {
-              <div class="mt-2 p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
-                <div>
-                  <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block">
-                    Domaines d'admission confirmés au CMR
-                  </span>
+              @if (!cmrRefused() && !cmrMinCriteriaNotMet()) {
+                <div class="mt-2 p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                      Domaines d'admission confirmés au CMR
+                    </span>
+                  </div>
+
                   <p class="text-xs text-slate-500 mt-0.5">
                     Sélectionnez le ou les programmes dans lesquels le candidat a reçu une offre d'admission :
                   </p>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Arts -->
+                    <label
+                      class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
+                      [class.bg-white]="!cmrArts()"
+                      [class.border-slate-200]="!cmrArts()"
+                      [class.bg-indigo-50]="cmrArts()"
+                      [class.border-indigo-400]="cmrArts()"
+                      [class.shadow-xs]="cmrArts()"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="cmrArts()"
+                        (change)="cmrArts.set(!cmrArts())"
+                        class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                      />
+                      <div class="flex flex-col">
+                        <span class="text-xs font-bold text-slate-800">Arts</span>
+                        <span class="text-[10px] text-slate-500">Sciences humaines & admin</span>
+                      </div>
+                    </label>
+
+                    <!-- Sciences -->
+                    <label
+                      class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
+                      [class.bg-white]="!cmrScience()"
+                      [class.border-slate-200]="!cmrScience()"
+                      [class.bg-indigo-50]="cmrScience()"
+                      [class.border-indigo-400]="cmrScience()"
+                      [class.shadow-xs]="cmrScience()"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="cmrScience()"
+                        (change)="cmrScience.set(!cmrScience())"
+                        class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                      />
+                      <div class="flex flex-col">
+                        <span class="text-xs font-bold text-slate-800">Sciences</span>
+                        <span class="text-[10px] text-slate-500">Physique, chimie, maths</span>
+                      </div>
+                    </label>
+
+                    <!-- Génie -->
+                    <label
+                      class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
+                      [class.bg-white]="!cmrGenie()"
+                      [class.border-slate-200]="!cmrGenie()"
+                      [class.bg-indigo-50]="cmrGenie()"
+                      [class.border-indigo-400]="cmrGenie()"
+                      [class.shadow-xs]="cmrGenie()"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="cmrGenie()"
+                        (change)="cmrGenie.set(!cmrGenie())"
+                        class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                      />
+                      <div class="flex flex-col">
+                        <span class="text-xs font-bold text-slate-800">Génie</span>
+                        <span class="text-[10px] text-slate-500">Ingénierie & tech</span>
+                      </div>
+                    </label>
+                  </div>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <!-- Arts -->
-                  <label
-                    class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
-                    [class.bg-white]="!cmrArts()"
-                    [class.border-slate-200]="!cmrArts()"
-                    [class.bg-indigo-50]="cmrArts()"
-                    [class.border-indigo-400]="cmrArts()"
-                    [class.shadow-xs]="cmrArts()"
-                  >
-                    <input
-                      type="checkbox"
-                      [checked]="cmrArts()"
-                      (change)="cmrArts.set(!cmrArts())"
-                      class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                    />
-                    <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-800">Arts</span>
-                      <span class="text-[10px] text-slate-500">Sciences humaines & admin</span>
-                    </div>
-                  </label>
-
-                  <!-- Sciences -->
-                  <label
-                    class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
-                    [class.bg-white]="!cmrScience()"
-                    [class.border-slate-200]="!cmrScience()"
-                    [class.bg-indigo-50]="cmrScience()"
-                    [class.border-indigo-400]="cmrScience()"
-                    [class.shadow-xs]="cmrScience()"
-                  >
-                    <input
-                      type="checkbox"
-                      [checked]="cmrScience()"
-                      (change)="cmrScience.set(!cmrScience())"
-                      class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                    />
-                    <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-800">Sciences</span>
-                      <span class="text-[10px] text-slate-500">Physique, chimie, maths</span>
-                    </div>
-                  </label>
-
-                  <!-- Génie -->
-                  <label
-                    class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all"
-                    [class.bg-white]="!cmrGenie()"
-                    [class.border-slate-200]="!cmrGenie()"
-                    [class.bg-indigo-50]="cmrGenie()"
-                    [class.border-indigo-400]="cmrGenie()"
-                    [class.shadow-xs]="cmrGenie()"
-                  >
-                    <input
-                      type="checkbox"
-                      [checked]="cmrGenie()"
-                      (change)="cmrGenie.set(!cmrGenie())"
-                      class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                    />
-                    <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-800">Génie</span>
-                      <span class="text-[10px] text-slate-500">Ingénierie & tech</span>
-                    </div>
-                  </label>
-                </div>
-              </div>
+              }
             }
           </div>
+
+          <!-- NOUVEAU PANNEAU : INADMISSIBLE AU PFOR (SI CMR) -->
+          @if (pforType() === 'cmr') {
+            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                  Inadmissible au PFOR
+                </h3>
+                @if (cmrRefused()) {
+                  <span class="text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full border border-rose-200">
+                    Refus CMR actif
+                  </span>
+                } @else if (cmrMinCriteriaNotMet()) {
+                  <span class="text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
+                    Critère minimal actif
+                  </span>
+                }
+              </div>
+
+              <p class="text-xs text-slate-500">
+                Cochez une option si le candidat ne peut pas être admis au PFOR (CMR) afin d'activer le processus de réorientation vers les métiers de militaire du rang :
+              </p>
+
+              <div class="flex flex-col gap-2">
+                <!-- Case à cocher : Admissibilité refusé par le CMR -->
+                <label
+                  class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all select-none"
+                  [class.bg-rose-50]="cmrRefused()"
+                  [class.border-rose-300]="cmrRefused()"
+                  [class.text-rose-900]="cmrRefused()"
+                  [class.shadow-xs]="cmrRefused()"
+                  [class.bg-white]="!cmrRefused()"
+                  [class.border-slate-200]="!cmrRefused()"
+                  [class.text-slate-800]="!cmrRefused()"
+                >
+                  <input
+                    type="checkbox"
+                    id="cmr-refused-checkbox"
+                    [checked]="cmrRefused()"
+                    (change)="onCmrRefusedChange($any($event.target).checked)"
+                    class="rounded text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold flex items-center gap-1.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-600">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                      Admissibilité refusé par le CMR
+                    </span>
+                    <span class="text-[10px]" [class.text-rose-700]="cmrRefused()" [class.text-slate-500]="!cmrRefused()">
+                      Le postulant a été refusé par le CMR et doit être réorienté vers les métiers de militaire du rang
+                    </span>
+                  </div>
+                </label>
+
+                <!-- Case à cocher : Critère minimal pour PFOR non rencontré -->
+                <label
+                  class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all select-none"
+                  [class.bg-amber-50]="cmrMinCriteriaNotMet()"
+                  [class.border-amber-300]="cmrMinCriteriaNotMet()"
+                  [class.text-amber-950]="cmrMinCriteriaNotMet()"
+                  [class.shadow-xs]="cmrMinCriteriaNotMet()"
+                  [class.bg-white]="!cmrMinCriteriaNotMet()"
+                  [class.border-slate-200]="!cmrMinCriteriaNotMet()"
+                  [class.text-slate-800]="!cmrMinCriteriaNotMet()"
+                >
+                  <input
+                    type="checkbox"
+                    id="cmr-min-criteria-checkbox"
+                    [checked]="cmrMinCriteriaNotMet()"
+                    (change)="onCmrMinCriteriaChange($any($event.target).checked)"
+                    class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4 cursor-pointer"
+                  />
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold flex items-center gap-1.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      </svg>
+                      Critère minimal pour PFOR non rencontré
+                    </span>
+                    <span class="text-[10px]" [class.text-amber-700]="cmrMinCriteriaNotMet()" [class.text-slate-500]="!cmrMinCriteriaNotMet()">
+                      Le postulant ne possède pas au minimum un diplôme d'études secondaires (DES) pour le PFOR
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          }
 
           <!-- 3. CHOIX ACTUELS AU DOSSIER (MAX 3) -->
           <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col gap-4">
@@ -459,6 +557,35 @@ export const CMR_JOB_DOMAINS: Record<
               </div>
             </div>
           }
+
+          <!-- Si PFOR CMR et Refus CMR ou Critère minimal non rencontré : Panneaux Scolarité et Expérience -->
+          @if (pforType() === 'cmr' && (cmrRefused() || cmrMinCriteriaNotMet())) {
+            <div class="p-5 bg-white border border-rose-200 rounded-xl shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between border-b border-rose-100 pb-3">
+                <div class="flex items-center gap-2">
+                  <span class="p-1 px-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold font-sans uppercase tracking-wider">
+                    Réorientation MR
+                  </span>
+                  <h3 class="text-sm font-bold text-slate-800">
+                    Scolarité et Expérience (Militaire du rang)
+                  </h3>
+                </div>
+                @if (cmrRefused()) {
+                  <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+                    Refus CMR actif
+                  </span>
+                } @else {
+                  <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                    Critère minimal non rencontré actif
+                  </span>
+                }
+              </div>
+              <p class="text-xs text-slate-600">
+                Sélectionnez les cours réussis et les expériences du candidat pour déterminer la liste des métiers de militaire du rang admissibles pour le courriel de réorientation :
+              </p>
+              <app-scolarite-experience></app-scolarite-experience>
+            </div>
+          }
         </div>
 
         <!-- COLONNE DROITE : Note de registre & Courriel de réorientation -->
@@ -556,9 +683,15 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation' }}
+                    {{ cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation')) }}
                   </h3>
-                  @if (isAttentesMode()) {
+                  @if (cmrRefused() || cmrMinCriteriaNotMet()) {
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200"
+                    >
+                      {{ eligibleNcmEvaluation().openJobs.length }} métier(s) MR ouvert(s)
+                    </span>
+                  } @else if (isAttentesMode()) {
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full border"
                       [class.bg-purple-100]="attentesSituation() === 1"
@@ -571,22 +704,24 @@ export const CMR_JOB_DOMAINS: Record<
                       {{ attentesSituationsSummary() }}
                     </span>
                   }
-                  @if (eligiblePforJobs().length > 0) {
-                    <div class="flex gap-2">
-                      <span
-                        class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
-                      >
-                        {{ eligiblePforJobs().length }} métier(s)
-                      </span>
-                    </div>
-                  } @else {
-                    <div class="flex gap-2">
-                      <span
-                        class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full"
-                      >
-                        0 métier PFOR ouvert
-                      </span>
-                    </div>
+                  @if (!cmrRefused() && !cmrMinCriteriaNotMet()) {
+                    @if (eligiblePforJobs().length > 0) {
+                      <div class="flex gap-2">
+                        <span
+                          class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
+                        >
+                          {{ eligiblePforJobs().length }} métier(s)
+                        </span>
+                      </div>
+                    } @else {
+                      <div class="flex gap-2">
+                        <span
+                          class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full"
+                        >
+                          0 métier PFOR ouvert
+                        </span>
+                      </div>
+                    }
                   }
                 </div>
 
@@ -659,6 +794,7 @@ export class PforComponent {
   sharedState = inject(SharedStateService);
   melService = inject(MelService);
   sanitizer = inject(DomSanitizer);
+  reorientationCriteria = inject(ReorientationCriteriaService);
 
   // Inputs & Signals
   age = signal<number | null>(18);
@@ -668,6 +804,8 @@ export class PforComponent {
   cmrArts = signal<boolean>(false);
   cmrScience = signal<boolean>(false);
   cmrGenie = signal<boolean>(false);
+  cmrRefused = signal<boolean>(false);
+  cmrMinCriteriaNotMet = signal<boolean>(false);
 
   selectedDossierJobId1 = signal<string>("");
   selectedDossierJobId2 = signal<string>("");
@@ -874,6 +1012,39 @@ export class PforComponent {
     return count;
   });
 
+  onCmrRefusedChange(checked: boolean) {
+    this.cmrRefused.set(checked);
+    if (checked) {
+      this.cmrMinCriteriaNotMet.set(false);
+      this.cmrArts.set(false);
+      this.cmrScience.set(false);
+      this.cmrGenie.set(false);
+    }
+  }
+
+  onCmrMinCriteriaChange(checked: boolean) {
+    this.cmrMinCriteriaNotMet.set(checked);
+    if (checked) {
+      this.cmrRefused.set(false);
+      this.cmrArts.set(false);
+      this.cmrScience.set(false);
+      this.cmrGenie.set(false);
+    }
+  }
+
+  eligibleNcmEvaluation = computed(() => {
+    return this.reorientationCriteria.evaluateEligibleNcmJobs({
+      age: this.age(),
+      citizenship: this.citizenship(),
+      ignoreSip: this.ignoreSip(),
+      currentSipPhase: this.currentSipPhase(),
+      hasMedicalLimitation: this.hasMedicalLimitation(),
+      medicalV: this.medicalV(),
+      medicalCV: this.medicalCV(),
+      medicalH: this.medicalH(),
+    });
+  });
+
   showResultsPanel = computed(() => {
     return (
       !!this.selectedDossierJobId1() ||
@@ -882,6 +1053,8 @@ export class PforComponent {
       this.cmrArts() ||
       this.cmrScience() ||
       this.cmrGenie() ||
+      this.cmrRefused() ||
+      this.cmrMinCriteriaNotMet() ||
       this.pforType() === "civil"
     );
   });
@@ -893,6 +1066,10 @@ export class PforComponent {
     let candidateJobIds: string[] = [];
 
     if (this.pforType() === "cmr") {
+      if (this.cmrRefused() || this.cmrMinCriteriaNotMet()) {
+        return [];
+      }
+
       const arts = this.cmrArts();
       const science = this.cmrScience();
       const genie = this.cmrGenie();
@@ -968,12 +1145,21 @@ export class PforComponent {
         reasonFr = "Âge limite dépassé";
         reasonEn = "Age limit exceeded";
       } else if (this.pforType() === "cmr") {
-        const cmrInfo = CMR_JOB_DOMAINS[id];
-        if (!cmrInfo) {
+        if (this.cmrRefused()) {
           isEligible = false;
-          reasonFr = "Ce métier n'est pas offert au CMR sous le PFOR.";
-          reasonEn = "This occupation is not offered at RMC under ROTP.";
+          reasonFr = "Candidat non admis au Collège militaire royal du Canada (CMR). Réorientation nécessaire.";
+          reasonEn = "Candidate not admitted to the Royal Military College of Canada (RMC). Reorientation required.";
+        } else if (this.cmrMinCriteriaNotMet()) {
+          isEligible = false;
+          reasonFr = "Critère minimal pour le PFOR non rencontré (DES requis). Réorientation nécessaire.";
+          reasonEn = "Minimum requirement for ROTP not met (High school diploma required). Reorientation required.";
         } else {
+          const cmrInfo = CMR_JOB_DOMAINS[id];
+          if (!cmrInfo) {
+            isEligible = false;
+            reasonFr = "Ce métier n'est pas offert au CMR sous le PFOR.";
+            reasonEn = "This occupation is not offered at RMC under ROTP.";
+          } else {
           const arts = this.cmrArts();
           const science = this.cmrScience();
           const genie = this.cmrGenie();
@@ -994,7 +1180,8 @@ export class PforComponent {
             reasonEn = "There are no longer positions available for this occupation under the Regular Officer Training Plan (ROTP).";
           }
         }
-      } else {
+      }
+    } else {
         // Civil
         if (!hasPfor) {
           isEligible = false;
@@ -1109,12 +1296,15 @@ export class PforComponent {
     this.cmrArts.set(false);
     this.cmrScience.set(false);
     this.cmrGenie.set(false);
+    this.cmrRefused.set(false);
+    this.cmrMinCriteriaNotMet.set(false);
     this.selectedDossierJobId1.set("");
     this.selectedDossierJobId2.set("");
     this.selectedDossierJobId3.set("");
     this.ignoreSip.set(false);
     this.includeTraitement.set(false);
     this.hasMedicalLimitation.set(false);
+    this.reorientationCriteria.resetAll();
   }
 
   getJobLinkMarkup(jobId: string, isFrench: boolean, isHtml: boolean): string {
@@ -1168,26 +1358,36 @@ export class PforComponent {
     let educationReasonEn = "";
 
     if (this.pforType() === "cmr") {
-      const cmrInfo = CMR_JOB_DOMAINS[jobId];
-      if (!cmrInfo) {
+      if (this.cmrRefused()) {
         isEducationAdmissible = false;
-        educationReason = "Ce métier n'est pas offert au CMR sous le PFOR.";
-        educationReasonEn = "This occupation is not offered at RMC under ROTP.";
+        educationReason = "Admissibilité refusée par le CMR pour le Programme de formation des officiers (PFOR).";
+        educationReasonEn = "Admission refused by RMC for the Regular Officer Training Plan (ROTP).";
+      } else if (this.cmrMinCriteriaNotMet()) {
+        isEducationAdmissible = false;
+        educationReason = "Critère minimal pour le PFOR non rencontré (diplôme d'études secondaires requis).";
+        educationReasonEn = "Minimum requirement for ROTP not met (High school diploma required).";
       } else {
-        const arts = this.cmrArts();
-        const science = this.cmrScience();
-        const genie = this.cmrGenie();
-        const match =
-          (arts && cmrInfo.arts) ||
-          (science && cmrInfo.science) ||
-          (genie && cmrInfo.genie);
-
-        if (!match) {
+        const cmrInfo = CMR_JOB_DOMAINS[jobId];
+        if (!cmrInfo) {
           isEducationAdmissible = false;
-          const reqFr = this.getCmrJobRequiredDomainsFr(jobId);
-          const admFr = this.getCmrAdmittedDomainsFr();
-          educationReason = `Requiert admission au CMR en ${reqFr} (actuellement admis en : ${admFr || "aucun"}).`;
-          educationReasonEn = `Requires admission to RMC in ${this.getCmrJobRequiredDomainsEn(jobId)}.`;
+          educationReason = "Ce métier n'est pas offert au CMR sous le PFOR.";
+          educationReasonEn = "This occupation is not offered at RMC under ROTP.";
+        } else {
+          const arts = this.cmrArts();
+          const science = this.cmrScience();
+          const genie = this.cmrGenie();
+          const match =
+            (arts && cmrInfo.arts) ||
+            (science && cmrInfo.science) ||
+            (genie && cmrInfo.genie);
+
+          if (!match) {
+            isEducationAdmissible = false;
+            const reqFr = this.getCmrJobRequiredDomainsFr(jobId);
+            const admFr = this.getCmrAdmittedDomainsFr();
+            educationReason = `Requiert admission au CMR en ${reqFr} (actuellement admis en : ${admFr || "aucun"}).`;
+            educationReasonEn = `Requires admission to RMC in ${this.getCmrJobRequiredDomainsEn(jobId)}.`;
+          }
         }
       }
     } else {
@@ -1298,17 +1498,27 @@ export class PforComponent {
 
       let reoPrefix = "Réorientation nécessaire car";
       if (this.pforType() === "cmr") {
-        const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
-        if (cmrDomains) {
-          reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
+        if (this.cmrRefused()) {
+          reoPrefix = "Refus d'admission CMR - Réorientation nécessaire";
+        } else if (this.cmrMinCriteriaNotMet()) {
+          reoPrefix = "Critère minimal PFOR non rencontré (DES manquant) - Réorientation nécessaire";
         } else {
-          reoPrefix = "PFOR CMR - Réorientation nécessaire car";
+          const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
+          if (cmrDomains) {
+            reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
+          } else {
+            reoPrefix = "PFOR CMR - Réorientation nécessaire car";
+          }
         }
       } else {
         reoPrefix = "PFOR Civil - Réorientation nécessaire car";
       }
 
-      reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+      if (this.pforType() === "cmr" && (this.cmrRefused() || this.cmrMinCriteriaNotMet())) {
+        reoNote = `Étape 1 (En cours) - ${reoPrefix}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+      } else {
+        reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+      }
     }
 
     if (this.sharedState.includeLinkedEmail() && this.sharedState.taskNote()) {
@@ -1753,9 +1963,454 @@ export class PforComponent {
     }
   }
 
+  buildCmrRefusalEmail(isHtml: boolean): string {
+    const ncmEval = this.eligibleNcmEvaluation();
+    const openJobs = ncmEval.openJobs;
+    const closedJobs = ncmEval.closedJobs;
+    const mergeTasks =
+      this.sharedState.includeLinkedEmail() &&
+      this.sharedState.hasReassignedTasks();
+
+    const renderHtmlNcmList = (
+      jobs: (JobEntry | string)[],
+      isClosed: boolean,
+      isFr: boolean,
+    ) => {
+      if (jobs.length === 0) return "";
+      let s = "";
+      if (isClosed) {
+        s += `<p class="mt-2 mb-1 font-bold text-red-600" style="color: #dc2626; font-weight: bold; margin-top: 8px; margin-bottom: 4px;">${isFr ? "Métiers fermés :" : "Closed occupations:"}</p>\n`;
+      }
+      s += '<ul class="list-disc pl-6 space-y-1 mb-2">\n';
+      for (const item of jobs) {
+        const jId = typeof item === "string" ? item : item.id;
+        const link = this.getJobLinkMarkup(jId, isFr, true);
+        if (isClosed) {
+          s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${isFr ? "FERMÉ" : "CLOSED"})</span></li>\n`;
+        } else {
+          s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong></li>\n`;
+        }
+      }
+      s += "</ul>\n";
+      return s;
+    };
+
+    const renderPlainNcmList = (
+      jobs: (JobEntry | string)[],
+      isClosed: boolean,
+      isFr: boolean,
+    ) => {
+      if (jobs.length === 0) return "";
+      let s = "";
+      if (isClosed) {
+        s += `\n${isFr ? "Métiers fermés :" : "Closed occupations:"}\n`;
+      }
+      for (const item of jobs) {
+        const jId = typeof item === "string" ? item : item.id;
+        const link = this.getJobLinkMarkup(jId, isFr, false);
+        if (isClosed) {
+          s += `  - ${jId} - ${link} (${isFr ? "FERMÉ" : "CLOSED"})\n`;
+        } else {
+          s += `  - ${jId} - ${link}\n`;
+        }
+      }
+      return s;
+    };
+
+    if (isHtml) {
+      let h = "";
+
+      // Optional Linked Tasks if active
+      if (mergeTasks) {
+        let taskPartHtml = "";
+        const rawHtml = this.sharedState.taskEmailHtmlFr();
+        if (rawHtml.includes("<!-- START_TASK_BODY_FR -->")) {
+          const frParts = rawHtml.split("<!-- START_TASK_BODY_FR -->");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
+            if (frBodyPart.length > 0) taskPartHtml = frBodyPart[0].trim();
+          }
+        } else {
+          const frParts = rawHtml.split("<p>Bonjour,</p>");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<p>En raison du volume");
+            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
+              taskPartHtml = frBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtml) {
+          h +=
+            '<div class="mb-6 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-amber-950 border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #78350f;">TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :</p>\n';
+          h += taskPartHtml + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      // ======================================
+      // FRENCH SECTION (FROM PDF)
+      // ======================================
+      h +=
+        '<p class="mb-4"><span style="background-color: #fef08a; padding: 2px 6px; font-weight: bold; border-radius: 2px;">English message will follow</span></p>\n';
+      h += '<p class="mt-4 mb-4">Bonjour,</p>\n';
+      if (this.cmrMinCriteriaNotMet()) {
+        h +=
+          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). En effet, <strong>vous devez posséder au minimum un diplôme d’études secondaires (DES) pour être admissible au Collège militaire royal du Canada (CMR).</strong></p>\n';
+      } else {
+        h +=
+          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous n’avez pas été admis(e) au CMR.</strong></p>\n';
+      }
+      h +=
+        '<p class="mt-4 mb-4">Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.<br>Voici les différentes options qui s’offrent à vous :</p>\n';
+
+      h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
+      if (this.cmrMinCriteriaNotMet()) {
+        h +=
+          "  <li>Vous pouvez choisir un métier de membre du rang parmi la liste suivante.</li>\n";
+        h +=
+          "  <li>Vous pouvez demander la fermeture de votre dossier et retenter votre chance pour le PFOR lorsque vous aurez obtenu votre diplôme d’études secondaires (DES).</li>\n";
+      } else {
+        h +=
+          "  <li>Vous pouvez retentez votre chance lors de la prochaine campagne PFOR l’an prochain.</li>\n";
+        h +=
+          '  <li>Vous pouvez vous inscrire dans une Université civile dans un programme de Baccalauréat admissible pour les métiers qui vous intéressent et nous fournir la lettre d’admission à temps pleins et sans conditions. <span style="background-color: #fef08a; padding: 1px 3px;">(Cela ne garantit pas que vous serez admis dans le volet Civil du PFOR)</span> <a href="https://forces.ca/fr/programmes-admissibles/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Liste des programmes admissibles par métier</a></li>\n';
+        h +=
+          "  <li>Vous pouvez aussi choisir un métier de membre du rang parmi la liste suivante.</li>\n";
+      }
+      h += "</ul>\n";
+
+      // NCM Jobs List
+      h +=
+        '<div class="my-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h +=
+        '<p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 text-xs uppercase tracking-wider">Métiers de militaire du rang admissibles :</p>\n';
+      if (
+        openJobs.length === 0 &&
+        (!this.ignoreSip() || closedJobs.length === 0)
+      ) {
+        h +=
+          '<p class="text-xs text-slate-500 italic py-1">(Veuillez sélectionner vos critères de scolarité et d\'expérience dans les panneaux pour afficher les métiers admissibles)</p>\n';
+      } else {
+        h += renderHtmlNcmList(openJobs, false, true);
+        if (this.ignoreSip() && closedJobs.length > 0) {
+          h += renderHtmlNcmList(closedJobs, true, true);
+        }
+      }
+      h += "</div>\n";
+
+      if (!this.cmrMinCriteriaNotMet()) {
+        h +=
+          '<p class="mt-4 mb-4">Il existe aussi un programme d’étude subventionné pour certains métiers de militaire du rang. Si un tel programme vous intéresse, veuillez consulter les informations que vous trouverez à ce lien : <a href="https://forces.ca/fr/programmes-etudes-subventionnees/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">PIESMR | Programmes d’études subventionnées | Forces armées canadiennes</a>.</p>\n';
+        h +=
+          "<p class=\"mt-4 mb-6\">Si vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel.</p>\n";
+      } else {
+        h +=
+          "<p class=\"mt-4 mb-6\">Si vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.</p>\n";
+      }
+
+      h += '<p class="mb-4">Cordialement,</p>\n';
+      h += '<p class="text-sm leading-relaxed text-slate-800">\n';
+      h += "  L’équipe de recrutement des Forces armées canadiennes<br>\n";
+      h += "  Centre de recrutement des Forces canadiennes Québec<br>\n";
+      h +=
+        "  Commandement du Personnel militaire / Forces armées canadiennes<br>\n";
+      h +=
+        '  <a href="https://forces.ca/fr/centre-assistance/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a>\n';
+      h += "</p>\n";
+
+      h += '<hr class="my-8 border-slate-300" />\n';
+
+      // Optional Linked Tasks (English) if active
+      if (mergeTasks) {
+        let taskPartHtmlEn = "";
+        const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
+        if (rawHtmlEn.includes("<!-- START_TASK_BODY_EN -->")) {
+          const enParts = rawHtmlEn.split("<!-- START_TASK_BODY_EN -->");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
+            if (enBodyPart.length > 0) taskPartHtmlEn = enBodyPart[0].trim();
+          }
+        } else {
+          const enParts = rawHtmlEn.split("<p>Hello,</p>");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<p>Due to a high volume");
+            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+              taskPartHtmlEn = enBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtmlEn) {
+          h +=
+            '<div class="mb-6 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-amber-950 border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #78350f;">TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:</p>\n';
+          h += taskPartHtmlEn + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      // ======================================
+      // ENGLISH SECTION (FROM PDF)
+      // ======================================
+      h += '<p class="mt-4 mb-4">Hello,</p>\n';
+      if (this.cmrMinCriteriaNotMet()) {
+        h +=
+          '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). Specifically, <strong>you must have at least a high school diploma to be eligible for the Royal Military College of Canada (RMC).</strong></p>\n';
+      } else {
+        h +=
+          '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have not been offered admission to RMC.</strong></p>\n';
+      }
+      h +=
+        '<p class="mt-4 mb-4">However, this does not mean that your recruiting process must come to an end at this time.<br>The following options remain available to you:</p>\n';
+
+      h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
+      if (this.cmrMinCriteriaNotMet()) {
+        h +=
+          "  <li>You may choose a Non-Commissioned Member (NCM) occupation from the following list.</li>\n";
+        h +=
+          "  <li>You may request to close your application file and reapply for the ROTP once you have obtained your high school diploma.</li>\n";
+      } else {
+        h +=
+          "  <li>You may reapply during next year’s ROTP selection campaign.</li>\n";
+        h +=
+          '  <li>You may apply in a civilian university in a bachelor\'s degree program that meets the educational requirements for the occupations that interest you and provide us with an unconditional full-time letter of acceptance. <span style="background-color: #fef08a; padding: 1px 3px;">(Please note that this does not guarantee admission through the Civilian University ROTP entry plan.)</span> <a href="https://forces.ca/en/eligible-programmes/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">List of Eligible Programs by Occupation</a></li>\n';
+        h +=
+          "  <li>You may also choose a Non-Commissioned Member (NCM) occupation</li>\n";
+      }
+      h += "</ul>\n";
+
+      // NCM Jobs List English
+      h +=
+        '<div class="my-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h +=
+        '<p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 text-xs uppercase tracking-wider">Eligible Non-Commissioned Member occupations:</p>\n';
+      if (
+        openJobs.length === 0 &&
+        (!this.ignoreSip() || closedJobs.length === 0)
+      ) {
+        h +=
+          '<p class="text-xs text-slate-500 italic py-1">(Please select your education and experience criteria in the panels to display eligible occupations)</p>\n';
+      } else {
+        h += renderHtmlNcmList(openJobs, false, false);
+        if (this.ignoreSip() && closedJobs.length > 0) {
+          h += renderHtmlNcmList(closedJobs, true, false);
+        }
+      }
+      h += "</div>\n";
+
+      if (!this.cmrMinCriteriaNotMet()) {
+        h +=
+          '<p class="mt-4 mb-4">There is also a subsidized education program available for certain Non-Commissioned Member (NCM) occupations. If such a program interests you, please consult the information available at the following link: <a href="https://forces.ca/en/paid-education-programs/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">NCMSTEP | Paid Education Programs | Canadian Armed Forces</a>.</p>\n';
+        h +=
+          "<p class=\"mt-4 mb-6\">If you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email.</p>\n";
+      } else {
+        h +=
+          "<p class=\"mt-4 mb-6\">If you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.</p>\n";
+      }
+
+      h += '<p class="mb-4">Sincerely,</p>\n';
+      h += '<p class="text-sm leading-relaxed text-slate-800">\n';
+      h += "  The Canadian Armed Forces Recruiting Team<br>\n";
+      h += "  Canadian Forces Recruiting Centre Quebec<br>\n";
+      h +=
+        "  Military Personnel Command / Canadian Armed Forces<br>\n";
+      h +=
+        '  <a href="https://forces.ca/en/help-centre/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a>\n';
+      h += "</p>\n";
+
+      return h;
+    } else {
+      // ======================================
+      // PLAIN TEXT VERSION (FROM PDF)
+      // ======================================
+      let t = "";
+
+      if (mergeTasks) {
+        let taskPartTxt = "";
+        const rawTxt = this.sharedState.taskEmailFr();
+        if (rawTxt.includes("<!-- START_TASK_BODY_FR -->")) {
+          const frParts = rawTxt.split("<!-- START_TASK_BODY_FR -->");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
+            if (frBodyPart.length > 0) taskPartTxt = frBodyPart[0].trim();
+          }
+        } else {
+          const frParts = rawTxt.split("Bonjour,");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("En raison du volume");
+            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
+              taskPartTxt = frBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartTxt) {
+          t += "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
+          t +=
+            "----------------------------------------------------------------------\n";
+          t += taskPartTxt + "\n\n";
+        }
+      }
+
+      t += "English message will follow\n\n";
+      t += "Bonjour,\n\n";
+      if (this.cmrMinCriteriaNotMet()) {
+        t +=
+          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). En effet, vous devez posséder au minimum un diplôme d’études secondaires (DES) pour être admissible au Collège militaire royal du Canada (CMR).\n\n";
+      } else {
+        t +=
+          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous n’avez pas été admis(e) au CMR.\n\n";
+      }
+      t +=
+        "Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.\n";
+      t += "Voici les différentes options qui s’offrent à vous :\n\n";
+
+      if (this.cmrMinCriteriaNotMet()) {
+        t +=
+          "• Vous pouvez choisir un métier de membre du rang parmi la liste suivante.\n";
+        t +=
+          "• Vous pouvez demander la fermeture de votre dossier et retenter votre chance pour le PFOR lorsque vous aurez obtenu votre diplôme d’études secondaires (DES).\n\n";
+      } else {
+        t +=
+          "• Vous pouvez retentez votre chance lors de la prochaine campagne PFOR l’an prochain.\n";
+        t +=
+          "• Vous pouvez vous inscrire dans une Université civile dans un programme de Baccalauréat admissible pour les métiers qui vous intéressent et nous fournir la lettre d’admission à temps pleins et sans conditions. (Cela ne garantit pas que vous serez admis dans le volet Civil du PFOR) Liste des programmes admissibles par métier (https://forces.ca/fr/programmes-admissibles/)\n";
+        t +=
+          "• Vous pouvez aussi choisir un métier de membre du rang parmi la liste suivante.\n\n";
+      }
+
+      t += "Métiers de militaire du rang admissibles :\n";
+      if (
+        openJobs.length === 0 &&
+        (!this.ignoreSip() || closedJobs.length === 0)
+      ) {
+        t +=
+          "(Veuillez sélectionner vos critères de scolarité et d'expérience dans les panneaux pour afficher les métiers admissibles)\n";
+      } else {
+        t += renderPlainNcmList(openJobs, false, true);
+        if (this.ignoreSip() && closedJobs.length > 0) {
+          t += renderPlainNcmList(closedJobs, true, true);
+        }
+      }
+
+      if (!this.cmrMinCriteriaNotMet()) {
+        t +=
+          "\nIl existe aussi un programme d’étude subventionné pour certains métiers de militaire du rang. Si un tel programme vous intéresse, veuillez consulter les informations que vous trouverez à ce lien : PIESMR | Programmes d’études subventionnées | Forces armées canadiennes (https://forces.ca/fr/programmes-etudes-subventionnees/).\n\n";
+        t +=
+          "Si vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel.\n\n";
+      } else {
+        t +=
+          "\nSi vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.\n\n";
+      }
+
+      t += "Cordialement,\n\n";
+      t += "L’équipe de recrutement des Forces armées canadiennes\n";
+      t += "Centre de recrutement des Forces canadiennes Québec\n";
+      t +=
+        "Commandement du Personnel militaire / Forces armées canadiennes\n";
+      t +=
+        "Centre d’assistance | Forces armées canadiennes (https://forces.ca/fr/centre-assistance/)\n\n";
+
+      t += "------------------------------------------------------------\n\n";
+
+      if (mergeTasks) {
+        let taskPartTxtEn = "";
+        const rawTxtEn = this.sharedState.taskEmailEn();
+        if (rawTxtEn.includes("<!-- START_TASK_BODY_EN -->")) {
+          const enParts = rawTxtEn.split("<!-- START_TASK_BODY_EN -->");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
+            if (enBodyPart.length > 0) taskPartTxtEn = enBodyPart[0].trim();
+          }
+        } else {
+          const enParts = rawTxtEn.split("Hello,");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("Due to a high volume");
+            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+              taskPartTxtEn = enBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartTxtEn) {
+          t += "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:\n";
+          t +=
+            "----------------------------------------------------------------------\n";
+          t += taskPartTxtEn + "\n\n";
+        }
+      }
+
+      t += "Hello,\n\n";
+      if (this.cmrMinCriteriaNotMet()) {
+        t +=
+          "Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). Specifically, you must have at least a high school diploma to be eligible for the Royal Military College of Canada (RMC).\n\n";
+      } else {
+        t +=
+          "Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have not been offered admission to RMC.\n\n";
+      }
+      t +=
+        "However, this does not mean that your recruiting process must come to an end at this time.\n";
+      t += "The following options remain available to you:\n\n";
+
+      if (this.cmrMinCriteriaNotMet()) {
+        t +=
+          "• You may choose a Non-Commissioned Member (NCM) occupation from the following list.\n";
+        t +=
+          "• You may request to close your application file and reapply for the ROTP once you have obtained your high school diploma.\n\n";
+      } else {
+        t +=
+          "• You may reapply during next year’s ROTP selection campaign.\n";
+        t +=
+          "• You may apply in a civilian university in a bachelor's degree program that meets the educational requirements for the occupations that interest you and provide us with an unconditional full-time letter of acceptance. (Please note that this does not guarantee admission through the Civilian University ROTP entry plan.) List of Eligible Programs by Occupation (https://forces.ca/en/eligible-programmes/)\n";
+        t +=
+          "• You may also choose a Non-Commissioned Member (NCM) occupation\n\n";
+      }
+
+      t += "Eligible Non-Commissioned Member occupations:\n";
+      if (
+        openJobs.length === 0 &&
+        (!this.ignoreSip() || closedJobs.length === 0)
+      ) {
+        t +=
+          "(Please select your education and experience criteria in the panels to display eligible occupations)\n";
+      } else {
+        t += renderPlainNcmList(openJobs, false, false);
+        if (this.ignoreSip() && closedJobs.length > 0) {
+          t += renderPlainNcmList(closedJobs, true, false);
+        }
+      }
+
+      if (!this.cmrMinCriteriaNotMet()) {
+        t +=
+          "\nThere is also a subsidized education program available for certain Non-Commissioned Member (NCM) occupations. If such a program interests you, please consult the information available at the following link: NCMSTEP | Paid Education Programs | Canadian Armed Forces (https://forces.ca/en/paid-education-programs/).\n\n";
+        t +=
+          "If you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email.\n\n";
+      } else {
+        t +=
+          "\nIf you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.\n\n";
+      }
+
+      t += "Sincerely,\n\n";
+      t += "The Canadian Armed Forces Recruiting Team\n";
+      t += "Canadian Forces Recruiting Centre Quebec\n";
+      t += "Military Personnel Command / Canadian Armed Forces\n";
+      t +=
+        "Help Centre | Canadian Armed Forces (https://forces.ca/en/help-centre/)\n";
+
+      return t;
+    }
+  }
+
   buildBilingualEmail(isHtml: boolean): string {
     if (this.isAttentesMode()) {
       return this.buildGestionDesAttentesEmail(isHtml);
+    }
+    if (this.pforType() === "cmr" && (this.cmrRefused() || this.cmrMinCriteriaNotMet())) {
+      return this.buildCmrRefusalEmail(isHtml);
     }
 
     const jobIds = this.eligiblePforJobs().map((j) => j.id);
