@@ -7586,7 +7586,7 @@ Thank you for your cooperation.`;
       }
     }
 
-    let note = `Étape 1 (Terminée) - Courriel FAC101 PFOR et courriel contenant le lien PA envoyés pour ${jobsText}, Tag CCM pour suite du traitement : -Cpl Plourde (DML) - Civ Anglehart (DRI) - Cpl Larouche (DCI) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Sgt-Recruteur : Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`;
+    let note = `Étape 1 (Terminée) - Courriel FAC101 PFOR et courriel contenant le lien PA envoyés pour ${jobsText}, Tag CCM pour suite du traitement : -Cpl Plourde (DML) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Sgt-Recruteur : Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`;
 
     const extraRejections = this.getRejectionReasonsForCompliantNote();
     if (extraRejections) {
