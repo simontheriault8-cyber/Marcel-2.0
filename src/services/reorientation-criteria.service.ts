@@ -81,6 +81,10 @@ export class ReorientationCriteriaService {
     this.MANUAL_CRITERIA.filter((c) => c.category === "Année scolaire"),
   );
 
+  criteriaHistoire = computed(() =>
+    this.MANUAL_CRITERIA.filter((c) => c.category === "Histoire"),
+  );
+
   criteriaLangue = computed(() =>
     this.MANUAL_CRITERIA.filter(
       (c) =>

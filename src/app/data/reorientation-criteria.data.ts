@@ -5,6 +5,7 @@ export interface ManualCriterion {
     | "Scolarité"
     | "Expérience"
     | "Année scolaire"
+    | "Histoire"
     | "Langue"
     | "Science"
     | "Informatique"
@@ -246,6 +247,11 @@ export const MANUAL_CRITERIA: ManualCriterion[] = [
       id: "sec4_24_credits",
       label: "24 crédit de sec 4/10e années complété",
       category: "Année scolaire",
+    },
+    {
+      id: "histoire_sec4",
+      label: "Histoire sec 4",
+      category: "Histoire",
     },
     {
       id: "francais_sec4_10e",

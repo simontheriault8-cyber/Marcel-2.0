@@ -13,6 +13,7 @@ interface ManualCriterion {
     | "Scolarité"
     | "Expérience"
     | "Année scolaire"
+    | "Histoire"
     | "Langue"
     | "Science"
     | "Informatique"
@@ -1573,6 +1574,30 @@ const CMR_JOB_DOMAINS: Record<
                     </label>
                   </div>
 
+                  <!-- Histoire -->
+                  <div class="mt-2 pt-3 border-t border-slate-100">
+                    <h4
+                      class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
+                    >
+                      Histoire
+                    </h4>
+                    <label
+                      *ngFor="let crit of criteriaHistoire()"
+                      class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 group"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="selectedCriteriaIds().has(crit.id)"
+                        (change)="toggleManualCriterion(crit.id)"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span
+                        class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
+                        >{{ crit.label }}</span
+                      >
+                    </label>
+                  </div>
+
                   <!-- Langue -->
                   <div class="mt-2 pt-3 border-t border-slate-100">
                     <h4
@@ -3049,6 +3074,11 @@ export class ReorientationComponent {
       id: "sec4_24_credits",
       label: "24 crédit de sec 4/10e années complété",
       category: "Année scolaire",
+    },
+    {
+      id: "histoire_sec4",
+      label: "Histoire sec 4",
+      category: "Histoire",
     },
     {
       id: "francais_sec4_10e",
@@ -6141,6 +6171,9 @@ o Médecine d’urgence`,
 
   criteriaAnneeScolaire = computed(() =>
     this.manualCriteria.filter((c) => c.category === "Année scolaire"),
+  );
+  criteriaHistoire = computed(() =>
+    this.manualCriteria.filter((c) => c.category === "Histoire"),
   );
   criteriaLangue = computed(() =>
     this.manualCriteria.filter((c) => c.category === "Langue" && c.id !== "etude_anglais" && c.id !== "etude_hors_canada"),

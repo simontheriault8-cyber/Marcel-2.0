@@ -9,6 +9,7 @@ import { ReorientationCriteriaService } from "../../services/reorientation-crite
 import { ScolariteExperienceComponent } from "./scolarite-experience.component";
 import { JobEntry } from "../../services/jobs-data";
 import { JOB_URLS } from "../data/job-urls.data";
+import { MATH_COURSES } from "../data/reorientation-criteria.data";
 
 export const CMR_JOB_DOMAINS: Record<
   string,
@@ -447,91 +448,93 @@ export const CMR_JOB_DOMAINS: Record<
             </div>
           }
 
-          <!-- 3. CHOIX ACTUELS AU DOSSIER (MAX 3) -->
-          <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col gap-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                Choix de métiers actuels au dossier
-              </h3>
-              <span class="text-xs text-slate-400 font-medium">Jusqu'à 3 choix</span>
+          <!-- 3. CHOIX ACTUELS AU DOSSIER (MAX 3) (Caché si refus CMR ou critère minimal non rencontré) -->
+          @if (!cmrRefused() && !cmrMinCriteriaNotMet()) {
+            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                  Choix de métiers actuels au dossier
+                </h3>
+                <span class="text-xs text-slate-400 font-medium">Jusqu'à 3 choix</span>
+              </div>
+
+              <div class="space-y-3">
+                <!-- Métier 1 -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-semibold text-slate-600">Choix 1 (Principal)</label>
+                    @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId1())) {
+                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                        Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId1()) }})
+                      </span>
+                    }
+                  </div>
+                  <select
+                    [ngModel]="selectedDossierJobId1()"
+                    (ngModelChange)="selectedDossierJobId1.set($event)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                  >
+                    <option value="">-- Aucun choix 1 sélectionné --</option>
+                    <option value="00003">00003 - Sans métier</option>
+                    @for (job of allPforJobs(); track job.id) {
+                      <option [value]="job.id">
+                        {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
+                      </option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Métier 2 -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-semibold text-slate-600">Choix 2</label>
+                    @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId2())) {
+                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                        Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId2()) }})
+                      </span>
+                    }
+                  </div>
+                  <select
+                    [ngModel]="selectedDossierJobId2()"
+                    (ngModelChange)="selectedDossierJobId2.set($event)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                  >
+                    <option value="">-- Aucun choix 2 sélectionné --</option>
+                    @for (job of allPforJobs(); track job.id) {
+                      <option [value]="job.id">
+                        {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
+                      </option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Métier 3 -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-semibold text-slate-600">Choix 3</label>
+                    @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId3())) {
+                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
+                        Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId3()) }})
+                      </span>
+                    }
+                  </div>
+                  <select
+                    [ngModel]="selectedDossierJobId3()"
+                    (ngModelChange)="selectedDossierJobId3.set($event)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                  >
+                    <option value="">-- Aucun choix 3 sélectionné --</option>
+                    @for (job of allPforJobs(); track job.id) {
+                      <option [value]="job.id">
+                        {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
+                      </option>
+                    }
+                  </select>
+                </div>
+              </div>
             </div>
-
-            <div class="space-y-3">
-              <!-- Métier 1 -->
-              <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label class="text-xs font-semibold text-slate-600">Choix 1 (Principal)</label>
-                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId1())) {
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
-                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId1()) }})
-                    </span>
-                  }
-                </div>
-                <select
-                  [ngModel]="selectedDossierJobId1()"
-                  (ngModelChange)="selectedDossierJobId1.set($event)"
-                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                >
-                  <option value="">-- Aucun choix 1 sélectionné --</option>
-                  <option value="00003">00003 - Sans métier</option>
-                  @for (job of allPforJobs(); track job.id) {
-                    <option [value]="job.id">
-                      {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
-                    </option>
-                  }
-                </select>
-              </div>
-
-              <!-- Métier 2 -->
-              <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label class="text-xs font-semibold text-slate-600">Choix 2</label>
-                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId2())) {
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
-                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId2()) }})
-                    </span>
-                  }
-                </div>
-                <select
-                  [ngModel]="selectedDossierJobId2()"
-                  (ngModelChange)="selectedDossierJobId2.set($event)"
-                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                >
-                  <option value="">-- Aucun choix 2 sélectionné --</option>
-                  @for (job of allPforJobs(); track job.id) {
-                    <option [value]="job.id">
-                      {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
-                    </option>
-                  }
-                </select>
-              </div>
-
-              <!-- Métier 3 -->
-              <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label class="text-xs font-semibold text-slate-600">Choix 3</label>
-                  @if (jobService.isJobInGestionDesAttentes(selectedDossierJobId3())) {
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200">
-                      Gestion des attentes (Situation {{ getJobAttentesSituation(selectedDossierJobId3()) }})
-                    </span>
-                  }
-                </div>
-                <select
-                  [ngModel]="selectedDossierJobId3()"
-                  (ngModelChange)="selectedDossierJobId3.set($event)"
-                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
-                >
-                  <option value="">-- Aucun choix 3 sélectionné --</option>
-                  @for (job of allPforJobs(); track job.id) {
-                    <option [value]="job.id">
-                      {{ job.id }} - {{ job.title }} ({{ job.abbreviation }})
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-          </div>
+          }
 
           <!-- Section médicale optionnelle -->
           @if (hasMedicalLimitation()) {
@@ -1963,6 +1966,90 @@ export class PforComponent {
     }
   }
 
+  getCmrMinMissingCriteriaFr(): string[] {
+    const selected = this.reorientationCriteria.selectedCriteriaIds();
+    const missing: string[] = [];
+
+    if (!selected.has("des_12e_annee")) {
+      missing.push("posséder au minimum un diplôme d’études secondaires (DES)");
+    }
+    if (!selected.has("histoire_sec4")) {
+      missing.push("avoir réussi le cours d'histoire de la 4e secondaire");
+    }
+    if (!selected.has("francais_sec5_11e")) {
+      missing.push("avoir réussi le cours de langue d'enseignement primaire de 5e secondaire");
+    }
+    if (!selected.has("anglais_sec5_12e")) {
+      missing.push("avoir réussi le cours de langue seconde de 5e secondaire");
+    }
+
+    const allMathIds = Object.values(MATH_COURSES).flat().map((m) => m.id);
+    const hasMath = allMathIds.some((mId) => selected.has(mId));
+    if (!hasMath) {
+      missing.push("avoir réussi un cours de mathématique SN,TS,CST ou 426 avec une note de 70% ou mieux");
+    }
+
+    return missing;
+  }
+
+  formatCmrMinCriteriaParagraphFr(): string {
+    const missing = this.getCmrMinMissingCriteriaFr();
+    if (missing.length === 0) {
+      return "En effet, vous devez posséder au minimum un diplôme d’études secondaires (DES) pour être admissible au Collège militaire royal du Canada (CMR).";
+    }
+    let listStr = "";
+    if (missing.length === 1) {
+      listStr = missing[0];
+    } else if (missing.length === 2) {
+      listStr = `${missing[0]} et ${missing[1]}`;
+    } else {
+      listStr = `${missing.slice(0, -1).join(", ")} et ${missing[missing.length - 1]}`;
+    }
+    return `En effet, vous devez ${listStr} pour être admissible au Collège militaire royal du Canada (CMR).`;
+  }
+
+  getCmrMinMissingCriteriaEn(): string[] {
+    const selected = this.reorientationCriteria.selectedCriteriaIds();
+    const missing: string[] = [];
+
+    if (!selected.has("des_12e_annee")) {
+      missing.push("have at least a high school diploma");
+    }
+    if (!selected.has("histoire_sec4")) {
+      missing.push("have passed Grade 10 / Secondary 4 History");
+    }
+    if (!selected.has("francais_sec5_11e")) {
+      missing.push("have passed the Secondary 5 / Grade 11 primary language of instruction course");
+    }
+    if (!selected.has("anglais_sec5_12e")) {
+      missing.push("have passed the Secondary 5 / Grade 11 second language course");
+    }
+
+    const allMathIds = Object.values(MATH_COURSES).flat().map((m) => m.id);
+    const hasMath = allMathIds.some((mId) => selected.has(mId));
+    if (!hasMath) {
+      missing.push("have passed a mathematics course (SN, TS, CST, or 426) with a grade of 70% or higher");
+    }
+
+    return missing;
+  }
+
+  formatCmrMinCriteriaParagraphEn(): string {
+    const missing = this.getCmrMinMissingCriteriaEn();
+    if (missing.length === 0) {
+      return "Specifically, you must have at least a high school diploma to be eligible for the Royal Military College of Canada (RMC).";
+    }
+    let listStr = "";
+    if (missing.length === 1) {
+      listStr = missing[0];
+    } else if (missing.length === 2) {
+      listStr = `${missing[0]} and ${missing[1]}`;
+    } else {
+      listStr = `${missing.slice(0, -1).join(", ")}, and ${missing[missing.length - 1]}`;
+    }
+    return `Specifically, you must ${listStr} to be eligible for the Royal Military College of Canada (RMC).`;
+  }
+
   buildCmrRefusalEmail(isHtml: boolean): string {
     const ncmEval = this.eligibleNcmEvaluation();
     const openJobs = ncmEval.openJobs;
@@ -2058,10 +2145,10 @@ export class PforComponent {
       h += '<p class="mt-4 mb-4">Bonjour,</p>\n';
       if (this.cmrMinCriteriaNotMet()) {
         h +=
-          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). En effet, <strong>vous devez posséder au minimum un diplôme d’études secondaires (DES) pour être admissible au Collège militaire royal du Canada (CMR).</strong></p>\n';
+          `<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). <strong>${this.formatCmrMinCriteriaParagraphFr()}</strong></p>\n`;
       } else {
         h +=
-          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous n’avez pas été admis(e) au CMR.</strong></p>\n';
+          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous n’avez pas été admis(e) par le CMR.</strong></p>\n';
       }
       h +=
         '<p class="mt-4 mb-4">Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.<br>Voici les différentes options qui s’offrent à vous :</p>\n';
@@ -2159,7 +2246,7 @@ export class PforComponent {
       h += '<p class="mt-4 mb-4">Hello,</p>\n';
       if (this.cmrMinCriteriaNotMet()) {
         h +=
-          '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). Specifically, <strong>you must have at least a high school diploma to be eligible for the Royal Military College of Canada (RMC).</strong></p>\n';
+          `<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). <strong>${this.formatCmrMinCriteriaParagraphEn()}</strong></p>\n`;
       } else {
         h +=
           '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have not been offered admission to RMC.</strong></p>\n';
@@ -2260,10 +2347,10 @@ export class PforComponent {
       t += "Bonjour,\n\n";
       if (this.cmrMinCriteriaNotMet()) {
         t +=
-          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). En effet, vous devez posséder au minimum un diplôme d’études secondaires (DES) pour être admissible au Collège militaire royal du Canada (CMR).\n\n";
+          `Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). ${this.formatCmrMinCriteriaParagraphFr()}\n\n`;
       } else {
         t +=
-          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous n’avez pas été admis(e) au CMR.\n\n";
+          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous n’avez pas été admis(e) par le CMR.\n\n";
       }
       t +=
         "Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.\n";
@@ -2347,7 +2434,7 @@ export class PforComponent {
       t += "Hello,\n\n";
       if (this.cmrMinCriteriaNotMet()) {
         t +=
-          "Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). Specifically, you must have at least a high school diploma to be eligible for the Royal Military College of Canada (RMC).\n\n";
+          `Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). ${this.formatCmrMinCriteriaParagraphEn()}\n\n`;
       } else {
         t +=
           "Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have not been offered admission to RMC.\n\n";
