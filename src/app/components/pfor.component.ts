@@ -673,15 +673,15 @@ export const CMR_JOB_DOMAINS: Record<
                 <div class="inline-flex border border-slate-300 rounded-lg overflow-hidden bg-slate-50 divide-x divide-slate-300 shadow-sm">
                   <div class="flex flex-col items-center">
                     <div class="px-3 py-1 bg-slate-100 text-xs font-bold text-slate-700 border-b border-slate-300 w-full text-center">V</div>
-                    <input type="text" [(ngModel)]="medicalV" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
+                    <input type="text" [ngModel]="medicalV()" (ngModelChange)="medicalV.set($event)" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
                   </div>
                   <div class="flex flex-col items-center">
                     <div class="px-3 py-1 bg-slate-100 text-xs font-bold text-slate-700 border-b border-slate-300 w-full text-center">CV</div>
-                    <input type="text" [(ngModel)]="medicalCV" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
+                    <input type="text" [ngModel]="medicalCV()" (ngModelChange)="medicalCV.set($event)" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
                   </div>
                   <div class="flex flex-col items-center">
                     <div class="px-3 py-1 bg-slate-100 text-xs font-bold text-slate-700 border-b border-slate-300 w-full text-center">H</div>
-                    <input type="text" [(ngModel)]="medicalH" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
+                    <input type="text" [ngModel]="medicalH()" (ngModelChange)="medicalH.set($event)" class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-indigo-50 focus:ring-2 focus:ring-indigo-500" />
                   </div>
                 </div>
               </div>
@@ -817,9 +817,15 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
+                    {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
                   </h3>
-                  @if (age() !== null && age()! >= 57) {
+                  @if (citizenship() === 'PR < 3 years') {
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
+                    >
+                      Inadmissible (RP &lt; 3 ans)
+                    </span>
+                  } @else if (age() !== null && age()! >= 57) {
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                     >

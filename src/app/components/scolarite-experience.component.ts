@@ -185,7 +185,8 @@ import { SharedStateService } from "../../services/shared-state.service";
                         Mathématique
                       </h4>
                       <select
-                        [(ngModel)]="selectedProvince"
+                        [ngModel]="selectedProvince()"
+                        (ngModelChange)="selectedProvince.set($event)"
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">

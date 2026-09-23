@@ -192,7 +192,7 @@ function getTodayDateString(): string {
           <p class="text-sm text-slate-500 mb-6">Veuillez entrer le mot de passe pour accéder à l'application.</p>
           <form (submit)="checkPassword($event)">
             <div class="relative mb-4">
-              <input [type]="showPassword() ? 'text' : 'password'" [(ngModel)]="passwordInput" [ngModelOptions]="{standalone: true}" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12" placeholder="Mot de passe" />
+              <input [type]="showPassword() ? 'text' : 'password'" [ngModel]="passwordInput()" (ngModelChange)="passwordInput.set($event)" [ngModelOptions]="{standalone: true}" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12" placeholder="Mot de passe" />
               <button type="button" (click)="showPassword.set(!showPassword())" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none">
                 @if (showPassword()) {
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -223,6 +223,22 @@ function getTodayDateString(): string {
         <app-tuto-marcel (close)="closeTutoMarcel()" />
       } @else {
         <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
+          <!-- Top Left: Tuto Marcel Button -->
+          <div class="absolute top-6 left-6 z-10">
+            <button
+              (click)="openTutoMarcel()"
+              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
+              title="Guide et Tutoriels d'utilisation de MARCEL"
+            >
+              <div class="w-7 h-7 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 flex items-center justify-center transition-colors shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <span>Tuto Marcel</span>
+            </button>
+          </div>
+
           <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
             
             <!-- MARCEL Title with Hover Animation -->
@@ -686,13 +702,24 @@ function getTodayDateString(): string {
           <div
             class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between items-center gap-2 flex-1 min-w-[320px]"
           >
-            <h1
-              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1"
+            <div
+              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1 flex items-center justify-between"
               [class.text-indigo-800]="selectedRole() === 'recruiter'"
               [class.text-amber-800]="selectedRole() === 'gestionnaire'"
             >
-              {{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}
-            </h1>
+              <span>{{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}</span>
+              <button
+                type="button"
+                (click)="openTutoMarcel()"
+                class="text-[10px] tracking-normal normal-case font-bold text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 px-2 py-0.5 rounded-lg border border-slate-200 transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                title="Consulter le tutoriel MARCEL"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                </svg>
+                <span>Tuto</span>
+              </button>
+            </div>
 
             <div class="grid grid-cols-2 gap-2 w-full flex-1">
               <!-- Top-Left: Reset -->
@@ -4944,6 +4971,7 @@ Thank you for your cooperation.`;
 
   closeTutoMarcel() {
     this.showTutoMarcel.set(false);
+    this.selectedRole.set('none');
   }
 
   // Signature Settings State

@@ -317,7 +317,8 @@ const CMR_JOB_DOMAINS: Record<
               >
               <input
                 type="number"
-                [(ngModel)]="age"
+                [ngModel]="age()"
+                (ngModelChange)="age.set($event)"
                 class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
                 placeholder="Ex: 18"
               />
@@ -327,7 +328,8 @@ const CMR_JOB_DOMAINS: Record<
                 >Statut de citoyenneté</label
               >
               <select
-                [(ngModel)]="citizenship"
+                [ngModel]="citizenship()"
+                (ngModelChange)="citizenship.set($event)"
                 class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
               >
                 <option value="Canadian Citizen">Citoyen canadien</option>
@@ -362,7 +364,8 @@ const CMR_JOB_DOMAINS: Record<
                     </div>
                     <input
                       type="text"
-                      [(ngModel)]="medicalV"
+                      [ngModel]="medicalV()"
+                      (ngModelChange)="medicalV.set($event)"
                       class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-500 focus:z-10 transition-colors"
                     />
                   </div>
@@ -374,7 +377,8 @@ const CMR_JOB_DOMAINS: Record<
                     </div>
                     <input
                       type="text"
-                      [(ngModel)]="medicalCV"
+                      [ngModel]="medicalCV()"
+                      (ngModelChange)="medicalCV.set($event)"
                       class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-500 focus:z-10 transition-colors"
                     />
                   </div>
@@ -386,7 +390,8 @@ const CMR_JOB_DOMAINS: Record<
                     </div>
                     <input
                       type="text"
-                      [(ngModel)]="medicalH"
+                      [ngModel]="medicalH()"
+                      (ngModelChange)="medicalH.set($event)"
                       class="w-12 sm:w-14 px-1 py-1.5 text-center text-sm font-semibold text-slate-800 bg-white outline-none focus:bg-blue-50 focus:ring-2 focus:ring-blue-500 focus:z-10 transition-colors"
                     />
                   </div>
@@ -1634,7 +1639,8 @@ const CMR_JOB_DOMAINS: Record<
                         Mathématique
                       </h4>
                       <select
-                        [(ngModel)]="selectedProvince"
+                        [ngModel]="selectedProvince()"
+                        (ngModelChange)="selectedProvince.set($event)"
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">
@@ -2685,24 +2691,38 @@ const CMR_JOB_DOMAINS: Record<
             <div
               class="p-4 bg-slate-50 border-b border-slate-200 shrink-0 flex items-center justify-between flex-wrap gap-2"
             >
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <h3 class="text-sm font-bold text-slate-800">
-                  Courriel de réorientation
+                  {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : 'Courriel de réorientation' }}
                 </h3>
-                <div class="flex gap-2" *ngIf="eligibleJobs().length > 0">
+                @if (citizenship() === 'PR < 3 years') {
                   <span
-                    class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                   >
-                    {{ eligibleJobs().length }} métier(s)
+                    Inadmissible (RP &lt; 3 ans)
                   </span>
-                </div>
-                <div class="flex gap-2" *ngIf="isPforApplicant() && eligibleJobs().length === 0">
+                } @else if (age() !== null && age()! >= 57) {
                   <span
-                    class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full"
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                   >
-                    0 métier PFOR ouvert
+                    Inadmissible (57+)
                   </span>
-                </div>
+                } @else {
+                  <div class="flex gap-2" *ngIf="eligibleJobs().length > 0">
+                    <span
+                      class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
+                    >
+                      {{ eligibleJobs().length }} métier(s)
+                    </span>
+                  </div>
+                  <div class="flex gap-2" *ngIf="isPforApplicant() && eligibleJobs().length === 0">
+                    <span
+                      class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full"
+                    >
+                      0 métier PFOR ouvert
+                    </span>
+                  </div>
+                }
               </div>
 
               <div class="flex gap-2 w-full sm:w-auto">
