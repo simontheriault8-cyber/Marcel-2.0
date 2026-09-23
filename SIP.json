@@ -335,8 +335,8 @@
     },
     "00178": {
       "PFOR": {
-        "admission": "f",
-        "traitement": "f"
+        "admission": "o",
+        "traitement": "o"
       },
       "EDO": {
         "admission": "f",
