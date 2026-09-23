@@ -1052,6 +1052,17 @@ export class RecruitmentDataService {
                 "Le visa ne prouve pas la citoyenneté. Doit fournir un certificat de naissance, certificat/carte de citoyenneté ou carte RP",
             },
             {
+              id: "cit_invalide_bapteme",
+              labelFr: "Certificat de baptême ou copie de certificat de baptême",
+              labelEn: "Baptism certificate or copy of baptism certificate",
+              instructionFr:
+                "Le certificat de baptême ou la copie de certificat de baptême ne prouve pas la citoyenneté canadienne. Vous devez fournir soit un certificat de naissance d'une province canadienne, un certificat de citoyenneté, une carte de citoyenneté ou une carte de résident permanent.",
+              instructionEn:
+                "A baptism certificate or copy of a baptism certificate does not prove Canadian citizenship. You must provide either a birth certificate from a Canadian province, a citizenship certificate, a citizenship card, or a permanent resident card.",
+              logNoteFr:
+                "Le certificat de baptême ne prouve pas la citoyenneté. Doit fournir un certificat de naissance, certificat/carte de citoyenneté ou carte RP",
+            },
+            {
               id: "cit_invalide_permis_travail",
               labelFr: "Permis de travail",
               labelEn: "Work permit",

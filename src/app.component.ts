@@ -27,6 +27,7 @@ import { UnitPickerComponent } from "./app/components/unit-picker.component";
 import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
 import { UnitSession, UNITS_LIST } from "./app/data/units.data";
 import { CourseSession } from "./app/data/course-sessions.data";
+import { JOB_URLS } from "./app/data/job-urls.data";
 import { SharedStateService, DEFAULT_SIG_FR, DEFAULT_SIG_EN, DEFAULT_SIG_OTA_FR, DEFAULT_SIG_OTA_EN } from "./services/shared-state.service";
 import { JobDatabaseService } from "./services/job-database.service";
 import { JobEntry, JobCategory, MilitaryElement, RecruitmentCenter, RECRUITMENT_CENTERS, ENROLMENT_HOURS } from "./services/jobs-data";
@@ -450,8 +451,6 @@ function getTodayDateString(): string {
           </div>
         }
       </div>
-    } @else if (showTutoMarcel()) {
-      <app-tuto-marcel (close)="closeTutoMarcel()" />
     } @else {
       <!-- INTRO SCREEN -->
       @if (stage() === "intro" && selectedRole() === "recruiter") {
@@ -702,24 +701,13 @@ function getTodayDateString(): string {
           <div
             class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between items-center gap-2 flex-1 min-w-[320px]"
           >
-            <div
-              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1 flex items-center justify-between"
+            <h1
+              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1"
               [class.text-indigo-800]="selectedRole() === 'recruiter'"
               [class.text-amber-800]="selectedRole() === 'gestionnaire'"
             >
-              <span>{{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}</span>
-              <button
-                type="button"
-                (click)="openTutoMarcel()"
-                class="text-[10px] tracking-normal normal-case font-bold text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 px-2 py-0.5 rounded-lg border border-slate-200 transition-all cursor-pointer flex items-center gap-1 active:scale-95"
-                title="Consulter le tutoriel MARCEL"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                </svg>
-                <span>Tuto</span>
-              </button>
-            </div>
+              {{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}
+            </h1>
 
             <div class="grid grid-cols-2 gap-2 w-full flex-1">
               <!-- Top-Left: Reset -->
@@ -8263,6 +8251,7 @@ Thank you for your cooperation.`;
 
     const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
     const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
+    const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
 
     // --- FRENCH BLOCK ---
     html += `<p><strong>English message will follow.</strong></p>`;
@@ -8273,7 +8262,12 @@ Thank you for your cooperation.`;
     html += `<p><strong>1-Vous informer :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://youtu.be/hYzMRYYBnag" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+    if (dossierJobs.length > 0) {
+      const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, true)).join(', ');
+      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
+    } else {
+      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+    }
     html += `  <li style="margin-bottom: 5px;">Explorer et bien comprendre la section <a href="https://forces.ca/fr/instruction-de-base/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Instruction de base</a> du site Forces.ca</li>`;
     html += `</ul>`;
 
@@ -8300,7 +8294,12 @@ Thank you for your cooperation.`;
     html += `<p><strong>1- Inform yourself :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://youtu.be/oKuX_ROtASw" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+    if (dossierJobs.length > 0) {
+      const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, true)).join(', ');
+      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
+    } else {
+      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+    }
     html += `  <li style="margin-bottom: 5px;">Explore and fully understand the <a href="https://forces.ca/en/basic-training/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Basic Training</a> section of the Forces.ca website.</li>`;
     html += `</ul>`;
 
@@ -8326,6 +8325,7 @@ Thank you for your cooperation.`;
 
     const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
     const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
+    const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
 
     // --- FRENCH ---
     plain += `English message will follow.\n\n`;
@@ -8334,7 +8334,12 @@ Thank you for your cooperation.`;
     plain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
     plain += `1-Vous informer :\n`;
     plain += `•\tRegarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://youtu.be/hYzMRYYBnag)\n`;
-    plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+    if (dossierJobs.length > 0) {
+      const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, false)).join(', ');
+      plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
+    } else {
+      plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+    }
     plain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/instruction-de-base/)\n\n`;
     plain += `2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail. Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/) De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.\n\n`;
     plain += `Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.\n\n`;
@@ -8353,7 +8358,12 @@ Thank you for your cooperation.`;
     plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
     plain += `1- Inform yourself :\n`;
     plain += `•\tWatch and understand the content of the following presentation: Forces 101 Presentation (https://youtu.be/oKuX_ROtASw)\n`;
-    plain += `•\tWatch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+    if (dossierJobs.length > 0) {
+      const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, false)).join(', ');
+      plain += `•\tWatch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
+    } else {
+      plain += `•\tWatch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+    }
     plain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/basic-training/)\n\n`;
     plain += `2-After viewing the video, Schedule an appointment for a consultation through your portal calendar. Canadian Armed Forces enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/) New time slots will open on your portal within 14 days.\n\n`;
     plain += `This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.\n\n`;
@@ -8367,11 +8377,60 @@ Thank you for your cooperation.`;
     return plain;
   }
 
+  getPforJobLinkMarkup(jobId: string, isFrench: boolean, isHtml: boolean): string {
+    const job = this.jobService.getAllJobs().find((j) => j.id === jobId);
+    const urlInfo = JOB_URLS[jobId];
+
+    let titleText = jobId;
+    if (job) {
+      titleText = job.title;
+      if (!isFrench && urlInfo) {
+        let slug =
+          urlInfo.en.split("/career/")[1] ||
+          urlInfo.en.split(".ca/en/")[1] ||
+          "";
+        slug = slug
+          .replace(/\//g, "")
+          .replace(/\?slug=nep/, "")
+          .replace(/-/g, " ");
+        if (slug) {
+          titleText = slug
+            .split(" ")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+        } else if (job.titleEn) {
+          titleText = job.titleEn;
+        }
+      } else if (!isFrench && job.titleEn) {
+        titleText = job.titleEn;
+      }
+    }
+
+    if (urlInfo) {
+      const url = isFrench ? urlInfo.fr : urlInfo.en;
+      if (isHtml) {
+        return `<a href="${url}" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">${titleText}</a>`;
+      } else {
+        return `${titleText} (${url})`;
+      }
+    }
+    if (job) {
+      const fallbackUrl = isFrench ? 'https://forces.ca/fr/carrieres/' : 'https://forces.ca/en/careers/';
+      if (isHtml) {
+        return `<a href="${fallbackUrl}" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">${titleText}</a>`;
+      } else {
+        return `${titleText} (${fallbackUrl})`;
+      }
+    }
+    return titleText;
+  }
+
   getCompliantPforEmailHtml(): string {
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
 
     const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
     const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
+    const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
 
     // --- FRENCH BLOCK ---
     html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
@@ -8382,12 +8441,20 @@ Thank you for your cooperation.`;
     html += `<p style="margin-bottom: 5px;"><strong>1- Vous informer :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://www.youtube.com/watch?v=UaCQUp-_ZUc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+    if (dossierJobs.length > 0) {
+      const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, true)).join(', ');
+      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
+    } else {
+      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+    }
     html += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège Militaire Canadien de St-Jean</li>`;
     html += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège Militaire Canadien de St-Jean</li>`;
     html += `</ul>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>2- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
+    html += `<p style="margin-bottom: 5px;"><strong>2- Vous assurer que toutes les tâches sur votre portail sont complétées :</strong></p>`;
+    html += `<p style="margin-top: 0; margin-bottom: 15px;">Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a></p>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Équipes du CMC St-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
     html += `  <li style="margin-bottom: 5px;">Équipes du CMC Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
@@ -8415,12 +8482,20 @@ Thank you for your cooperation.`;
     html += `<p style="margin-bottom: 5px;"><strong>1- Inform yourself :</strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=nGGLc_Ynr-I" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+    if (dossierJobs.length > 0) {
+      const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, true)).join(', ');
+      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
+    } else {
+      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+    }
     html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
     html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
     html += `</ul>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>2- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
+    html += `<p style="margin-bottom: 5px;"><strong>2- Ensure all tasks on your portal are completed:</strong></p>`;
+    html += `<p style="margin-top: 0; margin-bottom: 15px;">Please log in to your portal to verify and ensure that all required tasks are completed: <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces Enrolment Portal link</a></p>`;
+
+    html += `<p style="margin-bottom: 5px;"><strong>3- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
     html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
     html += `  <li style="margin-bottom: 5px;">CMC St-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
     html += `  <li style="margin-bottom: 5px;">CMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
@@ -8507,6 +8582,7 @@ Thank you for your cooperation.`;
 
     const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
     const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
+    const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
 
     // --- FRENCH ---
     plain += `English message will follow.\n\n`;
@@ -8515,10 +8591,17 @@ Thank you for your cooperation.`;
     plain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
     plain += `1- Vous informer :\n`;
     plain += `• Regarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://www.youtube.com/watch?v=UaCQUp-_ZUc)\n`;
-    plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+    if (dossierJobs.length > 0) {
+      const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, false)).join(', ');
+      plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
+    } else {
+      plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+    }
     plain += `• Explorer la section Foire aux Questions du site internet du Collège Militaire Canadien de St-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
     plain += `• Explorer la chaîne Youtube du Collège Militaire Canadien de St-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
-    plain += `2- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
+    plain += `2- Vous assurer que toutes les tâches sur votre portail sont complétées :\n`;
+    plain += `Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
+    plain += `3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
     plain += `• Équipes du CMC St-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
     plain += `• Équipes du CMC Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
     plain += `Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.\n\n`;
@@ -8541,10 +8624,17 @@ Thank you for your cooperation.`;
     plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
     plain += `1- Inform yourself :\n`;
     plain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=nGGLc_Ynr-I)\n`;
-    plain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+    if (dossierJobs.length > 0) {
+      const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, false)).join(', ');
+      plain += `• Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
+    } else {
+      plain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+    }
     plain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
     plain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
-    plain += `2- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
+    plain += `2- Ensure all tasks on your portal are completed:\n`;
+    plain += `Please log in to your portal to verify and ensure that all required tasks are completed: Canadian Armed Forces Enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
+    plain += `3- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
     plain += `• CMC St-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
     plain += `• CMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
     plain += `If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.\n\n`;
