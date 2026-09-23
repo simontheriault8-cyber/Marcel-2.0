@@ -24,6 +24,7 @@ import { JobSearchModalComponent } from "./app/components/job-search-modal.compo
 import { CalendarPickerComponent } from "./app/components/calendar-picker.component";
 import { CourseSeriesPickerComponent } from "./app/components/course-series-picker.component";
 import { UnitPickerComponent } from "./app/components/unit-picker.component";
+import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
 import { UnitSession, UNITS_LIST } from "./app/data/units.data";
 import { CourseSession } from "./app/data/course-sessions.data";
 import { SharedStateService, DEFAULT_SIG_FR, DEFAULT_SIG_EN, DEFAULT_SIG_OTA_FR, DEFAULT_SIG_OTA_EN } from "./services/shared-state.service";
@@ -177,7 +178,7 @@ function getTodayDateString(): string {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, FormsModule],
+  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, FormsModule],
   template: `
     @if (!isAuthenticated()) {
       <div class="h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-4">
@@ -218,65 +219,85 @@ function getTodayDateString(): string {
         </div>
       </div>
     } @else if (selectedRole() === 'none') {
-      <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6">
-        <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
-          
-          <!-- MARCEL Title with Hover Animation -->
-          <div class="flex justify-center w-full">
-            <div
-              class="group relative flex items-center justify-center overflow-hidden rounded-full bg-indigo-50 border-2 border-indigo-200/50 transition-all duration-500 hover:bg-white hover:border-indigo-300 hover:shadow-2xl shadow-lg h-16 w-72 sm:w-80 hover:w-full max-w-2xl cursor-default"
+      @if (showTutoMarcel()) {
+        <app-tuto-marcel (close)="closeTutoMarcel()" />
+      } @else {
+        <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
+          <!-- Top Left: Tuto Marcel Button -->
+          <div class="absolute top-6 left-6 z-10">
+            <button
+              (click)="openTutoMarcel()"
+              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
+              title="Guide et Tutoriels d'utilisation de MARCEL"
             >
-              <div class="absolute flex w-full items-center justify-center px-4">
-                <span
-                  class="font-black text-3xl sm:text-4xl tracking-wider text-indigo-700 transition-all duration-500 group-hover:-translate-y-16 group-hover:opacity-0 absolute drop-shadow-sm whitespace-nowrap"
-                  >MARCEL 2.0</span
-                >
-                <span
-                  class="text-[10px] sm:text-[11px] md:text-xs leading-none uppercase tracking-wider font-semibold text-slate-500 text-center transition-all duration-500 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 absolute w-full px-3 whitespace-nowrap"
-                >
-                  <span class="font-black text-indigo-700">M</span>odule
-                  d'<span class="font-black text-indigo-700">A</span>nalyse et de
-                  <span class="font-black text-indigo-700">R</span>éorientation
-                  des
-                  <span class="font-black text-indigo-700">C</span>andidats à l'<span class="font-black text-indigo-700">E</span>nrôlement pour les
-                  <span class="font-black text-indigo-700">L</span>âches
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sélection du Rôle</h1>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
-            <!-- Left: Gestionnaire de dossier -->
-            <div 
-              (click)="selectRole('gestionnaire')"
-              class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
-            >
-              <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              <div class="w-7 h-7 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 flex items-center justify-center transition-colors shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
-              <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Gestionnaire de dossier</h3>
-            </div>
-
-            <!-- Right: Recruteur -->
-            <div 
-              (click)="selectRole('recruiter')"
-              class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
-            >
-              <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Recruteur</h3>
-            </div>
+              <span>Tuto Marcel</span>
+            </button>
           </div>
 
+          <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
+            
+            <!-- MARCEL Title with Hover Animation -->
+            <div class="flex justify-center w-full">
+              <div
+                class="group relative flex items-center justify-center overflow-hidden rounded-full bg-indigo-50 border-2 border-indigo-200/50 transition-all duration-500 hover:bg-white hover:border-indigo-300 hover:shadow-2xl shadow-lg h-16 w-72 sm:w-80 hover:w-full max-w-2xl cursor-default"
+              >
+                <div class="absolute flex w-full items-center justify-center px-4">
+                  <span
+                    class="font-black text-3xl sm:text-4xl tracking-wider text-indigo-700 transition-all duration-500 group-hover:-translate-y-16 group-hover:opacity-0 absolute drop-shadow-sm whitespace-nowrap"
+                    >MARCEL 2.0</span
+                  >
+                  <span
+                    class="text-[10px] sm:text-[11px] md:text-xs leading-none uppercase tracking-wider font-semibold text-slate-500 text-center transition-all duration-500 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 absolute w-full px-3 whitespace-nowrap"
+                  >
+                    <span class="font-black text-indigo-700">M</span>odule
+                    d'<span class="font-black text-indigo-700">A</span>nalyse et de
+                    <span class="font-black text-indigo-700">R</span>éorientation
+                    des
+                    <span class="font-black text-indigo-700">C</span>andidats à l'<span class="font-black text-indigo-700">E</span>nrôlement pour les
+                    <span class="font-black text-indigo-700">L</span>âches
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sélection du Rôle</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
+              <!-- Left: Gestionnaire de dossier -->
+              <div 
+                (click)="selectRole('gestionnaire')"
+                class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
+              >
+                <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Gestionnaire de dossier</h3>
+              </div>
+
+              <!-- Right: Recruteur -->
+              <div 
+                (click)="selectRole('recruiter')"
+                class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
+              >
+                <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Recruteur</h3>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
+      }
     } @else {
     @if (showSignaturePage()) {
       <div class="h-screen w-full bg-slate-100 flex flex-col p-6 overflow-hidden select-none">
@@ -429,6 +450,8 @@ function getTodayDateString(): string {
           </div>
         }
       </div>
+    } @else if (showTutoMarcel()) {
+      <app-tuto-marcel (close)="closeTutoMarcel()" />
     } @else {
       <!-- INTRO SCREEN -->
       @if (stage() === "intro" && selectedRole() === "recruiter") {
@@ -842,6 +865,36 @@ function getTodayDateString(): string {
                       >
                         <span class="truncate">Courriel de vérification de programme EDO VS PFOR</span>
                         @if (selectedEmailBankTemplate() === 'verification_edo_vs_pfor') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('inadmissibilite_age_57')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
+                      >
+                        <span class="truncate">Inadmissibilité - Âge (57 ans et plus)</span>
+                        @if (selectedEmailBankTemplate() === 'inadmissibilite_age_57') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('inadmissibilite_pr_3ans')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
+                      >
+                        <span class="truncate">Inadmissibilité - Résident permanent (< 3 ans)</span>
+                        @if (selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -4898,6 +4951,17 @@ Thank you for your cooperation.`;
   isUnderAge = signal<boolean>(false);
   recruiterDossierType = signal<'normal' | 'pfor'>('normal');
 
+  // Tuto Marcel State
+  showTutoMarcel = signal<boolean>(false);
+
+  openTutoMarcel() {
+    this.showTutoMarcel.set(true);
+  }
+
+  closeTutoMarcel() {
+    this.showTutoMarcel.set(false);
+  }
+
   // Signature Settings State
   showSignaturePage = signal<boolean>(false);
   showToast = signal<boolean>(false);
@@ -7679,6 +7743,12 @@ Thank you for your cooperation.`;
     if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
       return "Courriel de vérification de programme EDO VS PFOR envoyé au postulant.";
     }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
+      return "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
+      return "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
+    }
 
     const closureSuffix =
       " Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
@@ -7862,6 +7932,12 @@ Thank you for your cooperation.`;
   activeEmailScenario = computed<EmailScenario | null>(() => {
     if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
       return this.emailScenariosService.getScenario("verification_edo_vs_pfor") || null;
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
+      return this.emailScenariosService.getScenario("inadmissibilite_age_57") || null;
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
+      return this.emailScenariosService.getScenario("inadmissibilite_pr_3ans") || null;
     }
 
     if (
@@ -10231,7 +10307,12 @@ Thank you for your cooperation.`;
     }
 
     const scenario = this.activeEmailScenario();
-    if (scenario && (scenario.id === "verification_edo_vs_pfor" || (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections()))) {
+    if (scenario && (
+      scenario.id === "verification_edo_vs_pfor" ||
+      scenario.id === "inadmissibilite_age_57" ||
+      scenario.id === "inadmissibilite_pr_3ans" ||
+      (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
+    )) {
       return this.sharedState.getCustomizedScenarioText(scenario.bodyText);
     }
 
@@ -10352,7 +10433,12 @@ Thank you for your cooperation.`;
     }
 
     const scenario = this.activeEmailScenario();
-    if (scenario && (scenario.id === "verification_edo_vs_pfor" || (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections()))) {
+    if (scenario && (
+      scenario.id === "verification_edo_vs_pfor" ||
+      scenario.id === "inadmissibilite_age_57" ||
+      scenario.id === "inadmissibilite_pr_3ans" ||
+      (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
+    )) {
       return this.sharedState.getCustomizedScenarioHtml(scenario.bodyHtml);
     }
 

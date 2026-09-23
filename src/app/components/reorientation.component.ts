@@ -466,9 +466,9 @@ const CMR_JOB_DOMAINS: Record<
             </div>
           </div>
 
-          <!-- Message pour limite d'âge de retraite forcée (âge >= 60) -->
+          <!-- Message pour limite d'âge de retraite forcée (âge >= 57 ou dépassement de durée de contrat) -->
           <div
-            *ngIf="age() !== null && age()! >= 60"
+            *ngIf="age() !== null && (age()! >= 57 || isCandidateTooOld())"
             class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-start gap-3 shadow-sm transition-all duration-300 shrink-0"
           >
             <svg
@@ -487,10 +487,13 @@ const CMR_JOB_DOMAINS: Record<
             </svg>
             <div>
               <p class="font-bold text-sm">
-                Âge limite dépassé (Retraite forcée)
+                {{ age()! >= 57 ? "Âge maximal d'enrôlement dépassé (57 ans et plus)" : "Âge limite dépassé pour les choix de contrats" }}
               </p>
               <p class="text-xs text-red-700 mt-0.5">
-                L'âge maximal d'admissibilité est de 56 ans, et le postulant doit pouvoir compléter le contrat initial avant l'âge de 60 ans.
+                {{ age()! >= 57 
+                  ? "57 ans et plus est automatiquement inadmissible aux Forces armées canadiennes. L'âge maximal d'enrôlement admissible est de 56 ans."
+                  : "La règle de durée des contrats initiaux s'applique : Admissible = 59 - durée du contrat initial ou moins (Inadmissible = 60 - durée du contrat initial ou plus)."
+                }}
               </p>
             </div>
           </div>
@@ -692,7 +695,7 @@ const CMR_JOB_DOMAINS: Record<
                                 <span class="italic text-slate-500"
                                   >Non renseigné (Contrat :
                                   {{ s1.durationYears }} ans - âge max:
-                                  {{ 60 - s1.durationYears }} ans)</span
+                                  {{ 59 - s1.durationYears }} ans)</span
                                 >
                               } @else {
                                 <span
@@ -998,7 +1001,7 @@ const CMR_JOB_DOMAINS: Record<
                                 <span class="italic text-slate-500"
                                   >Non renseigné (Contrat :
                                   {{ s2.durationYears }} ans - âge max:
-                                  {{ 60 - s2.durationYears }} ans)</span
+                                  {{ 59 - s2.durationYears }} ans)</span
                                 >
                               } @else {
                                 <span
@@ -1304,7 +1307,7 @@ const CMR_JOB_DOMAINS: Record<
                                 <span class="italic text-slate-500"
                                   >Non renseigné (Contrat :
                                   {{ s3.durationYears }} ans - âge max:
-                                  {{ 60 - s3.durationYears }} ans)</span
+                                  {{ 59 - s3.durationYears }} ans)</span
                                 >
                               } @else {
                                 <span
@@ -7249,7 +7252,34 @@ o Médecine d’urgence`,
     this.selectedCriteriaIds.set(current);
   }
 
+  isCandidateTooOld = computed(() => {
+    const ageVal = this.age();
+    if (ageVal === null || ageVal <= 0) return false;
+    if (ageVal >= 57) return true;
+
+    const dossierIds = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean).filter((id) => id !== "00003");
+
+    if (dossierIds.length > 0) {
+      const allDossierExceedAge = dossierIds.every((id) => {
+        const s = this.evaluateJobAdmissibility(id);
+        return s && !s.isAgeAdmissible;
+      });
+      if (allDossierExceedAge) return true;
+    }
+    return false;
+  });
+
   showResultsPanel = computed(() => {
+    if (this.citizenship() === "PR < 3 years") {
+      return true;
+    }
+    if (this.age() !== null && (this.age()! >= 57 || this.isCandidateTooOld())) {
+      return true;
+    }
     if (this.isPforApplicant()) {
       const hasDossierJob = !!(
         this.selectedDossierJobId1() ||
@@ -7314,7 +7344,7 @@ o Médecine d’urgence`,
           continue;
 
         if (ageVal !== null && ageVal > 0) {
-          if (ageVal > 56) continue;
+          if (ageVal >= 57) continue;
           const job = this.jobService.getAllJobs().find((j) => j.id === jId);
           if (job) {
             const firstContract =
@@ -7407,11 +7437,10 @@ o Médecine d’urgence`,
           }
 
           // Age qualification logic:
-          // Maximum enrollment age is 56.
-          // A candidate must have time to complete the initial contract length before reaching 60.
+          // Maximum enrollment age is 56 (57+ automatically ineligible).
+          // Contract duration formula: Admissible = 59 - duration or less (Inadmissible = 60 - duration or more).
           if (ageVal !== null && ageVal > 0) {
-            // Absolute max enrollment age is 56
-            if (ageVal > 56) {
+            if (ageVal >= 57) {
               continue;
             }
             const job = this.jobService.getAllJobs().find((j) => j.id === jId);
@@ -8232,6 +8261,7 @@ o Médecine d’urgence`,
 
     let isAgeAdmissible = true;
     let ageReason = "";
+    let ageReasonEn = "";
     const firstContract =
       job.contracts && job.contracts.length > 0 ? job.contracts[0] : null;
     const durationYears = firstContract
@@ -8241,13 +8271,16 @@ o Médecine d’urgence`,
       : 3;
 
     if (ageVal !== null && ageVal > 0) {
-      if (ageVal > 56) {
+      if (ageVal >= 57) {
         isAgeAdmissible = false;
         ageReason =
-          "L'âge maximal d'admissibilité est de 56 ans.";
+          "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
+        ageReasonEn =
+          "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
       } else if (ageVal + durationYears >= 60) {
         isAgeAdmissible = false;
-        ageReason = `L'âge limite dépasse avant la fin du contrat initial (${durationYears} ans). L'âge maximal d'enrôlement pour ce métier est de ${59 - durationYears} ans.`;
+        ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
+        ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
       }
     }
 
@@ -8354,6 +8387,7 @@ o Médecine d’urgence`,
         isEligible,
         isAgeAdmissible,
         ageReason,
+        ageReasonEn,
         isCitizenshipAdmissible,
         citizenshipReason,
         isEducationAdmissible,
@@ -8424,6 +8458,7 @@ o Médecine d’urgence`,
       isEligible,
       isAgeAdmissible,
       ageReason,
+      ageReasonEn,
       isCitizenshipAdmissible,
       citizenshipReason,
       isEducationAdmissible,
@@ -9114,6 +9149,14 @@ o Médecine d’urgence`,
   noteCopied = signal(false);
 
   generateNoteRegistry(): string {
+    if (this.age() !== null && this.age()! >= 57) {
+      return "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
+    }
+
+    if (this.citizenship() === "PR < 3 years") {
+      return "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
+    }
+
     const dossierIds = [
       this.selectedDossierJobId1(),
       this.selectedDossierJobId2(),
@@ -9500,6 +9543,124 @@ o Médecine d’urgence`,
       rawHtml.includes("Bonjour,");
     const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
 
+    if (this.age() !== null && this.age()! >= 57) {
+      if (isHtml) {
+        let h = "";
+        h +=
+          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+        h += '<p class="mt-4">Bonjour,</p>\n';
+        h +=
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.</p>\n';
+        h += '<p class="mt-4">Votre dossier sera fermé.</p>\n';
+        h +=
+          '<p class="mt-4">Merci de votre intérêt à joindre les Forces armées canadienne!</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        h +=
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
+        h += '<p class="mt-4">Hello,</p>\n';
+        h +=
+          '<p class="mt-4">Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.</p>\n';
+        h += '<p class="mt-4">Your file will be closed.</p>\n';
+        h +=
+          '<p class="mt-4">Thank you for your interest in joining the Canadian Armed Forces!</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        return h;
+      } else {
+        let p = "";
+        p += "English message will follow.\n\n";
+        p += "Bonjour,\n\n";
+        p +=
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.\n\n";
+        p += "Votre dossier sera fermé.\n\n";
+        p += "Merci de votre intérêt à joindre les Forces armées canadienne!\n\n";
+        p += this.sharedState.getSignatureFr() + "\n\n";
+        p +=
+          "______________________________________________________________________________\n\n";
+        p += "Hello,\n\n";
+        p +=
+          "Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.\n\n";
+        p += "Your file will be closed.\n\n";
+        p += "Thank you for your interest in joining the Canadian Armed Forces!\n\n";
+        p += this.sharedState.getSignatureEn();
+        return p;
+      }
+    }
+
+    if (this.citizenship() === "PR < 3 years") {
+      if (isHtml) {
+        let h = "";
+        h +=
+          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+        h += '<p class="mt-4">Bonjour,</p>\n';
+        h +=
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.</p>\n';
+        h +=
+          '<p class="mt-4">Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.</p>\n';
+        h +=
+          '<p class="mt-4">Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l\'avenir, vous devez :</p>\n';
+        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
+        h += '  <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>\n';
+        h += '  <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d\'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>\n';
+        h += '</ul>\n';
+        h +=
+          '<p class="mt-4">Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l\'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>\n';
+        h +=
+          '<p class="mt-4">Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        h +=
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
+        h += '<p class="mt-4">Hello,</p>\n';
+        h +=
+          '<p class="mt-4">Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.</p>\n';
+        h +=
+          '<p class="mt-4">To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.</p>\n';
+        h +=
+          '<p class="mt-4">In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>\n';
+        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
+        h += '  <li><strong>Either obtain Canadian citizenship;</strong></li>\n';
+        h += '  <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>\n';
+        h += '</ul>\n';
+        h +=
+          '<p class="mt-4">Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>\n';
+        h +=
+          '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        return h;
+      } else {
+        let p = "";
+        p += "English message will follow.\n\n";
+        p += "Bonjour,\n\n";
+        p +=
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.\n\n";
+        p +=
+          "Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.\n\n";
+        p +=
+          "Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :\n";
+        p += "  - Soit obtenir la citoyenneté canadienne ;\n";
+        p += "  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.\n\n";
+        p +=
+          "Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.\n\n";
+        p += "Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.\n\n";
+        p += this.sharedState.getSignatureFr() + "\n\n";
+        p +=
+          "______________________________________________________________________________\n\n";
+        p += "Hello,\n\n";
+        p +=
+          "Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.\n\n";
+        p +=
+          "To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.\n\n";
+        p +=
+          "In order to become eligible and be able to reapply or proceed with an application in the future, you must:\n";
+        p += "  - Either obtain Canadian citizenship;\n";
+        p += "  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.\n\n";
+        p +=
+          "Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.\n\n";
+        p += "Thank you for your interest in the Canadian Armed Forces.\n\n";
+        p += this.sharedState.getSignatureEn();
+        return p;
+      }
+    }
+
     if (isHtml) {
       // ------------------ HTML VERSION ------------------
       let h = "";
@@ -9515,15 +9676,23 @@ o Médecine d’urgence`,
       // FRENCH SECTION
       h += '<p class="mt-4">Bonjour,</p>\n';
 
-      if (isPforCmr) {
-        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr || "votre sélection"} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        h += '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature, nous constatons que vous devez faire l\'objet d\'une réorientation. En effet, vous dépassez l\'âge maximal d\'admissibilité pour vos choix de métiers.</p>\n';
+      } else if (isPforCmr && cmrAdmittedFr) {
+        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
       }
 
       if (mergeTasks) {
         // Unified smart intro explaining both tasks list and reorientation
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          h +=
+            '<p class="mt-4">De plus, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
+        } else if (isPforCmr && cmrAdmittedFr) {
           h +=
             '<p class="mt-4">Toutefois, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
+        } else if (isPforCmr) {
+          h +=
+            '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que certaines actions de votre part sont requises. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
         } else if (isPforCivil) {
           h +=
             '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Universités civiles)</strong>, nous constatons que certaines actions de votre part sont requises. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
@@ -9576,9 +9745,15 @@ o Médecine d’urgence`,
       } else {
         // Standard Reorientation Intro French
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.</p>\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
             h +=
               "<p class=\"mt-4\">Toutefois, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>\n";
           } else {
             h +=
               "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>\n";
@@ -9588,14 +9763,21 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              h +=
-                "<p class=\"mt-4\">Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
-            }
+          if (mergeTasks) {
+            h +=
+              "<p class=\"mt-2\">Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
+            h +=
+              "<p class=\"mt-4\">Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
           } else if (isPforCivil) {
             h +=
-              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Universités civiles)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
           } else {
             h +=
               "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
@@ -9627,9 +9809,7 @@ o Médecine d’urgence`,
               }
             }
             if (!s.isAgeAdmissible) {
-              reasonsFrList.push(
-                `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
-              );
+              reasonsFrList.push(s.ageReason);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsFrList.push(
@@ -9667,85 +9847,76 @@ o Médecine d’urgence`,
       }
 
       // Options French
-      h +=
-        '<p class="mt-4 font-semibold text-slate-800">Voici les options qui s\'offrent à vous :</p>\n';
-      if (hasTraitementClosed && hasAdmissionClosed) {
-        const opt1Title = closedTraitementJobs.length > 1
-          ? 'Option 1 : Conserver vos choix de métiers actuels (' + closedTraitementJobs.join(", ") + ') et attendre leur réouverture'
-          : 'Option 1 : Conserver votre choix de métier (' + closedTraitementJobs.join(", ") + ') et attendre sa réouverture';
-        const opt1MetiersDesc = closedTraitementJobs.length > 1
-          ? 'les métiers suivants pour lesquels vous êtes admissible : <strong>' + closedTraitementJobs.join(", ") + '</strong>'
-          : 'le métier suivant pour lequel vous êtes admissible : <strong>' + closedTraitementJobs.join(", ") + '</strong>';
-        const opt1Ending = closedTraitementJobs.length > 1 ? 'pour ces métiers.' : 'pour ce métier.';
-
-        const opt2Title = closedAdmissionOnlyJobs.length > 1
-          ? 'Option 2 : Conserver vos choix de métiers actuels (' + closedAdmissionOnlyJobs.join(", ") + ')'
-          : 'Option 2 : Conserver votre choix de métier actuel (' + closedAdmissionOnlyJobs.join(", ") + ')';
-        const opt2MetiersDesc = closedAdmissionOnlyJobs.length > 1
-          ? 'les métiers suivants : <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>'
-          : 'le métier suivant : <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>';
-
-        h +=
-          '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez choisir de garder ' + opt1MetiersDesc + ', et de patienter jusqu\'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, <span style="background-color: #fef08a; font-weight: bold;">votre dossier de candidature actuel sera fermé</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous recontacter au début du mois de mars prochain</span> pour réactiver votre processus ' + opt1Ending + '</p>\n';
-        h +=
-          '<p class="mt-4 text-sm"><strong>' + opt2Title + '</strong><br>Vous pouvez choisir de garder votre dossier ouvert pour ' + opt2MetiersDesc + ', mais il n\'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.</p>\n';
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 3 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
-      } else if (hasTraitementClosed) {
-        if (allRealDossierJobsAreClosedTraitement) {
-          const opt1Title = closedTraitementJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels et attendre leur réouverture'
-            : 'Option 1 : Conserver votre choix de métier actuel et attendre sa réouverture';
-          const opt1Choices = closedTraitementJobs.length > 1
-            ? 'vos choix de métiers actuels'
-            : 'votre choix de métier actuel';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez choisir de garder ' + opt1Choices + ' et de patienter jusqu\'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, <span style="background-color: #fef08a; font-weight: bold;">votre dossier de candidature actuel sera fermé</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous recontacter au début du mois de mars prochain</span> pour réactiver votre processus.</p>\n';
+      if (this.isCandidateTooOld() && jobIds.length === 0) {
+        h += '<p class="mt-4 font-semibold text-slate-800">Conclusion :</p>\n';
+        if (this.age() !== null && this.age()! >= 57) {
+          h += '<p class="mt-2 text-sm">Étant donné que vous avez atteint ou dépassé l\'âge maximal d\'enrôlement (57 ans et plus), aucun métier ne peut vous être offert au sein des Forces armées canadiennes.</p>\n';
         } else {
-          const opt1Title = closedTraitementJobs.length > 1
-            ? 'Option 1 : Conserver certains de vos choix de métiers actuels et attendre leur réouverture'
-            : 'Option 1 : Conserver votre choix de métier actuel et attendre sa réouverture';
-          const opt1MetiersDesc = closedTraitementJobs.length > 1
-            ? 'les métiers suivants pour lesquels vous êtes admissible : <strong>' + closedTraitementJobs.join(", ") + '</strong>'
-            : 'le métier suivant pour lequel vous êtes admissible : <strong>' + closedTraitementJobs.join(", ") + '</strong>';
-          const opt1Ending = closedTraitementJobs.length > 1 ? 'pour ces métiers.' : 'pour ce métier.';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez choisir de garder ' + opt1MetiersDesc + ', et de patienter jusqu\'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, <span style="background-color: #fef08a; font-weight: bold;">votre dossier de candidature actuel sera fermé</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous recontacter au début du mois de mars prochain</span> pour réactiver votre processus ' + opt1Ending + '</p>\n';
+          h += '<p class="mt-2 text-sm">Étant donné votre âge actuel, aucun métier admissible n\'est actuellement disponible pour votre candidature.</p>\n';
         }
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
-      } else if (hasAdmissionClosed) {
-        if (allRealDossierJobsAreClosedAdmissionOnly) {
-          const opt1Title = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels'
-            : 'Option 1 : Conserver votre choix de métier actuel';
-          const opt1Choices = closedAdmissionOnlyJobs.length > 1
-            ? 'vos choix de métiers actuels'
-            : 'votre choix de métier actuel';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez choisir de garder votre dossier ouvert pour ' + opt1Choices + ', mais il n\'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.</p>\n';
-        } else {
-          const opt1Title = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels (' + closedAdmissionOnlyJobs.join(", ") + ')'
-            : 'Option 1 : Conserver votre choix de métier actuel (' + closedAdmissionOnlyJobs.join(", ") + ')';
-          const opt1MetiersDesc = closedAdmissionOnlyJobs.length > 1
-            ? 'les métiers suivants pour lesquels vous êtes admissible : <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>'
-            : 'le métier suivant pour lequel vous êtes admissible : <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez choisir de garder votre dossier ouvert pour ' + opt1MetiersDesc + ', mais il n\'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.</p>\n';
-        }
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
       } else {
         h +=
-          '<p class="mt-2 text-sm"><strong>Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d\'enrôlement. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.</p>\n';
+          '<p class="mt-4 font-semibold text-slate-800">Voici les options qui s\'offrent à vous :</p>\n';
+        if (hasTraitementClosed && hasAdmissionClosed) {
+          const isPluralTraitement = closedTraitementJobs.length > 1;
+          const opt1Title = isPluralTraitement
+            ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedTraitementJobs.join(", ") + ')';
+          const opt1MetiersDesc = isPluralTraitement
+            ? 'vos choix de métiers (<strong>' + closedTraitementJobs.join(", ") + '</strong>)'
+            : 'votre choix de métier (<strong>' + closedTraitementJobs.join(", ") + '</strong>)';
+
+          const isPluralAdmission = closedAdmissionOnlyJobs.length > 1;
+          const opt2Title = isPluralAdmission
+            ? 'Option 2 : Conserver mes choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait'
+            : 'Option 2 : Conserver mon choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait';
+          const opt2MetiersDesc = isPluralAdmission
+            ? 'vos choix de métiers (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)'
+            : 'votre choix de métier (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)';
+          const opt2Refer = isPluralAdmission ? 'vos choix de métiers' : 'votre choix de métier';
+
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez conserver ' + opt1MetiersDesc + ' et attendre que les prochaines positions ouvrent en avril prochain. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement</span>.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>' + opt2Title + '</strong><br>Vous pouvez conserver ' + opt2MetiersDesc + ' au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois</span> pour savoir si des positions se seraient libérées pour ' + opt2Refer + ' afin de poursuivre le processus de recrutement.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 3 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
+        } else if (hasTraitementClosed) {
+          const isPluralTraitement = closedTraitementJobs.length > 1;
+          const opt1Title = isPluralTraitement
+            ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedTraitementJobs.join(", ") + ')';
+          const opt1MetiersDesc = isPluralTraitement
+            ? 'vos choix de métiers (<strong>' + closedTraitementJobs.join(", ") + '</strong>)'
+            : 'votre choix de métier (<strong>' + closedTraitementJobs.join(", ") + '</strong>)';
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez conserver ' + opt1MetiersDesc + ' et attendre que les prochaines positions ouvrent en avril prochain. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement</span>.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
+        } else if (hasAdmissionClosed) {
+          const isPluralAdmission = closedAdmissionOnlyJobs.length > 1;
+          const opt1Title = isPluralAdmission
+            ? 'Option 1 : Conserver mes choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait'
+            : 'Option 1 : Conserver mon choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait';
+          const opt1MetiersDesc = isPluralAdmission
+            ? 'vos choix de métiers (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)'
+            : 'votre choix de métier (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)';
+          const opt1Refer = isPluralAdmission ? 'vos choix de métiers' : 'votre choix de métier';
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez conserver ' + opt1MetiersDesc + ' au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois</span> pour savoir si des positions se seraient libérées pour ' + opt1Refer + ' afin de poursuivre le processus de recrutement.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
+        } else {
+          h +=
+            '<p class="mt-2 text-sm"><strong>Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d\'enrôlement. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.</p>\n';
+        }
       }
 
       if (this.ignoreSip()) {
         h +=
           '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
         h +=
-          '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler au début du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n';
+          '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n';
         h += '</div>\n';
       }
 
@@ -9811,15 +9982,27 @@ o Médecine d’urgence`,
       h += '<p class="mt-4">Hello,</p>\n';
 
       const cmrAdmittedEn = this.getCmrAdmittedDomainsEn();
-      if (isPforCmr) {
-        h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn || "your selection"}!</strong> We would like to warmly congratulate you on your admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          h += '<p class="mt-4">Following the analysis of your application file, we inform you that you exceed the maximum eligibility age for enrollment in the Canadian Armed Forces (maximum eligibility age is 56, 57 and older being automatically ineligible).</p>\n';
+        } else {
+          h += '<p class="mt-4">Following the analysis of your application file, we have determined that you must undergo a reorientation. Indeed, you exceed the maximum eligibility age for your selected occupations.</p>\n';
+        }
+      } else if (isPforCmr && cmrAdmittedEn) {
+        h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn} !</strong> We would like to warmly congratulate you on your admission.</p>\n`;
       }
 
       if (mergeTasks) {
         // Unified smart English intro
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          h +=
+            '<p class="mt-4">In addition, actions are required on your part to proceed with processing your application. Specifically, you must <strong>correct the reassigned tasks</strong> on your portal and undergo a <strong>reorientation of your occupational choices</strong>.</p>\n';
+        } else if (isPforCmr && cmrAdmittedEn) {
           h +=
             '<p class="mt-4">However, actions are required on your part to proceed with processing your application. Specifically, you must <strong>correct the reassigned tasks</strong> on your portal and undergo a <strong>reorientation of your occupational choices</strong>.</p>\n';
+        } else if (isPforCmr) {
+          h +=
+            '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, actions are required on your part. Specifically, you must <strong>correct the reassigned tasks</strong> on your portal and undergo a <strong>reorientation of your occupational choices</strong>.</p>\n';
         } else if (isPforCivil) {
           h +=
             '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (Civilian University ROTP)</strong>, actions are required on your part. Specifically, you must <strong>correct the reassigned tasks</strong> on your portal and undergo a <strong>reorientation of your occupational choices</strong>.</p>\n';
@@ -9871,9 +10054,15 @@ o Médecine d’urgence`,
       } else {
         // Standard English intro
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            h +=
+              '<p class="mt-4">In addition, no occupation is currently selected in your file, and the processing of your application cannot continue without an eligible occupation choice from you.</p>\n';
+          } else if (isPforCmr && cmrAdmittedEn) {
             h +=
               '<p class="mt-4">However, no occupation is currently selected in your file, and the processing of your application cannot continue without an eligible occupation choice from you.</p>\n';
+          } else if (isPforCmr) {
+            h +=
+              '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, we have determined that you must undergo a reorientation. Indeed, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.</p>\n';
           } else {
             h +=
               '<p class="mt-4">Following the analysis of your application file, we have determined that you must undergo a reorientation. Indeed, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.</p>\n';
@@ -9883,14 +10072,21 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              h +=
-                '<p class="mt-4">However, following the review of your current occupation choices, a reorientation is required. Here is the current status of the occupations in your file:</p>\n';
-            }
+          if (mergeTasks) {
+            h +=
+              '<p class="mt-2">Here is the current status of the occupations in your file:</p>\n';
+          } else if (this.isCandidateTooOld()) {
+            h +=
+              '<p class="mt-4">Here is the current status of the occupations in your file:</p>\n';
+          } else if (isPforCmr && cmrAdmittedEn) {
+            h +=
+              '<p class="mt-4">However, following the review of your current occupation choices, a reorientation is required. Here is the current status of the occupations in your file:</p>\n';
+          } else if (isPforCmr) {
+            h +=
+              '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, here is the current status of the occupations in your file:</p>\n';
           } else if (isPforCivil) {
             h +=
-              '<p class="mt-4">Following the analysis of your application file for the Regular Officer Training Plan (Civilian University ROTP), here is the current status of the occupations in your file:</p>\n';
+              '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (Civilian University ROTP)</strong>, here is the current status of the occupations in your file:</p>\n';
           } else {
             h +=
               '<p class="mt-4">Following the analysis of your application file, we have determined that you must undergo a reorientation. Here is the current status of the occupations in your file:</p>\n';
@@ -9922,9 +10118,7 @@ o Médecine d’urgence`,
               }
             }
             if (!s.isAgeAdmissible) {
-              reasonsEnList.push(
-                `Your current age does not allow you to complete the initial contract length for this occupation (${s.durationYears} years) before reaching age 60.`,
-              );
+              reasonsEnList.push(s.ageReasonEn);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsEnList.push(
@@ -9962,85 +10156,76 @@ o Médecine d’urgence`,
       }
 
       // Options English
-      h +=
-        '<p class="mt-4 font-semibold text-slate-800">Here are the options available to you:</p>\n';
-      if (hasTraitementClosed && hasAdmissionClosed) {
-        const opt1TitleEn = closedTraitementJobs.length > 1
-          ? 'Option 1: Retain your occupational choices (' + closedTraitementJobs.join(", ") + ') and wait for their reopening'
-          : 'Option 1: Retain your occupational choice (' + closedTraitementJobs.join(", ") + ') and wait for its reopening';
-        const opt1OccupationsEn = closedTraitementJobs.length > 1
-          ? 'the following occupations for which you are eligible: <strong>' + closedTraitementJobs.join(", ") + '</strong>'
-          : 'the following occupation for which you are eligible: <strong>' + closedTraitementJobs.join(", ") + '</strong>';
-        const opt1EndingEn = closedTraitementJobs.length > 1 ? 'for these occupations.' : 'for this occupation.';
-
-        const opt2TitleEn = closedAdmissionOnlyJobs.length > 1
-          ? 'Option 2: Retain your current occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
-          : 'Option 2: Retain your current occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
-        const opt2OccupationsEn = closedAdmissionOnlyJobs.length > 1
-          ? 'the following occupations: <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>'
-          : 'the following occupation: <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>';
-
-        h +=
-          '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can choose to keep ' + opt1OccupationsEn + ', and wait until next March for the reopening of recruiting positions. If you select this option, <span style="background-color: #fef08a; font-weight: bold;">your current application file will be closed</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact us at the beginning of next March</span> to reactivate your process ' + opt1EndingEn + '</p>\n';
-        h +=
-          '<p class="mt-4 text-sm"><strong>' + opt2TitleEn + '</strong><br>You can choose to keep your file open for ' + opt2OccupationsEn + ', but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.</p>\n';
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 3: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
-      } else if (hasTraitementClosed) {
-        if (allRealDossierJobsAreClosedTraitement) {
-          const opt1TitleEn = closedTraitementJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices and wait for their reopening'
-            : 'Option 1: Retain your current occupational choice and wait for its reopening';
-          const opt1ChoicesEn = closedTraitementJobs.length > 1
-            ? 'your current choices'
-            : 'your current choice';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can choose to keep ' + opt1ChoicesEn + ' and wait until next March for the reopening of recruiting positions. If you select this option, <span style="background-color: #fef08a; font-weight: bold;">your current application file will be closed</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact us at the beginning of next March</span> to reactivate your process.</p>\n';
+      if (this.isCandidateTooOld() && jobIds.length === 0) {
+        h += '<p class="mt-4 font-semibold text-slate-800">Conclusion :</p>\n';
+        if (this.age() !== null && this.age()! >= 57) {
+          h += '<p class="mt-2 text-sm">Given that you have reached or exceeded the maximum enrollment age (57 and older), no occupation can be offered to you within the Canadian Armed Forces.</p>\n';
         } else {
-          const opt1TitleEn = closedTraitementJobs.length > 1
-            ? 'Option 1: Retain some of your current occupational choices and wait for their reopening'
-            : 'Option 1: Retain your current occupational choice and wait for its reopening';
-          const opt1OccupationsEn = closedTraitementJobs.length > 1
-            ? 'the following occupations for which you are eligible: <strong>' + closedTraitementJobs.join(", ") + '</strong>'
-            : 'the following occupation for which you are eligible: <strong>' + closedTraitementJobs.join(", ") + '</strong>';
-          const opt1EndingEn = closedTraitementJobs.length > 1 ? 'for these occupations.' : 'for this occupation.';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can choose to keep ' + opt1OccupationsEn + ', and wait until next March for the reopening of recruiting positions. If you select this option, <span style="background-color: #fef08a; font-weight: bold;">your current application file will be closed</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact us at the beginning of next March</span> to reactivate your process ' + opt1EndingEn + '</p>\n';
+          h += '<p class="mt-2 text-sm">Given your current age, no eligible occupation is currently available for your application.</p>\n';
         }
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
-      } else if (hasAdmissionClosed) {
-        if (allRealDossierJobsAreClosedAdmissionOnly) {
-          const opt1TitleEn = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices'
-            : 'Option 1: Retain your current occupational choice';
-          const opt1ChoicesEn = closedAdmissionOnlyJobs.length > 1
-            ? 'your current occupational choices'
-            : 'your current occupational choice';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can choose to keep your file open for ' + opt1ChoicesEn + ', but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.</p>\n';
-        } else {
-          const opt1TitleEn = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
-            : 'Option 1: Retain your current occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
-          const opt1OccupationsEn = closedAdmissionOnlyJobs.length > 1
-            ? 'the following occupations for which you are eligible: <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>'
-            : 'the following occupation for which you are eligible: <strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>';
-          h +=
-            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can choose to keep your file open for ' + opt1OccupationsEn + ', but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.</p>\n';
-        }
-        h +=
-          '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
       } else {
         h +=
-          '<p class="mt-2 text-sm"><strong>Choose another occupation from the list of eligible occupations</strong><br>You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
+          '<p class="mt-4 font-semibold text-slate-800">Here are the options available to you:</p>\n';
+        if (hasTraitementClosed && hasAdmissionClosed) {
+          const isPluralTraitementEn = closedTraitementJobs.length > 1;
+          const opt1TitleEn = isPluralTraitementEn
+            ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedTraitementJobs.join(", ") + ')';
+          const opt1OccupationsEn = isPluralTraitementEn
+            ? 'your occupational choices (<strong>' + closedTraitementJobs.join(", ") + '</strong>)'
+            : 'your occupational choice (<strong>' + closedTraitementJobs.join(", ") + '</strong>)';
+
+          const isPluralAdmissionEn = closedAdmissionOnlyJobs.length > 1;
+          const opt2TitleEn = isPluralAdmissionEn
+            ? 'Option 2: Retain my occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up'
+            : 'Option 2: Retain my occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up';
+          const opt2OccupationsEn = isPluralAdmissionEn
+            ? 'your occupational choices (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)'
+            : 'your occupational choice (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)';
+          const opt2ReferEn = isPluralAdmissionEn ? 'your occupational choices' : 'your occupational choice';
+
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can retain ' + opt1OccupationsEn + ' and wait until next April for positions to open. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process</span>.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>' + opt2TitleEn + '</strong><br>You can retain ' + opt2OccupationsEn + ' in case another candidate already admitted does not complete the process and a position opens up. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre every three months</span> to find out if positions have opened up for ' + opt2ReferEn + ' in order to continue the recruitment process.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 3: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
+        } else if (hasTraitementClosed) {
+          const isPluralTraitementEn = closedTraitementJobs.length > 1;
+          const opt1TitleEn = isPluralTraitementEn
+            ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedTraitementJobs.join(", ") + ')';
+          const opt1OccupationsEn = isPluralTraitementEn
+            ? 'your occupational choices (<strong>' + closedTraitementJobs.join(", ") + '</strong>)'
+            : 'your occupational choice (<strong>' + closedTraitementJobs.join(", ") + '</strong>)';
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can retain ' + opt1OccupationsEn + ' and wait until next April for positions to open. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process</span>.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
+        } else if (hasAdmissionClosed) {
+          const isPluralAdmissionEn = closedAdmissionOnlyJobs.length > 1;
+          const opt1TitleEn = isPluralAdmissionEn
+            ? 'Option 1: Retain my occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up'
+            : 'Option 1: Retain my occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up';
+          const opt1OccupationsEn = isPluralAdmissionEn
+            ? 'your occupational choices (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)'
+            : 'your occupational choice (<strong>' + closedAdmissionOnlyJobs.join(", ") + '</strong>)';
+          const opt1ReferEn = isPluralAdmissionEn ? 'your occupational choices' : 'your occupational choice';
+          h +=
+            '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can retain ' + opt1OccupationsEn + ' in case another candidate already admitted does not complete the process and a position opens up. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre every three months</span> to find out if positions have opened up for ' + opt1ReferEn + ' in order to continue the recruitment process.</p>\n';
+          h +=
+            '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
+        } else {
+          h +=
+            '<p class="mt-2 text-sm"><strong>Choose another occupation from the list of eligible occupations</strong><br>You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
+        }
       }
 
       if (this.ignoreSip()) {
         h +=
           '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
         h +=
-          '  <strong>Important note regarding closed occupations:</strong> The list below includes both currently open and closed occupations. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to call us back at the beginning of next March</span> to reopen your file for this occupation.\n';
+          '  <strong>Important note regarding closed occupations:</strong> The list below includes both currently open and closed occupations. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to call us back towards the end of next March</span> to reopen your file for this occupation.\n';
         h += '</div>\n';
       }
 
@@ -10109,13 +10294,15 @@ o Médecine d’urgence`,
 
       p += "Bonjour,\n\n";
 
-      if (isPforCmr) {
-        p += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr || "votre sélection"} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+      if (isPforCmr && cmrAdmittedFr) {
+        p += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
       }
 
       if (this.sharedState.includeLinkedEmail()) {
-        if (isPforCmr) {
+        if (isPforCmr && cmrAdmittedFr) {
           p += "Toutefois, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
+        } else if (isPforCmr) {
+          p += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons que certaines actions de votre part sont requises. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
         } else if (isPforCivil) {
           p += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que certaines actions de votre part sont requises. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
         } else {
@@ -10150,10 +10337,26 @@ o Médecine d’urgence`,
       }
 
       // Intro French
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          p += "Suite à l'analyse de votre dossier de candidature, nous vous informons que vous dépassez l'âge maximal d'admissibilité pour l'enrôlement dans les Forces armées canadiennes (l'âge maximal d'admissibilité est de 56 ans, 57 ans et plus étant automatiquement inadmissible).\n\n";
+        } else {
+          p += "Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, vous dépassez l'âge maximal d'admissibilité pour vos choix de métiers.\n\n";
+        }
+      } else if (isPforCmr && cmrAdmittedFr) {
+        p += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+      }
+
       if (hasNoJobCode) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          p +=
+            "De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.\n\n";
+        } else if (isPforCmr && cmrAdmittedFr) {
           p +=
             "Toutefois, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.\n\n";
+        } else if (isPforCmr) {
+          p +=
+            "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.\n\n";
         } else {
           p +=
             "Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.\n\n";
@@ -10162,11 +10365,18 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!this.sharedState.includeLinkedEmail()) {
-              p +=
-                "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
-            }
+          if (this.sharedState.includeLinkedEmail()) {
+            p +=
+              "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (this.isCandidateTooOld()) {
+            p +=
+              "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
+            p +=
+              "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (isPforCmr) {
+            p +=
+              "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
           } else if (isPforCivil) {
             p +=
               "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :\n";
@@ -10200,9 +10410,7 @@ o Médecine d’urgence`,
               }
             }
             if (!s.isAgeAdmissible) {
-              reasonsFrList.push(
-                `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
-              );
+              reasonsFrList.push(s.ageReason);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsFrList.push(
@@ -10240,84 +10448,75 @@ o Médecine d’urgence`,
       }
 
       // Options French
-      p += "Voici les options qui s'offrent à vous :\n\n";
-      if (hasTraitementClosed && hasAdmissionClosed) {
-        const opt1Title = closedTraitementJobs.length > 1
-          ? 'Option 1 : Conserver vos choix de métiers actuels (' + closedTraitementJobs.join(", ") + ') et attendre leur réouverture'
-          : 'Option 1 : Conserver votre choix de métier (' + closedTraitementJobs.join(", ") + ') et attendre sa réouverture';
-        const opt1MetiersDesc = closedTraitementJobs.length > 1
-          ? 'les métiers suivants pour lesquels vous êtes admissible : ' + closedTraitementJobs.join(", ")
-          : 'le métier suivant pour lequel vous êtes admissible : ' + closedTraitementJobs.join(", ");
-        const opt1Ending = closedTraitementJobs.length > 1 ? 'pour ces métiers.' : 'pour ce métier.';
-
-        const opt2Title = closedAdmissionOnlyJobs.length > 1
-          ? 'Option 2 : Conserver vos choix de métiers actuels (' + closedAdmissionOnlyJobs.join(", ") + ')'
-          : 'Option 2 : Conserver votre choix de métier actuel (' + closedAdmissionOnlyJobs.join(", ") + ')';
-        const opt2MetiersDesc = closedAdmissionOnlyJobs.length > 1
-          ? 'les métiers suivants : ' + closedAdmissionOnlyJobs.join(", ")
-          : 'le métier suivant : ' + closedAdmissionOnlyJobs.join(", ");
-
-        p += opt1Title + "\n";
-        p += "Vous pouvez choisir de garder " + opt1MetiersDesc + ", et de patienter jusqu'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, votre dossier de candidature actuel sera fermé et il sera de votre entière responsabilité de nous recontacter au début du mois de mars prochain pour réactiver votre processus " + opt1Ending + "\n\n";
-
-        p += opt2Title + "\n";
-        p += "Vous pouvez choisir de garder votre dossier ouvert pour " + opt2MetiersDesc + ", mais il n'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.\n\n";
-
-        p += "Option 3 : Choisir un autre métier parmi la liste des métiers admissibles\n";
-        p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
-      } else if (hasTraitementClosed) {
-        if (allRealDossierJobsAreClosedTraitement) {
-          const opt1Title = closedTraitementJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels et attendre leur réouverture'
-            : 'Option 1 : Conserver votre choix de métier actuel et attendre sa réouverture';
-          const opt1Choices = closedTraitementJobs.length > 1
-            ? 'vos choix de métiers actuels'
-            : 'votre choix de métier actuel';
-          p += opt1Title + "\n";
-          p += "Vous pouvez choisir de garder " + opt1Choices + " et de patienter jusqu'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, votre dossier de candidature actuel sera fermé et il sera de votre entière responsabilité de nous recontacter au début du mois de mars prochain pour réactiver votre processus.\n\n";
+      if (this.isCandidateTooOld() && jobIds.length === 0) {
+        p += "Conclusion :\n";
+        if (this.age() !== null && this.age()! >= 57) {
+          p += "Étant donné que vous avez atteint ou dépassé l'âge maximal d'enrôlement (57 ans et plus), aucun métier ne peut vous être offert au sein des Forces armées canadiennes.\n\n";
         } else {
-          const opt1Title = closedTraitementJobs.length > 1
-            ? 'Option 1 : Conserver certains de vos choix de métiers actuels et attendre leur réouverture'
-            : 'Option 1 : Conserver votre choix de métier actuel et attendre sa réouverture';
-          const opt1MetiersDesc = closedTraitementJobs.length > 1
-            ? 'les métiers suivants pour lesquels vous êtes admissible : ' + closedTraitementJobs.join(", ")
-            : 'le métier suivant pour lequel vous êtes admissible : ' + closedTraitementJobs.join(", ");
-          const opt1Ending = closedTraitementJobs.length > 1 ? 'pour ces métiers.' : 'pour ce métier.';
-          p += opt1Title + "\n";
-          p += "Vous pouvez choisir de garder " + opt1MetiersDesc + ", et de patienter jusqu'en mars prochain pour la réouverture des positions. Si vous sélectionnez cette option, votre dossier de candidature actuel sera fermé et il sera de votre entière responsabilité de nous recontacter au début du mois de mars prochain pour réactiver votre processus " + opt1Ending + "\n\n";
+          p += "Étant donné votre âge actuel, aucun métier admissible n'est actuellement disponible pour votre candidature.\n\n";
         }
-        p += "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\n";
-        p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
-      } else if (hasAdmissionClosed) {
-        if (allRealDossierJobsAreClosedAdmissionOnly) {
-          const opt1Title = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels'
-            : 'Option 1 : Conserver votre choix de métier actuel';
-          const opt1Choices = closedAdmissionOnlyJobs.length > 1
-            ? 'vos choix de métiers actuels'
-            : 'votre choix de métier actuel';
-          p += opt1Title + "\n";
-          p += "Vous pouvez choisir de garder votre dossier ouvert pour " + opt1Choices + ", mais il n'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.\n\n";
-        } else {
-          const opt1Title = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1 : Conserver vos choix de métiers actuels (' + closedAdmissionOnlyJobs.join(", ") + ')'
-            : 'Option 1 : Conserver votre choix de métier actuel (' + closedAdmissionOnlyJobs.join(", ") + ')';
-          const opt1MetiersDesc = closedAdmissionOnlyJobs.length > 1
-            ? 'les métiers suivants pour lesquels vous êtes admissible : ' + closedAdmissionOnlyJobs.join(", ")
-            : 'le métier suivant pour lequel vous êtes admissible : ' + closedAdmissionOnlyJobs.join(", ");
-          p += opt1Title + "\n";
-          p += "Vous pouvez choisir de garder votre dossier ouvert pour " + opt1MetiersDesc + ", mais il n'y aura aucun traitement fait pour votre dossier sauf si les positions restantes ne sont pas comblées par les candidats déjà admis. Alors, il se pourrait que votre dossier soit repris en considération.\n\n";
-        }
-        p += "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\n";
-        p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
       } else {
-        p += "Choisir un autre métier parmi la liste des métiers admissibles\n";
-        p += "Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d'enrôlement. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.\n\n";
+        p += "Voici les options qui s'offrent à vous :\n\n";
+        if (hasTraitementClosed && hasAdmissionClosed) {
+          const isPluralTraitement = closedTraitementJobs.length > 1;
+          const opt1Title = isPluralTraitement
+            ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedTraitementJobs.join(", ") + ')';
+          const opt1MetiersDesc = isPluralTraitement
+            ? 'vos choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'votre choix de métier (' + closedTraitementJobs.join(", ") + ')';
+
+          const isPluralAdmission = closedAdmissionOnlyJobs.length > 1;
+          const opt2Title = isPluralAdmission
+            ? 'Option 2 : Conserver mes choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait'
+            : 'Option 2 : Conserver mon choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait';
+          const opt2MetiersDesc = isPluralAdmission
+            ? 'vos choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ')'
+            : 'votre choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ')';
+          const opt2Refer = isPluralAdmission ? 'vos choix de métiers' : 'votre choix de métier';
+
+          p += opt1Title + "\n";
+          p += "Vous pouvez conserver " + opt1MetiersDesc + " et attendre que les prochaines positions ouvrent en avril prochain. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement.\n\n";
+
+          p += opt2Title + "\n";
+          p += "Vous pouvez conserver " + opt2MetiersDesc + " au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois pour savoir si des positions se seraient libérées pour " + opt2Refer + " afin de poursuivre le processus de recrutement.\n\n";
+
+          p += "Option 3 : Choisir un autre métier parmi la liste des métiers admissibles\n";
+          p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
+        } else if (hasTraitementClosed) {
+          const isPluralTraitement = closedTraitementJobs.length > 1;
+          const opt1Title = isPluralTraitement
+            ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedTraitementJobs.join(", ") + ')';
+          const opt1MetiersDesc = isPluralTraitement
+            ? 'vos choix de métiers (' + closedTraitementJobs.join(", ") + ')'
+            : 'votre choix de métier (' + closedTraitementJobs.join(", ") + ')';
+          p += opt1Title + "\n";
+          p += "Vous pouvez conserver " + opt1MetiersDesc + " et attendre que les prochaines positions ouvrent en avril prochain. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement.\n\n";
+          p += "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\n";
+          p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
+        } else if (hasAdmissionClosed) {
+          const isPluralAdmission = closedAdmissionOnlyJobs.length > 1;
+          const opt1Title = isPluralAdmission
+            ? 'Option 1 : Conserver mes choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait'
+            : 'Option 1 : Conserver mon choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ') au cas où une position se libèrerait';
+          const opt1MetiersDesc = isPluralAdmission
+            ? 'vos choix de métiers (' + closedAdmissionOnlyJobs.join(", ") + ')'
+            : 'votre choix de métier (' + closedAdmissionOnlyJobs.join(", ") + ')';
+          const opt1Refer = isPluralAdmission ? 'vos choix de métiers' : 'votre choix de métier';
+          p += opt1Title + "\n";
+          p += "Vous pouvez conserver " + opt1MetiersDesc + " au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois pour savoir si des positions se seraient libérées pour " + opt1Refer + " afin de poursuivre le processus de recrutement.\n\n";
+          p += "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\n";
+          p += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
+        } else {
+          p += "Choisir un autre métier parmi la liste des métiers admissibles\n";
+          p += "Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d'enrôlement. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.\n\n";
+        }
       }
 
       if (this.ignoreSip()) {
         p += "Note importante concernant les métiers fermés :\n";
-        p += "La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé, nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler au début du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n\n";
+        p += "La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé, nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n\n";
       }
 
       // Eligible Jobs French Division
@@ -10370,13 +10569,21 @@ o Médecine d’urgence`,
       p += "Hello,\n\n";
 
       const cmrAdmittedEn = this.getCmrAdmittedDomainsEn();
-      if (isPforCmr) {
-        p += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn || "your selection"}! We would like to warmly congratulate you on your admission.\n\n`;
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          p += "Following the analysis of your application file, we inform you that you exceed the maximum eligibility age for enrollment in the Canadian Armed Forces (maximum eligibility age is 56, 57 and older being automatically ineligible).\n\n";
+        } else {
+          p += "Following the analysis of your application file, we have determined that you must undergo a reorientation. Indeed, you exceed the maximum eligibility age for your selected occupations.\n\n";
+        }
+      } else if (isPforCmr && cmrAdmittedEn) {
+        p += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
       }
 
       if (this.sharedState.includeLinkedEmail()) {
-        if (isPforCmr) {
+        if (isPforCmr && cmrAdmittedEn) {
           p += "However, actions are required on your part to proceed with processing your application. Specifically, you must correct the reassigned tasks on your portal and undergo a reorientation of your occupational choices.\n\n";
+        } else if (isPforCmr) {
+          p += "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), actions are required on your part. Specifically, you must correct the reassigned tasks on your portal and undergo a reorientation of your occupational choices.\n\n";
         } else if (isPforCivil) {
           p += "Following the analysis of your application file for the Regular Officer Training Plan (Civilian University ROTP), actions are required on your part. Specifically, you must correct the reassigned tasks on your portal and undergo a reorientation of your occupational choices.\n\n";
         } else {
@@ -10412,9 +10619,15 @@ o Médecine d’urgence`,
 
       // Intro English
       if (hasNoJobCode) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          p +=
+            "In addition, no occupation is currently selected in your file, and the processing of your application cannot continue without an eligible occupation choice from you.\n\n";
+        } else if (isPforCmr && cmrAdmittedEn) {
           p +=
             "However, no occupation is currently selected in your file, and the processing of your application cannot continue without an eligible occupation choice from you.\n\n";
+        } else if (isPforCmr) {
+          p +=
+            "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), we have determined that you must undergo a reorientation. Indeed, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.\n\n";
         } else {
           p +=
             "Following the analysis of your application file, we have determined that you must undergo a reorientation. Indeed, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.\n\n";
@@ -10423,11 +10636,18 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!this.sharedState.includeLinkedEmail()) {
-              p +=
-                "However, following the review of your current occupation choices, a reorientation is required. Here is the current status of the occupations in your file:\n";
-            }
+          if (this.sharedState.includeLinkedEmail()) {
+            p +=
+              "Here is the current status of the occupations in your file:\n";
+          } else if (this.isCandidateTooOld()) {
+            p +=
+              "Here is the current status of the occupations in your file:\n";
+          } else if (isPforCmr && cmrAdmittedEn) {
+            p +=
+              "However, following the review of your current occupation choices, a reorientation is required. Here is the current status of the occupations in your file:\n";
+          } else if (isPforCmr) {
+            p +=
+              "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), here is the current status of the occupations in your file:\n";
           } else if (isPforCivil) {
             p +=
               "Following the analysis of your application file for the Regular Officer Training Plan (Civilian University ROTP), here is the current status of the occupations in your file:\n";
@@ -10461,9 +10681,7 @@ o Médecine d’urgence`,
               }
             }
             if (!s.isAgeAdmissible) {
-              reasonsEnList.push(
-                `Your current age does not allow you to complete the initial contract length for this occupation (${s.durationYears} years) before reaching age 60.`,
-              );
+              reasonsEnList.push(s.ageReasonEn);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsEnList.push(
@@ -10501,84 +10719,75 @@ o Médecine d’urgence`,
       }
 
       // Options English
-      p += "Here are the options available to you:\n\n";
-      if (hasTraitementClosed && hasAdmissionClosed) {
-        const opt1TitleEn = closedTraitementJobs.length > 1
-          ? 'Option 1: Retain your occupational choices (' + closedTraitementJobs.join(", ") + ') and wait for their reopening'
-          : 'Option 1: Retain your occupational choice (' + closedTraitementJobs.join(", ") + ') and wait for its reopening';
-        const opt1OccupationsEn = closedTraitementJobs.length > 1
-          ? 'the following occupations for which you are eligible: ' + closedTraitementJobs.join(", ")
-          : 'the following occupation for which you are eligible: ' + closedTraitementJobs.join(", ");
-        const opt1EndingEn = closedTraitementJobs.length > 1 ? 'for these occupations.' : 'for this occupation.';
-
-        const opt2TitleEn = closedAdmissionOnlyJobs.length > 1
-          ? 'Option 2: Retain your current occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
-          : 'Option 2: Retain your current occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
-        const opt2OccupationsEn = closedAdmissionOnlyJobs.length > 1
-          ? 'the following occupations: ' + closedAdmissionOnlyJobs.join(", ")
-          : 'the following occupation: ' + closedAdmissionOnlyJobs.join(", ");
-
-        p += opt1TitleEn + "\n";
-        p += "You can choose to keep " + opt1OccupationsEn + ", and wait until next March for the reopening of recruiting positions. If you select this option, your current application file will be closed and it will be your sole responsibility to contact us at the beginning of next March to reactivate your process " + opt1EndingEn + "\n\n";
-
-        p += opt2TitleEn + "\n";
-        p += "You can choose to keep your file open for " + opt2OccupationsEn + ", but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.\n\n";
-
-        p += "Option 3: Choose another occupation from the list of eligible occupations\n";
-        p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
-      } else if (hasTraitementClosed) {
-        if (allRealDossierJobsAreClosedTraitement) {
-          const opt1TitleEn = closedTraitementJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices and wait for their reopening'
-            : 'Option 1: Retain your current occupational choice and wait for its reopening';
-          const opt1ChoicesEn = closedTraitementJobs.length > 1
-            ? 'your current choices'
-            : 'your current choice';
-          p += opt1TitleEn + "\n";
-          p += "You can choose to keep " + opt1ChoicesEn + " and wait until next March for the reopening of recruiting positions. If you select this option, your current application file will be closed and it will be your sole responsibility to contact us at the beginning of next March to reactivate your process.\n\n";
+      if (this.isCandidateTooOld() && jobIds.length === 0) {
+        p += "Conclusion :\n";
+        if (this.age() !== null && this.age()! >= 57) {
+          p += "Given that you have reached or exceeded the maximum enrollment age (57 and older), no occupation can be offered to you within the Canadian Armed Forces.\n\n";
         } else {
-          const opt1TitleEn = closedTraitementJobs.length > 1
-            ? 'Option 1: Retain some of your current occupational choices and wait for their reopening'
-            : 'Option 1: Retain your current occupational choice and wait for its reopening';
-          const opt1OccupationsEn = closedTraitementJobs.length > 1
-            ? 'the following occupations for which you are eligible: ' + closedTraitementJobs.join(", ")
-            : 'the following occupation for which you are eligible: ' + closedTraitementJobs.join(", ");
-          const opt1EndingEn = closedTraitementJobs.length > 1 ? 'for these occupations.' : 'for this occupation.';
-          p += opt1TitleEn + "\n";
-          p += "You can choose to keep " + opt1OccupationsEn + ", and wait until next March for the reopening of recruiting positions. If you select this option, your current application file will be closed and it will be your sole responsibility to contact us at the beginning of next March to reactivate your process " + opt1EndingEn + "\n\n";
+          p += "Given your current age, no eligible occupation is currently available for your application.\n\n";
         }
-        p += "Option 2: Choose another occupation from the list of eligible occupations\n";
-        p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
-      } else if (hasAdmissionClosed) {
-        if (allRealDossierJobsAreClosedAdmissionOnly) {
-          const opt1TitleEn = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices'
-            : 'Option 1: Retain your current occupational choice';
-          const opt1ChoicesEn = closedAdmissionOnlyJobs.length > 1
-            ? 'your current occupational choices'
-            : 'your current occupational choice';
-          p += opt1TitleEn + "\n";
-          p += "You can choose to keep your file open for " + opt1ChoicesEn + ", but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.\n\n";
-        } else {
-          const opt1TitleEn = closedAdmissionOnlyJobs.length > 1
-            ? 'Option 1: Retain your current occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
-            : 'Option 1: Retain your current occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
-          const opt1OccupationsEn = closedAdmissionOnlyJobs.length > 1
-            ? 'the following occupations for which you are eligible: ' + closedAdmissionOnlyJobs.join(", ")
-            : 'the following occupation for which you are eligible: ' + closedAdmissionOnlyJobs.join(", ");
-          p += opt1TitleEn + "\n";
-          p += "You can choose to keep your file open for " + opt1OccupationsEn + ", but no processing will be done on your file unless the remaining positions are not filled by candidates already admitted. In that case, your file may be reconsidered.\n\n";
-        }
-        p += "Option 2: Choose another occupation from the list of eligible occupations\n";
-        p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
       } else {
-        p += "Choose another occupation from the list of eligible occupations\n";
-        p += "You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
+        p += "Here are the options available to you:\n\n";
+        if (hasTraitementClosed && hasAdmissionClosed) {
+          const isPluralTraitementEn = closedTraitementJobs.length > 1;
+          const opt1TitleEn = isPluralTraitementEn
+            ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedTraitementJobs.join(", ") + ')';
+          const opt1OccupationsEn = isPluralTraitementEn
+            ? 'your occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'your occupational choice (' + closedTraitementJobs.join(", ") + ')';
+
+          const isPluralAdmissionEn = closedAdmissionOnlyJobs.length > 1;
+          const opt2TitleEn = isPluralAdmissionEn
+            ? 'Option 2: Retain my occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up'
+            : 'Option 2: Retain my occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up';
+          const opt2OccupationsEn = isPluralAdmissionEn
+            ? 'your occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
+            : 'your occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
+          const opt2ReferEn = isPluralAdmissionEn ? 'your occupational choices' : 'your occupational choice';
+
+          p += opt1TitleEn + "\n";
+          p += "You can retain " + opt1OccupationsEn + " and wait until next April for positions to open. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process.\n\n";
+
+          p += opt2TitleEn + "\n";
+          p += "You can retain " + opt2OccupationsEn + " in case another candidate already admitted does not complete the process and a position opens up. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre every three months to find out if positions have opened up for " + opt2ReferEn + " in order to continue the recruitment process.\n\n";
+
+          p += "Option 3: Choose another occupation from the list of eligible occupations\n";
+          p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
+        } else if (hasTraitementClosed) {
+          const isPluralTraitementEn = closedTraitementJobs.length > 1;
+          const opt1TitleEn = isPluralTraitementEn
+            ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedTraitementJobs.join(", ") + ')';
+          const opt1OccupationsEn = isPluralTraitementEn
+            ? 'your occupational choices (' + closedTraitementJobs.join(", ") + ')'
+            : 'your occupational choice (' + closedTraitementJobs.join(", ") + ')';
+          p += opt1TitleEn + "\n";
+          p += "You can retain " + opt1OccupationsEn + " and wait until next April for positions to open. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process.\n\n";
+          p += "Option 2: Choose another occupation from the list of eligible occupations\n";
+          p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
+        } else if (hasAdmissionClosed) {
+          const isPluralAdmissionEn = closedAdmissionOnlyJobs.length > 1;
+          const opt1TitleEn = isPluralAdmissionEn
+            ? 'Option 1: Retain my occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up'
+            : 'Option 1: Retain my occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ') in case a position opens up';
+          const opt1OccupationsEn = isPluralAdmissionEn
+            ? 'your occupational choices (' + closedAdmissionOnlyJobs.join(", ") + ')'
+            : 'your occupational choice (' + closedAdmissionOnlyJobs.join(", ") + ')';
+          const opt1ReferEn = isPluralAdmissionEn ? 'your occupational choices' : 'your occupational choice';
+          p += opt1TitleEn + "\n";
+          p += "You can retain " + opt1OccupationsEn + " in case another candidate already admitted does not complete the process and a position opens up. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre every three months to find out if positions have opened up for " + opt1ReferEn + " in order to continue the recruitment process.\n\n";
+          p += "Option 2: Choose another occupation from the list of eligible occupations\n";
+          p += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
+        } else {
+          p += "Choose another occupation from the list of eligible occupations\n";
+          p += "You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
+        }
       }
 
       if (this.ignoreSip()) {
         p += "Important note regarding closed occupations:\n";
-        p += "The list below includes both currently open and closed occupations. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation, we will have to close your file and it will be your sole responsibility to call us back at the beginning of next March to reopen your file for this occupation.\n\n";
+        p += "The list below includes both currently open and closed occupations. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation, we will have to close your file and it will be your sole responsibility to call us back towards the end of next March to reopen your file for this occupation.\n\n";
       }
 
       // Eligible Jobs English Division

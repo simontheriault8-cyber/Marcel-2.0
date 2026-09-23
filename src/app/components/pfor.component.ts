@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from "@angular/core";
+import { Component, computed, signal, inject, effect, untracked } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
@@ -221,11 +221,72 @@ export const CMR_JOB_DOMAINS: Record<
                   class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
                 >
                   <option value="Canadian Citizen">Citoyen canadien</option>
-                  <option value="PR > 3 years">Résident permanent (≥ 3 ans)</option>
-                  <option value="PR < 3 years">Résident permanent (&lt; 3 ans)</option>
+                  <option value="PR > 3 years">Résident permanent admissible</option>
+                  <option value="PR < 3 years">Résident permanent inadmissible</option>
                 </select>
               </div>
             </div>
+
+            <!-- Message d'admissibilité pour RP < 3 ans -->
+            @if (citizenship() === 'PR < 3 years') {
+              <div
+                class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-start gap-3 shadow-sm transition-all duration-300 shrink-0"
+              >
+                <svg
+                  class="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                  <p class="font-bold text-sm">Non admissible</p>
+                  <p class="text-xs text-red-700 mt-0.5">
+                    Les résidents permanents de moins de trois ans ne sont pas admissibles aux Forces armées canadiennes.
+                  </p>
+                </div>
+              </div>
+            }
+
+            <!-- Message d'avertissement limite d'âge -->
+            @if (age() !== null && (age()! >= 50 || isCandidateTooOld())) {
+              <div
+                class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-start gap-3 shadow-sm transition-all duration-300 shrink-0"
+              >
+                <svg
+                  class="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                  <p class="font-bold text-sm">
+                    {{ age()! >= 57 ? "Âge maximal d'enrôlement dépassé (57 ans et plus)" : "Âge limite dépassé pour les choix de contrats PFOR" }}
+                  </p>
+                  <p class="text-xs text-red-700 mt-0.5">
+                    {{ age()! >= 57
+                      ? "57 ans et plus est automatiquement inadmissible aux Forces armées canadiennes. L'âge maximal d'enrôlement admissible est de 56 ans. Le dossier sera fermé."
+                      : "L'âge maximal d'admissibilité pour l'enrôlement est de 56 ans (57 ans et plus est automatiquement inadmissible). Pour le PFOR, le postulant doit pouvoir compléter le contrat initial (minimum 10 ans) avant l'âge de 60 ans (admissible = 59 - durée du contrat ou moins, soit 49 ans au maximum pour un contrat de 10 ans)."
+                    }}
+                  </p>
+                </div>
+              </div>
+            }
           </div>
 
           <!-- 2. VOLET PFOR & ADMISSION CMR -->
@@ -483,6 +544,28 @@ export const CMR_JOB_DOMAINS: Record<
                       </option>
                     }
                   </select>
+                  @if (selectedDossierJobId1() && selectedDossierJobId1() !== '00003' && age() !== null && age()! > 0) {
+                    @let s1 = evaluateJobAdmissibility(selectedDossierJobId1());
+                    @if (s1) {
+                      @if (!s1.isAgeAdmissible) {
+                        <div class="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800 flex items-start gap-1.5 font-medium">
+                          <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                          <span><strong>Âge limite dépassé :</strong> {{ s1.ageReason }}</span>
+                        </div>
+                      } @else {
+                        <div class="mt-1 text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Âge admissible : contrat initial de {{ s1.durationYears }} ans (admissible jusqu'à {{ 59 - s1.durationYears }} ans)</span>
+                        </div>
+                      }
+                    }
+                  }
                 </div>
 
                 <!-- Métier 2 -->
@@ -507,6 +590,28 @@ export const CMR_JOB_DOMAINS: Record<
                       </option>
                     }
                   </select>
+                  @if (selectedDossierJobId2() && selectedDossierJobId2() !== '00003' && age() !== null && age()! > 0) {
+                    @let s2 = evaluateJobAdmissibility(selectedDossierJobId2());
+                    @if (s2) {
+                      @if (!s2.isAgeAdmissible) {
+                        <div class="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800 flex items-start gap-1.5 font-medium">
+                          <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                          <span><strong>Âge limite dépassé :</strong> {{ s2.ageReason }}</span>
+                        </div>
+                      } @else {
+                        <div class="mt-1 text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Âge admissible : contrat initial de {{ s2.durationYears }} ans (admissible jusqu'à {{ 59 - s2.durationYears }} ans)</span>
+                        </div>
+                      }
+                    }
+                  }
                 </div>
 
                 <!-- Métier 3 -->
@@ -531,6 +636,28 @@ export const CMR_JOB_DOMAINS: Record<
                       </option>
                     }
                   </select>
+                  @if (selectedDossierJobId3() && selectedDossierJobId3() !== '00003' && age() !== null && age()! > 0) {
+                    @let s3 = evaluateJobAdmissibility(selectedDossierJobId3());
+                    @if (s3) {
+                      @if (!s3.isAgeAdmissible) {
+                        <div class="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800 flex items-start gap-1.5 font-medium">
+                          <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                          <span><strong>Âge limite dépassé :</strong> {{ s3.ageReason }}</span>
+                        </div>
+                      } @else {
+                        <div class="mt-1 text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          <span>Âge admissible : contrat initial de {{ s3.durationYears }} ans (admissible jusqu'à {{ 59 - s3.durationYears }} ans)</span>
+                        </div>
+                      }
+                    }
+                  }
                 </div>
               </div>
             </div>
@@ -561,8 +688,8 @@ export const CMR_JOB_DOMAINS: Record<
             </div>
           }
 
-          <!-- Si PFOR CMR et Refus CMR ou Critère minimal non rencontré : Panneaux Scolarité et Expérience -->
-          @if (pforType() === 'cmr' && (cmrRefused() || cmrMinCriteriaNotMet())) {
+          <!-- Si PFOR CMR (Refus CMR / Critère minimal non rencontré) OU Âge dépassé pour les métiers choisis : Panneaux Scolarité et Expérience -->
+          @if (showScolariteExperiencePanel()) {
             <div class="p-5 bg-white border border-rose-200 rounded-xl shadow-sm flex flex-col gap-4">
               <div class="flex items-center justify-between border-b border-rose-100 pb-3">
                 <div class="flex items-center gap-2">
@@ -577,9 +704,13 @@ export const CMR_JOB_DOMAINS: Record<
                   <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
                     Refus CMR actif
                   </span>
-                } @else {
+                } @else if (cmrMinCriteriaNotMet()) {
                   <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
                     Critère minimal non rencontré actif
+                  </span>
+                } @else {
+                  <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+                    Âge maximal dépassé
                   </span>
                 }
               </div>
@@ -686,9 +817,15 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation')) }}
+                    {{ (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
                   </h3>
-                  @if (cmrRefused() || cmrMinCriteriaNotMet()) {
+                  @if (age() !== null && age()! >= 57) {
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
+                    >
+                      Inadmissible (57+)
+                    </span>
+                  } @else if (cmrRefused() || cmrMinCriteriaNotMet()) {
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200"
                     >
@@ -799,6 +936,19 @@ export class PforComponent {
   sanitizer = inject(DomSanitizer);
   reorientationCriteria = inject(ReorientationCriteriaService);
 
+  constructor() {
+    effect(() => {
+      const html = this.buildBilingualEmail(true);
+      const plain = this.buildBilingualEmail(false);
+      const note = this.generateNoteRegistry();
+      untracked(() => {
+        this.sharedState.reoMergedEmailHtml.set(html);
+        this.sharedState.reoMergedEmailPlain.set(plain);
+        this.sharedState.reoMergedNote.set(note);
+      });
+    });
+  }
+
   // Inputs & Signals
   age = signal<number | null>(18);
   citizenship = signal<string>("Canadian Citizen");
@@ -859,6 +1009,44 @@ export class PforComponent {
     return `Situations ${sits.sort().join(" & ")}`;
   });
 
+  getJobContractDuration(jobId: string): number {
+    const job = this.jobService.getJobById(jobId);
+    if (!job || !job.contracts || job.contracts.length === 0) return 10;
+    const pforContract =
+      job.contracts.find((c) => (c.program || "").toUpperCase().includes("PFOR")) ||
+      job.contracts[0];
+
+    if (pforContract && pforContract.duration) {
+      const match = pforContract.duration.match(/(\d+)\s*an/);
+      if (match) return parseInt(match[1], 10);
+    }
+    return 10;
+  }
+
+  isCandidateTooOld = computed(() => {
+    const ageVal = this.age();
+    if (ageVal === null || ageVal <= 0) return false;
+    if (ageVal > 56) return true;
+
+    const dossierIds = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean).filter((id) => id !== "00003");
+
+    if (dossierIds.length > 0) {
+      const allDossierExceedAge = dossierIds.every((id) => {
+        const s = this.evaluateJobAdmissibility(id);
+        return s && !s.isAgeAdmissible;
+      });
+      if (allDossierExceedAge) return true;
+    } else {
+      // If no dossier jobs selected yet, check if age reaches limit for any standard PFOR job (min 10 ans => >= 50)
+      if (ageVal >= 50) return true;
+    }
+    return false;
+  });
+
   getJobAttentesSituation(jobId: string): 1 | 2 {
     const pforStatus = this.jobService.getJobPforStatus(jobId);
     if (pforStatus && pforStatus.traitement === "f") {
@@ -881,6 +1069,9 @@ export class PforComponent {
         );
       }
       const s = this.evaluateJobAdmissibility(id);
+      if (s && !s.isAgeAdmissible) {
+        reasons.push(s.ageReason);
+      }
       if (s && !s.isEducationAdmissible && s.educationReason) {
         reasons.push(s.educationReason);
       }
@@ -893,9 +1084,7 @@ export class PforComponent {
           );
         }
         if (!s.isAgeAdmissible) {
-          reasons.push(
-            `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
-          );
+          reasons.push(s.ageReason);
         }
         if (!s.isCitizenshipAdmissible) {
           reasons.push(
@@ -927,6 +1116,9 @@ export class PforComponent {
         );
       }
       const s = this.evaluateJobAdmissibility(id);
+      if (s && !s.isAgeAdmissible) {
+        reasons.push(s.ageReasonEn);
+      }
       if (s && !s.isEducationAdmissible && s.educationReasonEn) {
         reasons.push(s.educationReasonEn);
       }
@@ -939,9 +1131,7 @@ export class PforComponent {
           );
         }
         if (!s.isAgeAdmissible) {
-          reasons.push(
-            `Your age does not allow completing the initial contract (${s.durationYears} years) before age 60.`,
-          );
+          reasons.push(s.ageReasonEn);
         }
         if (!s.isCitizenshipAdmissible) {
           reasons.push(
@@ -964,7 +1154,7 @@ export class PforComponent {
     if (this.cmrArts()) parts.push("Sciences humaines et sociales");
     if (this.cmrGenie()) parts.push("Génie");
     if (this.cmrScience()) parts.push("Sciences");
-    if (parts.length === 0) return "aucun domaine sélectionné";
+    if (parts.length === 0) return "";
     if (parts.length === 1) return parts[0];
     if (parts.length === 2) return `${parts[0]} et ${parts[1]}`;
     return `${parts[0]}, ${parts[1]} et ${parts[2]}`;
@@ -975,7 +1165,7 @@ export class PforComponent {
     if (this.cmrArts()) parts.push("Social Sciences and Humanities");
     if (this.cmrGenie()) parts.push("Engineering");
     if (this.cmrScience()) parts.push("Science");
-    if (parts.length === 0) return "no field selected";
+    if (parts.length === 0) return "";
     if (parts.length === 1) return parts[0];
     if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
     return `${parts[0]}, ${parts[1]} and ${parts[2]}`;
@@ -1048,8 +1238,45 @@ export class PforComponent {
     });
   });
 
+  hasAgeInadmissibilityInDossier = computed(() => {
+    const ageVal = this.age();
+    if (ageVal === null || ageVal <= 0 || ageVal >= 57) return false;
+
+    const dossierIds = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean).filter((id) => id !== "00003");
+
+    if (dossierIds.length > 0) {
+      return dossierIds.some((id) => {
+        const s = this.evaluateJobAdmissibility(id);
+        return s && !s.isAgeAdmissible;
+      });
+    }
+
+    return false;
+  });
+
+  showScolariteExperiencePanel = computed(() => {
+    if (this.pforType() === "cmr" && (this.cmrRefused() || this.cmrMinCriteriaNotMet())) {
+      return true;
+    }
+
+    const ageVal = this.age();
+    if (ageVal !== null && ageVal > 0 && ageVal < 57) {
+      if (this.isCandidateTooOld() || this.hasAgeInadmissibilityInDossier()) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
   showResultsPanel = computed(() => {
     return (
+      this.citizenship() === "PR < 3 years" ||
+      (this.age() !== null && this.age()! >= 57) ||
       !!this.selectedDossierJobId1() ||
       !!this.selectedDossierJobId2() ||
       !!this.selectedDossierJobId3() ||
@@ -1058,13 +1285,15 @@ export class PforComponent {
       this.cmrGenie() ||
       this.cmrRefused() ||
       this.cmrMinCriteriaNotMet() ||
+      this.showScolariteExperiencePanel() ||
       this.pforType() === "civil"
     );
   });
 
   eligiblePforJobs = computed<JobEntry[]>(() => {
     if (this.citizenship() === "PR < 3 years") return [];
-    if (this.age() !== null && this.age()! >= 60) return [];
+    const ageVal = this.age();
+    if (ageVal !== null && (ageVal > 56 || ageVal >= 60)) return [];
 
     let candidateJobIds: string[] = [];
 
@@ -1100,10 +1329,17 @@ export class PforComponent {
     const result: JobEntry[] = [];
     for (const jId of candidateJobIds) {
       if (!this.jobService.hasPforProgram(jId, this.currentSipPhase())) continue;
+      if (this.citizenship() === "PR > 3 years" && !this.jobService.isJobRp(jId)) continue;
       if (!this.ignoreSip() && this.jobService.isPforJobClosed(jId, this.currentSipPhase())) continue;
 
       const job = this.jobService.getJobById(jId);
-      if (job) result.push(job);
+      if (job) {
+        if (ageVal !== null && ageVal > 0) {
+          const durationYears = this.getJobContractDuration(jId);
+          if (ageVal + durationYears >= 60) continue;
+        }
+        result.push(job);
+      }
     }
 
     return result;
@@ -1139,14 +1375,20 @@ export class PforComponent {
         };
       }
 
+      const s = this.evaluateJobAdmissibility(id);
+
       if (this.citizenship() === "PR < 3 years") {
         isEligible = false;
         reasonFr = "Résident permanent de moins de 3 ans";
         reasonEn = "Permanent resident under 3 years";
-      } else if (this.age() !== null && this.age()! >= 60) {
+      } else if (this.citizenship() === "PR > 3 years" && !this.jobService.isJobRp(id)) {
         isEligible = false;
-        reasonFr = "Âge limite dépassé";
-        reasonEn = "Age limit exceeded";
+        reasonFr = "Pour diverses raisons, ce métier n'est pas accessible aux résidents permanents.";
+        reasonEn = "For various reasons, this occupation is not open to permanent residents.";
+      } else if (s && !s.isAgeAdmissible) {
+        isEligible = false;
+        reasonFr = s.ageReason;
+        reasonEn = s.ageReasonEn;
       } else if (this.pforType() === "cmr") {
         if (this.cmrRefused()) {
           isEligible = false;
@@ -1353,8 +1595,32 @@ export class PforComponent {
   evaluateJobAdmissibility(jobId: string) {
     const job = this.jobService.getJobById(jobId);
     const isJobClosed = !this.ignoreSip() && this.jobService.isPforJobClosed(jobId, this.currentSipPhase());
-    const isAgeAdmissible = this.age() === null || this.age()! < 60;
-    const isCitizenshipAdmissible = this.citizenship() !== "PR < 3 years";
+    
+    const ageVal = this.age();
+    let isAgeAdmissible = true;
+    let ageReason = "";
+    let ageReasonEn = "";
+
+    const durationYears = this.getJobContractDuration(jobId);
+
+    if (ageVal !== null && ageVal > 0) {
+      if (ageVal >= 57) {
+        isAgeAdmissible = false;
+        ageReason = "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
+        ageReasonEn = "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
+      } else if (ageVal + durationYears >= 60) {
+        isAgeAdmissible = false;
+        ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
+        ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
+      }
+    }
+
+    let isCitizenshipAdmissible = true;
+    if (this.citizenship() === "PR < 3 years") {
+      isCitizenshipAdmissible = false;
+    } else if (this.citizenship() === "PR > 3 years" && !this.jobService.isJobRp(jobId)) {
+      isCitizenshipAdmissible = false;
+    }
 
     let isEducationAdmissible = true;
     let educationReason = "";
@@ -1434,11 +1700,21 @@ export class PforComponent {
       medicalReasonEn,
       extraTestReasonFr: "",
       extraTestReasonEn: "",
-      durationYears: 5,
+      durationYears,
+      ageReason,
+      ageReasonEn,
     };
   }
 
   generateNoteRegistry(): string {
+    if (this.age() !== null && this.age()! >= 57) {
+      return "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
+    }
+
+    if (this.citizenship() === "PR < 3 years") {
+      return "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
+    }
+
     const dossierIds = [
       this.selectedDossierJobId1(),
       this.selectedDossierJobId2(),
@@ -1449,7 +1725,9 @@ export class PforComponent {
 
     if (this.isAttentesMode()) {
       let admissionPart = "";
-      if (this.pforType() === "cmr") {
+      if (this.isCandidateTooOld()) {
+        admissionPart = "PFOR - Âge limite dépassé";
+      } else if (this.pforType() === "cmr") {
         const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
         if (cmrDomains) {
           admissionPart = `Admis CMR (${cmrDomains})`;
@@ -1500,7 +1778,9 @@ export class PforComponent {
         : "";
 
       let reoPrefix = "Réorientation nécessaire car";
-      if (this.pforType() === "cmr") {
+      if (this.isCandidateTooOld()) {
+        reoPrefix = "PFOR - Âge limite dépassé - Réorientation nécessaire car";
+      } else if (this.pforType() === "cmr") {
         if (this.cmrRefused()) {
           reoPrefix = "Refus d'admission CMR - Réorientation nécessaire";
         } else if (this.cmrMinCriteriaNotMet()) {
@@ -1517,7 +1797,7 @@ export class PforComponent {
         reoPrefix = "PFOR Civil - Réorientation nécessaire car";
       }
 
-      if (this.pforType() === "cmr" && (this.cmrRefused() || this.cmrMinCriteriaNotMet())) {
+      if (!this.isCandidateTooOld() && this.pforType() === "cmr" && (this.cmrRefused() || this.cmrMinCriteriaNotMet())) {
         reoNote = `Étape 1 (En cours) - ${reoPrefix}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
       } else {
         reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
@@ -1648,7 +1928,13 @@ export class PforComponent {
 
       // FRENCH SECTION
       h += '<p class="mt-4">Bonjour,</p>\n';
-      h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMC dans le(s) domaine(s) d'études suivant(s): ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        h += '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que vous devez faire l\'objet d\'une réorientation. En effet, vous dépassez l\'âge maximal d\'admissibilité pour ce programme.</p>\n';
+      } else if (this.pforType() === "cmr" && cmrAdmittedFr) {
+        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+      } else {
+        h += `<p class="mt-4">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR${this.pforType() === 'civil' ? ' - Universités civiles' : ''})</strong>, nous constatons que vous devez faire l'objet d'une réorientation.</p>\n`;
+      }
 
       if (mergeTasks) {
         let taskPartHtml = "";
@@ -1680,8 +1966,13 @@ export class PforComponent {
         }
       }
 
-      h +=
-        '<p class="mt-4">Toutefois, suite à l\'analyse de vos choix de métiers actuels, nous constatons qu\'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n';
+      if (this.pforType() === "cmr" && cmrAdmittedFr) {
+        h +=
+          '<p class="mt-4">Toutefois, suite à l\'analyse de vos choix de métiers actuels, nous constatons qu\'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n';
+      } else {
+        h +=
+          '<p class="mt-4">Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n';
+      }
 
       h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
       for (const id of realDossierIds) {
@@ -1735,7 +2026,13 @@ export class PforComponent {
 
       // ENGLISH SECTION
       h += '<p class="mt-4">Hello,</p>\n';
-      h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Canadian Military College (CMC) for the Regular Officer Training Plan (ROTP), you have been admitted to CMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        h += '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we note that you require a reorientation. Indeed, you exceed the maximum eligibility age for this program.</p>\n';
+      } else if (this.pforType() === "cmr" && cmrAdmittedEn) {
+        h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}!</strong> We would like to warmly congratulate you on your admission.</p>\n`;
+      } else {
+        h += `<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP${this.pforType() === 'civil' ? ' - Civilian Universities' : ''})</strong>, we note that you require a reorientation.</p>\n`;
+      }
 
       if (mergeTasks) {
         const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
@@ -1768,8 +2065,13 @@ export class PforComponent {
         }
       }
 
-      h +=
-        '<p class="mt-4">However, following the review of your current occupation choices, a reorientation is required.<br>Here is the current status of the occupations in your file:</p>\n';
+      if (this.pforType() === "cmr" && cmrAdmittedEn) {
+        h +=
+          '<p class="mt-4">However, following the review of your current occupation choices, a reorientation is required.<br>Here is the current status of the occupations in your file:</p>\n';
+      } else {
+        h +=
+          '<p class="mt-4">Here is the status of the occupations currently in your file:</p>\n';
+      }
 
       h += '<ul class="list-disc pl-5 mt-2 mb-4 space-y-2">\n';
       for (const id of realDossierIds) {
@@ -1828,7 +2130,13 @@ export class PforComponent {
 
       // FRENCH PLAIN
       t += "Bonjour,\n\n";
-      t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMC dans le(s) domaine(s) d'études suivant(s): ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+      if (this.isCandidateTooOld()) {
+        t += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que vous devez faire l'objet d'une réorientation. En effet, vous dépassez l'âge maximal d'admissibilité pour ce programme.\n\n";
+      } else if (this.pforType() === "cmr" && cmrAdmittedFr) {
+        t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+      } else {
+        t += `Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR${this.pforType() === 'civil' ? ' - Universités civiles' : ''}), nous constatons que vous devez faire l'objet d'une réorientation.\n\n`;
+      }
 
       if (mergeTasks && rawTxt) {
         let taskPartTxt = "";
@@ -1848,8 +2156,13 @@ export class PforComponent {
         }
       }
 
-      t +=
-        "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+      if (this.pforType() === "cmr" && cmrAdmittedFr) {
+        t +=
+          "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+      } else {
+        t +=
+          "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+      }
       for (const id of realDossierIds) {
         const link = this.getJobLinkMarkup(id, true, false);
         const name = `${id} - ${link}`;
@@ -1895,7 +2208,13 @@ export class PforComponent {
 
       // ENGLISH PLAIN
       t += "Hello,\n\n";
-      t += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Canadian Military College (CMC) for the Regular Officer Training Plan (ROTP), you have been admitted to CMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
+      if (this.isCandidateTooOld()) {
+        t += "Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we note that you require a reorientation. Indeed, you exceed the maximum eligibility age for this program.\n\n";
+      } else if (this.pforType() === "cmr" && cmrAdmittedEn) {
+        t += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
+      } else {
+        t += `Following the analysis of your application file for the Regular Officer Training Plan (ROTP${this.pforType() === 'civil' ? ' - Civilian Universities' : ''}), we note that you require a reorientation.\n\n`;
+      }
 
       if (mergeTasks) {
         const rawTxtEn = this.sharedState.taskEmailEn();
@@ -1916,9 +2235,13 @@ export class PforComponent {
         }
       }
 
-      t +=
-        "However, following the review of your current occupation choices, a reorientation is required.\n";
-      t += "Here is the current status of the occupations in your file:\n";
+      if (this.pforType() === "cmr" && cmrAdmittedEn) {
+        t +=
+          "However, following the review of your current occupation choices, a reorientation is required.\nHere is the current status of the occupations in your file:\n";
+      } else {
+        t +=
+          "Here is the status of the occupations in your file:\n";
+      }
       for (const id of realDossierIds) {
         const link = this.getJobLinkMarkup(id, false, false);
         const name = `${id} - ${link}`;
@@ -2493,6 +2816,124 @@ export class PforComponent {
   }
 
   buildBilingualEmail(isHtml: boolean): string {
+    if (this.age() !== null && this.age()! >= 57) {
+      if (isHtml) {
+        let h = "";
+        h +=
+          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+        h += '<p class="mt-4">Bonjour,</p>\n';
+        h +=
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.</p>\n';
+        h += '<p class="mt-4">Votre dossier sera fermé.</p>\n';
+        h +=
+          '<p class="mt-4">Merci de votre intérêt à joindre les Forces armées canadienne!</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        h +=
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
+        h += '<p class="mt-4">Hello,</p>\n';
+        h +=
+          '<p class="mt-4">Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.</p>\n';
+        h += '<p class="mt-4">Your file will be closed.</p>\n';
+        h +=
+          '<p class="mt-4">Thank you for your interest in joining the Canadian Armed Forces!</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        return h;
+      } else {
+        let p = "";
+        p += "English message will follow.\n\n";
+        p += "Bonjour,\n\n";
+        p +=
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.\n\n";
+        p += "Votre dossier sera fermé.\n\n";
+        p += "Merci de votre intérêt à joindre les Forces armées canadienne!\n\n";
+        p += this.sharedState.getSignatureFr() + "\n\n";
+        p +=
+          "______________________________________________________________________________\n\n";
+        p += "Hello,\n\n";
+        p +=
+          "Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.\n\n";
+        p += "Your file will be closed.\n\n";
+        p += "Thank you for your interest in joining the Canadian Armed Forces!\n\n";
+        p += this.sharedState.getSignatureEn();
+        return p;
+      }
+    }
+
+    if (this.citizenship() === "PR < 3 years") {
+      if (isHtml) {
+        let h = "";
+        h +=
+          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+        h += '<p class="mt-4">Bonjour,</p>\n';
+        h +=
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.</p>\n';
+        h +=
+          '<p class="mt-4">Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.</p>\n';
+        h +=
+          '<p class="mt-4">Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l\'avenir, vous devez :</p>\n';
+        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
+        h += '  <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>\n';
+        h += '  <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d\'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>\n';
+        h += '</ul>\n';
+        h +=
+          '<p class="mt-4">Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l\'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>\n';
+        h +=
+          '<p class="mt-4">Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        h +=
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
+        h += '<p class="mt-4">Hello,</p>\n';
+        h +=
+          '<p class="mt-4">Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.</p>\n';
+        h +=
+          '<p class="mt-4">To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.</p>\n';
+        h +=
+          '<p class="mt-4">In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>\n';
+        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
+        h += '  <li><strong>Either obtain Canadian citizenship;</strong></li>\n';
+        h += '  <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>\n';
+        h += '</ul>\n';
+        h +=
+          '<p class="mt-4">Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>\n';
+        h +=
+          '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.</p>\n';
+        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        return h;
+      } else {
+        let p = "";
+        p += "English message will follow.\n\n";
+        p += "Bonjour,\n\n";
+        p +=
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.\n\n";
+        p +=
+          "Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.\n\n";
+        p +=
+          "Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :\n";
+        p += "  - Soit obtenir la citoyenneté canadienne ;\n";
+        p += "  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.\n\n";
+        p +=
+          "Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.\n\n";
+        p += "Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.\n\n";
+        p += this.sharedState.getSignatureFr() + "\n\n";
+        p +=
+          "______________________________________________________________________________\n\n";
+        p += "Hello,\n\n";
+        p +=
+          "Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.\n\n";
+        p +=
+          "To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.\n\n";
+        p +=
+          "In order to become eligible and be able to reapply or proceed with an application in the future, you must:\n";
+        p += "  - Either obtain Canadian citizenship;\n";
+        p += "  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.\n\n";
+        p +=
+          "Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.\n\n";
+        p += "Thank you for your interest in the Canadian Armed Forces.\n\n";
+        p += this.sharedState.getSignatureEn();
+        return p;
+      }
+    }
+
     if (this.isAttentesMode()) {
       return this.buildGestionDesAttentesEmail(isHtml);
     }
@@ -2526,6 +2967,29 @@ export class PforComponent {
     } else {
       listOFF = allEligibleJobs;
     }
+
+    const ncmEval = this.eligibleNcmEvaluation();
+    const openScolariteOfficerJobs = ncmEval.openOfficerJobs.filter(
+      (j) => !listOFF.some((o) => o.id === j.id)
+    );
+    const closedScolariteOfficerJobs = ncmEval.closedOfficerJobs.filter(
+      (j) => !listClosedOFF.some((o) => o.id === j.id)
+    );
+    const openNcmJobs = ncmEval.openNcmJobs;
+    const closedNcmJobs = ncmEval.closedNcmJobs;
+
+    const allOpenOfficerJobs = [...listOFF, ...openScolariteOfficerJobs];
+    const allClosedOfficerJobs = [
+      ...listClosedOFF,
+      ...closedScolariteOfficerJobs,
+    ];
+
+    const shouldIncludeNcm =
+      this.isCandidateTooOld() ||
+      this.hasAgeInadmissibilityInDossier() ||
+      this.showScolariteExperiencePanel() ||
+      ((openNcmJobs.length > 0 || openScolariteOfficerJobs.length > 0) &&
+        listOFF.length === 0);
 
     const renderHtmlList = (
       jobsList: JobEntry[],
@@ -2587,6 +3051,56 @@ export class PforComponent {
       return s;
     };
 
+    const renderHtmlNcmList = (
+      jobsList: (JobEntry | string)[],
+      isClosedList: boolean,
+      isFr: boolean,
+    ): string => {
+      if (jobsList.length === 0) return "";
+      let s = "";
+      if (isClosedList) {
+        s += `<p class="mt-3 mb-1 font-bold text-red-600" style="color: #dc2626; font-weight: bold; margin-top: 12px; margin-bottom: 4px;">${isFr ? "Militaire du rang (Fermés) :" : "Non-Commissioned Member (Closed):"}</p>\n`;
+      } else {
+        s += `<p class="mt-3 mb-1 font-bold text-slate-800" style="color: #1e293b; font-weight: bold; margin-top: 12px; margin-bottom: 4px;">${isFr ? "Militaire du rang :" : "Non-Commissioned Member:"}</p>\n`;
+      }
+      s += '<ul class="list-disc pl-5 space-y-1 mb-2">\n';
+      for (const item of jobsList) {
+        const jId = typeof item === "string" ? item : item.id;
+        const link = this.getJobLinkMarkup(jId, isFr, true);
+        if (isClosedList) {
+          s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${isFr ? "FERMÉ" : "CLOSED"})</span></li>\n`;
+        } else {
+          s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong></li>\n`;
+        }
+      }
+      s += "</ul>\n";
+      return s;
+    };
+
+    const renderPlainNcmList = (
+      jobsList: (JobEntry | string)[],
+      isClosedList: boolean,
+      isFr: boolean,
+    ): string => {
+      if (jobsList.length === 0) return "";
+      let s = "";
+      if (isClosedList) {
+        s += `\n${isFr ? "Militaire du rang (Fermés) :" : "Non-Commissioned Member (Closed):"}\n`;
+      } else {
+        s += `\n${isFr ? "Militaire du rang :" : "Non-Commissioned Member:"}\n`;
+      }
+      for (const item of jobsList) {
+        const jId = typeof item === "string" ? item : item.id;
+        const link = this.getJobLinkMarkup(jId, isFr, false);
+        if (isClosedList) {
+          s += `  - ${jId} - ${link} (${isFr ? "FERMÉ" : "CLOSED"})\n`;
+        } else {
+          s += `  - ${jId} - ${link}\n`;
+        }
+      }
+      return s;
+    };
+
     const dossierIds = [
       this.selectedDossierJobId1(),
       this.selectedDossierJobId2(),
@@ -2633,6 +3147,14 @@ export class PforComponent {
     const cmrAdmittedFr = this.getCmrAdmittedDomainsFr();
     const cmrAdmittedEn = this.getCmrAdmittedDomainsEn();
 
+    const hasAnyOffJobs =
+      allOpenOfficerJobs.length > 0 ||
+      (this.ignoreSip() && allClosedOfficerJobs.length > 0);
+    const hasAnyNcmJobs =
+      shouldIncludeNcm &&
+      (openNcmJobs.length > 0 ||
+        (this.ignoreSip() && closedNcmJobs.length > 0));
+
     if (isHtml) {
       let h = "";
       h +=
@@ -2641,14 +3163,22 @@ export class PforComponent {
       // FRENCH SECTION
       h += '<p class="mt-4">Bonjour,</p>\n';
 
-      if (isPforCmr) {
-        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr || "votre sélection"} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        h += '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que vous devez faire l\'objet d\'une réorientation. En effet, vous dépassez l\'âge maximal d\'admissibilité pour ce programme.</p>\n';
+      } else if (isPforCmr && cmrAdmittedFr) {
+        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
       }
 
       if (mergeTasks) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          h +=
+            '<p class="mt-4">De plus, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
+        } else if (isPforCmr && cmrAdmittedFr) {
           h +=
             '<p class="mt-4">Toutefois, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
+        } else if (isPforCmr) {
+          h +=
+            '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que certaines actions de votre part sont requises. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
         } else {
           h +=
             '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Universités civiles)</strong>, nous constatons que certaines actions de votre part sont requises. Vous devez à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l\'objet d\'une <strong>réorientation pour vos choix de métiers</strong>.</p>\n';
@@ -2686,26 +3216,39 @@ export class PforComponent {
           '<p class="mt-6 font-bold text-slate-900 border-b border-slate-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">2. STATUT DE VOS CHOIX DE MÉTIERS ACTUELS ET RÉORIENTATION REQUISE :</p>\n';
       } else {
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.</p>\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
             h +=
               "<p class=\"mt-4\">Toutefois, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>\n";
           } else {
             h +=
-              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>\n";
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Universités civiles)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>\n";
           }
         }
       }
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              h +=
-                "<p class=\"mt-4\">Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
-            }
+          if (mergeTasks) {
+            h +=
+              "<p class=\"mt-2\">Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
+            h +=
+              "<p class=\"mt-4\">Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
           } else {
             h +=
-              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
+              "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR - Universités civiles)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :</p>\n";
           }
         } else {
           h +=
@@ -2724,9 +3267,7 @@ export class PforComponent {
               );
             }
             if (!s.isAgeAdmissible) {
-              reasonsFrList.push(
-                `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
-              );
+              reasonsFrList.push(s.ageReason);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsFrList.push(
@@ -2801,13 +3342,28 @@ export class PforComponent {
           '</div>\n';
       }
 
-      if (listOFF.length === 0 && listClosedOFF.length === 0) {
-        h +=
-          '<p class="mt-2 text-slate-700 italic">Aucun métier PFOR ouvert correspondant n\'est disponible actuellement pour la sélection effectuée.</p>\n';
+      if (!hasAnyOffJobs && !hasAnyNcmJobs) {
+        if (shouldIncludeNcm) {
+          h +=
+            '<p class="mt-2 text-slate-700 italic">(Veuillez renseigner les critères de scolarité et d\'expérience dans les panneaux ci-dessus pour afficher les métiers admissibles)</p>\n';
+        } else {
+          h +=
+            '<p class="mt-2 text-slate-700 italic">Aucun métier PFOR ouvert correspondant n\'est disponible actuellement pour la sélection effectuée.</p>\n';
+        }
       } else {
-        h += renderHtmlList(listOFF, false, true);
-        if (listClosedOFF.length > 0) {
-          h += renderHtmlList(listClosedOFF, true, true);
+        if (allOpenOfficerJobs.length > 0) {
+          h += renderHtmlList(allOpenOfficerJobs, false, true);
+        }
+        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
+          h += renderHtmlList(allClosedOfficerJobs, true, true);
+        }
+        if (shouldIncludeNcm) {
+          if (openNcmJobs.length > 0) {
+            h += renderHtmlNcmList(openNcmJobs, false, true);
+          }
+          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+            h += renderHtmlNcmList(closedNcmJobs, true, true);
+          }
         }
       }
       h += "</div>\n";
@@ -2847,14 +3403,26 @@ export class PforComponent {
       // ======================================
       h += '<p class="mt-4">Hello,</p>\n';
 
-      if (isPforCmr) {
-        h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn || "your selection"}!</strong> We would like to warmly congratulate you on your admission.</p>\n`;
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          h += '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we regret to inform you that you exceed the maximum eligibility age for enrolment in the Canadian Armed Forces (the maximum enrolment age is 56, and 57 or older is automatically ineligible).</p>\n';
+        } else {
+          h += '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we have determined that you must undergo a reorientation. Indeed, you exceed the maximum eligibility age for this program.</p>\n';
+        }
+      } else if (isPforCmr && cmrAdmittedEn) {
+        h += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}!</strong> We would like to warmly congratulate you on your admission.</p>\n`;
       }
 
       if (mergeTasks) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          h +=
+            '<p class="mt-4">In addition, certain actions on your part are required to allow us to continue processing your application. You must both <strong>correct the tasks that have been reassigned to you</strong> on your portal and undergo a <strong>reorientation for your occupation choices</strong>.</p>\n';
+        } else if (isPforCmr && cmrAdmittedEn) {
           h +=
             '<p class="mt-4">However, certain actions on your part are required to allow us to continue processing your application. You must both <strong>correct the tasks that have been reassigned to you</strong> on your portal and undergo a <strong>reorientation for your occupation choices</strong>.</p>\n';
+        } else if (isPforCmr) {
+          h +=
+            '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, we note that certain actions are required. You must both <strong>correct the tasks that have been reassigned to you</strong> on your portal and undergo a <strong>reorientation for your occupation choices</strong>.</p>\n';
         } else {
           h +=
             '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Civilian Universities)</strong>, we note that certain actions are required. You must both <strong>correct the tasks that have been reassigned to you</strong> on your portal and undergo a <strong>reorientation for your occupation choices</strong>.</p>\n';
@@ -2893,26 +3461,39 @@ export class PforComponent {
           '<p class="mt-6 font-bold text-slate-900 border-b border-slate-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">2. STATUS OF YOUR CURRENT OCCUPATION CHOICES AND REQUIRED REORIENTATION:</p>\n';
       } else {
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">In addition, no occupation is currently selected on your file, and processing cannot continue without an eligible occupation choice on your part.</p>\n";
+          } else if (isPforCmr && cmrAdmittedEn) {
             h +=
               "<p class=\"mt-4\">However, no occupation is currently selected on your file, and processing cannot continue without an eligible occupation choice on your part.</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, we note that you require a reorientation. Indeed, no occupation is currently selected on your file, and processing cannot continue without an occupation choice on your part.</p>\n";
           } else {
             h +=
-              "<p class=\"mt-4\">Following the analysis of your application file, we note that you require a reorientation. Indeed, no occupation is currently selected on your file, and processing cannot continue without an occupation choice on your part.</p>\n";
+              "<p class=\"mt-4\">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP - Civilian Universities)</strong>, we note that you require a reorientation. Indeed, no occupation is currently selected on your file, and processing cannot continue without an occupation choice on your part.</p>\n";
           }
         }
       }
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              h +=
-                "<p class=\"mt-4\">However, following the review of your current occupation choices, we find that a reorientation is required. Here is the status of the occupations currently on your file:</p>\n";
-            }
+          if (mergeTasks) {
+            h +=
+              "<p class=\"mt-2\">Here is the status of the occupations currently on your file:</p>\n";
+          } else if (this.isCandidateTooOld()) {
+            h +=
+              "<p class=\"mt-4\">Here is the status of the occupations currently on your file:</p>\n";
+          } else if (isPforCmr && cmrAdmittedEn) {
+            h +=
+              "<p class=\"mt-4\">However, following the review of your current occupation choices, we find that a reorientation is required. Here is the status of the occupations currently on your file:</p>\n";
+          } else if (isPforCmr) {
+            h +=
+              "<p class=\"mt-4\">Following the review of your application file for the <strong>Regular Officer Training Plan (ROTP - Royal Military College)</strong>, we find that a reorientation is required. Here is the status of the occupations currently on your file:</p>\n";
           } else {
             h +=
-              "<p class=\"mt-4\">Following the review of your application file for the Regular Officer Training Plan (ROTP - Civilian Universities), we find that a reorientation is required. Here is the status of the occupations currently on your file:</p>\n";
+              "<p class=\"mt-4\">Following the review of your application file for the <strong>Regular Officer Training Plan (ROTP - Civilian Universities)</strong>, we find that a reorientation is required. Here is the status of the occupations currently on your file:</p>\n";
           }
         } else {
           h +=
@@ -2931,9 +3512,7 @@ export class PforComponent {
               );
             }
             if (!s.isAgeAdmissible) {
-              reasonsEnList.push(
-                `Your age does not allow completing the initial contract (${s.durationYears} years) before age 60.`,
-              );
+              reasonsEnList.push(s.ageReasonEn);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsEnList.push(
@@ -3008,13 +3587,28 @@ export class PforComponent {
           '</div>\n';
       }
 
-      if (listOFF.length === 0 && listClosedOFF.length === 0) {
-        h +=
-          '<p class="mt-2 text-slate-700 italic">No open ROTP occupations currently available for the selected profile.</p>\n';
+      if (!hasAnyOffJobs && !hasAnyNcmJobs) {
+        if (shouldIncludeNcm) {
+          h +=
+            '<p class="mt-2 text-slate-700 italic">(Please fill out the education and experience criteria in the panels above to display eligible occupations)</p>\n';
+        } else {
+          h +=
+            '<p class="mt-2 text-slate-700 italic">No open ROTP occupations currently available for the selected profile.</p>\n';
+        }
       } else {
-        h += renderHtmlList(listOFF, false, false);
-        if (listClosedOFF.length > 0) {
-          h += renderHtmlList(listClosedOFF, true, false);
+        if (allOpenOfficerJobs.length > 0) {
+          h += renderHtmlList(allOpenOfficerJobs, false, false);
+        }
+        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
+          h += renderHtmlList(allClosedOfficerJobs, true, false);
+        }
+        if (shouldIncludeNcm) {
+          if (openNcmJobs.length > 0) {
+            h += renderHtmlNcmList(openNcmJobs, false, false);
+          }
+          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+            h += renderHtmlNcmList(closedNcmJobs, true, false);
+          }
         }
       }
       h += "</div>\n";
@@ -3058,14 +3652,26 @@ export class PforComponent {
       // French Plain Text
       t += "Bonjour,\n\n";
 
-      if (isPforCmr) {
-        t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr || "votre sélection"} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          t += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous vous informons que vous dépassez l'âge maximal d'admissibilité pour l'enrôlement dans les Forces armées canadiennes (l'âge maximal d'admissibilité est de 56 ans, 57 ans et plus étant automatiquement inadmissible).\n\n";
+        } else {
+          t += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que vous devez faire l'objet d'une réorientation. En effet, vous dépassez l'âge maximal d'admissibilité pour ce programme.\n\n";
+        }
+      } else if (isPforCmr && cmrAdmittedFr) {
+        t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
       }
 
       if (mergeTasks) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          t +=
+            "De plus, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
+        } else if (isPforCmr && cmrAdmittedFr) {
           t +=
             "Toutefois, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
+        } else if (isPforCmr) {
+          t +=
+            "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons que certaines actions de votre part sont requises. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
         } else {
           t +=
             "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que certaines actions de votre part sont requises. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
@@ -3103,23 +3709,36 @@ export class PforComponent {
           "----------------------------------------------------------------------\n";
       } else {
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            t +=
+              "De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.\n\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
             t +=
               "Toutefois, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier admissible ne soit fait de votre part.\n\n";
+          } else if (isPforCmr) {
+            t +=
+              "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.\n\n";
           } else {
             t +=
-              "Suite à l'analyse de votre dossier de candidature, nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.\n\n";
+              "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que vous devez faire l'objet d'une réorientation. En effet, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.\n\n";
           }
         }
       }
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              t +=
-                "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
-            }
+          if (mergeTasks) {
+            t +=
+              "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (this.isCandidateTooOld()) {
+            t +=
+              "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (isPforCmr && cmrAdmittedFr) {
+            t +=
+              "Toutefois, suite à l'analyse de vos choix de métiers actuels, nous constatons qu'une réorientation est nécessaire. Voici le statut des métiers actuellement inscrits à votre dossier :\n";
+          } else if (isPforCmr) {
+            t +=
+              "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Collège militaire royal), nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :\n";
           } else {
             t +=
               "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR - Universités civiles), nous constatons que vous devez faire l'objet d'une réorientation. En effet, voici le statut des métiers actuellement inscrits à votre dossier :\n";
@@ -3140,9 +3759,7 @@ export class PforComponent {
               );
             }
             if (!s.isAgeAdmissible) {
-              reasonsFrList.push(
-                `Votre âge ne permet pas de compléter le contrat initial (${s.durationYears} ans) avant 60 ans.`,
-              );
+              reasonsFrList.push(s.ageReason);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsFrList.push(
@@ -3205,13 +3822,28 @@ export class PforComponent {
           "Attention – Choix du métier de Pilote (00183) : Le métier de Pilote étant fortement contingenté (nombre de places très limité), si vous choisissez ce métier, vous devez obligatoirement sélectionner un deuxième métier parmi la liste des métiers admissibles.\n\n";
       }
 
-      if (listOFF.length === 0 && listClosedOFF.length === 0) {
-        t +=
-          "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.\n";
+      if (!hasAnyOffJobs && !hasAnyNcmJobs) {
+        if (shouldIncludeNcm) {
+          t +=
+            "(Veuillez renseigner les critères de scolarité et d'expérience dans les panneaux ci-dessus pour afficher les métiers admissibles)\n";
+        } else {
+          t +=
+            "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.\n";
+        }
       } else {
-        t += renderPlainList(listOFF, false, true);
-        if (listClosedOFF.length > 0) {
-          t += renderPlainList(listClosedOFF, true, true);
+        if (allOpenOfficerJobs.length > 0) {
+          t += renderPlainList(allOpenOfficerJobs, false, true);
+        }
+        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
+          t += renderPlainList(allClosedOfficerJobs, true, true);
+        }
+        if (shouldIncludeNcm) {
+          if (openNcmJobs.length > 0) {
+            t += renderPlainNcmList(openNcmJobs, false, true);
+          }
+          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+            t += renderPlainNcmList(closedNcmJobs, true, true);
+          }
         }
       }
 
@@ -3244,14 +3876,26 @@ export class PforComponent {
       // English Plain Text
       t += "Hello,\n\n";
 
-      if (isPforCmr) {
-        t += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn || "your selection"}! We would like to warmly congratulate you on your admission.\n\n`;
+      if (this.isCandidateTooOld()) {
+        if (this.age() !== null && this.age()! >= 57) {
+          t += "Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we regret to inform you that you exceed the maximum eligibility age for enrolment in the Canadian Armed Forces (the maximum enrolment age is 56, and 57 or older is automatically ineligible).\n\n";
+        } else {
+          t += "Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we have determined that you must undergo a reorientation. Indeed, you exceed the maximum eligibility age for this program.\n\n";
+        }
+      } else if (isPforCmr && cmrAdmittedEn) {
+        t += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
       }
 
       if (mergeTasks) {
-        if (isPforCmr) {
+        if (this.isCandidateTooOld()) {
+          t +=
+            "In addition, certain actions on your part are required to allow us to continue processing your application. You must both correct the tasks that have been reassigned to you on your portal and undergo a reorientation for your occupation choices.\n\n";
+        } else if (isPforCmr && cmrAdmittedEn) {
           t +=
             "However, certain actions on your part are required to allow us to continue processing your application. You must both correct the tasks that have been reassigned to you on your portal and undergo a reorientation for your occupation choices.\n\n";
+        } else if (isPforCmr) {
+          t +=
+            "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), we note that certain actions are required. You must both correct the tasks that have been reassigned to you on your portal and undergo a reorientation for your occupation choices.\n\n";
         } else {
           t +=
             "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Civilian Universities), we note that certain actions are required. You must both correct the tasks that have been reassigned to you on your portal and undergo a reorientation for your occupation choices.\n\n";
@@ -3290,9 +3934,15 @@ export class PforComponent {
           "----------------------------------------------------------------------\n";
       } else {
         if (hasNoJobCode) {
-          if (isPforCmr) {
+          if (this.isCandidateTooOld()) {
+            t +=
+              "In addition, no occupation is currently selected on your file, and processing cannot continue without an eligible occupation choice on your part.\n\n";
+          } else if (isPforCmr && cmrAdmittedEn) {
             t +=
               "However, no occupation is currently selected on your file, and processing cannot continue without an eligible occupation choice on your part.\n\n";
+          } else if (isPforCmr) {
+            t +=
+              "Following the analysis of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), we note that you require a reorientation. Indeed, no occupation is currently selected on your file, and processing cannot continue without an occupation choice on your part.\n\n";
           } else {
             t +=
               "Following the analysis of your application file, we note that you require a reorientation. Indeed, no occupation is currently selected on your file, and processing cannot continue without an occupation choice on your part.\n\n";
@@ -3302,11 +3952,18 @@ export class PforComponent {
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (isPforCmr) {
-            if (!mergeTasks) {
-              t +=
-                "However, following the review of your current occupation choices, we find that a reorientation is required. Here is the status of the occupations currently on your file:\n";
-            }
+          if (mergeTasks) {
+            t +=
+              "Here is the status of the occupations currently on your file:\n";
+          } else if (this.isCandidateTooOld()) {
+            t +=
+              "Here is the status of the occupations currently on your file:\n";
+          } else if (isPforCmr && cmrAdmittedEn) {
+            t +=
+              "However, following the review of your current occupation choices, we find that a reorientation is required. Here is the status of the occupations currently on your file:\n";
+          } else if (isPforCmr) {
+            t +=
+              "Following the review of your application file for the Regular Officer Training Plan (ROTP - Royal Military College), we find that a reorientation is required. Here is the status of the occupations currently on your file:\n";
           } else {
             t +=
               "Following the review of your application file for the Regular Officer Training Plan (ROTP - Civilian Universities), we find that a reorientation is required. Here is the status of the occupations currently on your file:\n";
@@ -3327,9 +3984,7 @@ export class PforComponent {
               );
             }
             if (!s.isAgeAdmissible) {
-              reasonsEnList.push(
-                `Your age does not allow completing the initial contract (${s.durationYears} years) before age 60.`,
-              );
+              reasonsEnList.push(s.ageReasonEn);
             }
             if (!s.isCitizenshipAdmissible) {
               reasonsEnList.push(
@@ -3392,13 +4047,28 @@ export class PforComponent {
           "Notice – Choice of Pilot (00183): Since the Pilot occupation is highly competitive (very limited vacancies), if you select this occupation, you must mandatory choose a second occupation from the list of eligible occupations.\n\n";
       }
 
-      if (listOFF.length === 0 && listClosedOFF.length === 0) {
-        t +=
-          "No open ROTP occupations currently available for the selected profile.\n";
+      if (!hasAnyOffJobs && !hasAnyNcmJobs) {
+        if (shouldIncludeNcm) {
+          t +=
+            "(Please fill out the education and experience criteria in the panels above to display eligible occupations)\n";
+        } else {
+          t +=
+            "No open ROTP occupations currently available for the selected profile.\n";
+        }
       } else {
-        t += renderPlainList(listOFF, false, false);
-        if (listClosedOFF.length > 0) {
-          t += renderPlainList(listClosedOFF, true, false);
+        if (allOpenOfficerJobs.length > 0) {
+          t += renderPlainList(allOpenOfficerJobs, false, false);
+        }
+        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
+          t += renderPlainList(allClosedOfficerJobs, true, false);
+        }
+        if (shouldIncludeNcm) {
+          if (openNcmJobs.length > 0) {
+            t += renderPlainNcmList(openNcmJobs, false, false);
+          }
+          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+            t += renderPlainNcmList(closedNcmJobs, true, false);
+          }
         }
       }
 

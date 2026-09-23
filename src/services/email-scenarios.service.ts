@@ -508,6 +508,170 @@ Help Centre | Canadian Armed Forces`;
       bodyHtml: demandeDocsPforCivilHtml,
       bodyText: demandeDocsPforCivilText,
     });
+
+    // SCENARIO: Inadmissibilité - Âge (57 ans et plus)
+    const inadmissibiliteAge57Html = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><span style="background-color: yellow;">English message will follow.</span></p>
+        <p>Bonjour,</p>
+        <p>Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.</p>
+        <p>Votre dossier sera fermé.</p>
+        <p>Merci de votre intérêt à joindre les Forces armées canadiennes!</p>
+        <p>Cordialement,</p>
+        <p>L’équipe de recrutement des Forces armées canadiennes<br>
+        Centre de recrutement des Forces canadiennes Québec<br>
+        Commandement du Personnel militaire / Forces armées canadiennes<br>
+        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
+        
+        <br><p>______________________________________________________________________________</p><br>
+
+        <p>Hello,</p>
+        <p>Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.</p>
+        <p>Your file will be closed.</p>
+        <p>Thank you for your interest in joining the Canadian Armed Forces!</p>
+        <p>Sincerely,</p>
+        <p>The Canadian Armed Forces Recruiting Team<br>
+        Canadian Forces Recruiting Centre Quebec<br>
+        Military Personnel Command / Canadian Armed Forces<br>
+        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
+      </div>
+    `;
+
+    const inadmissibiliteAge57Text = `English message will follow.
+
+Bonjour,
+
+Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.
+
+Votre dossier sera fermé.
+
+Merci de votre intérêt à joindre les Forces armées canadiennes!
+
+Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes
+
+______________________________________________________________________________
+
+Hello,
+
+Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.
+
+Your file will be closed.
+
+Thank you for your interest in joining the Canadian Armed Forces!
+
+Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+    this.scenarios.set("inadmissibilite_age_57", {
+      id: "inadmissibilite_age_57",
+      subjectFr: "Forces armées canadiennes/Canadian Armed Forces",
+      subjectEn: "Forces armées canadiennes/Canadian Armed Forces",
+      bodyHtml: inadmissibiliteAge57Html,
+      bodyText: inadmissibiliteAge57Text,
+    });
+
+    // SCENARIO: Inadmissibilité - Résident permanent (< 3 ans)
+    const inadmissibilitePr3ansHtml = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><span style="background-color: yellow;">English message will follow.</span></p>
+        <p>Bonjour,</p>
+        <p>Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.</p>
+        <p>Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.</p>
+        <p>Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :</p>
+        <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>
+          <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>
+        </ul>
+        <p>Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>
+        <p>Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>
+        <p>Cordialement,</p>
+        <p>L’équipe de recrutement des Forces armées canadiennes<br>
+        Centre de recrutement des Forces canadiennes Québec<br>
+        Commandement du Personnel militaire / Forces armées canadiennes<br>
+        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
+        
+        <br><p>______________________________________________________________________________</p><br>
+
+        <p>Hello,</p>
+        <p>Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.</p>
+        <p>To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.</p>
+        <p>In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>
+        <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li><strong>Either obtain Canadian citizenship;</strong></li>
+          <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>
+        </ul>
+        <p>Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>
+        <p>Thank you for your interest in the Canadian Armed Forces.</p>
+        <p>Sincerely,</p>
+        <p>The Canadian Armed Forces Recruiting Team<br>
+        Canadian Forces Recruiting Centre Quebec<br>
+        Military Personnel Command / Canadian Armed Forces<br>
+        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
+      </div>
+    `;
+
+    const inadmissibilitePr3ansText = `English message will follow.
+
+Bonjour,
+
+Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.
+
+Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.
+
+Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :
+  - Soit obtenir la citoyenneté canadienne ;
+  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.
+
+Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.
+
+Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.
+
+Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes
+
+______________________________________________________________________________
+
+Hello,
+
+Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.
+
+To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.
+
+In order to become eligible and be able to reapply or proceed with an application in the future, you must:
+  - Either obtain Canadian citizenship;
+  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.
+
+Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.
+
+Thank you for your interest in the Canadian Armed Forces.
+
+Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+    this.scenarios.set("inadmissibilite_pr_3ans", {
+      id: "inadmissibilite_pr_3ans",
+      subjectFr: "Forces armées canadiennes/Canadian Armed Forces",
+      subjectEn: "Forces armées canadiennes/Canadian Armed Forces",
+      bodyHtml: inadmissibilitePr3ansHtml,
+      bodyText: inadmissibilitePr3ansText,
+    });
   }
 
   getScenario(id: string): EmailScenario | undefined {

@@ -16,6 +16,10 @@ export interface NcmEvaluationResult {
   eligibleJobs: JobEntry[];
   openJobs: JobEntry[];
   closedJobs: JobEntry[];
+  openOfficerJobs: JobEntry[];
+  closedOfficerJobs: JobEntry[];
+  openNcmJobs: JobEntry[];
+  closedNcmJobs: JobEntry[];
 }
 
 @Injectable({
@@ -1269,7 +1273,7 @@ export class ReorientationCriteriaService {
       : 3;
 
     if (ageVal !== null && ageVal > 0) {
-      if (ageVal > 56 || ageVal + durationYears >= 60) {
+      if (ageVal >= 57 || ageVal + durationYears >= 60) {
         return false;
       }
     }
@@ -1515,23 +1519,34 @@ export class ReorientationCriteriaService {
     const rawSelected =
       options?.selectedCriteriaIds ?? this.selectedCriteriaIds();
     if (rawSelected.size === 0) {
-      return { eligibleJobs: [], openJobs: [], closedJobs: [] };
+      return {
+        eligibleJobs: [],
+        openJobs: [],
+        closedJobs: [],
+        openOfficerJobs: [],
+        closedOfficerJobs: [],
+        openNcmJobs: [],
+        closedNcmJobs: [],
+      };
     }
 
     const citizenship = options?.citizenship ?? this.citizenship();
     if (citizenship === "PR < 3 years") {
-      return { eligibleJobs: [], openJobs: [], closedJobs: [] };
+      return {
+        eligibleJobs: [],
+        openJobs: [],
+        closedJobs: [],
+        openOfficerJobs: [],
+        closedOfficerJobs: [],
+        openNcmJobs: [],
+        closedNcmJobs: [],
+      };
     }
 
     const jobsSet = new Set<string>();
 
     for (const rule of this.JOB_RULES) {
       for (const jId of rule.jobs) {
-        // STRICT RULE: ONLY NCM (Militaire du rang) occupations!
-        if (this.jobService.isOfficerJob(jId)) {
-          continue;
-        }
-
         if (!this.isAdmissibleOtherThanEducation(jId, options)) {
           continue;
         }
@@ -1554,6 +1569,11 @@ export class ReorientationCriteriaService {
     const closedJobs: JobEntry[] = [];
     const eligibleJobs: JobEntry[] = [];
 
+    const openOfficerJobs: JobEntry[] = [];
+    const closedOfficerJobs: JobEntry[] = [];
+    const openNcmJobs: JobEntry[] = [];
+    const closedNcmJobs: JobEntry[] = [];
+
     // Sort job IDs numerically
     const sortedJobIds = Array.from(jobsSet).sort((a, b) => a.localeCompare(b));
 
@@ -1561,14 +1581,26 @@ export class ReorientationCriteriaService {
       const job = this.jobService.getJobById(jId);
       if (!job) continue;
 
+      const isOfficer = this.jobService.isOfficerJob(jId);
       const isClosed = this.jobService.isJobClosed(jId, sipPhaseVal);
+
       if (isClosed) {
         closedJobs.push(job);
+        if (isOfficer) {
+          closedOfficerJobs.push(job);
+        } else {
+          closedNcmJobs.push(job);
+        }
         if (ignoreSipVal) {
           eligibleJobs.push(job);
         }
       } else {
         openJobs.push(job);
+        if (isOfficer) {
+          openOfficerJobs.push(job);
+        } else {
+          openNcmJobs.push(job);
+        }
         eligibleJobs.push(job);
       }
     }
@@ -1577,6 +1609,10 @@ export class ReorientationCriteriaService {
       eligibleJobs,
       openJobs,
       closedJobs,
+      openOfficerJobs,
+      closedOfficerJobs,
+      openNcmJobs,
+      closedNcmJobs,
     };
   }
 
