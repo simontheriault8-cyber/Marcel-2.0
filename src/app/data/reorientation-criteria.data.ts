@@ -237,10 +237,23 @@ export const MATH_COURSES: Record<
   };
 
 
+export function hasDes(selected: Set<string>): boolean {
+  return selected.has("des_12e_annee") || selected.has("aens");
+}
+
+export function hasSec4(selected: Set<string>): boolean {
+  return selected.has("sec4_24_credits") || selected.has("des_12e_annee") || selected.has("aens");
+}
+
 export const MANUAL_CRITERIA: ManualCriterion[] = [
     {
       id: "des_12e_annee",
       label: "DES/12e années complété",
+      category: "Année scolaire",
+    },
+    {
+      id: "aens",
+      label: "AENS (Attestation d'équivalence de niveau de scolarité)",
       category: "Année scolaire",
     },
     {
@@ -2028,7 +2041,7 @@ export const JOB_RULES: JobRule[] = [
       allowPR: false, // CC
       customCheck: (selected, coursSpecialisesIds) => {
         const hasDESAndLang =
-          selected.has("des_12e_annee") && selected.has("francais_sec5_11e");
+          hasDes(selected) && selected.has("francais_sec5_11e");
         const hasCoursSpecialises = coursSpecialisesIds.some((id) =>
           selected.has(id),
         );
@@ -2048,7 +2061,7 @@ export const JOB_RULES: JobRule[] = [
       jobs: ["00100"],
       allowPR: true, // RP
       customCheck: (selected) => {
-        const hasDES = selected.has("des_12e_annee");
+        const hasDES = hasDes(selected);
         const hasMath11App = selected.has("base_math_11_app");
         const hasChemOrPhys =
           selected.has("chimie_sec5_11e") || selected.has("physique_sec5_11e");
@@ -2140,11 +2153,11 @@ export const JOB_RULES: JobRule[] = [
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
+          const passedAcademic = userHasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
           const passed = passedAcademic || selected.has("cs_tea_m");
           if (passed) return { passed: true };
           return {
@@ -2153,10 +2166,10 @@ export const JOB_RULES: JobRule[] = [
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-M (aircraft maintenance engineer - maintenance) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasPhysicsSec5 = selected.has("physique_sec5_11e");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
+          const passedAcademic = userHasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
           const passed = passedAcademic || selected.has("cs_tea_m");
           if (passed) return { passed: true };
           return {
@@ -2173,11 +2186,11 @@ export const JOB_RULES: JobRule[] = [
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
+          const passedAcademic = userHasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
           const passed = passedAcademic || selected.has("cs_tea_e");
           if (passed) return { passed: true };
           return {
@@ -2186,10 +2199,10 @@ export const JOB_RULES: JobRule[] = [
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-E (aircraft maintenance engineer - avionics) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasPhysicsSec5 = selected.has("physique_sec5_11e");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
+          const passedAcademic = userHasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
           const passed = passedAcademic || selected.has("cs_tea_e");
           if (passed) return { passed: true };
           return {
@@ -2205,7 +2218,7 @@ export const JOB_RULES: JobRule[] = [
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          selected.has("des_12e_annee") ||
+          hasDes(selected) ||
           selected.has("cs_photo_multimedia") ||
           selected.has("bacc_arts_communications") ||
           selected.has("bacc_arts_communication_visuelle")
@@ -2224,11 +2237,11 @@ export const JOB_RULES: JobRule[] = [
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
+          const passedAcademic = userHasDes && hasEnglishSec5 && (hasCegep201 || hasMath11AppOrAdv);
           const passed = passedAcademic || selected.has("cs_tea_s");
           if (passed) return { passed: true };
           return {
@@ -2237,9 +2250,9 @@ export const JOB_RULES: JobRule[] = [
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-S (aircraft maintenance engineer - structures) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const userHasDes = hasDes(selected);
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
-          const passedAcademic = hasDes && hasMath11AppOrAdv;
+          const passedAcademic = userHasDes && hasMath11AppOrAdv;
           const passed = passedAcademic || selected.has("cs_tea_s");
           if (passed) return { passed: true };
           return {
@@ -2255,7 +2268,7 @@ export const JOB_RULES: JobRule[] = [
       allowPR: true, // RP
       customCheck: (selected) => {
         const hasEducation =
-          selected.has("des_12e_annee") && selected.has("base_math_10_app");
+          hasDes(selected) && selected.has("base_math_10_app");
         const hasFireTech = selected.has("cs_sec_incendie");
         const passed = hasEducation || hasFireTech;
         if (passed) return { passed: true };
@@ -2338,7 +2351,7 @@ export const JOB_RULES: JobRule[] = [
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          selected.has("des_12e_annee") || selected.has("cs_etude_musique")
+          hasDes(selected) || selected.has("cs_etude_musique")
         );
         if (passed) return { passed: true };
         return {
@@ -2493,7 +2506,7 @@ export const JOB_RULES: JobRule[] = [
       allowPR: true,
       customCheck: (selected) => {
         const passed = (
-          (selected.has("des_12e_annee") && selected.has("base_math_11_app")) ||
+          (hasDes(selected) && selected.has("base_math_11_app")) ||
           selected.has("cs_dep_arpentage_topo")
         );
         if (passed) return { passed: true };
@@ -2528,8 +2541,8 @@ export const JOB_RULES: JobRule[] = [
       allowPR: true,
       customCheck: (selected) => {
         const passed = (
-          (selected.has("des_12e_annee") && selected.has("base_math_11_adv")) ||
-          (selected.has("des_12e_annee") && selected.has("info_sec5_12e")) ||
+          (hasDes(selected) && selected.has("base_math_11_adv")) ||
+          (hasDes(selected) && selected.has("info_sec5_12e")) ||
           selected.has("cs_dip_cyber")
         );
         if (passed) return { passed: true };

@@ -132,19 +132,6 @@ export const CMR_JOB_DOMAINS: Record<
                 <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
                   <input
                     type="checkbox"
-                    [checked]="sharedState.includeLinkedEmail()"
-                    (change)="toggleIncludeReo()"
-                    class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
-                  />
-                  <div class="flex flex-col">
-                    <span class="font-bold text-slate-800">Fusionner tâches & réorientation</span>
-                    <span class="text-[11px] text-slate-500">Intègre les tâches de l'onglet Dossier au courriel</span>
-                  </div>
-                </label>
-
-                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
-                  <input
-                    type="checkbox"
                     [checked]="ignoreSip()"
                     (change)="toggleIgnoreSip()"
                     class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
@@ -944,7 +931,27 @@ export class PforComponent {
 
   constructor() {
     effect(() => {
+      if (!this.sharedState.isPostulantPfor()) {
+        return;
+      }
+      const isReoGenerated = this.showResultsPanel();
+      untracked(() => {
+        this.sharedState.hasReoEmailGenerated.set(isReoGenerated);
+      });
+
+      if (!isReoGenerated) {
+        untracked(() => {
+          this.sharedState.reoMergedEmailHtml.set("");
+          this.sharedState.reoMergedEmailPlain.set("");
+          this.sharedState.reoMergedNote.set("");
+        });
+        return;
+      }
+
       const html = this.buildBilingualEmail(true);
+      if (html.includes("Veuillez renseigner les critères")) {
+        return;
+      }
       const plain = this.buildBilingualEmail(false);
       const note = this.generateNoteRegistry();
       untracked(() => {
@@ -952,6 +959,15 @@ export class PforComponent {
         this.sharedState.reoMergedEmailPlain.set(plain);
         this.sharedState.reoMergedNote.set(note);
       });
+    });
+
+    effect(() => {
+      const trigger = this.sharedState.recruiterResetTrigger();
+      if (trigger > 0) {
+        untracked(() => {
+          this.resetAll();
+        });
+      }
     });
   }
 
@@ -1206,7 +1222,6 @@ export class PforComponent {
 
   activeHeaderOptionsCount = computed(() => {
     let count = 0;
-    if (this.sharedState.includeLinkedEmail()) count++;
     if (this.hasMedicalLimitation()) count++;
     return count;
   });
@@ -1280,20 +1295,37 @@ export class PforComponent {
   });
 
   showResultsPanel = computed(() => {
-    return (
-      this.citizenship() === "PR < 3 years" ||
-      (this.age() !== null && this.age()! >= 57) ||
-      !!this.selectedDossierJobId1() ||
-      !!this.selectedDossierJobId2() ||
-      !!this.selectedDossierJobId3() ||
-      this.cmrArts() ||
-      this.cmrScience() ||
-      this.cmrGenie() ||
-      this.cmrRefused() ||
-      this.cmrMinCriteriaNotMet() ||
-      this.showScolariteExperiencePanel() ||
-      this.pforType() === "civil"
+    if (this.citizenship() === "PR < 3 years") {
+      return true;
+    }
+    if (this.age() !== null && this.age()! >= 57) {
+      return true;
+    }
+    if (this.cmrRefused() || this.cmrMinCriteriaNotMet()) {
+      return true;
+    }
+
+    const hasDossierJob = !!(
+      this.selectedDossierJobId1() ||
+      this.selectedDossierJobId2() ||
+      this.selectedDossierJobId3()
     );
+
+    if (!hasDossierJob) {
+      return false;
+    }
+
+    if (this.isCandidateTooOld()) {
+      return true;
+    }
+
+    if (this.pforType() === "cmr") {
+      const hasCmrDomain =
+        this.cmrArts() || this.cmrScience() || this.cmrGenie();
+      return hasCmrDomain || this.eligiblePforJobs().length > 0;
+    } else {
+      return true;
+    }
   });
 
   eligiblePforJobs = computed<JobEntry[]>(() => {
@@ -1515,10 +1547,6 @@ export class PforComponent {
     if (domains.length === 1) return domains[0];
     if (domains.length === 2) return `${domains[0]} or ${domains[1]}`;
     return `${domains[0]}, ${domains[1]} or ${domains[2]}`;
-  }
-
-  toggleIncludeReo() {
-    this.sharedState.includeLinkedEmail.update((v) => !v);
   }
 
   toggleIgnoreSip() {
@@ -1810,7 +1838,7 @@ export class PforComponent {
       }
     }
 
-    if (this.sharedState.includeLinkedEmail() && this.sharedState.taskNote()) {
+    if ((this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && this.sharedState.taskNote()) {
       const taskNoteRaw = this.sharedState.taskNote();
 
       let medicalSuffix = "";
@@ -1907,7 +1935,7 @@ export class PforComponent {
       !!rawHtml &&
       this.sharedState.hasReassignedTasks() &&
       rawHtml.includes("Bonjour,");
-    const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
+    const mergeTasks = (this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && hasTasks;
 
     const allEligibleJobs = this.eligiblePforJobs().filter(
       (j) => !dossierChoices.includes(j.id),
@@ -2299,7 +2327,7 @@ export class PforComponent {
     const selected = this.reorientationCriteria.selectedCriteriaIds();
     const missing: string[] = [];
 
-    if (!selected.has("des_12e_annee")) {
+    if (!selected.has("des_12e_annee") && !selected.has("aens")) {
       missing.push("posséder au minimum un diplôme d’études secondaires (DES)");
     }
     if (!selected.has("histoire_sec4")) {
@@ -2341,7 +2369,7 @@ export class PforComponent {
     const selected = this.reorientationCriteria.selectedCriteriaIds();
     const missing: string[] = [];
 
-    if (!selected.has("des_12e_annee")) {
+    if (!selected.has("des_12e_annee") && !selected.has("aens")) {
       missing.push("have at least a high school diploma");
     }
     if (!selected.has("histoire_sec4")) {
@@ -3146,7 +3174,7 @@ export class PforComponent {
       !!rawHtml &&
       this.sharedState.hasReassignedTasks() &&
       rawHtml.includes("Bonjour,");
-    const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
+    const mergeTasks = (this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && hasTasks;
 
     const isPforCmr = this.pforType() === "cmr";
     

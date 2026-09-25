@@ -30,6 +30,8 @@ import { CourseSession } from "./app/data/course-sessions.data";
 import { JOB_URLS } from "./app/data/job-urls.data";
 import { SharedStateService, DEFAULT_SIG_FR, DEFAULT_SIG_EN, DEFAULT_SIG_OTA_FR, DEFAULT_SIG_OTA_EN } from "./services/shared-state.service";
 import { JobDatabaseService } from "./services/job-database.service";
+import { MelService } from "./services/mel.service";
+import { ReorientationCriteriaService } from "./services/reorientation-criteria.service";
 import { JobEntry, JobCategory, MilitaryElement, RecruitmentCenter, RECRUITMENT_CENTERS, ENROLMENT_HOURS } from "./services/jobs-data";
 import { FormsModule } from "@angular/forms";
 
@@ -919,6 +921,21 @@ function getTodayDateString(): string {
                       >
                         <span class="truncate">Tentative de communication - Offre d'emploi</span>
                         @if (selectedEmailBankTemplate() === 'tentative_offre_gd') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('verification_dossier_cadet')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                      >
+                        <span class="truncate">Vérification Dossier Cadet</span>
+                        @if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -3436,35 +3453,6 @@ function getTodayDateString(): string {
               </h2>
 
               <div class="flex items-center gap-3">
-                @if (!allTasksCompliant()) {
-                  <label
-                    class="flex items-center gap-2 text-xs font-semibold text-slate-700 mr-2 cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-                      [checked]="sharedState.includeLinkedEmail()"
-                      (change)="toggleIncludeReo()"
-                    />
-                    <span class="relative">
-                      <svg
-                        class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                      Fusion courriel de Tâche(s) et courriel de Réo
-                    </span>
-                  </label>
-                }
-
-
                 <button
                   (click)="copyNote()"
                   class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5"
@@ -3747,6 +3735,12 @@ function getTodayDateString(): string {
                       />
                     </svg>
                     Note au Registre (Interne)
+                    @if (sharedState.includeLinkedEmail() && sharedState.reoMergedNote()) {
+                      <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                        Fusionnée avec la réorientation
+                      </span>
+                    }
                   </h3>
                 </div>
                 <div class="p-4 bg-slate-50">
@@ -3904,6 +3898,12 @@ function getTodayDateString(): string {
                         />
                       </svg>
                       Courriel au Postulant
+                      @if (sharedState.includeLinkedEmail() && sharedState.reoMergedEmailHtml()) {
+                        <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
+                          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                          Fusionné avec la réorientation
+                        </span>
+                      }
                     </h3>
                   </div>
                   <!-- Using innerHTML to render bold, yellow highlights and underlines -->
@@ -4045,6 +4045,8 @@ export class AppComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   public sharedState = inject(SharedStateService);
   public jobService = inject(JobDatabaseService);
+  public melService = inject(MelService);
+  public reorientationCriteria = inject(ReorientationCriteriaService);
 
   // Dossier Jobs Panel Dropdown States
   dossierDropdownOpen1 = signal<boolean>(false);
@@ -4444,21 +4446,6 @@ Thank you for your cooperation.`;
 
   isOffreOtaActive(): boolean {
     return this.evaluationMedicaleType() === 'Dossier OTA' && (this.offreNormaleChecked() || this.offreEtudesSubventionneesChecked());
-  }
-
-  getEmailSubject(): string {
-    if (this.isAnnexeQActive()) {
-      const alpha = this.annexeQAlphaPostulant().trim();
-      return `Annexe Q - ${alpha}`;
-    }
-    if (this.isOffreOtaActive()) {
-      const rawDate = this.offreDateEnrolement()?.trim();
-      const dateEnrol = rawDate || 'jour/mois/année';
-      const heure = (this.offreHeureArriveePostulant() || '07h30').trim();
-      const effectiveHeure = heure === '8h00' ? '07h30' : heure;
-      return `Enrôlement : ${dateEnrol} à ${effectiveHeure}`;
-    }
-    return "Forces armées canadiennes/Canadian Armed Forces";
   }
 
   getAnnexeQSectionPlainFr(): string {
@@ -5058,7 +5045,6 @@ Thank you for your cooperation.`;
     this.sharedState.testCspn00182Passed.set(snapshot.testCspn00182Passed || false);
     this.sharedState.testCspn00183Passed.set(snapshot.testCspn00183Passed || false);
     this.sharedState.testCspn00184Passed.set(snapshot.testCspn00184Passed || false);
-    this.sharedState.includeLinkedEmail.set(snapshot.includeLinkedEmail);
     this.sharedState.reoMergedEmailHtml.set(snapshot.reoMergedEmailHtml);
     this.sharedState.reoMergedEmailPlain.set(snapshot.reoMergedEmailPlain);
     this.sharedState.reoMergedNote.set(snapshot.reoMergedNote);
@@ -5493,10 +5479,15 @@ Thank you for your cooperation.`;
         this.sharedState.hasReassignedTasks.set(hasReassigned);
       });
     });
-  }
 
-  toggleIncludeReo() {
-    this.sharedState.includeLinkedEmail.update((v) => !v);
+    effect(() => {
+      const trigger = this.sharedState.recruiterResetTrigger();
+      if (trigger > 0) {
+        untracked(() => {
+          this.restartApp(false);
+        });
+      }
+    });
   }
 
   // --- DOSSIER JOBS METHODS ---
@@ -5680,7 +5671,15 @@ Thank you for your cooperation.`;
 
   // --- STAGE LOGIC ---
 
-  restartApp() {
+  restartApp(triggerShared: boolean = true) {
+    if (triggerShared) {
+      this.sharedState.triggerRecruiterReset();
+    }
+    this.showJobSearch.set(false);
+    this.melService.resetApplicantLimitations();
+    this.reorientationCriteria.resetAll();
+    this.sharedState.resetSharedRecruiterState();
+
     this.stage.set("intro");
     this.isUnderAge.set(false);
     this.recruiterDossierType.set("normal");
@@ -5790,12 +5789,6 @@ Thank you for your cooperation.`;
     this.dossierDropdownOpen1.set(false);
     this.dossierDropdownOpen2.set(false);
     this.dossierDropdownOpen3.set(false);
-
-    this.sharedState.includeLinkedEmail.set(false);
-    this.sharedState.reoMergedEmailHtml.set('');
-    this.sharedState.reoMergedEmailPlain.set('');
-    this.sharedState.reoMergedNote.set('');
-    this.sharedState.hasReassignedTasks.set(false);
 
     const current = this.selectedRole();
     if (current === 'recruiter' || current === 'gestionnaire') {
@@ -8227,7 +8220,20 @@ Thank you for your cooperation.`;
 
     // 3.6 Tentative communication pour offre Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'tentative_offre_gd') {
-      notes.push("Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD");
+      let tentativeNote = "Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD";
+      if (this.triageMedicalRequis()) {
+        tentativeNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return tentativeNote;
+    }
+
+    // 3.7 Vérification Dossier Cadet Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+      let cadetNote = "Courriel de vérification de dossier cadet envoyé à MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca.";
+      if (this.triageMedicalRequis()) {
+        cadetNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cadetNote;
     }
 
     // 4. All tasks compliant Note
@@ -10743,6 +10749,62 @@ Thank you for your cooperation.`;
     return html;
   }
 
+  // Vérification Dossier Cadet (Volet GD)
+  getVerificationCadetEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nPourriez-vous me confirmer si le postulant suivant a un matricule attribué comme cadet et si possible avoir sa fiche de renseignements de cadet?\n\nNom : \nPrénom : \nDDN : \n\n${sigFr}`;
+  }
+
+  getVerificationCadetEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Pourriez-vous me confirmer si le postulant suivant a un matricule attribué comme cadet et si possible avoir sa fiche de renseignements de cadet?</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Nom : <br>Prénom : <br>DDN : </p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  getEmailSubject(): string {
+    if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
+      return "Forces armées canadiennes/Canadian Armed Forces";
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return "(Vérification Dossier Cadet)";
+    }
+    if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
+      return "Tentative de communication - Offre d'emploi";
+    }
+    if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
+      return "Vérification de programme EDO VS PFOR";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
+      return "Inadmissibilité - Âge (57 ans et plus)";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
+      return "Inadmissibilité - Résident permanent";
+    }
+    if (this.isPremierContactActive()) {
+      return "Premier contact - Inscription aux Forces armées canadiennes";
+    }
+    if (this.isAvisFermetureActive()) {
+      return "Avis de fermeture de dossier";
+    }
+    if (this.isAnnexeQActive()) {
+      return "Annexe Q - Attestation de sécurité";
+    }
+    if (this.offreNormaleChecked() || this.offreEtudesSubventionneesChecked()) {
+      return "Offre d'emploi - Forces armées canadiennes";
+    }
+    if (this.rappelCeremonieChecked()) {
+      return "Rappel - Cérémonie d'assermentation";
+    }
+    if (this.isMedicalEvaluationActive()) {
+      return "Évaluation médicale - Forces armées canadiennes";
+    }
+    return "Suivi de votre candidature - Forces armées canadiennes";
+  }
+
   // Consolidated Plain Text Email
   getCombinedPlainString(ignoreMerge: boolean = false): string {
     if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailPlain()) {
@@ -10751,6 +10813,9 @@ Thank you for your cooperation.`;
 
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return this.getVerificationCadetEmailPlain();
     }
 
     const scenario = this.activeEmailScenario();
@@ -10877,6 +10942,9 @@ Thank you for your cooperation.`;
 
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return this.getVerificationCadetEmailHtml();
     }
 
     const scenario = this.activeEmailScenario();
@@ -11228,7 +11296,7 @@ Thank you for your cooperation.`;
 
     html += `<p><strong>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</strong></p>`;
 
-    return html;
+    return `<!-- START_TASK_BODY_FR -->${html}<!-- END_TASK_BODY_FR -->`;
   }
 
   getRejectionHtmlEn(): string {
@@ -11449,7 +11517,7 @@ Thank you for your cooperation.`;
 
     html += `<p><strong>If you take no action, your file will be automatically deactivated after 30 days.</strong></p>`;
 
-    return html;
+    return `<!-- START_TASK_BODY_EN -->${html}<!-- END_TASK_BODY_EN -->`;
   }
 
   // Helper to get raw HTML string for clipboard and display
@@ -11491,6 +11559,11 @@ Thank you for your cooperation.`;
       setTimeout(() => this.copiedEmail.set(false), 3000);
 
       // 2. Open Outlook
+      if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+        const mailtoLink = `mailto:MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca?subject=${encodeURIComponent('(Vérification Dossier Cadet)')}`;
+        window.location.href = mailtoLink;
+        return;
+      }
       const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}`;
       window.location.href = mailtoLink;
     } catch (err) {
