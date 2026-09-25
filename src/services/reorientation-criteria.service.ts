@@ -174,9 +174,10 @@ export class ReorientationCriteriaService {
     };
     const hasMath10App = hasMath(10, 2);
 
-    // exp_photo_design needs one of: 'des_12e_annee', 'cs_photo_multimedia', 'bacc_arts_communications', 'bacc_arts_communication_visuelle'
+    // exp_photo_design needs one of: 'des_12e_annee', 'aens', 'cs_photo_multimedia', 'bacc_arts_communications', 'bacc_arts_communication_visuelle'
     const hasEduForPhoto =
       selected.has("des_12e_annee") ||
+      selected.has("aens") ||
       selected.has("cs_photo_multimedia") ||
       selected.has("bacc_arts_communications") ||
       selected.has("bacc_arts_communication_visuelle");
@@ -187,7 +188,7 @@ export class ReorientationCriteriaService {
 
     // exp_permis_conduire needs ('des_12e_annee' && 'base_math_10_app') or 'cs_sec_incendie' for 00149, or 'cs_tech_policieres' for 00161, or bacc degrees for 00214
     const check149 =
-      ((selected.has("des_12e_annee") && hasMath10App) ||
+      (((selected.has("des_12e_annee") || selected.has("aens")) && hasMath10App) ||
         selected.has("cs_sec_incendie")) &&
       this.isAdmissibleOtherThanEducation("00149");
     const isOutsideCanada = selected.has("etude_hors_canada");
@@ -332,7 +333,7 @@ export class ReorientationCriteriaService {
           (c) => c.id === "exp_mus_pro",
         );
         if (critMusPro) criteria.push(critMusPro);
-      } else if (selected.has("des_12e_annee")) {
+      } else if (selected.has("des_12e_annee") || selected.has("aens")) {
         const hasEnsembles = selected.has("exp_mus_ensembles");
         const hasEtudiant = selected.has("exp_mus_etudiant");
         if (hasEnsembles) {
@@ -729,7 +730,7 @@ export class ReorientationCriteriaService {
       ((selected.has("bacc_arts_theologie") || selected.has("maitrise_theologie")) && this.isAdmissibleOtherThanEducation("00349")) ||
       (selected.has("cs_dep_sante_infirmiers") && this.isAdmissibleOtherThanEducation("00372")) ||
       ((selected.has("bacc_sante_adjoint_medecin") || selected.has("maitrise_adjoint_medecin") || selected.has("doctorat_adjoint_medecin")) && this.isAdmissibleOtherThanEducation("00374")) ||
-      (((selected.has("des_12e_annee") && selected.has("base_math_11_adv")) || (selected.has("des_12e_annee") && selected.has("info_sec5_12e")) || selected.has("cs_dip_cyber")) && this.isAdmissibleOtherThanEducation("00378")) ||
+      ((((selected.has("des_12e_annee") || selected.has("aens")) && selected.has("base_math_11_adv")) || ((selected.has("des_12e_annee") || selected.has("aens")) && selected.has("info_sec5_12e")) || selected.has("cs_dip_cyber")) && this.isAdmissibleOtherThanEducation("00378")) ||
       (selected.has("doctorat_medecine") && this.isAdmissibleOtherThanEducation("00390")) ||
       ((baccSanteSaufPlusHaut || dEsSanteSaufPlusHaut) && this.isAdmissibleOtherThanEducation("00398")) ||
       (selected.has("cs_cert_soins_param") && this.isAdmissibleOtherThanEducation("00406"));
@@ -890,6 +891,7 @@ export class ReorientationCriteriaService {
     // Auto-cleanup orphaned experience choices
     const hasEduForPhoto =
       current.has("des_12e_annee") ||
+      current.has("aens") ||
       current.has("cs_photo_multimedia") ||
       current.has("bacc_arts_communications") ||
       current.has("bacc_arts_communication_visuelle");
@@ -911,7 +913,7 @@ export class ReorientationCriteriaService {
     const hasMath10App = hasMath(10, 2);
 
     const hasEduForConduire =
-      (current.has("des_12e_annee") && hasMath10App) ||
+      ((current.has("des_12e_annee") || current.has("aens")) && hasMath10App) ||
       current.has("cs_sec_incendie") ||
       current.has("cs_tech_policieres") ||
       current.has("bacc_arts_justice_criminelle") ||
@@ -958,7 +960,7 @@ export class ReorientationCriteriaService {
     }
 
     // Auto-cleanup for 00166 musician
-    if (!current.has("des_12e_annee") || current.has("cs_etude_musique")) {
+    if ((!current.has("des_12e_annee") && !current.has("aens")) || current.has("cs_etude_musique")) {
       current.delete("exp_mus_ensembles");
       current.delete("exp_mus_etudiant");
     }

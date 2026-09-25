@@ -368,6 +368,10 @@ export class MelService {
     }));
   }
 
+  resetApplicantLimitations() {
+    this.applicantLimitations.set({});
+  }
+
   setAcceptability(melId: string, occId: string, value: boolean) {
     this.acceptabilityMatrix.update(matrix => {
       const newMatrix = { ...matrix };

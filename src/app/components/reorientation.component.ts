@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
 import { MelService, MEL_LIMITATIONS } from "../../services/mel.service";
+import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
 import { JOB_URLS } from "../data/job-urls.data";
 
 interface ManualCriterion {
@@ -187,32 +188,6 @@ const CMR_JOB_DOMAINS: Record<
               </div>
 
               <div class="flex flex-col gap-2.5 pt-1">
-                <label
-                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
-                    [checked]="sharedState.includeLinkedEmail()"
-                    (change)="toggleIncludeReo()"
-                  />
-                  <span class="relative flex items-center">
-                    <svg
-                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    Fusion courriel de Tâche(s) et courriel de Réo
-                  </span>
-                </label>
-
                 <label
                   class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
                 >
@@ -2791,12 +2766,12 @@ export class ReorientationComponent {
   jobService = inject(JobDatabaseService);
   sharedState = inject(SharedStateService);
   melService = inject(MelService);
+  reorientationCriteria = inject(ReorientationCriteriaService);
 
   showOptionsDropdown = signal<boolean>(false);
 
   activeHeaderOptionsCount = computed<number>(() => {
     let count = 0;
-    if (this.sharedState.includeLinkedEmail()) count++;
     if (this.ignoreSip()) count++;
     if (this.hasMedicalLimitation()) count++;
     if (this.isPforApplicant()) count++;
@@ -2824,6 +2799,23 @@ export class ReorientationComponent {
 
   constructor() {
     effect(() => {
+      if (this.isPforApplicant() || this.sharedState.isPostulantPfor()) {
+        return;
+      }
+      const isReoGenerated = this.showResultsPanel();
+      untracked(() => {
+        this.sharedState.hasReoEmailGenerated.set(isReoGenerated);
+      });
+
+      if (!isReoGenerated) {
+        untracked(() => {
+          this.sharedState.reoMergedEmailHtml.set("");
+          this.sharedState.reoMergedEmailPlain.set("");
+          this.sharedState.reoMergedNote.set("");
+        });
+        return;
+      }
+
       const html = this.buildBilingualEmail(true);
       const plain = this.buildBilingualEmail(false);
       const note = this.generateNoteRegistry();
@@ -2833,10 +2825,15 @@ export class ReorientationComponent {
         this.sharedState.reoMergedNote.set(note);
       });
     });
-  }
 
-  toggleIncludeReo() {
-    this.sharedState.includeLinkedEmail.update((v) => !v);
+    effect(() => {
+      const trigger = this.sharedState.recruiterResetTrigger();
+      if (trigger > 0) {
+        untracked(() => {
+          this.resetAllLocal();
+        });
+      }
+    });
   }
 
   ignoreSip = signal<boolean>(false);
@@ -3091,6 +3088,11 @@ export class ReorientationComponent {
     {
       id: "des_12e_annee",
       label: "DES/12e années complété",
+      category: "Année scolaire",
+    },
+    {
+      id: "aens",
+      label: "AENS (Attestation d'équivalence de niveau de scolarité)",
       category: "Année scolaire",
     },
     {
@@ -4877,7 +4879,7 @@ o Médecine d’urgence`,
       allowPR: false, // CC
       customCheck: (selected, coursSpecialisesIds) => {
         const hasDESAndLang =
-          selected.has("des_12e_annee") && selected.has("francais_sec5_11e");
+          this.hasCriterion(selected, "des_12e_annee") && selected.has("francais_sec5_11e");
         const hasCoursSpecialises = coursSpecialisesIds.some((id) =>
           selected.has(id),
         );
@@ -4897,7 +4899,7 @@ o Médecine d’urgence`,
       jobs: ["00100"],
       allowPR: true, // RP
       customCheck: (selected) => {
-        const hasDES = selected.has("des_12e_annee");
+        const hasDES = this.hasCriterion(selected, "des_12e_annee");
         const hasMath11App = selected.has("base_math_11_app");
         const hasChemOrPhys =
           selected.has("chimie_sec5_11e") || selected.has("physique_sec5_11e");
@@ -4989,7 +4991,7 @@ o Médecine d’urgence`,
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
@@ -5002,7 +5004,7 @@ o Médecine d’urgence`,
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-M (aircraft maintenance engineer - maintenance) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasPhysicsSec5 = selected.has("physique_sec5_11e");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
           const passedAcademic = hasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
@@ -5022,7 +5024,7 @@ o Médecine d’urgence`,
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
@@ -5035,7 +5037,7 @@ o Médecine d’urgence`,
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-E (aircraft maintenance engineer - avionics) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasPhysicsSec5 = selected.has("physique_sec5_11e");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
           const passedAcademic = hasDes && hasPhysicsSec5 && hasMath11AppOrAdv;
@@ -5054,7 +5056,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          selected.has("des_12e_annee") ||
+          this.hasCriterion(selected, "des_12e_annee") ||
           selected.has("cs_photo_multimedia") ||
           selected.has("bacc_arts_communications") ||
           selected.has("bacc_arts_communication_visuelle")
@@ -5073,7 +5075,7 @@ o Médecine d’urgence`,
       customCheck: (selected) => {
         const isEnglish = selected.has("etude_anglais");
         if (isEnglish) {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasEnglishSec5 = selected.has("anglais_sec5_12e");
           const hasCegep201 = selected.has("qc_12_cegep201") || selected.has("base_math_12_adv");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
@@ -5086,7 +5088,7 @@ o Médecine d’urgence`,
             missingEn: "Requires: (High School Diploma + Grade 12 / Sec 5 English + (CEGEP 201 Appliquée ou Théoriques / 12e année or Grade 11 Math (Applied) or Grade 11 Math (Advanced))) or (An accredited Transport Canada AME-S (aircraft maintenance engineer - structures) program diploma)",
           };
         } else {
-          const hasDes = selected.has("des_12e_annee");
+          const hasDes = this.hasCriterion(selected, "des_12e_annee");
           const hasMath11AppOrAdv = selected.has("base_math_11_app") || selected.has("base_math_11_adv");
           const passedAcademic = hasDes && hasMath11AppOrAdv;
           const passed = passedAcademic || selected.has("cs_tea_s");
@@ -5104,7 +5106,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const hasEducation =
-          selected.has("des_12e_annee") && selected.has("base_math_10_app");
+          this.hasCriterion(selected, "des_12e_annee") && selected.has("base_math_10_app");
         const hasFireTech = selected.has("cs_sec_incendie");
         const passed = hasEducation || hasFireTech;
         if (passed) return { passed: true };
@@ -5187,7 +5189,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          selected.has("des_12e_annee") || selected.has("cs_etude_musique")
+          this.hasCriterion(selected, "des_12e_annee") || selected.has("cs_etude_musique")
         );
         if (passed) return { passed: true };
         return {
@@ -5235,10 +5237,10 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const option1 =
-          selected.has("sec4_24_credits") && selected.has("base_math_10_app");
+          this.hasCriterion(selected, "sec4_24_credits") && selected.has("base_math_10_app");
         const option2 = selected.has("cs_dep_electricite");
         const option3 =
-          selected.has("des_12e_annee") &&
+          this.hasCriterion(selected, "des_12e_annee") &&
           selected.has("base_math_11_adv") &&
           selected.has("physique_sec5_11e");
         const passed = option1 || option2 || option3;
@@ -5251,7 +5253,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          (selected.has("sec4_24_credits") &&
+          (this.hasCriterion(selected, "sec4_24_credits") &&
             selected.has("base_math_10_app")) ||
           selected.has("cs_dep_electricite")
         );
@@ -5264,7 +5266,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          (selected.has("sec4_24_credits") &&
+          (this.hasCriterion(selected, "sec4_24_credits") &&
             selected.has("base_math_10_app")) ||
           selected.has("cs_dep_plomberie_chauffage")
         );
@@ -5277,7 +5279,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          (selected.has("sec4_24_credits") &&
+          (this.hasCriterion(selected, "sec4_24_credits") &&
             selected.has("base_math_10_app")) ||
           selected.has("cs_aec_eaux")
         );
@@ -5290,7 +5292,7 @@ o Médecine d’urgence`,
       allowPR: true, // RP
       customCheck: (selected) => {
         const passed = (
-          (selected.has("sec4_24_credits") &&
+          (this.hasCriterion(selected, "sec4_24_credits") &&
             selected.has("base_math_10_app")) ||
           selected.has("cs_dep_charpenterie")
         );
@@ -5342,7 +5344,7 @@ o Médecine d’urgence`,
       allowPR: true,
       customCheck: (selected) => {
         const passed = (
-          (selected.has("des_12e_annee") && selected.has("base_math_11_app")) ||
+          (this.hasCriterion(selected, "des_12e_annee") && selected.has("base_math_11_app")) ||
           selected.has("cs_dep_arpentage_topo")
         );
         if (passed) return { passed: true };
@@ -5377,8 +5379,8 @@ o Médecine d’urgence`,
       allowPR: true,
       customCheck: (selected) => {
         const passed = (
-          (selected.has("des_12e_annee") && selected.has("base_math_11_adv")) ||
-          (selected.has("des_12e_annee") && selected.has("info_sec5_12e")) ||
+          (this.hasCriterion(selected, "des_12e_annee") && selected.has("base_math_11_adv")) ||
+          (this.hasCriterion(selected, "des_12e_annee") && selected.has("info_sec5_12e")) ||
           selected.has("cs_dip_cyber")
         );
         if (passed) return { passed: true };
@@ -6434,7 +6436,7 @@ o Médecine d’urgence`,
           (c) => c.id === "exp_mus_pro",
         );
         if (critMusPro) criteria.push(critMusPro);
-      } else if (selected.has("des_12e_annee")) {
+      } else if (this.hasCriterion(selected, "des_12e_annee")) {
         const hasEnsembles = selected.has("exp_mus_ensembles");
         const hasEtudiant = selected.has("exp_mus_etudiant");
         if (hasEnsembles) {
@@ -6884,7 +6886,7 @@ o Médecine d’urgence`,
     this.expandedDomaines.set(current);
   }
 
-  resetAll() {
+  resetAllLocal() {
     this.age.set(null);
     this.citizenship.set("Canadian Citizen");
     this.selectedProvince.set("QC");
@@ -6914,7 +6916,24 @@ o Médecine d’urgence`,
     this.dropdownOpen1.set(false);
     this.dropdownOpen2.set(false);
     this.dropdownOpen3.set(false);
-    this.sharedState.includeLinkedEmail.set(false);
+    this.showOptionsDropdown.set(false);
+    this.ignoreSip.set(false);
+    this.includeTraitement.set(false);
+    this.testEcePassed.set(false);
+    this.testEsomPassed.set(false);
+    this.testCeopmPassed.set(false);
+    this.testCspnPassed.set(false);
+    this.testCspn00182Passed.set(false);
+    this.testCspn00183Passed.set(false);
+    this.testCspn00184Passed.set(false);
+    this.melService.resetApplicantLimitations();
+    this.reorientationCriteria.resetAll();
+    this.sharedState.resetSharedRecruiterState();
+  }
+
+  resetAll() {
+    this.resetAllLocal();
+    this.sharedState.triggerRecruiterReset();
   }
 
   toggleManualCriterion(id: string) {
@@ -7131,7 +7150,7 @@ o Médecine d’urgence`,
     }
 
     // Auto-cleanup for 00166 musician
-    if (!current.has("des_12e_annee") || current.has("cs_etude_musique")) {
+    if ((!current.has("des_12e_annee") && !current.has("aens")) || current.has("cs_etude_musique")) {
       current.delete("exp_mus_ensembles");
       current.delete("exp_mus_etudiant");
     }
@@ -7297,25 +7316,45 @@ o Médecine d’urgence`,
     if (this.citizenship() === "PR < 3 years") {
       return true;
     }
-    if (this.age() !== null && (this.age()! >= 57 || this.isCandidateTooOld())) {
+    if (this.age() !== null && this.age()! >= 57) {
       return true;
     }
+
+    const hasDossierJob = !!(
+      this.selectedDossierJobId1() ||
+      this.selectedDossierJobId2() ||
+      this.selectedDossierJobId3()
+    );
+
+    if (!hasDossierJob) {
+      return false;
+    }
+
+    if (this.isCandidateTooOld()) {
+      return true;
+    }
+
     if (this.isPforApplicant()) {
-      const hasDossierJob = !!(
-        this.selectedDossierJobId1() ||
-        this.selectedDossierJobId2() ||
-        this.selectedDossierJobId3()
-      );
       if (this.pforType() === "cmr") {
         const hasCmrDomain =
           this.cmrArts() || this.cmrScience() || this.cmrGenie();
-        return hasCmrDomain && hasDossierJob;
+        return hasCmrDomain || this.eligibleJobs().length > 0;
       } else {
-        return hasDossierJob || this.eligibleJobs().length > 0;
+        return true;
       }
     }
-    return this.eligibleJobs().length > 0;
+    return true;
   });
+
+  hasCriterion(selected: Set<string>, id: string): boolean {
+    if (id === "des_12e_annee") {
+      return selected.has("des_12e_annee") || selected.has("aens");
+    }
+    if (id === "sec4_24_credits") {
+      return selected.has("sec4_24_credits") || selected.has("des_12e_annee") || selected.has("aens");
+    }
+    return selected.has(id);
+  }
 
   eligibleJobs = computed(() => {
     const citizenship = this.citizenship();
@@ -7431,7 +7470,7 @@ o Médecine d’urgence`,
         rule.requiredCriteriaIds &&
         rule.requiredCriteriaIds.length > 0
       ) {
-        meetsRule = rule.requiredCriteriaIds.every((id) => selected.has(id));
+        meetsRule = rule.requiredCriteriaIds.every((id) => this.hasCriterion(selected, id));
       }
 
       if (meetsRule) {
@@ -7596,7 +7635,7 @@ o Médecine d’urgence`,
         rule.requiredCriteriaIds &&
         rule.requiredCriteriaIds.length > 0
       ) {
-        meetsRule = rule.requiredCriteriaIds.every((id) => selected.has(id));
+        meetsRule = rule.requiredCriteriaIds.every((id) => this.hasCriterion(selected, id));
       }
 
       if (meetsRule) {
@@ -7999,6 +8038,7 @@ o Médecine d’urgence`,
         const crit = this.manualCriteria.find(c => c.id === id);
         if (crit) {
             if (id === "des_12e_annee") return isFr ? "DES ou 12e année" : "High School Diploma or Grade 12";
+            if (id === "aens") return isFr ? "AENS (Attestation d'équivalence de niveau de scolarité)" : "School Equivalency Attestation (AENS)";
             if (id === "sec4_24_credits") return isFr ? "Sec 4 (24 crédits) ou 10e année" : "Grade 10 (24 credits)";
             if (id === "francais_sec4_10e") return isFr ? "Français/Anglais de sec 4 ou 10e année" : "Grade 10 English/French";
             if (id === "francais_sec5_11e") return isFr ? "Français/Anglais de sec 5 ou 11e année" : "Grade 11 English/French";
@@ -8046,7 +8086,7 @@ o Médecine d’urgence`,
         rule.requiredCriteriaIds &&
         rule.requiredCriteriaIds.length > 0
       ) {
-        const missingIds = rule.requiredCriteriaIds.filter((id) => !selected.has(id));
+        const missingIds = rule.requiredCriteriaIds.filter((id) => !this.hasCriterion(selected, id));
         if (missingIds.length === 0) {
             meetsRule = true;
         } else {
@@ -8832,7 +8872,7 @@ o Médecine d’urgence`,
             "Provide proof of experience as a professional musician in a variety of ensembles and in various styles of music, e.g. as a self-employed musician, or full-time with a local orchestra, ensemble, or music group.",
           );
         }
-      } else if (selected.has("des_12e_annee")) {
+      } else if (this.hasCriterion(selected, "des_12e_annee")) {
         if (
           !selected.has("exp_mus_ensembles") &&
           !selected.has("exp_mus_etudiant")
@@ -9262,7 +9302,7 @@ o Médecine d’urgence`,
 
     const reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
 
-    if (this.sharedState.includeLinkedEmail() && this.sharedState.taskNote()) {
+    if ((this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && this.sharedState.taskNote()) {
       const taskNoteRaw = this.sharedState.taskNote();
 
       // Extrait le message médical s'il est présent
@@ -9561,7 +9601,7 @@ o Médecine d’urgence`,
       !!rawHtml &&
       this.sharedState.hasReassignedTasks() &&
       rawHtml.includes("Bonjour,");
-    const mergeTasks = this.sharedState.includeLinkedEmail() && hasTasks;
+    const mergeTasks = (this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && hasTasks;
 
     if (this.age() !== null && this.age()! >= 57) {
       if (isHtml) {
@@ -9749,6 +9789,14 @@ o Médecine d’urgence`,
             )
             .replace(
               /Nous avons procédé à l'évaluation de vos documents\. Bien que votre dossier progresse, certains éléments ne sont pas conformes et nécessitent des corrections de votre part pour nous permettre de poursuivre le traitement\.\s*/gis,
+              ""
+            )
+            .replace(
+              /<p[^>]*>\s*<strong>\s*Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours\.\s*<\/strong>\s*<\/p>/gis,
+              ""
+            )
+            .replace(
+              /<strong>\s*Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours\.\s*<\/strong>/gis,
               ""
             )
             .trim();
@@ -10060,6 +10108,14 @@ o Médecine d’urgence`,
               /We have evaluated your documents\. While your application is progressing, some items are not compliant and require corrections on your part to allow us to continue processing\.\s*/gis,
               ""
             )
+            .replace(
+              /<p[^>]*>\s*<strong>\s*If you take no action, your file will be automatically deactivated after 30 days\.\s*<\/strong>\s*<\/p>/gis,
+              ""
+            )
+            .replace(
+              /<strong>\s*If you take no action, your file will be automatically deactivated after 30 days\.\s*<\/strong>/gis,
+              ""
+            )
             .trim();
           h +=
             '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
@@ -10318,7 +10374,7 @@ o Médecine d’urgence`,
         p += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
       }
 
-      if (this.sharedState.includeLinkedEmail()) {
+      if (mergeTasks) {
         if (isPforCmr && cmrAdmittedFr) {
           p += "Toutefois, certaines actions de votre part sont requises pour nous permettre de poursuivre le traitement de votre demande. Vous devez à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.\n\n";
         } else if (isPforCmr) {
@@ -10385,7 +10441,7 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (this.sharedState.includeLinkedEmail()) {
+          if (mergeTasks) {
             p +=
               "Voici le statut des métiers actuellement inscrits à votre dossier :\n";
           } else if (this.isCandidateTooOld()) {
@@ -10557,7 +10613,7 @@ o Médecine d’urgence`,
       }
 
       // Conclusion French
-      if (this.sharedState.includeLinkedEmail()) {
+      if (mergeTasks) {
         p += "\nProchaines étapes :\n";
         p += "En raison du volume élevé de candidatures, nous devons prioriser le traitement des dossiers dont toutes les tâches sont complétées. Nous vous invitons donc à :\n";
         p += "- Vous rendre sur votre portail (https://www.cafoap-pclfac.forces.gc.ca/) afin de corriger sans délai les tâches indiquées ci-dessus ;\n";
@@ -10599,7 +10655,7 @@ o Médecine d’urgence`,
         p += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
       }
 
-      if (this.sharedState.includeLinkedEmail()) {
+      if (mergeTasks) {
         if (isPforCmr && cmrAdmittedEn) {
           p += "However, actions are required on your part to proceed with processing your application. Specifically, you must correct the reassigned tasks on your portal and undergo a reorientation of your occupational choices.\n\n";
         } else if (isPforCmr) {
@@ -10656,7 +10712,7 @@ o Médecine d’urgence`,
 
       if (realDossierIds.length > 0) {
         if (!hasNoJobCode) {
-          if (this.sharedState.includeLinkedEmail()) {
+          if (mergeTasks) {
             p +=
               "Here is the current status of the occupations in your file:\n";
           } else if (this.isCandidateTooOld()) {
@@ -10828,7 +10884,7 @@ o Médecine d’urgence`,
       }
 
       // Conclusion English
-      if (this.sharedState.includeLinkedEmail()) {
+      if (mergeTasks) {
         p += "\nNext steps:\n";
         p += "Due to the high volume of applications, we must prioritize processing files for which all tasks are completed. We therefore invite you to:\n";
         p += "- Visit your portal (https://www.cafoap-pclfac.forces.gc.ca/) to correct the tasks indicated above without delay;\n";

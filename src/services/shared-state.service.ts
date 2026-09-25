@@ -1,4 +1,4 @@
-import { Injectable, signal } from "@angular/core";
+import { Injectable, signal, computed } from "@angular/core";
 
 export const DEFAULT_SIG_FR = `Cordialement,
 
@@ -28,7 +28,19 @@ www.forces.ca`;
   providedIn: "root",
 })
 export class SharedStateService {
-  includeLinkedEmail = signal<boolean>(false);
+  hasReoEmailGenerated = signal<boolean>(false);
+  hasReassignedTasks = signal<boolean>(false);
+
+  // Automatically merges when both reattributed tasks email and reorientation email are generated
+  includeLinkedEmail = computed(() => {
+    return this.hasReassignedTasks() && this.hasReoEmailGenerated();
+  });
+
+  recruiterResetTrigger = signal<number>(0);
+
+  triggerRecruiterReset() {
+    this.recruiterResetTrigger.update((n) => n + 1);
+  }
 
   // Stored output from Task panel
   taskNote = signal<string>("");
@@ -48,8 +60,6 @@ export class SharedStateService {
   reoMergedEmailHtml = signal<string>("");
   reoMergedEmailPlain = signal<string>("");
   reoMergedNote = signal<string>("");
-
-  hasReassignedTasks = signal<boolean>(false);
 
   isPostulantPfor = signal<boolean>(false);
 
@@ -72,6 +82,41 @@ export class SharedStateService {
   testCspn00182Passed = signal<boolean>(false);
   testCspn00183Passed = signal<boolean>(false);
   testCspn00184Passed = signal<boolean>(false);
+
+  resetSharedRecruiterState() {
+    this.taskNote.set("");
+    this.taskEmailFr.set("");
+    this.taskEmailEn.set("");
+    this.taskEmailHtmlFr.set("");
+    this.taskEmailHtmlEn.set("");
+    this.taskEmailHtmlGeneral.set("");
+    this.taskBodyHtmlFr.set("");
+    this.taskBodyHtmlEn.set("");
+    this.taskBodyPlainFr.set("");
+    this.taskBodyPlainEn.set("");
+    this.reoMergedEmailHtml.set("");
+    this.reoMergedEmailPlain.set("");
+    this.reoMergedNote.set("");
+    this.hasReassignedTasks.set(false);
+    this.hasReoEmailGenerated.set(false);
+    this.isPostulantPfor.set(false);
+    this.selectedDossierJobId1.set("");
+    this.selectedDossierJobId2.set("");
+    this.selectedDossierJobId3.set("");
+    this.searchDossierQuery1.set("");
+    this.searchDossierQuery2.set("");
+    this.searchDossierQuery3.set("");
+    this.dossierJobFailedCe1.set(false);
+    this.dossierJobFailedCe2.set(false);
+    this.dossierJobFailedCe3.set(false);
+    this.testEcePassed.set(false);
+    this.testEsomPassed.set(false);
+    this.testCeopmPassed.set(false);
+    this.testCspnPassed.set(false);
+    this.testCspn00182Passed.set(false);
+    this.testCspn00183Passed.set(false);
+    this.testCspn00184Passed.set(false);
+  }
 
   // Custom Signatures Signals (Normal)
   isOtaDossier = signal<boolean>(false);

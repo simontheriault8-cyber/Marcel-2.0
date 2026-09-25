@@ -11,6 +11,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { JobDatabaseService } from "../../services/job-database.service";
+import { SharedStateService } from "../../services/shared-state.service";
 import { JobEntry } from "../../services/jobs-data";
 import { ReorientationComponent } from "./reorientation.component";
 import { PforComponent } from "./pfor.component";
@@ -80,7 +81,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
           >
             @if (_showReorientationTab()) {
               <button
-                (click)="activeTab.set('reorientation')"
+                (click)="setTab('reorientation')"
                 class="px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer"
                 [class.bg-slate-700]="activeTab() === 'reorientation'"
                 [class.text-white]="activeTab() === 'reorientation'"
@@ -90,7 +91,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 Réorientation
               </button>
               <button
-                (click)="activeTab.set('pfor')"
+                (click)="setTab('pfor')"
                 class="px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer"
                 [class.bg-slate-700]="activeTab() === 'pfor'"
                 [class.text-white]="activeTab() === 'pfor'"
@@ -182,7 +183,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
       <div class="sm:hidden bg-slate-800 p-2 flex gap-1.5 shrink-0 flex-wrap">
         @if (_showReorientationTab()) {
           <button
-            (click)="activeTab.set('reorientation')"
+            (click)="setTab('reorientation')"
             class="flex-1 min-w-[70px] px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
             [class.bg-slate-700]="activeTab() === 'reorientation'"
             [class.text-white]="activeTab() === 'reorientation'"
@@ -191,7 +192,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
             Réorientation
           </button>
           <button
-            (click)="activeTab.set('pfor')"
+            (click)="setTab('pfor')"
             class="flex-1 min-w-[70px] px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors"
             [class.bg-slate-700]="activeTab() === 'pfor'"
             [class.text-white]="activeTab() === 'pfor'"
@@ -892,7 +893,17 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
 })
 export class JobSearchModalComponent {
   jobService = inject(JobDatabaseService);
+  sharedState = inject(SharedStateService);
   private sanitizer = inject(DomSanitizer);
+
+  setTab(tab: ModalTab) {
+    this.activeTab.set(tab);
+    if (tab === "pfor") {
+      this.sharedState.isPostulantPfor.set(true);
+    } else if (tab === "reorientation") {
+      this.sharedState.isPostulantPfor.set(false);
+    }
+  }
 
   @Input() set showReorientationTab(val: boolean) {
     this._showReorientationTab.set(val);

@@ -30,6 +30,8 @@ import { CourseSession } from "./app/data/course-sessions.data";
 import { JOB_URLS } from "./app/data/job-urls.data";
 import { SharedStateService, DEFAULT_SIG_FR, DEFAULT_SIG_EN, DEFAULT_SIG_OTA_FR, DEFAULT_SIG_OTA_EN } from "./services/shared-state.service";
 import { JobDatabaseService } from "./services/job-database.service";
+import { MelService } from "./services/mel.service";
+import { ReorientationCriteriaService } from "./services/reorientation-criteria.service";
 import { JobEntry, JobCategory, MilitaryElement, RecruitmentCenter, RECRUITMENT_CENTERS, ENROLMENT_HOURS } from "./services/jobs-data";
 import { FormsModule } from "@angular/forms";
 
@@ -115,6 +117,16 @@ interface RoleSnapshot {
   premierContactGambit?: boolean;
   premierContactPsps?: boolean;
   premierContactSelfie?: boolean;
+  premierContactIptad?: boolean;
+  premierContactSeaf?: boolean;
+  premierContactSubPanelMode?: 'courriel' | 'note';
+  premierContactNoteIptad?: string;
+  premierContactNoteSeaf?: string;
+  premierContactNoteEntrevue?: string;
+  premierContactNoteMedical?: string;
+  premierContactNotePsps?: string;
+  premierContactNoteGambit?: string;
+  premierContactNoteAnxQ?: string;
   avisFermetureCourriel?: boolean;
   avisFermetureDelaiJours?: string;
   avisFermetureDate?: string;
@@ -166,6 +178,7 @@ interface RoleSnapshot {
   noteSvcMilAnt?: string;
   noteBeneficiaire?: string;
   noteDateCourrielConfirmation?: string;
+  testEsomRecruitmentCenterCity?: string;
 }
 
 function getTodayDateString(): string {
@@ -914,6 +927,111 @@ function getTodayDateString(): string {
                           </svg>
                         }
                       </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('verification_dossier_cadet')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
+                      >
+                        <span class="truncate">Vérification Dossier Cadet</span>
+                        @if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('bris_bail_entreposage')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                      >
+                        <span class="truncate">Bris de bail et entreposage</span>
+                        @if (selectedEmailBankTemplate() === 'bris_bail_entreposage') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_nav_tan')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                      >
+                        <span class="truncate">Demande NAV/TAN & Claims X - CSPN partie 1</span>
+                        @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_autorisation_cspn')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                      >
+                        <span class="truncate">Demande d'autorisation pour un CSPN</span>
+                        @if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('documents_conjoint_de_fait')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                      >
+                        <span class="truncate">Documents requis - Conjoint(e) de fait</span>
+                        @if (selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_sdpm_conjoint_militaire')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                      >
+                        <span class="truncate">Demande SDPM pour conjoint militaire</span>
+                        @if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('test_esom_confirmation')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                      >
+                        <span class="truncate">TEST ESOM / Confirmation</span>
+                        @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
                     }
                   </div>
                 }
@@ -1582,6 +1700,41 @@ function getTodayDateString(): string {
                     </p>
                   </div>
                   <div class="flex items-center gap-3">
+                    @if (task.nameFr === "Premier contact") {
+                      <div class="inline-flex p-1 bg-slate-200/80 rounded-xl border border-slate-300 shadow-inner">
+                        <button
+                          type="button"
+                          (click)="premierContactSubPanelMode.set('courriel')"
+                          class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                          [class.bg-white]="premierContactSubPanelMode() === 'courriel'"
+                          [class.text-blue-700]="premierContactSubPanelMode() === 'courriel'"
+                          [class.shadow-xs]="premierContactSubPanelMode() === 'courriel'"
+                          [class.text-slate-600]="premierContactSubPanelMode() !== 'courriel'"
+                          [class.hover:text-slate-900]="premierContactSubPanelMode() !== 'courriel'"
+                        >
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <span>Courriel</span>
+                        </button>
+                        <button
+                          type="button"
+                          (click)="premierContactSubPanelMode.set('note')"
+                          class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                          [class.bg-white]="premierContactSubPanelMode() === 'note'"
+                          [class.text-indigo-700]="premierContactSubPanelMode() === 'note'"
+                          [class.shadow-xs]="premierContactSubPanelMode() === 'note'"
+                          [class.text-slate-600]="premierContactSubPanelMode() !== 'note'"
+                          [class.hover:text-slate-900]="premierContactSubPanelMode() !== 'note'"
+                        >
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span>Note</span>
+                        </button>
+                      </div>
+                    }
+
                     @if (task.nameFr.includes("Offre") || task.nameFr.includes("Courriel d'offre") || task.section === "Courriel d'offre") {
                       <div class="inline-flex p-1 bg-slate-200/80 rounded-xl border border-slate-300 shadow-inner">
                         <button
@@ -1752,104 +1905,246 @@ function getTodayDateString(): string {
                     <div class="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-300">
                       <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
                         <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          <span>Premier contact</span>
+                          @if (premierContactSubPanelMode() === 'courriel') {
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span>Premier contact — Courriel</span>
+                          } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>Premier contact — Note au dossier</span>
+                          }
                         </div>
                       </div>
 
-                      <div class="p-4 space-y-4 rounded-b-xl">
-                        <div>
-                          <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
-                            <input
-                              type="checkbox"
-                              [checked]="premierContactCourriel()"
-                              (change)="togglePremierContactCourriel()"
-                              class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                            />
-                            <span class="text-xs font-bold text-slate-800">Courriel de premier contact</span>
-                          </label>
-                        </div>
-
-                        <div class="pt-3 border-t border-slate-100">
-                          <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Tâches à compléter présentement
-                          </label>
-                          <p class="text-[11px] text-slate-500 mb-3">
-                            Sélectionnez les tâches requises pour le postulant.
-                          </p>
-
-                          <div class="space-y-2 text-xs">
-                            <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                      @if (premierContactSubPanelMode() === 'courriel') {
+                        <div class="p-4 space-y-4 rounded-b-xl">
+                          <div>
+                            <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
                               <input
                                 type="checkbox"
-                                [checked]="premierContactMedical()"
-                                (change)="togglePremierContactTask('medical')"
-                                class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                [checked]="premierContactCourriel()"
+                                (change)="togglePremierContactCourriel()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                               />
-                              <div>
-                                <span class="font-semibold text-slate-800">Évaluation médicale</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">
-                                   {{ evaluationMedicaleType() === 'Dossier OTA' ? 'Rendez-vous fixé au centre de recrutement de Montréal' : 'Planifiez votre évaluation médicale' }}
-                                </p>
-                              </div>
-                            </label>
-
-                            <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
-                              <input
-                                type="checkbox"
-                                [checked]="premierContactEntrevue()"
-                                (change)="togglePremierContactTask('entrevue')"
-                                class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                              />
-                              <div>
-                                <span class="font-semibold text-slate-800">Entrevue</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Planifiez votre entrevue</p>
-                              </div>
-                            </label>
-
-                            <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
-                              <input
-                                type="checkbox"
-                                [checked]="premierContactGambit()"
-                                (change)="togglePremierContactTask('gambit')"
-                                class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                              />
-                              <div>
-                                <span class="font-semibold text-slate-800">Gambit</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Références, antécédents d'emploi et d'études (Gambit)</p>
-                              </div>
-                            </label>
-
-                            <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
-                              <input
-                                type="checkbox"
-                                [checked]="premierContactPsps()"
-                                (change)="togglePremierContactTask('psps')"
-                                class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                              />
-                              <div>
-                                <span class="font-semibold text-slate-800">PSPS</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)</p>
-                              </div>
-                            </label>
-
-                            <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
-                              <input
-                                type="checkbox"
-                                [checked]="premierContactSelfie()"
-                                (change)="togglePremierContactTask('selfie')"
-                                class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                              />
-                              <div>
-                                <span class="font-semibold text-slate-800">Selfie</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Pièce d'identité avec photo émise par le gouvernement canadien (les deux côtés)</p>
-                              </div>
+                              <span class="text-xs font-bold text-slate-800">Courriel de premier contact</span>
                             </label>
                           </div>
+
+                          <div class="pt-3 border-t border-slate-100">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                              Tâches à compléter présentement
+                            </label>
+                            <p class="text-[11px] text-slate-500 mb-3">
+                              Sélectionnez les tâches requises pour le postulant.
+                            </p>
+
+                            <div class="space-y-2 text-xs">
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactMedical()"
+                                  (change)="togglePremierContactTask('medical')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">Évaluation médicale</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">
+                                     {{ evaluationMedicaleType() === 'Dossier OTA' ? 'Rendez-vous fixé au centre de recrutement de Montréal' : 'Planifiez votre évaluation médicale' }}
+                                  </p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactEntrevue()"
+                                  (change)="togglePremierContactTask('entrevue')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">Entrevue</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Planifiez votre entrevue</p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactGambit()"
+                                  (change)="togglePremierContactTask('gambit')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">Gambit</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Références, antécédents d'emploi et d'études (Gambit)</p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactPsps()"
+                                  (change)="togglePremierContactTask('psps')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">PSPS</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)</p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactSelfie()"
+                                  (change)="togglePremierContactTask('selfie')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">Selfie</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Égoportrait (selfie) avec pièce d'identité (Tâche : Pièce d'identité avec photo émise par le gouvernement canadien)</p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactIptad()"
+                                  (change)="togglePremierContactTask('iptad')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">IPTAD</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Évaluation de la personnalité (Inventaire de personnalité des traits auto-descriptifs)</p>
+                                </div>
+                              </label>
+
+                              <label class="flex items-start gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+                                <input
+                                  type="checkbox"
+                                  [checked]="premierContactSeaf()"
+                                  (change)="togglePremierContactTask('seaf')"
+                                  class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                                <div>
+                                  <span class="font-semibold text-slate-800">SEAF</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Formulaire de demande d'emploi notée</p>
+                                </div>
+                              </label>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      } @else {
+                        <!-- Premier contact Note Sub-Panel -->
+                        <div class="p-4 space-y-4 rounded-b-xl">
+                          <div class="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs text-indigo-900 mb-2">
+                            Renseignez les statuts des composantes pour générer la note au registre du Premier contact.
+                          </div>
+
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <!-- IPTAD -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">IPTAD :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteIptad()"
+                                (change)="premierContactNoteIptad.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactIptadOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- SEAF -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">SEAF :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteSeaf()"
+                                (change)="premierContactNoteSeaf.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactSeafOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- Entrevue -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">Entrevue :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteEntrevue()"
+                                (change)="premierContactNoteEntrevue.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactEntrevueOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- Médical -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">Médical :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteMedical()"
+                                (change)="premierContactNoteMedical.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactMedicalOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- PSPS -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">PSPS :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNotePsps()"
+                                (change)="premierContactNotePsps.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactPspsOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- Gambit -->
+                            <div>
+                              <label class="block font-semibold text-slate-700 mb-1">Gambit :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteGambit()"
+                                (change)="premierContactNoteGambit.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactGambitOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+
+                            <!-- ANX Q -->
+                            <div class="sm:col-span-2">
+                              <label class="block font-semibold text-slate-700 mb-1">ANX Q :</label>
+                              <select
+                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
+                                [value]="premierContactNoteAnxQ()"
+                                (change)="premierContactNoteAnxQ.set($any($event.target).value)"
+                              >
+                                @for (opt of premierContactAnxQOptions; track opt) {
+                                  <option [value]="opt">{{ opt }}</option>
+                                }
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      }
                     </div>
 
                   } @else if (task.nameFr === "Avis de fermeture" || task.section === "Suivi de dossier") {
@@ -2703,7 +2998,7 @@ function getTodayDateString(): string {
                       <div class="p-4 bg-white space-y-3 rounded-b-xl">
                         <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                           <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Génération de courriel :</div>
-                          <div class="grid grid-cols-1 gap-2">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <label class="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
                               <input
                                 type="checkbox"
@@ -2712,6 +3007,15 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
                               <span class="text-xs font-bold text-slate-800">Générer courriel Rappel cérémonie d'assermentation</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
+                              <input
+                                type="checkbox"
+                                [checked]="rappelCeremonieRalliementChecked()"
+                                (change)="toggleRappelCeremonieRalliement()"
+                                class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                              />
+                              <span class="text-xs font-bold text-slate-800">Instruction de ralliement ELRFC</span>
                             </label>
                           </div>
                         </div>
@@ -3240,35 +3544,6 @@ function getTodayDateString(): string {
               </h2>
 
               <div class="flex items-center gap-3">
-                @if (!allTasksCompliant()) {
-                  <label
-                    class="flex items-center gap-2 text-xs font-semibold text-slate-700 mr-2 cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all"
-                      [checked]="sharedState.includeLinkedEmail()"
-                      (change)="toggleIncludeReo()"
-                    />
-                    <span class="relative">
-                      <svg
-                        class="absolute -left-[1.15rem] top-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                      Fusion courriel de Tâche(s) et courriel de Réo
-                    </span>
-                  </label>
-                }
-
-
                 <button
                   (click)="copyNote()"
                   class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5"
@@ -3551,6 +3826,12 @@ function getTodayDateString(): string {
                       />
                     </svg>
                     Note au Registre (Interne)
+                    @if (sharedState.includeLinkedEmail() && sharedState.reoMergedNote()) {
+                      <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                        Fusionnée avec la réorientation
+                      </span>
+                    }
                   </h3>
                 </div>
                 <div class="p-4 bg-slate-50">
@@ -3708,6 +3989,12 @@ function getTodayDateString(): string {
                         />
                       </svg>
                       Courriel au Postulant
+                      @if (sharedState.includeLinkedEmail() && sharedState.reoMergedEmailHtml()) {
+                        <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
+                          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+                          Fusionné avec la réorientation
+                        </span>
+                      }
                     </h3>
                   </div>
                   <!-- Using innerHTML to render bold, yellow highlights and underlines -->
@@ -3744,6 +4031,27 @@ function getTodayDateString(): string {
               </h2>
 
               <div class="flex items-center gap-3">
+                @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                  <div class="flex items-center gap-2 bg-indigo-50/70 border border-indigo-200 px-3 py-1 rounded-xl shadow-2xs">
+                    <label class="text-xs font-bold text-indigo-900 flex items-center gap-1.5 whitespace-nowrap">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Lieu du test :
+                    </label>
+                    <select
+                      [ngModel]="testEsomRecruitmentCenterCity()"
+                      (ngModelChange)="testEsomRecruitmentCenterCity.set($event)"
+                      class="text-xs border border-indigo-300 rounded-lg px-2.5 py-1 bg-white font-semibold text-slate-800 shadow-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer"
+                    >
+                      @for (center of recruitmentCentersList; track center.city) {
+                        <option [value]="center.city">{{ center.city }} ({{ center.name }})</option>
+                      }
+                    </select>
+                  </div>
+                }
+
                 <button
                   (click)="copyNote()"
                   class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
@@ -3792,6 +4100,50 @@ function getTodayDateString(): string {
                   <span>Cochez une ou plusieurs options dans le panneau « Construction de courriels » (Partie 1, Partie 2, Partie 1 et 2, Offre d'emploi, etc.) pour générer le courriel au postulant ainsi que la note au registre.</span>
                 </div>
               } @else {
+                <!-- Instructions pour le GD (Demande NAV/TAN) -->
+                @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                  <div class="bg-amber-50 border border-amber-200/90 rounded-xl p-4 shadow-xs">
+                    <div class="flex items-start gap-3">
+                      <div class="p-2 bg-amber-100 text-amber-700 rounded-lg shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                          Instructions pour le gestionnaire de dossier (GD)
+                        </h4>
+                        <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
+                          <li>Mettre en attache le message d’autorisation les opérations (Ops CRFC)</li>
+                          <li>Mettre en attache le message d’autorisation officiel (message DRAFT)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <!-- Instructions pour le GD (Test ESOM) -->
+                @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                  <div class="bg-amber-50 border border-amber-200/90 rounded-xl p-4 shadow-xs">
+                    <div class="flex items-start gap-3">
+                      <div class="p-2 bg-amber-100 text-amber-700 rounded-lg shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                          Instructions pour le gestionnaire de dossier (GD)
+                        </h4>
+                        <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
+                          <li>Contacter le postulant pour ses disponibilité</li>
+                          <li>Vérifier la disponibilité de l'administrateur de test</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                }
+
                 <!-- 1. Note Section (Single unified note) -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
                   <div class="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
@@ -3816,7 +4168,19 @@ function getTodayDateString(): string {
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Courriel au Postulant (Bilingue)</h3>
+                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">
+                        @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                          Courriel - Destinataire : CRFCQcReclamations&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+                          Courriel - Destinataire : MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+                          Courriel - Destinataire : CRFCQcAdmin&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+                          Courriel - Demande d’autorisation pour un CSPN
+                        } @else {
+                          Courriel au Postulant (Bilingue)
+                        }
+                      </h3>
                     </div>
                   </div>
                   <div
@@ -3849,6 +4213,8 @@ export class AppComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   public sharedState = inject(SharedStateService);
   public jobService = inject(JobDatabaseService);
+  public melService = inject(MelService);
+  public reorientationCriteria = inject(ReorientationCriteriaService);
 
   // Dossier Jobs Panel Dropdown States
   dossierDropdownOpen1 = signal<boolean>(false);
@@ -3856,12 +4222,31 @@ export class AppComponent implements OnInit {
   dossierDropdownOpen3 = signal<boolean>(false);
 
   // Premier Contact State
+  premierContactSubPanelMode = signal<'courriel' | 'note'>('courriel');
+  readonly premierContactIptadOptions: string[] = ['Complété', 'À faire', 'Attribuer'];
+  readonly premierContactSeafOptions: string[] = ['Complété', 'Attribuer'];
+  readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribuer'];
+  readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribuer'];
+  readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initier'];
+  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'Concluent favorable', 'Concluent défavorable', 'Non Concluent'];
+  readonly premierContactAnxQOptions: string[] = ['À faire', 'Complété'];
+
+  premierContactNoteIptad = signal<string>('Complété');
+  premierContactNoteSeaf = signal<string>('Complété');
+  premierContactNoteEntrevue = signal<string>('À faire');
+  premierContactNoteMedical = signal<string>('À faire');
+  premierContactNotePsps = signal<string>('À faire');
+  premierContactNoteGambit = signal<string>('En attente (type 28)');
+  premierContactNoteAnxQ = signal<string>('À faire');
+
   premierContactCourriel = signal<boolean>(false);
   premierContactMedical = signal<boolean>(false);
   premierContactEntrevue = signal<boolean>(false);
   premierContactGambit = signal<boolean>(false);
   premierContactPsps = signal<boolean>(false);
   premierContactSelfie = signal<boolean>(false);
+  premierContactIptad = signal<boolean>(false);
+  premierContactSeaf = signal<boolean>(false);
 
   // Avis de Fermeture State
   avisFermetureCourriel = signal<boolean>(false);
@@ -3965,44 +4350,84 @@ export class AppComponent implements OnInit {
   }
 
   // --- Premier Contact Methods ---
-  getPremierContactSelectedTasks(): { id: string; labelFr: string; labelEn: string }[] {
-    const list: { id: string; labelFr: string; labelEn: string }[] = [];
+  getPremierContactSelectedTasks(): {
+    id: string;
+    labelPlainFr: string;
+    labelPlainEn: string;
+    labelHtmlFr: string;
+    labelHtmlEn: string;
+  }[] {
+    const list: {
+      id: string;
+      labelPlainFr: string;
+      labelPlainEn: string;
+      labelHtmlFr: string;
+      labelHtmlEn: string;
+    }[] = [];
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
 
     // In local dossiers, medical is a numbered list item. In OTA dossiers, medical appointment text replaces or follows the list.
     if (this.premierContactMedical() && !isOta) {
       list.push({
         id: 'medical',
-        labelFr: 'Planifiez votre évaluation médicale',
-        labelEn: 'Schedule your medical evaluation',
+        labelPlainFr: 'Planifiez votre évaluation médicale',
+        labelPlainEn: 'Schedule your medical evaluation',
+        labelHtmlFr: 'Planifiez votre évaluation médicale',
+        labelHtmlEn: 'Schedule your medical evaluation',
       });
     }
     if (this.premierContactEntrevue()) {
       list.push({
         id: 'entrevue',
-        labelFr: 'Planifiez votre entrevue',
-        labelEn: 'Schedule your interview',
+        labelPlainFr: 'Planifiez votre entrevue',
+        labelPlainEn: 'Schedule your interview',
+        labelHtmlFr: 'Planifiez votre entrevue',
+        labelHtmlEn: 'Schedule your interview',
       });
     }
     if (this.premierContactGambit()) {
       list.push({
         id: 'gambit',
-        labelFr: "Références, antécédents d'emploi et d'études (Gambit)",
-        labelEn: 'References, employment and education history (Gambit)',
+        labelPlainFr: "Références, antécédents d'emploi et d'études (Gambit)",
+        labelPlainEn: 'References, employment and education history (Gambit)',
+        labelHtmlFr: "Références, antécédents d'emploi et d'études (Gambit)",
+        labelHtmlEn: 'References, employment and education history (Gambit)',
       });
     }
     if (this.premierContactPsps()) {
       list.push({
         id: 'psps',
-        labelFr: "Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)",
-        labelEn: 'Criminal record and credit check (PSPS/this task is not in your portal, you will receive an email sent by app@gambitid.com)',
+        labelPlainFr: "Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)",
+        labelPlainEn: 'Criminal record and credit check (PSPS/this task is not in your portal, you will receive an email sent by app@gambitid.com)',
+        labelHtmlFr: "Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)",
+        labelHtmlEn: 'Criminal record and credit check (PSPS/this task is not in your portal, you will receive an email sent by app@gambitid.com)',
       });
     }
     if (this.premierContactSelfie()) {
       list.push({
         id: 'selfie',
-        labelFr: "Pièce d'identité avec photo émise par le gouvernement canadien (les deux côtés)",
-        labelEn: 'Canadian government issued photo ID (both sides)',
+        labelPlainFr: "Téléverser un égoportrait (selfie) avec votre pièce d'identité dans votre portail (dans la tâche : Pièce d'identité avec photo émise par le gouvernement canadien (les deux côtés)). Voici un lien vers un exemple acceptable d’un égoportrait : https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png",
+        labelPlainEn: 'Upload a selfie with your ID document to your portal (in the task: Canadian government issued photo ID (both sides)). Here is a link to an acceptable example of a selfie: https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png',
+        labelHtmlFr: `Téléverser un égoportrait (selfie) avec votre pièce d'identité dans votre portail (dans la tâche : Pièce d'identité avec photo émise par le gouvernement canadien (les deux côtés)). Voici un lien vers un exemple acceptable d’un <a href="https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png" target="_blank" style="color: #0563c1; text-decoration: underline;">égoportrait</a>.`,
+        labelHtmlEn: `Upload a selfie with your ID document to your portal (in the task: Canadian government issued photo ID (both sides)). Here is a link to an acceptable example of a <a href="https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png" target="_blank" style="color: #0563c1; text-decoration: underline;">selfie</a>.`,
+      });
+    }
+    if (this.premierContactIptad()) {
+      list.push({
+        id: 'iptad',
+        labelPlainFr: "Évaluation de la personnalité (Inventaire de personnalité des traits auto-descriptifs)",
+        labelPlainEn: "Personality Assessment (Self-Descriptive Inventory of Personality Traits)",
+        labelHtmlFr: "Évaluation de la personnalité (Inventaire de personnalité des traits auto-descriptifs)",
+        labelHtmlEn: "Personality Assessment (Self-Descriptive Inventory of Personality Traits)",
+      });
+    }
+    if (this.premierContactSeaf()) {
+      list.push({
+        id: 'seaf',
+        labelPlainFr: "Formulaire de demande d'emploi notée",
+        labelPlainEn: "Scored Employment Application Form",
+        labelHtmlFr: "Formulaire de demande d'emploi notée",
+        labelHtmlEn: "Scored Employment Application Form",
       });
     }
     return list;
@@ -4018,7 +4443,7 @@ Nous vous demandons de porter une attention particulière à vos courriels et à
 
     let p2 = '';
     if (selected.length > 0) {
-      const listStr = selected.map((t, idx) => `${idx + 1}-\t${t.labelFr}`).join('\n');
+      const listStr = selected.map((t, idx) => `${idx + 1}-\t${t.labelPlainFr}`).join('\n');
       p2 = `\n\nTâche(s) à compléter présentement :\n${listStr}`;
     }
 
@@ -4052,7 +4477,7 @@ We ask you to pay close attention to your emails and your portal as tasks will b
 
     let p2 = '';
     if (selected.length > 0) {
-      const listStr = selected.map((t, idx) => `${idx + 1}-\t${t.labelEn}`).join('\n');
+      const listStr = selected.map((t, idx) => `${idx + 1}-\t${t.labelPlainEn}`).join('\n');
       p2 = `\n\nTask(s) to be completed at this time:\n${listStr}`;
     }
 
@@ -4095,7 +4520,7 @@ Thank you for your cooperation.`;
       const itemsHtml = selected
         .map(
           (t, idx) =>
-            `${idx + 1}-&nbsp;&nbsp;&nbsp;&nbsp;${t.labelFr}`
+            `${idx + 1}-&nbsp;&nbsp;&nbsp;&nbsp;${t.labelHtmlFr}`
         )
         .join('<br>');
       p2Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Tâche(s) à compléter présentement :<br>${itemsHtml}</p>`;
@@ -4122,7 +4547,7 @@ Thank you for your cooperation.`;
       const itemsHtml = selected
         .map(
           (t, idx) =>
-            `${idx + 1}-&nbsp;&nbsp;&nbsp;&nbsp;${t.labelEn}`
+            `${idx + 1}-&nbsp;&nbsp;&nbsp;&nbsp;${t.labelHtmlEn}`
         )
         .join('<br>');
       p2Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Task(s) to be completed at this time:<br>${itemsHtml}</p>`;
@@ -4189,21 +4614,6 @@ Thank you for your cooperation.`;
 
   isOffreOtaActive(): boolean {
     return this.evaluationMedicaleType() === 'Dossier OTA' && (this.offreNormaleChecked() || this.offreEtudesSubventionneesChecked());
-  }
-
-  getEmailSubject(): string {
-    if (this.isAnnexeQActive()) {
-      const alpha = this.annexeQAlphaPostulant().trim();
-      return `Annexe Q - ${alpha}`;
-    }
-    if (this.isOffreOtaActive()) {
-      const rawDate = this.offreDateEnrolement()?.trim();
-      const dateEnrol = rawDate || 'jour/mois/année';
-      const heure = (this.offreHeureArriveePostulant() || '07h30').trim();
-      const effectiveHeure = heure === '8h00' ? '07h30' : heure;
-      return `Enrôlement : ${dateEnrol} à ${effectiveHeure}`;
-    }
-    return "Forces armées canadiennes/Canadian Armed Forces";
   }
 
   getAnnexeQSectionPlainFr(): string {
@@ -4630,6 +5040,16 @@ Thank you for your cooperation.`;
       premierContactGambit: this.premierContactGambit(),
       premierContactPsps: this.premierContactPsps(),
       premierContactSelfie: this.premierContactSelfie(),
+      premierContactIptad: this.premierContactIptad(),
+      premierContactSeaf: this.premierContactSeaf(),
+      premierContactSubPanelMode: this.premierContactSubPanelMode(),
+      premierContactNoteIptad: this.premierContactNoteIptad(),
+      premierContactNoteSeaf: this.premierContactNoteSeaf(),
+      premierContactNoteEntrevue: this.premierContactNoteEntrevue(),
+      premierContactNoteMedical: this.premierContactNoteMedical(),
+      premierContactNotePsps: this.premierContactNotePsps(),
+      premierContactNoteGambit: this.premierContactNoteGambit(),
+      premierContactNoteAnxQ: this.premierContactNoteAnxQ(),
       avisFermetureCourriel: this.avisFermetureCourriel(),
       avisFermetureDelaiJours: this.avisFermetureDelaiJours(),
       avisFermetureDate: this.avisFermetureDate(),
@@ -4680,6 +5100,7 @@ Thank you for your cooperation.`;
       noteSvcMilAnt: this.noteSvcMilAnt(),
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
+      testEsomRecruitmentCenterCity: this.testEsomRecruitmentCenterCity(),
       recruiterDossierType: this.recruiterDossierType(),
       sgtCheckedInstructions: Array.from(this.sgtCheckedInstructions()),
     };
@@ -4708,6 +5129,16 @@ Thank you for your cooperation.`;
     this.premierContactGambit.set(snapshot.premierContactGambit || false);
     this.premierContactPsps.set(snapshot.premierContactPsps || false);
     this.premierContactSelfie.set(snapshot.premierContactSelfie || false);
+    this.premierContactIptad.set(snapshot.premierContactIptad || false);
+    this.premierContactSeaf.set(snapshot.premierContactSeaf || false);
+    this.premierContactSubPanelMode.set(snapshot.premierContactSubPanelMode || 'courriel');
+    this.premierContactNoteIptad.set(snapshot.premierContactNoteIptad || 'Complété');
+    this.premierContactNoteSeaf.set(snapshot.premierContactNoteSeaf || 'Complété');
+    this.premierContactNoteEntrevue.set(snapshot.premierContactNoteEntrevue || 'À faire');
+    this.premierContactNoteMedical.set(snapshot.premierContactNoteMedical || 'À faire');
+    this.premierContactNotePsps.set(snapshot.premierContactNotePsps || 'À faire');
+    this.premierContactNoteGambit.set(snapshot.premierContactNoteGambit || 'En attente (type 28)');
+    this.premierContactNoteAnxQ.set(snapshot.premierContactNoteAnxQ || 'À faire');
 
     this.avisFermetureCourriel.set(snapshot.avisFermetureCourriel || false);
     this.avisFermetureDelaiJours.set(snapshot.avisFermetureDelaiJours || '14');
@@ -4766,6 +5197,7 @@ Thank you for your cooperation.`;
     this.noteSvcMilAnt.set(snapshot.noteSvcMilAnt || 'N/A');
     this.noteBeneficiaire.set(snapshot.noteBeneficiaire || '');
     this.noteDateCourrielConfirmation.set(snapshot.noteDateCourrielConfirmation || '');
+    this.testEsomRecruitmentCenterCity.set(snapshot.testEsomRecruitmentCenterCity || 'Québec');
 
     this.sharedState.selectedDossierJobId1.set(snapshot.selectedDossierJobId1);
     this.sharedState.selectedDossierJobId2.set(snapshot.selectedDossierJobId2);
@@ -4783,7 +5215,6 @@ Thank you for your cooperation.`;
     this.sharedState.testCspn00182Passed.set(snapshot.testCspn00182Passed || false);
     this.sharedState.testCspn00183Passed.set(snapshot.testCspn00183Passed || false);
     this.sharedState.testCspn00184Passed.set(snapshot.testCspn00184Passed || false);
-    this.sharedState.includeLinkedEmail.set(snapshot.includeLinkedEmail);
     this.sharedState.reoMergedEmailHtml.set(snapshot.reoMergedEmailHtml);
     this.sharedState.reoMergedEmailPlain.set(snapshot.reoMergedEmailPlain);
     this.sharedState.reoMergedNote.set(snapshot.reoMergedNote);
@@ -4810,6 +5241,16 @@ Thank you for your cooperation.`;
       premierContactGambit: false,
       premierContactPsps: false,
       premierContactSelfie: false,
+      premierContactIptad: false,
+      premierContactSeaf: false,
+      premierContactSubPanelMode: 'courriel',
+      premierContactNoteIptad: 'Complété',
+      premierContactNoteSeaf: 'Complété',
+      premierContactNoteEntrevue: 'À faire',
+      premierContactNoteMedical: 'À faire',
+      premierContactNotePsps: 'À faire',
+      premierContactNoteGambit: 'En attente (type 28)',
+      premierContactNoteAnxQ: 'À faire',
       avisFermetureCourriel: false,
       avisFermetureDelaiJours: '14',
       avisFermetureDate: '',
@@ -4860,6 +5301,7 @@ Thank you for your cooperation.`;
       noteSvcMilAnt: 'N/A',
       noteBeneficiaire: '',
       noteDateCourrielConfirmation: '',
+      testEsomRecruitmentCenterCity: 'Québec',
       selectedDossierJobId1: '',
       selectedDossierJobId2: '',
       selectedDossierJobId3: '',
@@ -5208,10 +5650,15 @@ Thank you for your cooperation.`;
         this.sharedState.hasReassignedTasks.set(hasReassigned);
       });
     });
-  }
 
-  toggleIncludeReo() {
-    this.sharedState.includeLinkedEmail.update((v) => !v);
+    effect(() => {
+      const trigger = this.sharedState.recruiterResetTrigger();
+      if (trigger > 0) {
+        untracked(() => {
+          this.restartApp(false);
+        });
+      }
+    });
   }
 
   // --- DOSSIER JOBS METHODS ---
@@ -5395,7 +5842,15 @@ Thank you for your cooperation.`;
 
   // --- STAGE LOGIC ---
 
-  restartApp() {
+  restartApp(triggerShared: boolean = true) {
+    if (triggerShared) {
+      this.sharedState.triggerRecruiterReset();
+    }
+    this.showJobSearch.set(false);
+    this.melService.resetApplicantLimitations();
+    this.reorientationCriteria.resetAll();
+    this.sharedState.resetSharedRecruiterState();
+
     this.stage.set("intro");
     this.isUnderAge.set(false);
     this.recruiterDossierType.set("normal");
@@ -5423,6 +5878,16 @@ Thank you for your cooperation.`;
     this.premierContactGambit.set(false);
     this.premierContactPsps.set(false);
     this.premierContactSelfie.set(false);
+    this.premierContactIptad.set(false);
+    this.premierContactSeaf.set(false);
+    this.premierContactSubPanelMode.set('courriel');
+    this.premierContactNoteIptad.set('Complété');
+    this.premierContactNoteSeaf.set('Complété');
+    this.premierContactNoteEntrevue.set('À faire');
+    this.premierContactNoteMedical.set('À faire');
+    this.premierContactNotePsps.set('À faire');
+    this.premierContactNoteGambit.set('En attente (type 28)');
+    this.premierContactNoteAnxQ.set('À faire');
 
     this.avisFermetureCourriel.set(false);
     this.avisFermetureDelaiJours.set('14');
@@ -5487,6 +5952,7 @@ Thank you for your cooperation.`;
     this.noteSvcMilAnt.set('N/A');
     this.noteBeneficiaire.set('');
     this.noteDateCourrielConfirmation.set(getTodayDateString());
+    this.testEsomRecruitmentCenterCity.set('Québec');
 
     // Reset Dossier jobs & Réo shared state
     this.clearDossierJob(1);
@@ -5495,12 +5961,6 @@ Thank you for your cooperation.`;
     this.dossierDropdownOpen1.set(false);
     this.dossierDropdownOpen2.set(false);
     this.dossierDropdownOpen3.set(false);
-
-    this.sharedState.includeLinkedEmail.set(false);
-    this.sharedState.reoMergedEmailHtml.set('');
-    this.sharedState.reoMergedEmailPlain.set('');
-    this.sharedState.reoMergedNote.set('');
-    this.sharedState.hasReassignedTasks.set(false);
 
     const current = this.selectedRole();
     if (current === 'recruiter' || current === 'gestionnaire') {
@@ -6510,6 +6970,8 @@ Thank you for your cooperation.`;
     if (this.selectedRole() !== 'gestionnaire') return false;
     return (
       this.isPremierContactActive() ||
+      (this.selectedTask()?.nameFr === 'Premier contact' && this.premierContactSubPanelMode() === 'note') ||
+      (this.selectedTask()?.nameFr?.includes('Offre') && this.offreSubPanelMode() === 'note') ||
       this.isAvisFermetureActive() ||
       this.isAnnexeQActive() ||
       this.isMedicalEvaluationActive() ||
@@ -6650,6 +7112,7 @@ Thank you for your cooperation.`;
   
   // Rappel cérémonie d'assermentation state
   rappelCeremonieChecked = signal(false);
+  rappelCeremonieRalliementChecked = signal(false);
   rappelCeremonieDate = signal<string>('');
   rappelCeremonieHeurePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_postulant')) || '7h30');
   rappelCeremonieHeureInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('rappel_heure_invites')) || '10h15');
@@ -6667,6 +7130,11 @@ Thank you for your cooperation.`;
   offreEtudesSubventionnees = signal<string>('');
   offreDureeEtudesSubventionnees = signal<string>('');
   readonly enrolmentHoursList: string[] = ENROLMENT_HOURS;
+  testEsomRecruitmentCenterCity = signal<string>('Québec');
+
+  getTestEsomCenter(): RecruitmentCenter {
+    return this.recruitmentCentersList.find(c => c.city === this.testEsomRecruitmentCenterCity()) || this.recruitmentCentersList[0];
+  }
   offreHeureArriveePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00');
   offreHeureArriveeInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00');
   offreDateEnrolement = signal<string>('');
@@ -7163,7 +7631,10 @@ Thank you for your cooperation.`;
     if (except !== 'annexeQ') this.annexeQCourriel.set(false);
     if (except !== 'offreNormale') this.offreNormaleChecked.set(false);
     if (except !== 'offreEtudes') this.offreEtudesSubventionneesChecked.set(false);
-    if (except !== 'rappelCeremonie') this.rappelCeremonieChecked.set(false);
+    if (except !== 'rappelCeremonie') {
+      this.rappelCeremonieChecked.set(false);
+      this.rappelCeremonieRalliementChecked.set(false);
+    }
   }
 
   togglePremierContactCourriel() {
@@ -7174,7 +7645,7 @@ Thank you for your cooperation.`;
     this.premierContactCourriel.set(nextVal);
   }
 
-  togglePremierContactTask(type: 'medical' | 'entrevue' | 'gambit' | 'psps' | 'selfie') {
+  togglePremierContactTask(type: 'medical' | 'entrevue' | 'gambit' | 'psps' | 'selfie' | 'iptad' | 'seaf') {
     let nextVal = false;
     if (type === 'medical') {
       nextVal = !this.premierContactMedical();
@@ -7191,9 +7662,15 @@ Thank you for your cooperation.`;
     } else if (type === 'selfie') {
       nextVal = !this.premierContactSelfie();
       this.premierContactSelfie.set(nextVal);
+    } else if (type === 'iptad') {
+      nextVal = !this.premierContactIptad();
+      this.premierContactIptad.set(nextVal);
+    } else if (type === 'seaf') {
+      nextVal = !this.premierContactSeaf();
+      this.premierContactSeaf.set(nextVal);
     }
 
-    if (nextVal || this.premierContactMedical() || this.premierContactEntrevue() || this.premierContactGambit() || this.premierContactPsps() || this.premierContactSelfie()) {
+    if (nextVal || this.premierContactMedical() || this.premierContactEntrevue() || this.premierContactGambit() || this.premierContactPsps() || this.premierContactSelfie() || this.premierContactIptad() || this.premierContactSeaf()) {
       this.clearOtherGdEmails('premierContact');
       this.premierContactCourriel.set(true);
     }
@@ -7523,8 +8000,19 @@ Thank you for your cooperation.`;
     const nextVal = !this.rappelCeremonieChecked();
     if (nextVal) {
       this.clearOtherGdEmails('rappelCeremonie');
+    } else {
+      this.rappelCeremonieRalliementChecked.set(false);
     }
     this.rappelCeremonieChecked.set(nextVal);
+  }
+
+  toggleRappelCeremonieRalliement() {
+    const nextVal = !this.rappelCeremonieRalliementChecked();
+    if (nextVal) {
+      this.clearOtherGdEmails('rappelCeremonie');
+      this.rappelCeremonieChecked.set(true);
+    }
+    this.rappelCeremonieRalliementChecked.set(nextVal);
   }
 
   // Computed Content Generators
@@ -7834,7 +8322,18 @@ Thank you for your cooperation.`;
     const notes: string[] = [];
 
     // 0. Premier Contact Note
-    if (this.isPremierContactActive()) {
+    if (this.premierContactSubPanelMode() === 'note' && this.selectedTask()?.nameFr === 'Premier contact') {
+      const noteLines: string[] = [
+        `IPTAD : ${this.premierContactNoteIptad()}`,
+        `SEAF : ${this.premierContactNoteSeaf()}`,
+        `Entrevue : ${this.premierContactNoteEntrevue()}`,
+        `Médical : ${this.premierContactNoteMedical()}`,
+        `PSPS : ${this.premierContactNotePsps()}`,
+        `Gambit : ${this.premierContactNoteGambit()}`,
+        `ANX Q : ${this.premierContactNoteAnxQ()}`
+      ];
+      notes.push(noteLines.join('\n'));
+    } else if (this.isPremierContactActive()) {
       let msg = "Courriel de premier contact envoyé au postulant.";
       const tasks: string[] = [];
       if (this.premierContactMedical()) tasks.push("Médical");
@@ -7842,6 +8341,8 @@ Thank you for your cooperation.`;
       if (this.premierContactGambit()) tasks.push("Gambit");
       if (this.premierContactPsps()) tasks.push("PSPS");
       if (this.premierContactSelfie()) tasks.push("Selfie");
+      if (this.premierContactIptad()) tasks.push("IPTAD");
+      if (this.premierContactSeaf()) tasks.push("SEAF");
 
       if (tasks.length > 0) {
         const tasksStr = tasks.length > 1 
@@ -7896,7 +8397,75 @@ Thank you for your cooperation.`;
 
     // 3.6 Tentative communication pour offre Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'tentative_offre_gd') {
-      notes.push("Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD");
+      let tentativeNote = "Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD";
+      if (this.triageMedicalRequis()) {
+        tentativeNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return tentativeNote;
+    }
+
+    // 3.7 Vérification Dossier Cadet Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+      let cadetNote = "Courriel de vérification de dossier cadet envoyé à MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca.";
+      if (this.triageMedicalRequis()) {
+        cadetNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cadetNote;
+    }
+
+    // 3.8 Bris de bail et entreposage Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'bris_bail_entreposage') {
+      let brisNote = "Transmission des informations et documents requis concernant le bris de bail et l'entreposage.";
+      if (this.triageMedicalRequis()) {
+        brisNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return brisNote;
+    }
+
+    // 3.9 Demande NAV/TAN & Claims X - CSPN partie 1 Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
+      let navTanNote = "Demande de numéro de NAV/TAN et création de compte claims X envoyée à CRFCQcReclamations@forces.gc.ca pour CSPN partie 1.";
+      if (this.triageMedicalRequis()) {
+        navTanNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return navTanNote;
+    }
+
+    // 3.10 Demande d'autorisation pour un CSPN Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+      let cspnNote = "Demande d’autorisation pour un CSPN envoyée.";
+      if (this.triageMedicalRequis()) {
+        cspnNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cspnNote;
+    }
+
+    // 3.11 Documents requis - Conjoint(e) de fait Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
+      let cdfNote = "Courriel de demande de documents pour statut de conjoint(e) de fait envoyé au postulant.";
+      if (this.triageMedicalRequis()) {
+        cdfNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cdfNote;
+    }
+
+    // 3.12 Demande SDPM pour conjoint militaire Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+      let sdpmNote = "Demande de SDPM/MPRR pour conjoint militaire envoyée à CRFCQcAdmin@forces.gc.ca.";
+      if (this.triageMedicalRequis()) {
+        sdpmNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return sdpmNote;
+    }
+
+    // 3.13 Test ESOM / Confirmation Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'test_esom_confirmation') {
+      const center = this.getTestEsomCenter();
+      let esomNote = `Courriel de convocation au test ESOM envoyé au candidat (${center.city}).`;
+      if (this.triageMedicalRequis()) {
+        esomNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return esomNote;
     }
 
     // 4. All tasks compliant Note
@@ -9363,12 +9932,12 @@ Thank you for your cooperation.`;
       if (isUic3613) {
         if (isConjoint) {
           res += `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
-          res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
+          res += "Instructions de ralliement (QMB/QMBO) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
           res += "Instruction union de fait : https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf\n";
           res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
         } else {
           res += `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.\n`;
-          res += "Instructions de ralliement (QMB) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
+          res += "Instructions de ralliement (QMB/QMBO) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf\n";
           res += "Demande de cote de sécurité (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf\n";
         }
       } else {
@@ -9390,12 +9959,12 @@ Thank you for your cooperation.`;
       if (isUic3613) {
         if (isConjoint) {
           res += `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
-          res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
+          res += "Joining Instructions (BMQ/BMOQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
           res += "Common-Law partnership instruction : https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf\n";
           res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
         } else {
           res += `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.\n`;
-          res += "Joining Instructions (BMQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
+          res += "Joining Instructions (BMQ/BMOQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf\n";
           res += "Security Screening Application (TBS330-61) : https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf\n";
         }
       } else {
@@ -9425,12 +9994,12 @@ Thank you for your cooperation.`;
       if (isUic3613) {
         if (isConjoint) {
           res += `Voici les liens vers vos instructions de ralliement, instruction pour union de fait et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
-          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB/QMBO)</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instruction union de fait</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
         } else {
           res += `Voici les liens vers vos instructions de ralliement et votre demande de cote de sécurité (TBS330-61). La demande de cote de sécurité devra être complété de la section B à la section K et apporté à : ${uniteNom}.<br>`;
-          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB/QMBO)</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Demande de cote de sécurité (TBS330-61)</a>`;
         }
       } else {
@@ -9452,12 +10021,12 @@ Thank you for your cooperation.`;
       if (isUic3613) {
         if (isConjoint) {
           res += `Here are the links to your joining instructions, common-law partnership instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
-          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ/BMOQ)</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Common-Law partnership instruction</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
         } else {
           res += `Here are the links to your joining instructions and your security screening application (TBS330-61). The security screening application must be completed from section B to section K and brought to : ${uniteNom}.<br>`;
-          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ)</a><br>`;
+          res += `<a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ/BMOQ)</a><br>`;
           res += `<a href="https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Security Screening Application (TBS330-61)</a>`;
         }
       } else {
@@ -10215,7 +10784,11 @@ Thank you for your cooperation.`;
     blocks.push(`Si vous êtes dans une Union de fait, votre conjoint ou conjointe doit être présent avec vous dès votre arrivé au centre de recrutement la journée de votre cérémonie d'assermentation.`);
 
     blocks.push(`Veuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).`);
-    blocks.push(`Vous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.`);
+
+    if (this.rappelCeremonieRalliementChecked()) {
+      blocks.push(`Voici le lien vers vos instructions de ralliement pour l’École de leadership et de recrues des Forces canadiennes (ELRFC) :\nInstructions de ralliement (QMB/QMBO) : https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf`);
+    }
+
     blocks.push(`Si jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.`);
     blocks.push(`Si vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.`);
     blocks.push(`Si vous avez des questions, n'hésitez pas à me faire suivre un courriel.`);
@@ -10248,7 +10821,11 @@ Thank you for your cooperation.`;
     blocks.push(`If you are in a common-law relationship, your spouse or common-law partner must be present with you upon arrival at the recruitment centre on the day of your swearing-in ceremony.`);
 
     blocks.push(`Please bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).`);
-    blocks.push(`Attached you will find your joining instructions and additional information regarding your basic military qualifications.`);
+
+    if (this.rappelCeremonieRalliementChecked()) {
+      blocks.push(`Here is the link to your joining instructions for the Canadian Forces Leadership and Recruit School (CFLRS):\nJoining Instructions (BMQ/BMOQ) : https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf`);
+    }
+
     blocks.push(`If you are unable to attend, please notify us as soon as possible by replying to this email.`);
     blocks.push(`If you fail to attend without notifying us, you risk having your file closed.`);
     blocks.push(`If you have any questions, please do not hesitate to email me.`);
@@ -10267,6 +10844,9 @@ Thank you for your cooperation.`;
     const teamsHtml = this.getRappelCeremonieTeamsHtmlFr();
     const pTeams = teamsHtml ? `<p>${teamsHtml}</p>` : '';
     const pUnion = `<p>Si vous êtes dans une Union de fait, votre conjoint ou conjointe doit être présent avec vous dès votre arrivé au centre de recrutement la journée de votre cérémonie d'assermentation.</p>`;
+    const pRalliement = this.rappelCeremonieRalliementChecked()
+      ? `<p>Voici le lien vers vos instructions de ralliement pour l’École de leadership et de recrues des Forces canadiennes (ELRFC) :<br><a href="https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Instructions de ralliement (QMB/QMBO)</a></p>`
+      : '';
 
     const htmlParts = [
       `<p>Bonjour,</p>`,
@@ -10281,7 +10861,7 @@ Thank you for your cooperation.`;
       pTeams,
       pUnion,
       `<p>Veuillez apporter une pièce d'identité valide avec photo (ex: permis de conduire, carte d'assurance maladie, etc).</p>`,
-      `<p>Vous trouverez ci-joint vos instructions de ralliement et d'autres informations supplémentaires sur vos qualifications militaires de base.</p>`,
+      pRalliement,
       `<p>Si jamais vous êtes dans l'impossibilité de vous présenter, veuillez-nous en aviser le plus rapidement possible en répondant à ce courriel.</p>`,
       `<p>Si vous ne vous présentez pas sans nous en aviser, vous risquez la fermeture de votre dossier.</p>`,
       `<p>Si vous avez des questions, n'hésitez pas à me faire suivre un courriel.</p>`,
@@ -10301,6 +10881,9 @@ Thank you for your cooperation.`;
     const teamsHtml = this.getRappelCeremonieTeamsHtmlEn();
     const pTeams = teamsHtml ? `<p>${teamsHtml}</p>` : '';
     const pUnion = `<p>If you are in a common-law relationship, your spouse or common-law partner must be present with you upon arrival at the recruitment centre on the day of your swearing-in ceremony.</p>`;
+    const pRalliement = this.rappelCeremonieRalliementChecked()
+      ? `<p>Here is the link to your joining instructions for the Canadian Forces Leadership and Recruit School (CFLRS):<br><a href="https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Joining Instructions (BMQ/BMOQ)</a></p>`
+      : '';
 
     const htmlParts = [
       `<p>Hello,</p>`,
@@ -10315,7 +10898,7 @@ Thank you for your cooperation.`;
       pTeams,
       pUnion,
       `<p>Please bring a valid photo ID (e.g. driver's licence, health insurance card, etc.).</p>`,
-      `<p>Attached you will find your joining instructions and additional information regarding your basic military qualifications.</p>`,
+      pRalliement,
       `<p>If you are unable to attend, please notify us as soon as possible by replying to this email.</p>`,
       `<p>If you fail to attend without notifying us, you risk having your file closed.</p>`,
       `<p>If you have any questions, please do not hesitate to email me.</p>`,
@@ -10398,14 +10981,385 @@ Thank you for your cooperation.`;
     return html;
   }
 
+  // Vérification Dossier Cadet (Volet GD)
+  getVerificationCadetEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nPourriez-vous me confirmer si le postulant suivant a un matricule attribué comme cadet et si possible avoir sa fiche de renseignements de cadet?\n\nNom : \nPrénom : \nDDN : \n\n${sigFr}`;
+  }
+
+  getVerificationCadetEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Pourriez-vous me confirmer si le postulant suivant a un matricule attribué comme cadet et si possible avoir sa fiche de renseignements de cadet?</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Nom : <br>Prénom : <br>DDN : </p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Bris de bail et entreposage (Volet GD)
+  getBrisBailEntreposageSectionPlainFr(): string {
+    return `Bonjour M./Mme XXXXX,\n\n` +
+      `Voici les informations concernant le bris de bail et votre entreposage :\n\n` +
+      `Lors de votre enrôlement, vous avez la possibilité de vous faire rembourser la pénalité pour votre bris de bail (2 mois). Les documents mentionnés plus bas devront être remis au commis responsable des réclamations lors de votre première semaine à l’École de leadership et de recrues des Forces canadiennes (ELRFC) à St-Jean.\n\n` +
+      `Bris de bail :\n\n` +
+      `Vous devrez fournir les documents suivants :\n\n` +
+      `•           Bail (original)\n\n` +
+      `•           Lettre de renouvellement du bail\n\n` +
+      `•           Lettre du propriétaire indiquant qu’il y a une pénalité en raison du bris de bail et détaillant les mois de la pénalité et le montant payé par le locataire (vous devez fournir l’original).\n\n` +
+      `•           Preuve de paiement pour les mois de la pénalité (Reçu fournis par le propriétaire détaillant les mois de la pénalité et les montants)\n\n` +
+      `•           Preuves de paiement pour le dernier mois régulier de loyer payé par le locataire ainsi que le mois de quittance.\n\n` +
+      `Entreposage :\n\n` +
+      `Concernant l’entreposage, une personne de la base de Valcartier vous contactera pour confirmer avec vous une date après enrôlement, date à laquelle un déménageur se rendra à votre résidence pour emballer vos effets personnels et transporter le tout dans un entrepôt. Vos effets personnels seront entreposés jusqu’à la fin de votre cours de métier, en attendant votre première mutation.\n\n` +
+      `Veuillez prendre note qu’il vous en coûtera 75-100$ à chaque fois que vous allez vouloir accéder à votre entrepôt, puisqu’une personne de la CIE devra se déplacer sur place.`;
+  }
+
+  getBrisBailEntreposageSectionPlainEn(): string {
+    return `Hello Mr./Ms. XXXXX,\n\n` +
+      `Here is the information regarding the lease break and your storage:\n\n` +
+      `Upon your enrolment, you have the option to be reimbursed for the penalty for your lease break (2 months). The documents mentioned below must be submitted to the claims clerk during your first week at the Canadian Forces Leadership and Recruit School (CFLRS) in St-Jean.\n\n` +
+      `Lease break:\n\n` +
+      `You will need to provide the following documents:\n\n` +
+      `•           Lease (original)\n\n` +
+      `•           Lease renewal letter\n\n` +
+      `•           Letter from the landlord indicating that there is a penalty due to the lease break and detailing the penalty months and the amount paid by the tenant (you must provide the original).\n\n` +
+      `•           Proof of payment for the penalty months (Receipt provided by the landlord detailing the penalty months and amounts)\n\n` +
+      `•           Proof of payment for the last regular month of rent paid by the tenant as well as the release month.\n\n` +
+      `Storage:\n\n` +
+      `Regarding storage, a representative from the Valcartier base will contact you to confirm a date after enrolment, on which a mover will come to your residence to pack your personal belongings and transport everything to a storage facility. Your personal belongings will be stored until the end of your occupational training course, pending your first posting.\n\n` +
+      `Please note that it will cost you $75-$100 each time you wish to access your storage unit, as a company representative will have to travel on-site.`;
+  }
+
+  getBrisBailEntreposageEmailPlain(): string {
+    const fr = this.getBrisBailEntreposageSectionPlainFr();
+    const en = this.getBrisBailEntreposageSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getBrisBailEntreposageSectionHtmlFr(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour M./Mme XXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Voici les informations concernant le bris de bail et votre entreposage :</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Lors de votre enrôlement, vous avez la possibilité de vous faire rembourser la pénalité pour votre bris de bail (2 mois). Les documents mentionnés plus bas devront être remis au commis responsable des réclamations lors de votre première semaine à l’École de leadership et de recrues des Forces canadiennes (ELRFC) à St-Jean.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Bris de bail :</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Vous devrez fournir les documents suivants :</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Bail (original)</li>` +
+      `<li style="margin-bottom: 6pt;">Lettre de renouvellement du bail</li>` +
+      `<li style="margin-bottom: 6pt;">Lettre du propriétaire indiquant qu’il y a une pénalité en raison du bris de bail et détaillant les mois de la pénalité et le montant payé par le locataire (vous devez fournir l’original).</li>` +
+      `<li style="margin-bottom: 6pt;">Preuve de paiement pour les mois de la pénalité (Reçu fournis par le propriétaire détaillant les mois de la pénalité et les montants)</li>` +
+      `<li style="margin-bottom: 6pt;">Preuves de paiement pour le dernier mois régulier de loyer payé par le locataire ainsi que le mois de quittance.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Entreposage :</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Concernant l’entreposage, une personne de la base de Valcartier vous contactera pour confirmer avec vous une date après enrôlement, date à laquelle un déménageur se rendra à votre résidence pour emballer vos effets personnels et transporter le tout dans un entrepôt. Vos effets personnels seront entreposés jusqu’à la fin de votre cours de métier, en attendant votre première mutation.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Veuillez prendre note qu’il vous en coûtera 75-100$ à chaque fois que vous allez vouloir accéder à votre entrepôt, puisqu’une personne de la CIE devra se déplacer sur place.</p>`;
+  }
+
+  getBrisBailEntreposageSectionHtmlEn(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello Mr./Ms. XXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Here is the information regarding the lease break and your storage:</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Upon your enrolment, you have the option to be reimbursed for the penalty for your lease break (2 months). The documents mentioned below must be submitted to the claims clerk during your first week at the Canadian Forces Leadership and Recruit School (CFLRS) in St-Jean.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Lease break:</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">You will need to provide the following documents:</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Lease (original)</li>` +
+      `<li style="margin-bottom: 6pt;">Lease renewal letter</li>` +
+      `<li style="margin-bottom: 6pt;">Letter from the landlord indicating that there is a penalty due to the lease break and detailing the penalty months and the amount paid by the tenant (you must provide the original).</li>` +
+      `<li style="margin-bottom: 6pt;">Proof of payment for the penalty months (Receipt provided by the landlord detailing the penalty months and amounts)</li>` +
+      `<li style="margin-bottom: 6pt;">Proof of payment for the last regular month of rent paid by the tenant as well as the release month.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Storage:</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Regarding storage, a representative from the Valcartier base will contact you to confirm a date after enrolment, on which a mover will come to your residence to pack your personal belongings and transport everything to a storage facility. Your personal belongings will be stored until the end of your occupational training course, pending your first posting.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Please note that it will cost you $75-$100 each time you wish to access your storage unit, as a company representative will have to travel on-site.</p>`;
+  }
+
+  getBrisBailEntreposageEmailHtml(): string {
+    const fr = this.getBrisBailEntreposageSectionHtmlFr();
+    const en = this.getBrisBailEntreposageSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
+  // Demande NAV/TAN & Claims X - CSPN partie 1 (Volet GD)
+  getDemandeNavTanEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nPourriez-vous nous donner un numéro de NAV/TAN pour le postulant suivant svp:\n\nSN: XXXXXXXX\nRANK : APPL/POST CIV\nFIRST NAME : XXXXXXX\nNAME : XXXXXXX\nPON :  281(QUEBEC)\nUIC : 0202(QC)\nPROV OF EMPLOYMENT :  QC\nDate de CSPN : jour-au jour -mois-année\n\n${sigFr}`;
+  }
+
+  getDemandeNavTanEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Pourriez-vous nous donner un numéro de NAV/TAN pour le postulant suivant svp:</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `SN: XXXXXXXX<br>` +
+      `RANK : APPL/POST CIV<br>` +
+      `FIRST NAME : XXXXXXX<br>` +
+      `NAME : XXXXXXX<br>` +
+      `PON :  281(QUEBEC)<br>` +
+      `UIC : 0202(QC)<br>` +
+      `PROV OF EMPLOYMENT :  QC<br>` +
+      `Date de CSPN : jour-au jour -mois-année` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Demande d'autorisation pour un CSPN (Volet GD)
+  getDemandeAutorisationCspnEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nVoici une demande d’autorisation pour un CSPN.\n\nAlpha : XXX\nNM : XXX\nNom : XXX\nPrénom : XXX\nMétier : XXX\n\n${sigFr}`;
+  }
+
+  getDemandeAutorisationCspnEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Voici une demande d’autorisation pour un CSPN.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `Alpha : XXX<br>` +
+      `NM : XXX<br>` +
+      `Nom : XXX<br>` +
+      `Prénom : XXX<br>` +
+      `Métier : XXX` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Documents requis - Conjoint(e) de fait (Volet GD)
+  getDocumentsConjointDeFaitSectionPlainFr(): string {
+    return `Bonjour,\n\n` +
+      `Vous nous avez mentionné être conjoint.e de fait. Pour votre enrôlement, nous avons besoin de prouver ce statut. Pour se faire, merci de m’envoyer par courriel :\n\n` +
+      `• Une facture de vous et une facture de votre conjoint.e d’un an en arrière, soit une facture de juin 2025, qui prouve que vous habitiez ensemble l’an passé,\n` +
+      `• Une facture de vous et une facture de votre conjoint.e qui prouve que vous êtes à la même adresse actuellement (soit mai/juin 2026),\n` +
+      `• Le certificat de naissance de votre conjoint.e.\n\n` +
+      `(Vous pouvez fournir des factures à vos noms individuels ou des factures adressées à vos deux noms)\n\n` +
+      `Lors de l’assermentation :\n\n` +
+      `• Apportez les factures originales et le certificat de naissance de votre conjoint.e.\n` +
+      `• Votre conjoint.e devra être présent.e lors de l’assermentation pour signer les documents d’union de fait (cela prendra quelques minutes, il/elle pourra quitter par la suite)`;
+  }
+
+  getDocumentsConjointDeFaitSectionPlainEn(): string {
+    return `Hello,\n\n` +
+      `You mentioned to us that you are in a common-law relationship. For your enrolment, we need to establish proof of this status. To do so, please email me:\n\n` +
+      `• One bill/invoice for you and one for your common-law partner from one year ago (e.g., June 2025), proving that you lived together last year,\n` +
+      `• One bill/invoice for you and one for your common-law partner proving that you are currently at the same address (e.g., May/June 2026),\n` +
+      `• Your common-law partner's birth certificate.\n\n` +
+      `(You can provide bills in your individual names or bills addressed to both names)\n\n` +
+      `At the swearing-in ceremony:\n\n` +
+      `• Bring the original bills and your common-law partner's birth certificate.\n` +
+      `• Your common-law partner must be present during the swearing-in ceremony to sign the common-law relationship documents (this will take a few minutes, he/she may leave afterwards)`;
+  }
+
+  getDocumentsConjointDeFaitEmailPlain(): string {
+    const fr = this.getDocumentsConjointDeFaitSectionPlainFr();
+    const en = this.getDocumentsConjointDeFaitSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getDocumentsConjointDeFaitSectionHtmlFr(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Vous nous avez mentionné être conjoint.e de fait. Pour votre enrôlement, nous avons besoin de prouver ce statut. Pour se faire, merci de m’envoyer par courriel :</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Une facture de vous et une facture de votre conjoint.e d’un an en arrière, soit une facture de juin 2025, qui prouve que vous habitiez ensemble l’an passé,</li>` +
+      `<li style="margin-bottom: 6pt;">Une facture de vous et une facture de votre conjoint.e qui prouve que vous êtes à la même adresse actuellement (soit mai/juin 2026),</li>` +
+      `<li style="margin-bottom: 6pt;">Le certificat de naissance de votre conjoint.e.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><em>(Vous pouvez fournir des factures à vos noms individuels ou des factures adressées à vos deux noms)</em></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Lors de l’assermentation :</strong></p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Apportez les factures originales et le certificat de naissance de votre conjoint.e.</li>` +
+      `<li style="margin-bottom: 6pt;">Votre conjoint.e devra être présent.e lors de l’assermentation pour signer les documents d’union de fait (cela prendra quelques minutes, il/elle pourra quitter par la suite)</li>` +
+      `</ul>`;
+  }
+
+  getDocumentsConjointDeFaitSectionHtmlEn(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">You mentioned to us that you are in a common-law relationship. For your enrolment, we need to establish proof of this status. To do so, please email me:</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">One bill/invoice for you and one for your common-law partner from one year ago (e.g., June 2025), proving that you lived together last year,</li>` +
+      `<li style="margin-bottom: 6pt;">One bill/invoice for you and one for your common-law partner proving that you are currently at the same address (e.g., May/June 2026),</li>` +
+      `<li style="margin-bottom: 6pt;">Your common-law partner's birth certificate.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><em>(You can provide bills in your individual names or bills addressed to both names)</em></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>At the swearing-in ceremony:</strong></p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Bring the original bills and your common-law partner's birth certificate.</li>` +
+      `<li style="margin-bottom: 6pt;">Your common-law partner must be present during the swearing-in ceremony to sign the common-law relationship documents (this will take a few minutes, he/she may leave afterwards)</li>` +
+      `</ul>`;
+  }
+
+  getDocumentsConjointDeFaitEmailHtml(): string {
+    const fr = this.getDocumentsConjointDeFaitSectionHtmlFr();
+    const en = this.getDocumentsConjointDeFaitSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
+  // Demande SDPM pour conjoint militaire (Volet GD)
+  getDemandeSdpmConjointMilitaireEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nLe traitement aurait besoin de SDPM/MPRR pour le membre suivant :\n\nMatricule : XXXXX\nPrénom : XXXXX\nNOM : XXXXX\nDate de naissance : XXXXX\nF rég\n\n${sigFr}`;
+  }
+
+  getDemandeSdpmConjointMilitaireEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Le traitement aurait besoin de SDPM/MPRR pour le membre suivant :</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `Matricule : XXXXX<br>` +
+      `Prénom : XXXXX<br>` +
+      `NOM : XXXXX<br>` +
+      `Date de naissance : XXXXX<br>` +
+      `F rég` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Test ESOM / Confirmation (Volet GD)
+  getTestEsomConfirmationEmailPlain(): string {
+    const center = this.getTestEsomCenter();
+    const sigFr = this.getSignatureFr();
+    return `Bonjour M. XXXXXX,\n\n` +
+      `Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).\n\n` +
+      `Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.\n\n` +
+      `Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.\n\n` +
+      `Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}\n\n` +
+      `Lieu : ${center.address}\n` +
+      `Stationnement : Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)\n\n` +
+      `Veuillez confirmer votre disponibilité en répondant à ce courriel.\n\n` +
+      `${sigFr}`;
+  }
+
+  getTestEsomConfirmationEmailHtml(): string {
+    const center = this.getTestEsomCenter();
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour M. XXXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<strong>Lieu :</strong> ${center.address}<br>` +
+      `<strong>Stationnement :</strong> Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Veuillez confirmer votre disponibilité en répondant à ce courriel.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  getEmailSubject(): string {
+    if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
+      return "Forces armées canadiennes/Canadian Armed Forces";
+    }
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return "Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1";
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return "Demande d’autorisation pour un CSPN";
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return "Documents requis - Statut de conjoint(e) de fait";
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return "Demande SDPM pour conjoint militaire";
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return "TEST ESOM/ Confirmation";
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return "(Vérification Dossier Cadet)";
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return "Bris de bail et Entreposage";
+    }
+    if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
+      return "Tentative de communication - Offre d'emploi";
+    }
+    if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
+      return "Vérification de programme EDO VS PFOR";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
+      return "Inadmissibilité - Âge (57 ans et plus)";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
+      return "Inadmissibilité - Résident permanent";
+    }
+    if (this.isPremierContactActive()) {
+      return "Premier contact - Inscription aux Forces armées canadiennes";
+    }
+    if (this.isAvisFermetureActive()) {
+      return "Avis de fermeture de dossier";
+    }
+    if (this.isAnnexeQActive()) {
+      return "Annexe Q - Attestation de sécurité";
+    }
+    if (this.offreNormaleChecked() || this.offreEtudesSubventionneesChecked()) {
+      return "Offre d'emploi - Forces armées canadiennes";
+    }
+    if (this.rappelCeremonieChecked()) {
+      return "Rappel - Cérémonie d'assermentation";
+    }
+    if (this.isMedicalEvaluationActive()) {
+      return "Évaluation médicale - Forces armées canadiennes";
+    }
+    return "Suivi de votre candidature - Forces armées canadiennes";
+  }
+
   // Consolidated Plain Text Email
   getCombinedPlainString(ignoreMerge: boolean = false): string {
     if (!ignoreMerge && this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailPlain()) {
       return this.sharedState.reoMergedEmailPlain();
     }
 
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return this.getDemandeNavTanEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return this.getDemandeAutorisationCspnEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return this.getDocumentsConjointDeFaitEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return this.getDemandeSdpmConjointMilitaireEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return this.getTestEsomConfirmationEmailPlain();
+    }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return this.getVerificationCadetEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return this.getBrisBailEntreposageEmailPlain();
     }
 
     const scenario = this.activeEmailScenario();
@@ -10530,8 +11484,29 @@ Thank you for your cooperation.`;
       return this.sharedState.reoMergedEmailHtml();
     }
 
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return this.getDemandeNavTanEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return this.getDemandeAutorisationCspnEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return this.getDocumentsConjointDeFaitEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return this.getDemandeSdpmConjointMilitaireEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return this.getTestEsomConfirmationEmailHtml();
+    }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
+      return this.getVerificationCadetEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return this.getBrisBailEntreposageEmailHtml();
     }
 
     const scenario = this.activeEmailScenario();
@@ -10883,7 +11858,7 @@ Thank you for your cooperation.`;
 
     html += `<p><strong>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</strong></p>`;
 
-    return html;
+    return `<!-- START_TASK_BODY_FR -->${html}<!-- END_TASK_BODY_FR -->`;
   }
 
   getRejectionHtmlEn(): string {
@@ -11104,7 +12079,7 @@ Thank you for your cooperation.`;
 
     html += `<p><strong>If you take no action, your file will be automatically deactivated after 30 days.</strong></p>`;
 
-    return html;
+    return `<!-- START_TASK_BODY_EN -->${html}<!-- END_TASK_BODY_EN -->`;
   }
 
   // Helper to get raw HTML string for clipboard and display
@@ -11146,6 +12121,16 @@ Thank you for your cooperation.`;
       setTimeout(() => this.copiedEmail.set(false), 3000);
 
       // 2. Open Outlook
+      if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+        const mailtoLink = `mailto:MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca?subject=${encodeURIComponent('(Vérification Dossier Cadet)')}`;
+        window.location.href = mailtoLink;
+        return;
+      }
+      if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
+        const mailtoLink = `mailto:CRFCQcReclamations@forces.gc.ca?subject=${encodeURIComponent(subject)}`;
+        window.location.href = mailtoLink;
+        return;
+      }
       const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}`;
       window.location.href = mailtoLink;
     } catch (err) {
