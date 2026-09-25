@@ -178,6 +178,7 @@ interface RoleSnapshot {
   noteSvcMilAnt?: string;
   noteBeneficiaire?: string;
   noteDateCourrielConfirmation?: string;
+  testEsomRecruitmentCenterCity?: string;
 }
 
 function getTodayDateString(): string {
@@ -936,6 +937,96 @@ function getTodayDateString(): string {
                       >
                         <span class="truncate">Vérification Dossier Cadet</span>
                         @if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('bris_bail_entreposage')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
+                      >
+                        <span class="truncate">Bris de bail et entreposage</span>
+                        @if (selectedEmailBankTemplate() === 'bris_bail_entreposage') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_nav_tan')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_nav_tan'"
+                      >
+                        <span class="truncate">Demande NAV/TAN & Claims X - CSPN partie 1</span>
+                        @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_autorisation_cspn')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
+                      >
+                        <span class="truncate">Demande d'autorisation pour un CSPN</span>
+                        @if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('documents_conjoint_de_fait')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
+                      >
+                        <span class="truncate">Documents requis - Conjoint(e) de fait</span>
+                        @if (selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('demande_sdpm_conjoint_militaire')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
+                      >
+                        <span class="truncate">Demande SDPM pour conjoint militaire</span>
+                        @if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('test_esom_confirmation')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
+                      >
+                        <span class="truncate">TEST ESOM / Confirmation</span>
+                        @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -3940,6 +4031,27 @@ function getTodayDateString(): string {
               </h2>
 
               <div class="flex items-center gap-3">
+                @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                  <div class="flex items-center gap-2 bg-indigo-50/70 border border-indigo-200 px-3 py-1 rounded-xl shadow-2xs">
+                    <label class="text-xs font-bold text-indigo-900 flex items-center gap-1.5 whitespace-nowrap">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Lieu du test :
+                    </label>
+                    <select
+                      [ngModel]="testEsomRecruitmentCenterCity()"
+                      (ngModelChange)="testEsomRecruitmentCenterCity.set($event)"
+                      class="text-xs border border-indigo-300 rounded-lg px-2.5 py-1 bg-white font-semibold text-slate-800 shadow-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer"
+                    >
+                      @for (center of recruitmentCentersList; track center.city) {
+                        <option [value]="center.city">{{ center.city }} ({{ center.name }})</option>
+                      }
+                    </select>
+                  </div>
+                }
+
                 <button
                   (click)="copyNote()"
                   class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
@@ -3988,6 +4100,50 @@ function getTodayDateString(): string {
                   <span>Cochez une ou plusieurs options dans le panneau « Construction de courriels » (Partie 1, Partie 2, Partie 1 et 2, Offre d'emploi, etc.) pour générer le courriel au postulant ainsi que la note au registre.</span>
                 </div>
               } @else {
+                <!-- Instructions pour le GD (Demande NAV/TAN) -->
+                @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                  <div class="bg-amber-50 border border-amber-200/90 rounded-xl p-4 shadow-xs">
+                    <div class="flex items-start gap-3">
+                      <div class="p-2 bg-amber-100 text-amber-700 rounded-lg shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                          Instructions pour le gestionnaire de dossier (GD)
+                        </h4>
+                        <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
+                          <li>Mettre en attache le message d’autorisation les opérations (Ops CRFC)</li>
+                          <li>Mettre en attache le message d’autorisation officiel (message DRAFT)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <!-- Instructions pour le GD (Test ESOM) -->
+                @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                  <div class="bg-amber-50 border border-amber-200/90 rounded-xl p-4 shadow-xs">
+                    <div class="flex items-start gap-3">
+                      <div class="p-2 bg-amber-100 text-amber-700 rounded-lg shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                          Instructions pour le gestionnaire de dossier (GD)
+                        </h4>
+                        <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
+                          <li>Contacter le postulant pour ses disponibilité</li>
+                          <li>Vérifier la disponibilité de l'administrateur de test</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                }
+
                 <!-- 1. Note Section (Single unified note) -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
                   <div class="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
@@ -4012,7 +4168,19 @@ function getTodayDateString(): string {
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Courriel au Postulant (Bilingue)</h3>
+                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">
+                        @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                          Courriel - Destinataire : CRFCQcReclamations&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+                          Courriel - Destinataire : MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+                          Courriel - Destinataire : CRFCQcAdmin&#64;forces.gc.ca
+                        } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+                          Courriel - Demande d’autorisation pour un CSPN
+                        } @else {
+                          Courriel au Postulant (Bilingue)
+                        }
+                      </h3>
                     </div>
                   </div>
                   <div
@@ -4932,6 +5100,7 @@ Thank you for your cooperation.`;
       noteSvcMilAnt: this.noteSvcMilAnt(),
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
+      testEsomRecruitmentCenterCity: this.testEsomRecruitmentCenterCity(),
       recruiterDossierType: this.recruiterDossierType(),
       sgtCheckedInstructions: Array.from(this.sgtCheckedInstructions()),
     };
@@ -5028,6 +5197,7 @@ Thank you for your cooperation.`;
     this.noteSvcMilAnt.set(snapshot.noteSvcMilAnt || 'N/A');
     this.noteBeneficiaire.set(snapshot.noteBeneficiaire || '');
     this.noteDateCourrielConfirmation.set(snapshot.noteDateCourrielConfirmation || '');
+    this.testEsomRecruitmentCenterCity.set(snapshot.testEsomRecruitmentCenterCity || 'Québec');
 
     this.sharedState.selectedDossierJobId1.set(snapshot.selectedDossierJobId1);
     this.sharedState.selectedDossierJobId2.set(snapshot.selectedDossierJobId2);
@@ -5131,6 +5301,7 @@ Thank you for your cooperation.`;
       noteSvcMilAnt: 'N/A',
       noteBeneficiaire: '',
       noteDateCourrielConfirmation: '',
+      testEsomRecruitmentCenterCity: 'Québec',
       selectedDossierJobId1: '',
       selectedDossierJobId2: '',
       selectedDossierJobId3: '',
@@ -5781,6 +5952,7 @@ Thank you for your cooperation.`;
     this.noteSvcMilAnt.set('N/A');
     this.noteBeneficiaire.set('');
     this.noteDateCourrielConfirmation.set(getTodayDateString());
+    this.testEsomRecruitmentCenterCity.set('Québec');
 
     // Reset Dossier jobs & Réo shared state
     this.clearDossierJob(1);
@@ -6958,6 +7130,11 @@ Thank you for your cooperation.`;
   offreEtudesSubventionnees = signal<string>('');
   offreDureeEtudesSubventionnees = signal<string>('');
   readonly enrolmentHoursList: string[] = ENROLMENT_HOURS;
+  testEsomRecruitmentCenterCity = signal<string>('Québec');
+
+  getTestEsomCenter(): RecruitmentCenter {
+    return this.recruitmentCentersList.find(c => c.city === this.testEsomRecruitmentCenterCity()) || this.recruitmentCentersList[0];
+  }
   offreHeureArriveePostulant = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00');
   offreHeureArriveeInvites = signal<string>((typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00');
   offreDateEnrolement = signal<string>('');
@@ -8234,6 +8411,61 @@ Thank you for your cooperation.`;
         cadetNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return cadetNote;
+    }
+
+    // 3.8 Bris de bail et entreposage Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'bris_bail_entreposage') {
+      let brisNote = "Transmission des informations et documents requis concernant le bris de bail et l'entreposage.";
+      if (this.triageMedicalRequis()) {
+        brisNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return brisNote;
+    }
+
+    // 3.9 Demande NAV/TAN & Claims X - CSPN partie 1 Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
+      let navTanNote = "Demande de numéro de NAV/TAN et création de compte claims X envoyée à CRFCQcReclamations@forces.gc.ca pour CSPN partie 1.";
+      if (this.triageMedicalRequis()) {
+        navTanNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return navTanNote;
+    }
+
+    // 3.10 Demande d'autorisation pour un CSPN Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+      let cspnNote = "Demande d’autorisation pour un CSPN envoyée.";
+      if (this.triageMedicalRequis()) {
+        cspnNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cspnNote;
+    }
+
+    // 3.11 Documents requis - Conjoint(e) de fait Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
+      let cdfNote = "Courriel de demande de documents pour statut de conjoint(e) de fait envoyé au postulant.";
+      if (this.triageMedicalRequis()) {
+        cdfNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return cdfNote;
+    }
+
+    // 3.12 Demande SDPM pour conjoint militaire Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+      let sdpmNote = "Demande de SDPM/MPRR pour conjoint militaire envoyée à CRFCQcAdmin@forces.gc.ca.";
+      if (this.triageMedicalRequis()) {
+        sdpmNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return sdpmNote;
+    }
+
+    // 3.13 Test ESOM / Confirmation Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'test_esom_confirmation') {
+      const center = this.getTestEsomCenter();
+      let esomNote = `Courriel de convocation au test ESOM envoyé au candidat (${center.city}).`;
+      if (this.triageMedicalRequis()) {
+        esomNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return esomNote;
     }
 
     // 4. All tasks compliant Note
@@ -10765,12 +10997,306 @@ Thank you for your cooperation.`;
       `</div>`;
   }
 
+  // Bris de bail et entreposage (Volet GD)
+  getBrisBailEntreposageSectionPlainFr(): string {
+    return `Bonjour M./Mme XXXXX,\n\n` +
+      `Voici les informations concernant le bris de bail et votre entreposage :\n\n` +
+      `Lors de votre enrôlement, vous avez la possibilité de vous faire rembourser la pénalité pour votre bris de bail (2 mois). Les documents mentionnés plus bas devront être remis au commis responsable des réclamations lors de votre première semaine à l’École de leadership et de recrues des Forces canadiennes (ELRFC) à St-Jean.\n\n` +
+      `Bris de bail :\n\n` +
+      `Vous devrez fournir les documents suivants :\n\n` +
+      `•           Bail (original)\n\n` +
+      `•           Lettre de renouvellement du bail\n\n` +
+      `•           Lettre du propriétaire indiquant qu’il y a une pénalité en raison du bris de bail et détaillant les mois de la pénalité et le montant payé par le locataire (vous devez fournir l’original).\n\n` +
+      `•           Preuve de paiement pour les mois de la pénalité (Reçu fournis par le propriétaire détaillant les mois de la pénalité et les montants)\n\n` +
+      `•           Preuves de paiement pour le dernier mois régulier de loyer payé par le locataire ainsi que le mois de quittance.\n\n` +
+      `Entreposage :\n\n` +
+      `Concernant l’entreposage, une personne de la base de Valcartier vous contactera pour confirmer avec vous une date après enrôlement, date à laquelle un déménageur se rendra à votre résidence pour emballer vos effets personnels et transporter le tout dans un entrepôt. Vos effets personnels seront entreposés jusqu’à la fin de votre cours de métier, en attendant votre première mutation.\n\n` +
+      `Veuillez prendre note qu’il vous en coûtera 75-100$ à chaque fois que vous allez vouloir accéder à votre entrepôt, puisqu’une personne de la CIE devra se déplacer sur place.`;
+  }
+
+  getBrisBailEntreposageSectionPlainEn(): string {
+    return `Hello Mr./Ms. XXXXX,\n\n` +
+      `Here is the information regarding the lease break and your storage:\n\n` +
+      `Upon your enrolment, you have the option to be reimbursed for the penalty for your lease break (2 months). The documents mentioned below must be submitted to the claims clerk during your first week at the Canadian Forces Leadership and Recruit School (CFLRS) in St-Jean.\n\n` +
+      `Lease break:\n\n` +
+      `You will need to provide the following documents:\n\n` +
+      `•           Lease (original)\n\n` +
+      `•           Lease renewal letter\n\n` +
+      `•           Letter from the landlord indicating that there is a penalty due to the lease break and detailing the penalty months and the amount paid by the tenant (you must provide the original).\n\n` +
+      `•           Proof of payment for the penalty months (Receipt provided by the landlord detailing the penalty months and amounts)\n\n` +
+      `•           Proof of payment for the last regular month of rent paid by the tenant as well as the release month.\n\n` +
+      `Storage:\n\n` +
+      `Regarding storage, a representative from the Valcartier base will contact you to confirm a date after enrolment, on which a mover will come to your residence to pack your personal belongings and transport everything to a storage facility. Your personal belongings will be stored until the end of your occupational training course, pending your first posting.\n\n` +
+      `Please note that it will cost you $75-$100 each time you wish to access your storage unit, as a company representative will have to travel on-site.`;
+  }
+
+  getBrisBailEntreposageEmailPlain(): string {
+    const fr = this.getBrisBailEntreposageSectionPlainFr();
+    const en = this.getBrisBailEntreposageSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getBrisBailEntreposageSectionHtmlFr(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour M./Mme XXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Voici les informations concernant le bris de bail et votre entreposage :</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Lors de votre enrôlement, vous avez la possibilité de vous faire rembourser la pénalité pour votre bris de bail (2 mois). Les documents mentionnés plus bas devront être remis au commis responsable des réclamations lors de votre première semaine à l’École de leadership et de recrues des Forces canadiennes (ELRFC) à St-Jean.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Bris de bail :</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Vous devrez fournir les documents suivants :</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Bail (original)</li>` +
+      `<li style="margin-bottom: 6pt;">Lettre de renouvellement du bail</li>` +
+      `<li style="margin-bottom: 6pt;">Lettre du propriétaire indiquant qu’il y a une pénalité en raison du bris de bail et détaillant les mois de la pénalité et le montant payé par le locataire (vous devez fournir l’original).</li>` +
+      `<li style="margin-bottom: 6pt;">Preuve de paiement pour les mois de la pénalité (Reçu fournis par le propriétaire détaillant les mois de la pénalité et les montants)</li>` +
+      `<li style="margin-bottom: 6pt;">Preuves de paiement pour le dernier mois régulier de loyer payé par le locataire ainsi que le mois de quittance.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Entreposage :</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Concernant l’entreposage, une personne de la base de Valcartier vous contactera pour confirmer avec vous une date après enrôlement, date à laquelle un déménageur se rendra à votre résidence pour emballer vos effets personnels et transporter le tout dans un entrepôt. Vos effets personnels seront entreposés jusqu’à la fin de votre cours de métier, en attendant votre première mutation.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Veuillez prendre note qu’il vous en coûtera 75-100$ à chaque fois que vous allez vouloir accéder à votre entrepôt, puisqu’une personne de la CIE devra se déplacer sur place.</p>`;
+  }
+
+  getBrisBailEntreposageSectionHtmlEn(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello Mr./Ms. XXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Here is the information regarding the lease break and your storage:</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Upon your enrolment, you have the option to be reimbursed for the penalty for your lease break (2 months). The documents mentioned below must be submitted to the claims clerk during your first week at the Canadian Forces Leadership and Recruit School (CFLRS) in St-Jean.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Lease break:</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">You will need to provide the following documents:</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Lease (original)</li>` +
+      `<li style="margin-bottom: 6pt;">Lease renewal letter</li>` +
+      `<li style="margin-bottom: 6pt;">Letter from the landlord indicating that there is a penalty due to the lease break and detailing the penalty months and the amount paid by the tenant (you must provide the original).</li>` +
+      `<li style="margin-bottom: 6pt;">Proof of payment for the penalty months (Receipt provided by the landlord detailing the penalty months and amounts)</li>` +
+      `<li style="margin-bottom: 6pt;">Proof of payment for the last regular month of rent paid by the tenant as well as the release month.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Storage:</strong></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Regarding storage, a representative from the Valcartier base will contact you to confirm a date after enrolment, on which a mover will come to your residence to pack your personal belongings and transport everything to a storage facility. Your personal belongings will be stored until the end of your occupational training course, pending your first posting.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Please note that it will cost you $75-$100 each time you wish to access your storage unit, as a company representative will have to travel on-site.</p>`;
+  }
+
+  getBrisBailEntreposageEmailHtml(): string {
+    const fr = this.getBrisBailEntreposageSectionHtmlFr();
+    const en = this.getBrisBailEntreposageSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
+  // Demande NAV/TAN & Claims X - CSPN partie 1 (Volet GD)
+  getDemandeNavTanEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nPourriez-vous nous donner un numéro de NAV/TAN pour le postulant suivant svp:\n\nSN: XXXXXXXX\nRANK : APPL/POST CIV\nFIRST NAME : XXXXXXX\nNAME : XXXXXXX\nPON :  281(QUEBEC)\nUIC : 0202(QC)\nPROV OF EMPLOYMENT :  QC\nDate de CSPN : jour-au jour -mois-année\n\n${sigFr}`;
+  }
+
+  getDemandeNavTanEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Pourriez-vous nous donner un numéro de NAV/TAN pour le postulant suivant svp:</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `SN: XXXXXXXX<br>` +
+      `RANK : APPL/POST CIV<br>` +
+      `FIRST NAME : XXXXXXX<br>` +
+      `NAME : XXXXXXX<br>` +
+      `PON :  281(QUEBEC)<br>` +
+      `UIC : 0202(QC)<br>` +
+      `PROV OF EMPLOYMENT :  QC<br>` +
+      `Date de CSPN : jour-au jour -mois-année` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Demande d'autorisation pour un CSPN (Volet GD)
+  getDemandeAutorisationCspnEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nVoici une demande d’autorisation pour un CSPN.\n\nAlpha : XXX\nNM : XXX\nNom : XXX\nPrénom : XXX\nMétier : XXX\n\n${sigFr}`;
+  }
+
+  getDemandeAutorisationCspnEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Voici une demande d’autorisation pour un CSPN.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `Alpha : XXX<br>` +
+      `NM : XXX<br>` +
+      `Nom : XXX<br>` +
+      `Prénom : XXX<br>` +
+      `Métier : XXX` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Documents requis - Conjoint(e) de fait (Volet GD)
+  getDocumentsConjointDeFaitSectionPlainFr(): string {
+    return `Bonjour,\n\n` +
+      `Vous nous avez mentionné être conjoint.e de fait. Pour votre enrôlement, nous avons besoin de prouver ce statut. Pour se faire, merci de m’envoyer par courriel :\n\n` +
+      `• Une facture de vous et une facture de votre conjoint.e d’un an en arrière, soit une facture de juin 2025, qui prouve que vous habitiez ensemble l’an passé,\n` +
+      `• Une facture de vous et une facture de votre conjoint.e qui prouve que vous êtes à la même adresse actuellement (soit mai/juin 2026),\n` +
+      `• Le certificat de naissance de votre conjoint.e.\n\n` +
+      `(Vous pouvez fournir des factures à vos noms individuels ou des factures adressées à vos deux noms)\n\n` +
+      `Lors de l’assermentation :\n\n` +
+      `• Apportez les factures originales et le certificat de naissance de votre conjoint.e.\n` +
+      `• Votre conjoint.e devra être présent.e lors de l’assermentation pour signer les documents d’union de fait (cela prendra quelques minutes, il/elle pourra quitter par la suite)`;
+  }
+
+  getDocumentsConjointDeFaitSectionPlainEn(): string {
+    return `Hello,\n\n` +
+      `You mentioned to us that you are in a common-law relationship. For your enrolment, we need to establish proof of this status. To do so, please email me:\n\n` +
+      `• One bill/invoice for you and one for your common-law partner from one year ago (e.g., June 2025), proving that you lived together last year,\n` +
+      `• One bill/invoice for you and one for your common-law partner proving that you are currently at the same address (e.g., May/June 2026),\n` +
+      `• Your common-law partner's birth certificate.\n\n` +
+      `(You can provide bills in your individual names or bills addressed to both names)\n\n` +
+      `At the swearing-in ceremony:\n\n` +
+      `• Bring the original bills and your common-law partner's birth certificate.\n` +
+      `• Your common-law partner must be present during the swearing-in ceremony to sign the common-law relationship documents (this will take a few minutes, he/she may leave afterwards)`;
+  }
+
+  getDocumentsConjointDeFaitEmailPlain(): string {
+    const fr = this.getDocumentsConjointDeFaitSectionPlainFr();
+    const en = this.getDocumentsConjointDeFaitSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getDocumentsConjointDeFaitSectionHtmlFr(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Vous nous avez mentionné être conjoint.e de fait. Pour votre enrôlement, nous avons besoin de prouver ce statut. Pour se faire, merci de m’envoyer par courriel :</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Une facture de vous et une facture de votre conjoint.e d’un an en arrière, soit une facture de juin 2025, qui prouve que vous habitiez ensemble l’an passé,</li>` +
+      `<li style="margin-bottom: 6pt;">Une facture de vous et une facture de votre conjoint.e qui prouve que vous êtes à la même adresse actuellement (soit mai/juin 2026),</li>` +
+      `<li style="margin-bottom: 6pt;">Le certificat de naissance de votre conjoint.e.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><em>(Vous pouvez fournir des factures à vos noms individuels ou des factures adressées à vos deux noms)</em></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Lors de l’assermentation :</strong></p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Apportez les factures originales et le certificat de naissance de votre conjoint.e.</li>` +
+      `<li style="margin-bottom: 6pt;">Votre conjoint.e devra être présent.e lors de l’assermentation pour signer les documents d’union de fait (cela prendra quelques minutes, il/elle pourra quitter par la suite)</li>` +
+      `</ul>`;
+  }
+
+  getDocumentsConjointDeFaitSectionHtmlEn(): string {
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">You mentioned to us that you are in a common-law relationship. For your enrolment, we need to establish proof of this status. To do so, please email me:</p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">One bill/invoice for you and one for your common-law partner from one year ago (e.g., June 2025), proving that you lived together last year,</li>` +
+      `<li style="margin-bottom: 6pt;">One bill/invoice for you and one for your common-law partner proving that you are currently at the same address (e.g., May/June 2026),</li>` +
+      `<li style="margin-bottom: 6pt;">Your common-law partner's birth certificate.</li>` +
+      `</ul>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><em>(You can provide bills in your individual names or bills addressed to both names)</em></p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 6.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>At the swearing-in ceremony:</strong></p>` +
+      `<ul style="margin-top: 0cm; margin-bottom: 12.0pt; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<li style="margin-bottom: 6pt;">Bring the original bills and your common-law partner's birth certificate.</li>` +
+      `<li style="margin-bottom: 6pt;">Your common-law partner must be present during the swearing-in ceremony to sign the common-law relationship documents (this will take a few minutes, he/she may leave afterwards)</li>` +
+      `</ul>`;
+  }
+
+  getDocumentsConjointDeFaitEmailHtml(): string {
+    const fr = this.getDocumentsConjointDeFaitSectionHtmlFr();
+    const en = this.getDocumentsConjointDeFaitSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
+  // Demande SDPM pour conjoint militaire (Volet GD)
+  getDemandeSdpmConjointMilitaireEmailPlain(): string {
+    const sigFr = this.getSignatureFr();
+    return `Bonjour,\n\nLe traitement aurait besoin de SDPM/MPRR pour le membre suivant :\n\nMatricule : XXXXX\nPrénom : XXXXX\nNOM : XXXXX\nDate de naissance : XXXXX\nF rég\n\n${sigFr}`;
+  }
+
+  getDemandeSdpmConjointMilitaireEmailHtml(): string {
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Le traitement aurait besoin de SDPM/MPRR pour le membre suivant :</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `Matricule : XXXXX<br>` +
+      `Prénom : XXXXX<br>` +
+      `NOM : XXXXX<br>` +
+      `Date de naissance : XXXXX<br>` +
+      `F rég` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
+  // Test ESOM / Confirmation (Volet GD)
+  getTestEsomConfirmationEmailPlain(): string {
+    const center = this.getTestEsomCenter();
+    const sigFr = this.getSignatureFr();
+    return `Bonjour M. XXXXXX,\n\n` +
+      `Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).\n\n` +
+      `Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.\n\n` +
+      `Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.\n\n` +
+      `Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}\n\n` +
+      `Lieu : ${center.address}\n` +
+      `Stationnement : Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)\n\n` +
+      `Veuillez confirmer votre disponibilité en répondant à ce courriel.\n\n` +
+      `${sigFr}`;
+  }
+
+  getTestEsomConfirmationEmailHtml(): string {
+    const center = this.getTestEsomCenter();
+    const sigFr = this.getHtmlSignatureFr();
+    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour M. XXXXXX,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+      `<strong>Lieu :</strong> ${center.address}<br>` +
+      `<strong>Stationnement :</strong> Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)` +
+      `</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Veuillez confirmer votre disponibilité en répondant à ce courriel.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigFr}</p>` +
+      `</div>`;
+  }
+
   getEmailSubject(): string {
     if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
       return "Forces armées canadiennes/Canadian Armed Forces";
     }
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return "Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1";
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return "Demande d’autorisation pour un CSPN";
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return "Documents requis - Statut de conjoint(e) de fait";
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return "Demande SDPM pour conjoint militaire";
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return "TEST ESOM/ Confirmation";
+    }
     if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
       return "(Vérification Dossier Cadet)";
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return "Bris de bail et Entreposage";
     }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return "Tentative de communication - Offre d'emploi";
@@ -10811,11 +11337,29 @@ Thank you for your cooperation.`;
       return this.sharedState.reoMergedEmailPlain();
     }
 
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return this.getDemandeNavTanEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return this.getDemandeAutorisationCspnEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return this.getDocumentsConjointDeFaitEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return this.getDemandeSdpmConjointMilitaireEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return this.getTestEsomConfirmationEmailPlain();
+    }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailPlain();
     }
     if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
       return this.getVerificationCadetEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return this.getBrisBailEntreposageEmailPlain();
     }
 
     const scenario = this.activeEmailScenario();
@@ -10940,11 +11484,29 @@ Thank you for your cooperation.`;
       return this.sharedState.reoMergedEmailHtml();
     }
 
+    if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
+      return this.getDemandeNavTanEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
+      return this.getDemandeAutorisationCspnEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
+      return this.getDocumentsConjointDeFaitEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
+      return this.getDemandeSdpmConjointMilitaireEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
+      return this.getTestEsomConfirmationEmailHtml();
+    }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
       return this.getTentativeOffreGdEmailHtml();
     }
     if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
       return this.getVerificationCadetEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
+      return this.getBrisBailEntreposageEmailHtml();
     }
 
     const scenario = this.activeEmailScenario();
@@ -11561,6 +12123,11 @@ Thank you for your cooperation.`;
       // 2. Open Outlook
       if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
         const mailtoLink = `mailto:MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca?subject=${encodeURIComponent('(Vérification Dossier Cadet)')}`;
+        window.location.href = mailtoLink;
+        return;
+      }
+      if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
+        const mailtoLink = `mailto:CRFCQcReclamations@forces.gc.ca?subject=${encodeURIComponent(subject)}`;
         window.location.href = mailtoLink;
         return;
       }
