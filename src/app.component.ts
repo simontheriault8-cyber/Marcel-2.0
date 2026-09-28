@@ -9659,7 +9659,6 @@ Thank you for your cooperation.`;
     }
     txt += "\n";
 
-    txt += "Veuillez svp prévoir vos déplacements lors des enrôlements du 20 au 27 septembre, en raison des mondiaux de cyclisme à Montréal.\n";
     txt += "Un retard lors de la journée de votre enrôlement n’est pas acceptable.\n\n";
 
     txt += "Pour toutes questions, veuillez contacter l’adresse courriel suivante \n";
@@ -9751,7 +9750,6 @@ Thank you for your cooperation.`;
     }
     txt += "\n";
 
-    txt += "Please plan your travel accordingly for enrolments from September 20 to 27, due to the World Cycling Championships in Montreal.\n";
     txt += "Tardiness on the day of your enrolment is not acceptable.\n\n";
 
     txt += "For any questions, please contact the following email address:\n";
@@ -9877,7 +9875,6 @@ Thank you for your cooperation.`;
     html += `</ul>`;
 
     // Avertissements
-    html += `<p style="margin-bottom: 10px;"><span style="background-color: #ffff00;">Veuillez svp prévoir vos déplacements lors des enrôlements du 20 au 27 septembre, en raison des mondiaux de cyclisme à Montréal.</span></p>`;
     html += `<p style="margin-bottom: 14px;"><span style="background-color: #ffff00;">Un retard lors de la journée de votre enrôlement n’est pas acceptable.</span></p>`;
 
     // Contact
@@ -10001,7 +9998,6 @@ Thank you for your cooperation.`;
     html += `</ul>`;
 
     // Avertissements
-    html += `<p style="margin-bottom: 10px;"><span style="background-color: #ffff00;">Please plan your travel accordingly for enrolments from September 20 to 27, due to the World Cycling Championships in Montreal.</span></p>`;
     html += `<p style="margin-bottom: 14px;"><span style="background-color: #ffff00;">Tardiness on the day of your enrolment is not acceptable.</span></p>`;
 
     // Contact
