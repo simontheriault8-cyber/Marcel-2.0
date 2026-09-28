@@ -104,6 +104,7 @@ interface RoleSnapshot {
   testEsomPassed?: boolean;
   testCeopmPassed?: boolean;
   testCspnPassed?: boolean;
+  testCspnNotCompleted?: boolean;
   testCspn00182Passed?: boolean;
   testCspn00183Passed?: boolean;
   testCspn00184Passed?: boolean;
@@ -179,6 +180,10 @@ interface RoleSnapshot {
   noteBeneficiaire?: string;
   noteDateCourrielConfirmation?: string;
   testEsomRecruitmentCenterCity?: string;
+  offreFormulairePpp?: boolean;
+  offreFormulairePcu?: boolean;
+  offreFormulaireCroixSouvenir?: boolean;
+  offreFormulaireBeneficiaire?: boolean;
 }
 
 function getTodayDateString(): string {
@@ -2732,6 +2737,91 @@ function getTodayDateString(): string {
                             </div>
                           }
                         </div>
+
+                        <!-- Formulaires Supplémentaires -->
+                        <div class="mt-4 pt-4 border-t border-slate-200">
+                          <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <label class="block font-bold text-slate-800 text-xs uppercase tracking-wider">
+                              Formulaires Supplémentaires :
+                            </label>
+                          </div>
+                          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+                            <!-- PPP -->
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border transition-all cursor-pointer select-none text-xs font-semibold"
+                              [class.bg-indigo-50]="offreFormulairePpp()"
+                              [class.border-indigo-300]="offreFormulairePpp()"
+                              [class.text-indigo-900]="offreFormulairePpp()"
+                              [class.bg-slate-50]="!offreFormulairePpp()"
+                              [class.border-slate-200]="!offreFormulairePpp()"
+                              [class.text-slate-700]="!offreFormulairePpp()"
+                            >
+                              <input
+                                type="checkbox"
+                                [checked]="offreFormulairePpp()"
+                                (change)="toggleOffreFormulairePpp()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
+                              />
+                              <span>PPP</span>
+                            </label>
+
+                            <!-- PCU -->
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border transition-all cursor-pointer select-none text-xs font-semibold"
+                              [class.bg-indigo-50]="offreFormulairePcu()"
+                              [class.border-indigo-300]="offreFormulairePcu()"
+                              [class.text-indigo-900]="offreFormulairePcu()"
+                              [class.bg-slate-50]="!offreFormulairePcu()"
+                              [class.border-slate-200]="!offreFormulairePcu()"
+                              [class.text-slate-700]="!offreFormulairePcu()"
+                            >
+                              <input
+                                type="checkbox"
+                                [checked]="offreFormulairePcu()"
+                                (change)="toggleOffreFormulairePcu()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
+                              />
+                              <span>PCU</span>
+                            </label>
+
+                            <!-- Croix du souvenir -->
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border transition-all cursor-pointer select-none text-xs font-semibold"
+                              [class.bg-indigo-50]="offreFormulaireCroixSouvenir()"
+                              [class.border-indigo-300]="offreFormulaireCroixSouvenir()"
+                              [class.text-indigo-900]="offreFormulaireCroixSouvenir()"
+                              [class.bg-slate-50]="!offreFormulaireCroixSouvenir()"
+                              [class.border-slate-200]="!offreFormulaireCroixSouvenir()"
+                              [class.text-slate-700]="!offreFormulaireCroixSouvenir()"
+                            >
+                              <input
+                                type="checkbox"
+                                [checked]="offreFormulaireCroixSouvenir()"
+                                (change)="toggleOffreFormulaireCroixSouvenir()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
+                              />
+                              <span>Croix du souvenir</span>
+                            </label>
+
+                            <!-- Désignation de bénéficiaire -->
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border transition-all cursor-pointer select-none text-xs font-semibold"
+                              [class.bg-indigo-50]="offreFormulaireBeneficiaire()"
+                              [class.border-indigo-300]="offreFormulaireBeneficiaire()"
+                              [class.text-indigo-900]="offreFormulaireBeneficiaire()"
+                              [class.bg-slate-50]="!offreFormulaireBeneficiaire()"
+                              [class.border-slate-200]="!offreFormulaireBeneficiaire()"
+                              [class.text-slate-700]="!offreFormulaireBeneficiaire()"
+                            >
+                              <input
+                                type="checkbox"
+                                [checked]="offreFormulaireBeneficiaire()"
+                                (change)="toggleOffreFormulaireBeneficiaire()"
+                                class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
+                              />
+                              <span>Désignation de bénéficiaire</span>
+                            </label>
+                          </div>
+                        </div>
                       </div>
                       } @else {
                         <!-- Note Sub-panel -->
@@ -5027,6 +5117,7 @@ Thank you for your cooperation.`;
       testEsomPassed: this.sharedState.testEsomPassed(),
       testCeopmPassed: this.sharedState.testCeopmPassed(),
       testCspnPassed: this.sharedState.testCspnPassed(),
+      testCspnNotCompleted: this.sharedState.testCspnNotCompleted(),
       testCspn00182Passed: this.sharedState.testCspn00182Passed(),
       testCspn00183Passed: this.sharedState.testCspn00183Passed(),
       testCspn00184Passed: this.sharedState.testCspn00184Passed(),
@@ -5101,6 +5192,10 @@ Thank you for your cooperation.`;
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
       testEsomRecruitmentCenterCity: this.testEsomRecruitmentCenterCity(),
+      offreFormulairePpp: this.offreFormulairePpp(),
+      offreFormulairePcu: this.offreFormulairePcu(),
+      offreFormulaireCroixSouvenir: this.offreFormulaireCroixSouvenir(),
+      offreFormulaireBeneficiaire: this.offreFormulaireBeneficiaire(),
       recruiterDossierType: this.recruiterDossierType(),
       sgtCheckedInstructions: Array.from(this.sgtCheckedInstructions()),
     };
@@ -5198,6 +5293,10 @@ Thank you for your cooperation.`;
     this.noteBeneficiaire.set(snapshot.noteBeneficiaire || '');
     this.noteDateCourrielConfirmation.set(snapshot.noteDateCourrielConfirmation || '');
     this.testEsomRecruitmentCenterCity.set(snapshot.testEsomRecruitmentCenterCity || 'Québec');
+    this.offreFormulairePpp.set(snapshot.offreFormulairePpp || false);
+    this.offreFormulairePcu.set(snapshot.offreFormulairePcu || false);
+    this.offreFormulaireCroixSouvenir.set(snapshot.offreFormulaireCroixSouvenir || false);
+    this.offreFormulaireBeneficiaire.set(snapshot.offreFormulaireBeneficiaire || false);
 
     this.sharedState.selectedDossierJobId1.set(snapshot.selectedDossierJobId1);
     this.sharedState.selectedDossierJobId2.set(snapshot.selectedDossierJobId2);
@@ -5212,6 +5311,7 @@ Thank you for your cooperation.`;
     this.sharedState.testEsomPassed.set(snapshot.testEsomPassed || false);
     this.sharedState.testCeopmPassed.set(snapshot.testCeopmPassed || false);
     this.sharedState.testCspnPassed.set(snapshot.testCspnPassed || false);
+    this.sharedState.testCspnNotCompleted.set(snapshot.testCspnNotCompleted || false);
     this.sharedState.testCspn00182Passed.set(snapshot.testCspn00182Passed || false);
     this.sharedState.testCspn00183Passed.set(snapshot.testCspn00183Passed || false);
     this.sharedState.testCspn00184Passed.set(snapshot.testCspn00184Passed || false);
@@ -5302,6 +5402,10 @@ Thank you for your cooperation.`;
       noteBeneficiaire: '',
       noteDateCourrielConfirmation: '',
       testEsomRecruitmentCenterCity: 'Québec',
+      offreFormulairePpp: false,
+      offreFormulairePcu: false,
+      offreFormulaireCroixSouvenir: false,
+      offreFormulaireBeneficiaire: false,
       selectedDossierJobId1: '',
       selectedDossierJobId2: '',
       selectedDossierJobId3: '',
@@ -5315,6 +5419,7 @@ Thank you for your cooperation.`;
       testEsomPassed: false,
       testCeopmPassed: false,
       testCspnPassed: false,
+      testCspnNotCompleted: false,
       testCspn00182Passed: false,
       testCspn00183Passed: false,
       testCspn00184Passed: false,
@@ -5937,6 +6042,10 @@ Thank you for your cooperation.`;
     this.offreSerieCours.set('');
     this.offreDateCoursDebut.set('');
     this.offreDateCoursFin.set('');
+    this.offreFormulairePpp.set(false);
+    this.offreFormulairePcu.set(false);
+    this.offreFormulaireCroixSouvenir.set(false);
+    this.offreFormulaireBeneficiaire.set(false);
     this.offreSubPanelMode.set('courriel');
     this.noteStatutCivil.set('célibataire');
     this.noteConjoint.set('N/A');
@@ -7145,6 +7254,119 @@ Thank you for your cooperation.`;
   offreSerieCours = signal<string>('');
   offreDateCoursDebut = signal<string>('');
   offreDateCoursFin = signal<string>('');
+  offreFormulairePpp = signal<boolean>(false);
+  offreFormulairePcu = signal<boolean>(false);
+  offreFormulaireCroixSouvenir = signal<boolean>(false);
+  offreFormulaireBeneficiaire = signal<boolean>(false);
+
+  toggleOffreFormulairePpp() {
+    this.offreFormulairePpp.update(v => !v);
+    this.autoActivateOffreEmail();
+  }
+
+  toggleOffreFormulairePcu() {
+    this.offreFormulairePcu.update(v => !v);
+    this.autoActivateOffreEmail();
+  }
+
+  toggleOffreFormulaireCroixSouvenir() {
+    this.offreFormulaireCroixSouvenir.update(v => !v);
+    this.autoActivateOffreEmail();
+  }
+
+  toggleOffreFormulaireBeneficiaire() {
+    this.offreFormulaireBeneficiaire.update(v => !v);
+    this.autoActivateOffreEmail();
+  }
+
+  hasAnyOffreFormulairesSupplementaires(): boolean {
+    return this.offreFormulairePpp() ||
+      this.offreFormulairePcu() ||
+      this.offreFormulaireCroixSouvenir() ||
+      this.offreFormulaireBeneficiaire();
+  }
+
+  getOffreFormulairesSupplementairesPlain(lang: 'fr' | 'en'): string {
+    if (!this.hasAnyOffreFormulairesSupplementaires()) {
+      return '';
+    }
+
+    let txt = '';
+    if (lang === 'fr') {
+      txt += "Et voici des liens vers des formulaires supplémentaires que vous devez remplir et me renvoyer par courriel.\n";
+      if (this.offreFormulairePpp()) {
+        txt += "• Identification des plus proches parents : https://simontheriault8-cyber.github.io/Documents/Identification%20des%20plus%20proches%20parents.pdf\n";
+      }
+      if (this.offreFormulairePcu()) {
+        txt += "• Personnes à contacter en cas d'urgence : https://simontheriault8-cyber.github.io/Documents/Personne%20%C3%A0%20contacter%20en%20cas%20d'urgence.pdf\n";
+      }
+      if (this.offreFormulaireCroixSouvenir()) {
+        txt += "• Désignation des récipiendaires de la Croix du souvenir : https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20des%20r%C3%A9cipiendaires%20de%20la%20Croix%20du%20souvenir.pdf\n";
+      }
+      if (this.offreFormulaireBeneficiaire()) {
+        txt += "• Désignation ou changement de bénéficiaire : https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20ou%20changement%20de%20b%C3%A9n%C3%A9ficiaire.pdf\n";
+      }
+      txt += "\n";
+    } else {
+      txt += "And here are links to additional forms that you must complete and return to me by email.\n";
+      if (this.offreFormulairePpp()) {
+        txt += "• Next of Kin Identification : https://simontheriault8-cyber.github.io/Documents/Identification%20des%20plus%20proches%20parents.pdf\n";
+      }
+      if (this.offreFormulairePcu()) {
+        txt += "• Emergency Contact Notification : https://simontheriault8-cyber.github.io/Documents/Personne%20%C3%A0%20contacter%20en%20cas%20d'urgence.pdf\n";
+      }
+      if (this.offreFormulaireCroixSouvenir()) {
+        txt += "• Designation of Memorial Cross Recipients : https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20des%20r%C3%A9cipiendaires%20de%20la%20Croix%20du%20souvenir.pdf\n";
+      }
+      if (this.offreFormulaireBeneficiaire()) {
+        txt += "• Naming or Substitution of a Beneficiary : https://simontheriault8-cyber.github.io/Documents/Naming%20or%20Substitution%20of%20a%20Beneficiary.pdf\n";
+      }
+      txt += "\n";
+    }
+    return txt;
+  }
+
+  getOffreFormulairesSupplementairesHtml(lang: 'fr' | 'en'): string {
+    if (!this.hasAnyOffreFormulairesSupplementaires()) {
+      return '';
+    }
+
+    let html = '';
+    if (lang === 'fr') {
+      html += `<p style="margin-top: 10px; margin-bottom: 6px;">Et voici des liens vers des formulaires supplémentaires que vous devez remplir et me renvoyer par courriel.</p>`;
+      html += `<ul style="margin-top: 0; margin-bottom: 14px; padding-left: 20px; list-style-type: disc;">`;
+      if (this.offreFormulairePpp()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/Identification%20des%20plus%20proches%20parents.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Identification des plus proches parents</a></li>`;
+      }
+      if (this.offreFormulairePcu()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/Personne%20%C3%A0%20contacter%20en%20cas%20d'urgence.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Personnes à contacter en cas d'urgence</a></li>`;
+      }
+      if (this.offreFormulaireCroixSouvenir()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20des%20r%C3%A9cipiendaires%20de%20la%20Croix%20du%20souvenir.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Désignation des récipiendaires de la Croix du souvenir</a></li>`;
+      }
+      if (this.offreFormulaireBeneficiaire()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20ou%20changement%20de%20b%C3%A9n%C3%A9ficiaire.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Désignation ou changement de bénéficiaire</a></li>`;
+      }
+      html += `</ul>`;
+    } else {
+      html += `<p style="margin-top: 10px; margin-bottom: 6px;">And here are links to additional forms that you must complete and return to me by email.</p>`;
+      html += `<ul style="margin-top: 0; margin-bottom: 14px; padding-left: 20px; list-style-type: disc;">`;
+      if (this.offreFormulairePpp()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/Identification%20des%20plus%20proches%20parents.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Next of Kin Identification</a></li>`;
+      }
+      if (this.offreFormulairePcu()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/Personne%20%C3%A0%20contacter%20en%20cas%20d'urgence.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Emergency Contact Notification</a></li>`;
+      }
+      if (this.offreFormulaireCroixSouvenir()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20des%20r%C3%A9cipiendaires%20de%20la%20Croix%20du%20souvenir.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Designation of Memorial Cross Recipients</a></li>`;
+      }
+      if (this.offreFormulaireBeneficiaire()) {
+        html += `<li><a href="https://simontheriault8-cyber.github.io/Documents/Naming%20or%20Substitution%20of%20a%20Beneficiary.pdf" target="_blank" style="color: #2563eb; text-decoration: underline;">Naming or Substitution of a Beneficiary</a></li>`;
+      }
+      html += `</ul>`;
+    }
+    return html;
+  }
 
   // Sub-panel mode for Offer task
   offreSubPanelMode = signal<'courriel' | 'note'>('courriel');
@@ -9843,6 +10065,7 @@ Thank you for your cooperation.`;
     const { dateLimiteStr, elementsPlain } = this.getElementsManquantsBlocks('fr');
     fr += `Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
+    fr += this.getOffreFormulairesSupplementairesPlain('fr');
     fr += this.getOffreLinksBlockPlain('fr');
     fr += this.getOffreEvenementsParticuliersPlainFr();
     fr += "Pour toute autre question, n’hésitez pas à communiquer avec moi. \n\n\n";
@@ -9868,6 +10091,7 @@ Thank you for your cooperation.`;
     const blocksEn = this.getElementsManquantsBlocks('en');
     en += `Please send me the following items no later than${blocksEn.dateLimiteStr}:\n\n`;
     en += blocksEn.elementsPlain;
+    en += this.getOffreFormulairesSupplementairesPlain('en');
     en += this.getOffreLinksBlockPlain('en');
     en += this.getOffreEvenementsParticuliersPlainEn();
     en += "If you have any further questions, please do not hesitate to contact me. \n\n\n";
@@ -10121,6 +10345,7 @@ Thank you for your cooperation.`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
     html += `<p>Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
+    html += this.getOffreFormulairesSupplementairesHtml('fr');
     html += this.getOffreLinksBlockHtml('fr');
     html += this.getOffreEvenementsParticuliersHtmlFr();
     html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
@@ -10147,6 +10372,7 @@ Thank you for your cooperation.`;
     const blocksHtmlEn = this.getElementsManquantsBlocks('en');
     html += `<p>Please send me the following items no later than${blocksHtmlEn.dateLimiteStr}:</p>`;
     html += blocksHtmlEn.elementsHtmlList;
+    html += this.getOffreFormulairesSupplementairesHtml('en');
     html += this.getOffreLinksBlockHtml('en');
     html += this.getOffreEvenementsParticuliersHtmlEn();
     html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
@@ -10199,6 +10425,7 @@ Thank you for your cooperation.`;
     const { dateLimiteStr, elementsPlain } = this.getElementsManquantsBlocks('fr');
     fr += `Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :\n\n`;
     fr += elementsPlain;
+    fr += this.getOffreFormulairesSupplementairesPlain('fr');
     fr += this.getOffreLinksBlockPlain('fr');
     fr += this.getOffreEvenementsParticuliersPlainFr();
     fr += "Pour toute autre question, n’hésitez pas à communiquer avec moi. \n\n\n";
@@ -10226,6 +10453,7 @@ Thank you for your cooperation.`;
     const blocksSubEn = this.getElementsManquantsBlocks('en');
     en += `Please review the documents attached to this email and return the following documents to me no later than${blocksSubEn.dateLimiteStr}:\n\n`;
     en += blocksSubEn.elementsPlain;
+    en += this.getOffreFormulairesSupplementairesPlain('en');
     en += this.getOffreLinksBlockPlain('en');
     en += this.getOffreEvenementsParticuliersPlainEn();
     en += "If you have any further questions, please do not hesitate to contact me. \n\n\n";
@@ -10274,6 +10502,7 @@ Thank you for your cooperation.`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
     html += `<p>Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :</p>`;
     html += elementsHtmlList;
+    html += this.getOffreFormulairesSupplementairesHtml('fr');
     html += this.getOffreLinksBlockHtml('fr');
     html += this.getOffreEvenementsParticuliersHtmlFr();
     html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
@@ -10299,6 +10528,7 @@ Thank you for your cooperation.`;
     const blocksHtmlSubEn = this.getElementsManquantsBlocks('en');
     html += `<p>Please review the documents attached to this email and return the following documents to me no later than${blocksHtmlSubEn.dateLimiteStr}:</p>`;
     html += blocksHtmlSubEn.elementsHtmlList;
+    html += this.getOffreFormulairesSupplementairesHtml('en');
     html += this.getOffreLinksBlockHtml('en');
     html += this.getOffreEvenementsParticuliersHtmlEn();
     html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;

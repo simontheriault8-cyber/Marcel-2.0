@@ -79,6 +79,7 @@ export class SharedStateService {
   testEsomPassed = signal<boolean>(false);
   testCeopmPassed = signal<boolean>(false);
   testCspnPassed = signal<boolean>(false);
+  testCspnNotCompleted = signal<boolean>(false);
   testCspn00182Passed = signal<boolean>(false);
   testCspn00183Passed = signal<boolean>(false);
   testCspn00184Passed = signal<boolean>(false);
@@ -113,6 +114,7 @@ export class SharedStateService {
     this.testEsomPassed.set(false);
     this.testCeopmPassed.set(false);
     this.testCspnPassed.set(false);
+    this.testCspnNotCompleted.set(false);
     this.testCspn00182Passed.set(false);
     this.testCspn00183Passed.set(false);
     this.testCspn00184Passed.set(false);
