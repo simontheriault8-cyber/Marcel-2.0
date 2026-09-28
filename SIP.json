@@ -1,5 +1,5 @@
 {
- "date": "21/09/2026",
+ "date": "28/09/2026",
   "programs": {
     "00003": {
       "aucun": {
@@ -177,12 +177,12 @@
         "traitement": "f"
       },
       "PFS-MR": {
-        "admission": "f",
-        "traitement": "f"
+        "admission": "o",
+        "traitement": "o"
       },
       "Non Qual": {
-        "admission": "f",
-        "traitement": "f"
+        "admission": "o",
+        "traitement": "o"
       }
     },
     "00137": {
@@ -215,7 +215,7 @@
     },
     "00149": {
       "Non Qual": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "Qual": {
@@ -615,7 +615,7 @@
     },
     "00261": {
       "Non Qual": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
@@ -653,8 +653,8 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "f",
-        "traitement": "f"
+        "admission": "o",
+        "traitement": "o"
       }
     },
     "00303": {
@@ -759,7 +759,7 @@
     },
     "00337": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -959,7 +959,7 @@
     },
     "00386": {
       "Non Qual": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       }
     },
@@ -1065,7 +1065,7 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
