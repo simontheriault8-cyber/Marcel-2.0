@@ -1398,7 +1398,7 @@ export class PforComponent {
       } as JobEntry);
 
       const hasPfor = this.jobService.hasPforProgram(id, this.currentSipPhase());
-      const isPforClosed = !this.ignoreSip() && this.jobService.isPforJobClosed(id, this.currentSipPhase());
+      const isPforClosed = this.jobService.isPforJobClosed(id, this.currentSipPhase());
 
       let isEligible = true;
       let reasonFr = "";
@@ -1628,7 +1628,7 @@ export class PforComponent {
 
   evaluateJobAdmissibility(jobId: string) {
     const job = this.jobService.getJobById(jobId);
-    const isJobClosed = !this.ignoreSip() && this.jobService.isPforJobClosed(jobId, this.currentSipPhase());
+    const isJobClosed = this.jobService.isPforJobClosed(jobId, this.currentSipPhase());
     
     const ageVal = this.age();
     let isAgeAdmissible = true;
@@ -3144,8 +3144,9 @@ export class PforComponent {
     const hasNoJobCode = dossierIds.includes("00003");
     const realDossierIds = dossierIds.filter((id) => id !== "00003");
 
-    const closedButAdmissibleJobs: string[] = [];
-    const closedButAdmissibleJobsEn: string[] = [];
+    // Determine which dossier jobs are closed but otherwise admissible
+    const closedTraitementJobs: string[] = [];
+    const closedAdmissionOnlyJobs: string[] = [];
     for (const id of realDossierIds) {
       const s = this.evaluateJobAdmissibility(id);
       if (
@@ -3156,14 +3157,13 @@ export class PforComponent {
         s.isEducationAdmissible &&
         s.isMedicalAdmissible
       ) {
-        const job = this.jobService.getJobById(id);
-        const titleFr = job?.title || id;
-        const titleEn = job?.titleEn || job?.title || id;
-        closedButAdmissibleJobs.push(`${id} - ${titleFr}`);
-        closedButAdmissibleJobsEn.push(`${id} - ${titleEn}`);
+        closedTraitementJobs.push(id);
       }
     }
-    const hasClosedButAdmissibleJobs = closedButAdmissibleJobs.length > 0;
+    const hasTraitementClosed = closedTraitementJobs.length > 0;
+    const hasAdmissionClosed = closedAdmissionOnlyJobs.length > 0;
+    const hasClosedButAdmissibleJobs = hasTraitementClosed || hasAdmissionClosed;
+    const closedButAdmissibleJobs = [...closedTraitementJobs, ...closedAdmissionOnlyJobs];
     const allRealDossierJobsAreClosedButAdmissible =
       realDossierIds.length > 0 &&
       closedButAdmissibleJobs.length === realDossierIds.length;
@@ -3339,28 +3339,20 @@ export class PforComponent {
       h +=
         '<p class="mt-4 font-semibold text-slate-800">Voici les options qui s\'offrent à vous :</p>\n';
       if (hasClosedButAdmissibleJobs) {
-        if (allRealDossierJobsAreClosedButAdmissible) {
-          h +=
-            '<p class="mt-2 text-sm"><strong>Option 1 : Conserver vos choix de métier actuels et attendre leur réouverture</strong><br>Vous pouvez choisir de garder vos choix de métier actuels et de patienter jusqu\'en avril prochain pour la réouverture des positions. Si vous sélectionnez cette option, <span style="background-color: #fef08a; font-weight: bold;">votre dossier de candidature actuel sera fermé</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous recontacter vers la fin du mois de mars prochain</span> pour réactiver votre processus.</p>\n';
-        } else {
-          h +=
-            '<p class="mt-2 text-sm"><strong>Option 1 : Conserver certains de vos choix de métier actuels et attendre leur réouverture</strong><br>Vous pouvez choisir de garder le ou les métiers suivants pour lesquels vous êtes admissible : <strong>' +
-            closedButAdmissibleJobs.join(", ") +
-            '</strong>, et de patienter jusqu\'en avril prochain pour la réouverture des positions. Si vous sélectionnez cette option, <span style="background-color: #fef08a; font-weight: bold;">votre dossier de candidature actuel sera fermé</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous recontacter vers la fin du mois de mars prochain</span> pour réactiver votre processus pour ce ou ces métiers.</p>\n';
-        }
+        const isPlural = closedButAdmissibleJobs.length > 1;
+        const opt1Title = isPlural
+          ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedButAdmissibleJobs.join(", ") + ')';
+        const opt1MetiersDesc = isPlural
+          ? 'vos choix de métiers (<strong>' + closedButAdmissibleJobs.join(", ") + '</strong>)'
+          : 'votre choix de métier (<strong>' + closedButAdmissibleJobs.join(", ") + '</strong>)';
         h +=
-          '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Consultez la liste ci-dessous.</p>\n';
+          '<p class="mt-2 text-sm"><strong>' + opt1Title + '</strong><br>Vous pouvez conserver ' + opt1MetiersDesc + ' et attendre que les prochaines positions ouvrent en avril prochain. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement</span>.</p>\n';
+        h +=
+          '<p class="mt-4 text-sm"><strong>Option 2 : Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous pouvez réorienter votre candidature vers d\'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.</p>\n';
       } else {
         h +=
-          '<p class="mt-2 text-sm"><strong>Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d\'enrôlement. Veuillez consulter la liste ci-dessous.</p>\n';
-      }
-
-      if (this.ignoreSip()) {
-        h +=
-          '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
-        h +=
-          '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n';
-        h += '</div>\n';
+          '<p class="mt-2 text-sm"><strong>Choisir un autre métier parmi la liste des métiers admissibles</strong><br>Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d\'enrôlement. Pour ces métiers, l\'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.</p>\n';
       }
 
       // Eligible Jobs French Division
@@ -3388,14 +3380,18 @@ export class PforComponent {
         if (allOpenOfficerJobs.length > 0) {
           h += renderHtmlList(allOpenOfficerJobs, false, true);
         }
-        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
-          h += renderHtmlList(allClosedOfficerJobs, true, true);
+        if (shouldIncludeNcm && openNcmJobs.length > 0) {
+          h += renderHtmlNcmList(openNcmJobs, false, true);
         }
-        if (shouldIncludeNcm) {
-          if (openNcmJobs.length > 0) {
-            h += renderHtmlNcmList(openNcmJobs, false, true);
+        if (this.ignoreSip() && (allClosedOfficerJobs.length > 0 || (shouldIncludeNcm && closedNcmJobs.length > 0))) {
+          h +=
+            '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n' +
+            '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n' +
+            '</div>\n';
+          if (allClosedOfficerJobs.length > 0) {
+            h += renderHtmlList(allClosedOfficerJobs, true, true);
           }
-          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+          if (shouldIncludeNcm && closedNcmJobs.length > 0) {
             h += renderHtmlNcmList(closedNcmJobs, true, true);
           }
         }
@@ -3584,28 +3580,20 @@ export class PforComponent {
       h +=
         '<p class="mt-4 font-semibold text-slate-800">Here are the options available to you:</p>\n';
       if (hasClosedButAdmissibleJobs) {
-        if (allRealDossierJobsAreClosedButAdmissible) {
-          h +=
-            '<p class="mt-2 text-sm"><strong>Option 1: Keep your current occupation choices and wait for them to reopen</strong><br>You may choose to keep your current occupation choices and wait until next April for positions to reopen. If you select this option, <span style="background-color: #fef08a; font-weight: bold;">your current application file will be closed</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your full responsibility to contact us near the end of next March</span> to reactivate your process.</p>\n';
-        } else {
-          h +=
-            '<p class="mt-2 text-sm"><strong>Option 1: Keep some of your current occupation choices and wait for them to reopen</strong><br>You may choose to keep the following occupation(s) for which you are eligible: <strong>' +
-            closedButAdmissibleJobsEn.join(", ") +
-            '</strong>, and wait until next April for positions to reopen. If you select this option, <span style="background-color: #fef08a; font-weight: bold;">your current application file will be closed</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your full responsibility to contact us near the end of next March</span> to reactivate your process for this or these occupations.</p>\n';
-        }
+        const isPluralEn = closedButAdmissibleJobs.length > 1;
+        const opt1TitleEn = isPluralEn
+          ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedButAdmissibleJobs.join(", ") + ')';
+        const opt1OccupationsEn = isPluralEn
+          ? 'your occupational choices (<strong>' + closedButAdmissibleJobs.join(", ") + '</strong>)'
+          : 'your occupational choice (<strong>' + closedButAdmissibleJobs.join(", ") + '</strong>)';
         h +=
-          '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can reorient your application towards other eligible occupation choices right now. See the list below.</p>\n';
+          '<p class="mt-2 text-sm"><strong>' + opt1TitleEn + '</strong><br>You can retain ' + opt1OccupationsEn + ' and wait until next April for positions to open. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process</span>.</p>\n';
+        h +=
+          '<p class="mt-4 text-sm"><strong>Option 2: Choose another occupation from the list of eligible occupations</strong><br>You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
       } else {
         h +=
-          '<p class="mt-2 text-sm"><strong>Choose another occupation from the list of eligible occupations</strong><br>You must reorient your application towards an occupation choice for which you are eligible in order to continue the enrolment process. Please see the list below.</p>\n';
-      }
-
-      if (this.ignoreSip()) {
-        h +=
-          '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
-        h +=
-          '  <strong>Important note regarding closed occupations:</strong> The list below includes occupations that are currently open and closed. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your full responsibility to call us back near the end of next March</span> to reopen your file in that occupation.\n';
-        h += '</div>\n';
+          '<p class="mt-2 text-sm"><strong>Choose another occupation from the list of eligible occupations</strong><br>You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.</p>\n';
       }
 
       // Eligible Jobs English Division
@@ -3633,14 +3621,18 @@ export class PforComponent {
         if (allOpenOfficerJobs.length > 0) {
           h += renderHtmlList(allOpenOfficerJobs, false, false);
         }
-        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
-          h += renderHtmlList(allClosedOfficerJobs, true, false);
+        if (shouldIncludeNcm && openNcmJobs.length > 0) {
+          h += renderHtmlNcmList(openNcmJobs, false, false);
         }
-        if (shouldIncludeNcm) {
-          if (openNcmJobs.length > 0) {
-            h += renderHtmlNcmList(openNcmJobs, false, false);
+        if (this.ignoreSip() && (allClosedOfficerJobs.length > 0 || (shouldIncludeNcm && closedNcmJobs.length > 0))) {
+          h +=
+            '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n' +
+            '  <strong>Important note regarding closed occupations:</strong> The list below includes occupations that are currently open and closed. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your full responsibility to call us back near the end of next March</span> to reopen your file in that occupation.\n' +
+            '</div>\n';
+          if (allClosedOfficerJobs.length > 0) {
+            h += renderHtmlList(allClosedOfficerJobs, true, false);
           }
-          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+          if (shouldIncludeNcm && closedNcmJobs.length > 0) {
             h += renderHtmlNcmList(closedNcmJobs, true, false);
           }
         }
@@ -3829,25 +3821,20 @@ export class PforComponent {
 
       t += "Voici les options qui s'offrent à vous :\n";
       if (hasClosedButAdmissibleJobs) {
-        if (allRealDossierJobsAreClosedButAdmissible) {
-          t +=
-            "Option 1 : Conserver vos choix de métier actuels et attendre leur réouverture\nVous pouvez choisir de garder vos choix de métier actuels et de patienter jusqu'en avril prochain pour la réouverture des positions. Si vous sélectionnez cette option, votre dossier de candidature actuel sera fermé et il sera de votre entière responsabilité de nous recontacter vers la fin du mois de mars prochain pour réactiver votre processus.\n\n";
-        } else {
-          t +=
-            "Option 1 : Conserver certains de vos choix de métier actuels et attendre leur réouverture\nVous pouvez choisir de garder le ou les métiers suivants pour lesquels vous êtes admissible : " +
-            closedButAdmissibleJobs.join(", ") +
-            ", et de patienter jusqu'en avril prochain pour la réouverture des positions. Si vous sélectionnez cette option, votre dossier de candidature actuel sera fermé et il sera de votre entière responsabilité de nous recontacter vers la fin du mois de mars prochain pour réactiver votre processus pour ce ou ces métiers.\n\n";
-        }
-        t +=
-          "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\nVous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Consultez la liste ci-dessous.\n\n";
+        const isPlural = closedButAdmissibleJobs.length > 1;
+        const opt1Title = isPlural
+          ? 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (' + closedButAdmissibleJobs.join(", ") + ')';
+        const opt1MetiersDesc = isPlural
+          ? 'vos choix de métiers (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'votre choix de métier (' + closedButAdmissibleJobs.join(", ") + ')';
+        t += opt1Title + "\n";
+        t += "Vous pouvez conserver " + opt1MetiersDesc + " et attendre que les prochaines positions ouvrent en avril prochain. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement.\n\n";
+        t += "Option 2 : Choisir un autre métier parmi la liste des métiers admissibles\n";
+        t += "Vous pouvez réorienter votre candidature vers d'autres choix de métiers admissibles dès maintenant. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Consultez la liste ci-dessous.\n\n";
       } else {
-        t +=
-          "Choisir un autre métier parmi la liste des métiers admissibles\nVous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d'enrôlement. Veuillez consulter la liste ci-dessous.\n\n";
-      }
-
-      if (this.ignoreSip()) {
-        t +=
-          "Note importante concernant les métiers fermés : La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé (marqué FERMÉ), nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n\n";
+        t += "Choisir un autre métier parmi la liste des métiers admissibles\n";
+        t += "Vous devez réorienter votre candidature vers un choix de métier pour lequel vous êtes admissible afin de poursuivre le processus d'enrôlement. Pour ces métiers, l'admission est ouverte et le traitement de votre dossier se poursuivra immédiatement. Veuillez consulter la liste ci-dessous.\n\n";
       }
 
       t += "MÉTIERS ADMISSIBLES :\n";
@@ -3868,14 +3855,16 @@ export class PforComponent {
         if (allOpenOfficerJobs.length > 0) {
           t += renderPlainList(allOpenOfficerJobs, false, true);
         }
-        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
-          t += renderPlainList(allClosedOfficerJobs, true, true);
+        if (shouldIncludeNcm && openNcmJobs.length > 0) {
+          t += renderPlainNcmList(openNcmJobs, false, true);
         }
-        if (shouldIncludeNcm) {
-          if (openNcmJobs.length > 0) {
-            t += renderPlainNcmList(openNcmJobs, false, true);
+        if (this.ignoreSip() && (allClosedOfficerJobs.length > 0 || (shouldIncludeNcm && closedNcmJobs.length > 0))) {
+          t +=
+            "\nNote importante concernant les métiers fermés : La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé (marqué FERMÉ), nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n\n";
+          if (allClosedOfficerJobs.length > 0) {
+            t += renderPlainList(allClosedOfficerJobs, true, true);
           }
-          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+          if (shouldIncludeNcm && closedNcmJobs.length > 0) {
             t += renderPlainNcmList(closedNcmJobs, true, true);
           }
         }
@@ -4054,25 +4043,20 @@ export class PforComponent {
 
       t += "Here are the options available to you:\n";
       if (hasClosedButAdmissibleJobs) {
-        if (allRealDossierJobsAreClosedButAdmissible) {
-          t +=
-            "Option 1: Keep your current occupation choices and wait for them to reopen\nYou may choose to keep your current occupation choices and wait until next April for positions to reopen. If you select this option, your current application file will be closed and it will be your full responsibility to contact us near the end of next March to reactivate your process.\n\n";
-        } else {
-          t +=
-            "Option 1: Keep some of your current occupation choices and wait for them to reopen\nYou may choose to keep the following occupation(s) for which you are eligible: " +
-            closedButAdmissibleJobsEn.join(", ") +
-            ", and wait until next April for positions to reopen. If you select this option, your current application file will be closed and it will be your full responsibility to contact us near the end of next March to reactivate your process for this or these occupations.\n\n";
-        }
-        t +=
-          "Option 2: Choose another occupation from the list of eligible occupations\nYou can reorient your application towards other eligible occupation choices right now. See the list below.\n\n";
+        const isPluralEn = closedButAdmissibleJobs.length > 1;
+        const opt1TitleEn = isPluralEn
+          ? 'Option 1: Close my file and wait for the next open positions for my occupational choices (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'Option 1: Close my file and wait for the next open positions for my occupational choice (' + closedButAdmissibleJobs.join(", ") + ')';
+        const opt1OccupationsEn = isPluralEn
+          ? 'your occupational choices (' + closedButAdmissibleJobs.join(", ") + ')'
+          : 'your occupational choice (' + closedButAdmissibleJobs.join(", ") + ')';
+        t += opt1TitleEn + "\n";
+        t += "You can retain " + opt1OccupationsEn + " and wait until next April for positions to open. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process.\n\n";
+        t += "Option 2: Choose another occupation from the list of eligible occupations\n";
+        t += "You can redirect your application to other eligible occupational choices right now. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
       } else {
-        t +=
-          "Choose another occupation from the list of eligible occupations\nYou must reorient your application towards an occupation choice for which you are eligible in order to continue the enrolment process. Please see the list below.\n\n";
-      }
-
-      if (this.ignoreSip()) {
-        t +=
-          "Important note regarding closed occupations: The list below includes occupations that are currently open and closed. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation (marked CLOSED), we will have to close your file and it will be your full responsibility to call us back near the end of next March to reopen your file in that occupation.\n\n";
+        t += "Choose another occupation from the list of eligible occupations\n";
+        t += "You must redirect your application to an occupational choice for which you are eligible to continue the enrollment process. For these occupations, admission is open and the processing of your application will continue immediately. Please consult the list below.\n\n";
       }
 
       t += "ELIGIBLE OCCUPATIONS:\n";
@@ -4093,14 +4077,16 @@ export class PforComponent {
         if (allOpenOfficerJobs.length > 0) {
           t += renderPlainList(allOpenOfficerJobs, false, false);
         }
-        if (this.ignoreSip() && allClosedOfficerJobs.length > 0) {
-          t += renderPlainList(allClosedOfficerJobs, true, false);
+        if (shouldIncludeNcm && openNcmJobs.length > 0) {
+          t += renderPlainNcmList(openNcmJobs, false, false);
         }
-        if (shouldIncludeNcm) {
-          if (openNcmJobs.length > 0) {
-            t += renderPlainNcmList(openNcmJobs, false, false);
+        if (this.ignoreSip() && (allClosedOfficerJobs.length > 0 || (shouldIncludeNcm && closedNcmJobs.length > 0))) {
+          t +=
+            "\nImportant note regarding closed occupations: The list below includes occupations that are currently open and closed. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation (marked CLOSED), we will have to close your file and it will be your full responsibility to call us back near the end of next March to reopen your file in that occupation.\n\n";
+          if (allClosedOfficerJobs.length > 0) {
+            t += renderPlainList(allClosedOfficerJobs, true, false);
           }
-          if (this.ignoreSip() && closedNcmJobs.length > 0) {
+          if (shouldIncludeNcm && closedNcmJobs.length > 0) {
             t += renderPlainNcmList(closedNcmJobs, true, false);
           }
         }

@@ -8487,8 +8487,8 @@ o Médecine d’urgence`,
       const isPforClosedAdmission = this.jobService.isPforJobClosed(jobId, "admission");
       const isClosedAdmissionRaw = !hasPforAdmission || isPforClosedAdmission;
 
-      const isClosedTraitement = !this.ignoreSip() && isClosedTraitementRaw;
-      const isClosedAdmissionOnly = !this.ignoreSip() && (isClosedAdmissionRaw && !isClosedTraitementRaw);
+      const isClosedTraitement = isClosedTraitementRaw;
+      const isClosedAdmissionOnly = isClosedAdmissionRaw && !isClosedTraitementRaw;
       const isJobClosed = isClosedTraitement || isClosedAdmissionOnly;
 
       return {
@@ -8558,8 +8558,8 @@ o Médecine d’urgence`,
       isExtraTestAdmissible;
     const isClosedTraitementRaw = this.jobService.isJobClosed(jobId, "traitement");
     const isClosedAdmissionRaw = this.jobService.isJobClosed(jobId, "admission");
-    const isClosedTraitement = !this.ignoreSip() && isClosedTraitementRaw;
-    const isClosedAdmissionOnly = !this.ignoreSip() && (isClosedAdmissionRaw && !isClosedTraitementRaw);
+    const isClosedTraitement = isClosedTraitementRaw;
+    const isClosedAdmissionOnly = isClosedAdmissionRaw && !isClosedTraitementRaw;
     const isJobClosed = isClosedTraitement || isClosedAdmissionOnly;
 
     return {
@@ -9491,24 +9491,22 @@ o Médecine d’urgence`,
 
     const isPilotEligible = jobIds.includes("00183");
     const isPRAdmissible = this.citizenship() === "PR > 3 years";
+    const isPfor = this.isPforApplicant();
+    const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j, this.currentSipPhase()) : this.jobService.isJobClosed(j, this.currentSipPhase());
 
-    const renderHtmlList = (jobs: string[], isOfficer: boolean, isFrench: boolean) => {
+    const renderAllEligibleJobsHtml = (ncmJobs: string[], offJobs: string[], isFrench: boolean) => {
       let out = "";
-      const isPfor = this.isPforApplicant();
-      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j, this.currentSipPhase()) : this.jobService.isJobClosed(j, this.currentSipPhase());
+      const openNcm = ncmJobs.filter(j => !isJobClosed(j));
+      const closedNcm = ncmJobs.filter(j => isJobClosed(j));
+      const openOff = offJobs.filter(j => !isJobClosed(j));
+      const closedOff = offJobs.filter(j => isJobClosed(j));
 
-      const openJobs = jobs.filter(j => !isJobClosed(j));
-      const closedJobs = jobs.filter(j => isJobClosed(j));
-      
-      const titleColor = isOfficer ? "purple-800" : "blue-800";
-      const inlineTitleColor = isOfficer ? "#6b21a8" : "#1e40af";
-      
-      let openTitle = isOfficer ? (isFrench ? "Officiers" : "Officers") : (isFrench ? "Militaires du rang" : "Non-Commissioned Members");
-      let closedTitle = isOfficer ? (isFrench ? "Officiers (Fermés)" : "Officers (Closed)") : (isFrench ? "Militaires du rang (Fermés)" : "Non-Commissioned Members (Closed)");
-      
-      if (this.ignoreSip()) {
-        openTitle += isFrench ? " (Ouverts)" : " (Open)";
-      }
+      const hasClosedJobs = (closedNcm.length > 0 || closedOff.length > 0);
+
+      const openNcmTitle = isFrench ? (this.ignoreSip() ? "Militaires du rang (Ouverts)" : "Militaires du rang") : (this.ignoreSip() ? "Non-Commissioned Members (Open)" : "Non-Commissioned Members");
+      const openOffTitle = isFrench ? (this.ignoreSip() ? "Officiers (Ouverts)" : "Officiers") : (this.ignoreSip() ? "Officers (Open)" : "Officers");
+      const closedNcmTitle = isFrench ? "Militaires du rang (Fermés)" : "Non-Commissioned Members (Closed)";
+      const closedOffTitle = isFrench ? "Officiers (Fermés)" : "Officers (Closed)";
 
       const buildSection = (jobList: string[], title: string, color: string, inlineColor: string, isClosed: boolean) => {
         let sec = "";
@@ -9542,27 +9540,45 @@ o Médecine d’urgence`,
         return sec;
       };
 
-      out += buildSection(openJobs, openTitle, titleColor, inlineTitleColor, false);
-      if (this.ignoreSip()) {
-        out += buildSection(closedJobs, closedTitle, "red-800", "#991b1b", true);
+      // 1. Open jobs first
+      out += buildSection(openNcm, openNcmTitle, "blue-800", "#1e40af", false);
+      out += buildSection(openOff, openOffTitle, "purple-800", "#6b21a8", false);
+
+      // 2. Closed note right above closed jobs if ignoreSip is active and there are closed jobs
+      if (this.ignoreSip() && hasClosedJobs) {
+        if (isFrench) {
+          out +=
+            '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n' +
+            '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n' +
+            '</div>\n';
+        } else {
+          out +=
+            '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n' +
+            '  <strong>Important note regarding closed occupations:</strong> The list below includes both currently open and closed occupations. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to call us back towards the end of next March</span> to reopen your file for this occupation.\n' +
+            '</div>\n';
+        }
+
+        // 3. Closed jobs
+        out += buildSection(closedNcm, closedNcmTitle, "red-800", "#991b1b", true);
+        out += buildSection(closedOff, closedOffTitle, "red-800", "#991b1b", true);
       }
+
       return out;
     };
 
-    const renderPlainList = (jobs: string[], isOfficer: boolean, isFrench: boolean) => {
+    const renderAllEligibleJobsPlain = (ncmJobs: string[], offJobs: string[], isFrench: boolean) => {
       let out = "";
-      const isPfor = this.isPforApplicant();
-      const isJobClosed = (j: string) => isPfor ? this.jobService.isPforJobClosed(j, this.currentSipPhase()) : this.jobService.isJobClosed(j, this.currentSipPhase());
+      const openNcm = ncmJobs.filter(j => !isJobClosed(j));
+      const closedNcm = ncmJobs.filter(j => isJobClosed(j));
+      const openOff = offJobs.filter(j => !isJobClosed(j));
+      const closedOff = offJobs.filter(j => isJobClosed(j));
 
-      const openJobs = jobs.filter(j => !isJobClosed(j));
-      const closedJobs = jobs.filter(j => isJobClosed(j));
-      
-      let openTitle = isOfficer ? (isFrench ? "Officiers" : "Officers") : (isFrench ? "Militaires du rang" : "Non-Commissioned Members");
-      let closedTitle = isOfficer ? (isFrench ? "Officiers (Fermés)" : "Officers (Closed)") : (isFrench ? "Militaires du rang (Fermés)" : "Non-Commissioned Members (Closed)");
-      
-      if (this.ignoreSip()) {
-        openTitle += isFrench ? " (Ouverts)" : " (Open)";
-      }
+      const hasClosedJobs = (closedNcm.length > 0 || closedOff.length > 0);
+
+      const openNcmTitle = isFrench ? (this.ignoreSip() ? "Militaires du rang (Ouverts)" : "Militaires du rang") : (this.ignoreSip() ? "Non-Commissioned Members (Open)" : "Non-Commissioned Members");
+      const openOffTitle = isFrench ? (this.ignoreSip() ? "Officiers (Ouverts)" : "Officiers") : (this.ignoreSip() ? "Officers (Open)" : "Officers");
+      const closedNcmTitle = isFrench ? "Militaires du rang (Fermés)" : "Non-Commissioned Members (Closed)";
+      const closedOffTitle = isFrench ? "Officiers (Fermés)" : "Officers (Closed)";
 
       const buildSection = (jobList: string[], title: string) => {
         let sec = "";
@@ -9589,10 +9605,27 @@ o Médecine d’urgence`,
         return sec;
       };
 
-      out += buildSection(openJobs, openTitle);
-      if (this.ignoreSip()) {
-        out += buildSection(closedJobs, closedTitle);
+      // 1. Open jobs first
+      out += buildSection(openNcm, openNcmTitle);
+      out += buildSection(openOff, openOffTitle);
+
+      // 2. Closed note right above closed jobs
+      if (this.ignoreSip() && hasClosedJobs) {
+        if (isFrench) {
+          out +=
+            "\nNote importante concernant les métiers fermés :\n" +
+            "La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé, nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n";
+        } else {
+          out +=
+            "\nImportant note regarding closed occupations:\n" +
+            "The list below includes both currently open and closed occupations. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation, we will have to close your file and it will be your sole responsibility to call us back towards the end of next March to reopen your file for this occupation.\n";
+        }
+
+        // 3. Closed jobs
+        out += buildSection(closedNcm, closedNcmTitle);
+        out += buildSection(closedOff, closedOffTitle);
       }
+
       return out;
     };
 
@@ -10030,14 +10063,6 @@ o Médecine d’urgence`,
         }
       }
 
-      if (this.ignoreSip()) {
-        h +=
-          '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
-        h +=
-          '  <strong>Note importante concernant les métiers fermés :</strong> La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un <span style="background-color: #fef08a; font-weight: bold;">métier ouvert</span>, nous pourrons poursuivre le traitement de votre demande d\'emploi immédiatement. Par contre, si vous choisissez un <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">métier fermé</span> (marqué en rouge), nous devrons fermer votre dossier et ce sera <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain</span> pour faire rouvrir votre dossier dans ce métier.\n';
-        h += '</div>\n';
-      }
-
       // Eligible Jobs French Division
       h +=
         '<div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
@@ -10054,8 +10079,7 @@ o Médecine d’urgence`,
       if (listNCM.length === 0 && listOFF.length === 0) {
         h += '<p class="mt-2 text-slate-700 italic">' + (this.isPforApplicant() ? "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée." : "Aucun métier correspondant disponible.") + '</p>\n';
       } else {
-        h += renderHtmlList(listNCM, false, true);
-        h += renderHtmlList(listOFF, true, true);
+        h += renderAllEligibleJobsHtml(listNCM, listOFF, true);
       }
       h += "</div>\n";
 
@@ -10347,14 +10371,6 @@ o Médecine d’urgence`,
         }
       }
 
-      if (this.ignoreSip()) {
-        h +=
-          '<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900" style="margin-top: 16px; padding: 12px; background-color: #fefce8; border: 1px solid #fef08a; border-radius: 4px; font-size: 14px; color: #713f12;">\n';
-        h +=
-          '  <strong>Important note regarding closed occupations:</strong> The list below includes both currently open and closed occupations. If you choose an <span style="background-color: #fef08a; font-weight: bold;">open occupation</span>, we can continue processing your application immediately. However, if you choose a <span style="background-color: #fecaca; color: #991b1b; font-weight: bold;">closed occupation</span> (marked in red), we will have to close your file and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to call us back towards the end of next March</span> to reopen your file for this occupation.\n';
-        h += '</div>\n';
-      }
-
       // Eligible Jobs English Division
       h +=
         '<div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
@@ -10371,8 +10387,7 @@ o Médecine d’urgence`,
       if (listNCM.length === 0 && listOFF.length === 0) {
         h += '<p class="mt-2 text-slate-700 italic">' + (this.isPforApplicant() ? "No matching open ROTP occupations are currently available for the selected options." : "No matching occupations available.") + '</p>\n';
       } else {
-        h += renderHtmlList(listNCM, false, false);
-        h += renderHtmlList(listOFF, true, false);
+        h += renderAllEligibleJobsHtml(listNCM, listOFF, false);
       }
       h += "</div>\n";
 
@@ -10640,11 +10655,6 @@ o Médecine d’urgence`,
         }
       }
 
-      if (this.ignoreSip()) {
-        p += "Note importante concernant les métiers fermés :\n";
-        p += "La liste ci-dessous inclut des métiers actuellement ouverts et fermés. Si vous choisissez un métier ouvert, nous pourrons poursuivre le traitement de votre demande d'emploi immédiatement. Par contre, si vous choisissez un métier fermé, nous devrons fermer votre dossier et ce sera votre entière responsabilité de nous rappeler vers la fin du mois de mars prochain pour faire rouvrir votre dossier dans ce métier.\n\n";
-      }
-
       // Eligible Jobs French Division
       p += "--------------------------------------------------\n";
       p += "MÉTIERS ADMISSIBLES :\n";
@@ -10658,8 +10668,7 @@ o Médecine d’urgence`,
       if (listNCM.length === 0 && listOFF.length === 0) {
         p += (this.isPforApplicant() ? "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.\n\n" : "Aucun métier correspondant disponible.\n\n");
       } else {
-        p += renderPlainList(listNCM, false, true);
-        p += renderPlainList(listOFF, true, true);
+        p += renderAllEligibleJobsPlain(listNCM, listOFF, true);
       }
 
       // Conclusion French
@@ -10911,11 +10920,6 @@ o Médecine d’urgence`,
         }
       }
 
-      if (this.ignoreSip()) {
-        p += "Important note regarding closed occupations:\n";
-        p += "The list below includes both currently open and closed occupations. If you choose an open occupation, we can continue processing your application immediately. However, if you choose a closed occupation, we will have to close your file and it will be your sole responsibility to call us back towards the end of next March to reopen your file for this occupation.\n\n";
-      }
-
       // Eligible Jobs English Division
       p += "--------------------------------------------------\n";
       p += "ELIGIBLE OCCUPATIONS:\n";
@@ -10929,8 +10933,7 @@ o Médecine d’urgence`,
       if (listNCM.length === 0 && listOFF.length === 0) {
         p += (this.isPforApplicant() ? "No matching open ROTP occupations are currently available for the selected options.\n\n" : "No matching occupations available.\n\n");
       } else {
-        p += renderPlainList(listNCM, false, false);
-        p += renderPlainList(listOFF, true, false);
+        p += renderAllEligibleJobsPlain(listNCM, listOFF, false);
       }
 
       // Conclusion English
