@@ -9259,6 +9259,9 @@ Thank you for your cooperation.`;
 
     html += this.getPforCaf101HighDemandWarningHtml('fr');
 
+    html += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">Porte ouverte du CMR St-Jean</span></p>`;
+    html += `<p>Nous vous invitons à profiter de la <span style="background-color: #FFFF00;">journée portes ouvertes du Collège militaire royal de Saint-Jean</span>, qui se tiendra le <span style="background-color: #FFFF00; font-weight: bold;">31 octobre 2026 de 8 h 30 à 16 h</span>. <span style="background-color: #FFFF00;">Aucune inscription n'est nécessaire</span>.<br>Venez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.<br>Des visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.<br>Nous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.</p>`;
+
     html += `<p>Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.</p>`;
 
     html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
@@ -9299,6 +9302,9 @@ Thank you for your cooperation.`;
     }
 
     html += this.getPforCaf101HighDemandWarningHtml('en');
+
+    html += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">RMC Saint-Jean Open House</span></p>`;
+    html += `<p>We invite you to take advantage of the <span style="background-color: #FFFF00;">Royal Military College Saint-Jean Open House</span>, which will be held on <span style="background-color: #FFFF00; font-weight: bold;">October 31, 2026, from 8:30 a.m. to 4:00 p.m.</span> <span style="background-color: #FFFF00;">No registration is required</span>.<br>Come and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.<br>Guided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.<br>We hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.</p>`;
 
     html += `<p>If no action is taken in your portal, your file will automatically close within 30 days.</p>`;
 
@@ -9403,6 +9409,9 @@ Thank you for your cooperation.`;
 
     plain += this.getPforCaf101HighDemandWarningPlain('fr');
 
+    plain += `Porte ouverte du CMR St-Jean\n`;
+    plain += `Nous vous invitons à profiter de la journée portes ouvertes du Collège militaire royal de Saint-Jean, qui se tiendra le 31 octobre 2026 de 8 h 30 à 16 h. Aucune inscription n'est nécessaire.\nVenez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.\nDes visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.\nNous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.\n\n`;
+
     plain += `Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.\n\n`;
 
     plain += this.getSignatureFr();
@@ -9435,6 +9444,9 @@ Thank you for your cooperation.`;
     }
 
     plain += this.getPforCaf101HighDemandWarningPlain('en');
+
+    plain += `RMC Saint-Jean Open House\n`;
+    plain += `We invite you to take advantage of the Royal Military College Saint-Jean Open House, which will be held on October 31, 2026, from 8:30 a.m. to 4:00 p.m. No registration is required.\nCome and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.\nGuided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.\nWe hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.\n\n`;
 
     plain += `If no action is taken in your portal, your file will automatically close within 30 days.\n\n`;
 
