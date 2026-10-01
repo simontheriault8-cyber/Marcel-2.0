@@ -765,7 +765,9 @@ const CMR_JOB_DOMAINS: Record<
                                   {{
                                     s1.isExtraTestAdmissible
                                       ? "Test réussi (OK)."
-                                      : "Test non réussi ou non complété."
+                                      : (testCspnNotCompleted() && (s1.job.id === '00182' || s1.job.id === '00183' || s1.job.id === '00184'))
+                                        ? "Pas encore complété (Inadmissible)."
+                                        : "Test non réussi ou non complété."
                                   }}
                                 </span>
                               </div>
@@ -1071,7 +1073,9 @@ const CMR_JOB_DOMAINS: Record<
                                   {{
                                     s2.isExtraTestAdmissible
                                       ? "Test réussi (OK)."
-                                      : "Test non réussi ou non complété."
+                                      : (testCspnNotCompleted() && (s2.job.id === '00182' || s2.job.id === '00183' || s2.job.id === '00184'))
+                                        ? "Pas encore complété (Inadmissible)."
+                                        : "Test non réussi ou non complété."
                                   }}
                                 </span>
                               </div>
@@ -1377,7 +1381,9 @@ const CMR_JOB_DOMAINS: Record<
                                   {{
                                     s3.isExtraTestAdmissible
                                       ? "Test réussi (OK)."
-                                      : "Test non réussi ou non complété."
+                                      : (testCspnNotCompleted() && (s3.job.id === '00182' || s3.job.id === '00183' || s3.job.id === '00184'))
+                                        ? "Pas encore complété (Inadmissible)."
+                                        : "Test non réussi ou non complété."
                                   }}
                                 </span>
                               </div>
@@ -2312,25 +2318,45 @@ const CMR_JOB_DOMAINS: Record<
                       <!-- Test CSPN (00182, 00183, 00184) -->
                       @if (hasCspnJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs space-y-2">
-                          <label class="flex items-start gap-2.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              [checked]="testCspnPassed()"
-                              (change)="onCspnMainToggle($any($event.target).checked)"
-                              class="mt-0.5 w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
-                            />
-                            <div class="flex-1">
-                              <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-800">CSPN</span>
-                                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testCspnPassed()" [class.text-emerald-800]="testCspnPassed()" [class.bg-slate-100]="!testCspnPassed()" [class.text-slate-600]="!testCspnPassed()">
-                                  {{ testCspnPassed() ? "Test réussi" : "Non coché (Inadmissible)" }}
-                                </span>
+                          <div class="flex flex-wrap items-start justify-between gap-2">
+                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                [checked]="testCspnPassed()"
+                                (change)="onCspnMainToggle($any($event.target).checked)"
+                                class="mt-0.5 w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+                              />
+                              <div>
+                                <div class="flex items-center gap-2">
+                                  <span class="text-xs font-bold text-slate-800">CSPN</span>
+                                  <span
+                                    class="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                                    [class.bg-emerald-100]="testCspnPassed()"
+                                    [class.text-emerald-800]="testCspnPassed()"
+                                    [class.bg-amber-100]="testCspnNotCompleted()"
+                                    [class.text-amber-800]="testCspnNotCompleted()"
+                                    [class.bg-slate-100]="!testCspnPassed() && !testCspnNotCompleted()"
+                                    [class.text-slate-600]="!testCspnPassed() && !testCspnNotCompleted()"
+                                  >
+                                    {{ testCspnPassed() ? "Test réussi" : (testCspnNotCompleted() ? "Pas encore complété (Inadmissible)" : "Non coché (Inadmissible)") }}
+                                  </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 mt-0.5">
+                                  Centre de sélection du personnel navigant (00182, 00183, 00184)
+                                </p>
                               </div>
-                              <p class="text-[11px] text-slate-500 mt-0.5">
-                                Centre de sélection du personnel navigant (00182, 00183, 00184)
-                              </p>
-                            </div>
-                          </label>
+                            </label>
+
+                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                              <input
+                                type="checkbox"
+                                [checked]="testCspnNotCompleted()"
+                                (change)="onCspnNotCompletedToggle($any($event.target).checked)"
+                                class="w-3.5 h-3.5 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer"
+                              />
+                              <span class="text-xs font-medium text-amber-900">Pas encore complété</span>
+                            </label>
+                          </div>
 
                           @if (testCspnPassed()) {
                             <div class="mt-2 pl-6 pt-2 border-t border-slate-100 space-y-1.5">
@@ -6923,6 +6949,7 @@ o Médecine d’urgence`,
     this.testEsomPassed.set(false);
     this.testCeopmPassed.set(false);
     this.testCspnPassed.set(false);
+    this.testCspnNotCompleted.set(false);
     this.testCspn00182Passed.set(false);
     this.testCspn00183Passed.set(false);
     this.testCspn00184Passed.set(false);
@@ -7690,6 +7717,7 @@ o Médecine d’urgence`,
   testEsomPassed = this.sharedState.testEsomPassed;
   testCeopmPassed = this.sharedState.testCeopmPassed;
   testCspnPassed = this.sharedState.testCspnPassed;
+  testCspnNotCompleted = this.sharedState.testCspnNotCompleted;
   testCspn00182Passed = this.sharedState.testCspn00182Passed;
   testCspn00183Passed = this.sharedState.testCspn00183Passed;
   testCspn00184Passed = this.sharedState.testCspn00184Passed;
@@ -7717,7 +7745,19 @@ o Médecine d’urgence`,
 
   onCspnMainToggle(checked: boolean) {
     this.testCspnPassed.set(checked);
-    if (!checked) {
+    if (checked) {
+      this.testCspnNotCompleted.set(false);
+    } else {
+      this.testCspn00182Passed.set(false);
+      this.testCspn00183Passed.set(false);
+      this.testCspn00184Passed.set(false);
+    }
+  }
+
+  onCspnNotCompletedToggle(checked: boolean) {
+    this.testCspnNotCompleted.set(checked);
+    if (checked) {
+      this.testCspnPassed.set(false);
       this.testCspn00182Passed.set(false);
       this.testCspn00183Passed.set(false);
       this.testCspn00184Passed.set(false);
@@ -7778,45 +7818,54 @@ o Médecine d’urgence`,
     }
     if (jobId === "00182") {
       const isTested = this.hasCspnJob();
-      const eligible = !isTested || (this.testCspnPassed() && this.testCspn00182Passed());
+      const notCompleted = this.testCspnNotCompleted();
+      const eligible =
+        !isTested ||
+        (!notCompleted && this.testCspnPassed() && this.testCspn00182Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00182 (Officier – Systèmes de combat).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00182 (Air Combat Systems Officer).",
       };
     }
     if (jobId === "00183") {
       const isTested = this.hasCspnJob();
-      const eligible = !isTested || (this.testCspnPassed() && this.testCspn00183Passed());
+      const notCompleted = this.testCspnNotCompleted();
+      const eligible =
+        !isTested ||
+        (!notCompleted && this.testCspnPassed() && this.testCspn00183Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00183 (Pilote).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00183 (Pilot).",
       };
     }
     if (jobId === "00184") {
       const isTested = this.hasCspnJob();
-      const eligible = !isTested || (this.testCspnPassed() && this.testCspn00184Passed());
+      const notCompleted = this.testCspnNotCompleted();
+      const eligible =
+        !isTested ||
+        (!notCompleted && this.testCspnPassed() && this.testCspn00184Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00184 (Contrôle aérospatial).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00184 (Aerospace Control Officer).",
       };
@@ -8561,6 +8610,7 @@ o Médecine d’urgence`,
     this.testEsomPassed.set(false);
     this.testCeopmPassed.set(false);
     this.testCspnPassed.set(false);
+    this.testCspnNotCompleted.set(false);
     this.testCspn00182Passed.set(false);
     this.testCspn00183Passed.set(false);
     this.testCspn00184Passed.set(false);
@@ -9268,7 +9318,7 @@ o Médecine d’urgence`,
           if (!s.isMedicalAdmissible) {
             reasonsFrList.push("Limitation médicale");
           }
-          if (s.isExtraTestRequired && !s.isExtraTestAdmissible) {
+          if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonFr) {
             reasonsFrList.push(`Test ${s.extraTestName}`);
           }
 
@@ -9890,7 +9940,7 @@ o Médecine d’urgence`,
             if (!s.isMedicalAdmissible) {
               reasonsFrList.push(s.medicalReason);
             }
-            if (s.isExtraTestRequired && !s.isExtraTestAdmissible) {
+            if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonFr) {
               reasonsFrList.push(s.extraTestReasonFr);
             }
 
@@ -10207,7 +10257,7 @@ o Médecine d’urgence`,
             if (!s.isMedicalAdmissible) {
               reasonsEnList.push(s.medicalReasonEn);
             }
-            if (s.isExtraTestRequired && !s.isExtraTestAdmissible) {
+            if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonEn) {
               reasonsEnList.push(s.extraTestReasonEn);
             }
 
@@ -10499,7 +10549,7 @@ o Médecine d’urgence`,
             if (!s.isMedicalAdmissible) {
               reasonsFrList.push(s.medicalReason);
             }
-            if (s.isExtraTestRequired && !s.isExtraTestAdmissible) {
+            if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonFr) {
               reasonsFrList.push(s.extraTestReasonFr);
             }
 
@@ -10770,7 +10820,7 @@ o Médecine d’urgence`,
             if (!s.isMedicalAdmissible) {
               reasonsEnList.push(s.medicalReasonEn);
             }
-            if (s.isExtraTestRequired && !s.isExtraTestAdmissible) {
+            if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonEn) {
               reasonsEnList.push(s.extraTestReasonEn);
             }
 

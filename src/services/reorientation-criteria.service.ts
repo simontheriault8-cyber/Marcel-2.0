@@ -1165,54 +1165,60 @@ export class ReorientationCriteriaService {
     }
     if (jobId === "00182") {
       const isTested = this.hasCspnJob();
+      const notCompleted = this.sharedState.testCspnNotCompleted();
       const eligible =
         !isTested ||
-        (this.sharedState.testCspnPassed() &&
+        (!notCompleted &&
+          this.sharedState.testCspnPassed() &&
           this.sharedState.testCspn00182Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00182 (Officier – Systèmes de combat).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00182 (Air Combat Systems Officer).",
       };
     }
     if (jobId === "00183") {
       const isTested = this.hasCspnJob();
+      const notCompleted = this.sharedState.testCspnNotCompleted();
       const eligible =
         !isTested ||
-        (this.sharedState.testCspnPassed() &&
+        (!notCompleted &&
+          this.sharedState.testCspnPassed() &&
           this.sharedState.testCspn00183Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00183 (Pilote).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00183 (Pilot).",
       };
     }
     if (jobId === "00184") {
       const isTested = this.hasCspnJob();
+      const notCompleted = this.sharedState.testCspnNotCompleted();
       const eligible =
         !isTested ||
-        (this.sharedState.testCspnPassed() &&
+        (!notCompleted &&
+          this.sharedState.testCspnPassed() &&
           this.sharedState.testCspn00184Passed());
       return {
         isExtraTestRequired: isTested,
         testName: "CSPN",
         eligible,
-        reasonFr: eligible
+        reasonFr: eligible || notCompleted
           ? ""
           : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00184 (Contrôle aérospatial).",
-        reasonEn: eligible
+        reasonEn: eligible || notCompleted
           ? ""
           : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00184 (Aerospace Control Officer).",
       };

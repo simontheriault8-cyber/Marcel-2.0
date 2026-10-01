@@ -372,6 +372,73 @@ export class RecruitmentDataService {
       nameEn: "Government-issued photo ID (both sides)",
       documents: [
         {
+          nameFr: "Égoportrait (Selfie) avec pièce d'identité",
+          nameEn: "Selfie with ID",
+          reasons: [
+            {
+              id: "selfie_floue",
+              labelFr: "Floue / illisible",
+              labelEn: "Blurred / Illegible",
+              instructionFr:
+                "La photo de vous et votre pièce d’identité est floue et illisible. Veuillez prendre une nouvelle photo et la téléverser à nouveau. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
+              instructionEn:
+                "The photo of you and your ID is blurred and illegible. Please take a new photo and upload it again. Ensure the image is sharp, without glare, and all information is clearly visible.",
+              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
+              logNoteFr: "Égoportrait (Selfie) avec pièce d’identité flou",
+            },
+            {
+              id: "selfie_mauvaise",
+              labelFr: "Mauvaise pièce d’identité",
+              labelEn: "Wrong ID",
+              instructionFr:
+                "La pièce d'identité que vous tenez dans vos mains sur la photo ne correspond pas à celle que vous avez téléversée au dossier. Si vous avez soumis un permis de conduire, vous devez tenir ce même permis de conduire sur votre égoportrait (selfie). Veuillez téléverser une nouvelle photo correspondante.",
+              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
+              instructionEn:
+                "The ID held does not match the one submitted to the file. Please upload a new photo of yourself holding the ID submitted to the file.",
+              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
+              logNoteFr:
+                "La pièce d'identité utilisée dans l'égoportrait (selfie) n'est pas la bonne",
+            },
+            {
+              id: "selfie_inexistant",
+              labelFr: "Inexistant au dossier",
+              labelEn: "Missing from file",
+              instructionFr:
+                "La photo ne se trouve pas dans votre dossier, veuillez prendre un égoportrait (selfie) avec la pièce d'identité qui est dans votre dossier et téléverser cette photo sur votre portail en ligne. Vous devez tenir la pièce d'identité près de votre visage de façon à ce que votre visage et votre pièce d'identité soit clair et lisible.",
+              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
+              instructionEn:
+                "The document is not in your file. Please take a photo and upload it. Ensure the image is sharp, without glare, and all information is clearly visible.",
+              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
+              logNoteFr:
+                "Aucun égoportrait (selfie) avec pièce d'identité au dossier",
+            },
+            {
+              id: "selfie_incomplet",
+              labelFr: "Document incomplet sur la photo",
+              labelEn: "Incomplete document in the photo",
+              instructionFr:
+                "La photo est incomplète, votre visage ou votre pièce d’identité n'est pas totalement visible sur la photo. Veuillez téléverser une nouvelle photo en vous assurant que votre visage et votre pièce d’identité sont clairement visibles.",
+              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
+              instructionEn:
+                "The photo is incomplete, your face or ID is not fully visible in the photo. Please upload a new photo ensuring both your face and ID are clearly visible.",
+              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
+              logNoteFr:
+                "Égoportrait (Selfie) avec pièce d’identité incomplet",
+            },
+            {
+              id: "selfie_maj",
+              labelFr: "Mise à jour du document",
+              labelEn: "Document update",
+              instructionFr:
+                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
+              instructionEn:
+                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
+              logNoteFr: "Mise à jour de l'égoportrait (Selfie)",
+            },
+          ],
+        },
+        {
           nameFr: "Permis de conduire",
           nameEn: "Driver's License",
           reasons: [
@@ -644,73 +711,6 @@ export class RecruitmentDataService {
               instructionEn:
                 "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
               logNoteFr: "Mise à jour de la pièce d'identité",
-            },
-          ],
-        },
-        {
-          nameFr: "Égoportrait (Selfie) avec pièce d'identité",
-          nameEn: "Selfie with ID",
-          reasons: [
-            {
-              id: "selfie_floue",
-              labelFr: "Floue / illisible",
-              labelEn: "Blurred / Illegible",
-              instructionFr:
-                "La photo de vous et votre pièce d’identité est floue et illisible. Veuillez prendre une nouvelle photo et la téléverser à nouveau. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
-              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
-              instructionEn:
-                "The photo of you and your ID is blurred and illegible. Please take a new photo and upload it again. Ensure the image is sharp, without glare, and all information is clearly visible.",
-              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
-              logNoteFr: "Égoportrait (Selfie) avec pièce d’identité flou",
-            },
-            {
-              id: "selfie_mauvaise",
-              labelFr: "Mauvaise pièce d’identité",
-              labelEn: "Wrong ID",
-              instructionFr:
-                "La pièce d'identité que vous tenez dans vos mains sur la photo ne correspond pas à celle que vous avez téléversée au dossier. Si vous avez soumis un permis de conduire, vous devez tenir ce même permis de conduire sur votre égoportrait (selfie). Veuillez téléverser une nouvelle photo correspondante.",
-              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
-              instructionEn:
-                "The ID held does not match the one submitted to the file. Please upload a new photo of yourself holding the ID submitted to the file.",
-              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
-              logNoteFr:
-                "La pièce d'identité utilisée dans l'égoportrait (selfie) n'est pas la bonne",
-            },
-            {
-              id: "selfie_inexistant",
-              labelFr: "Inexistant au dossier",
-              labelEn: "Missing from file",
-              instructionFr:
-                "La photo ne se trouve pas dans votre dossier, veuillez prendre un égoportrait (selfie) avec la pièce d'identité qui est dans votre dossier et téléverser cette photo sur votre portail en ligne. Vous devez tenir la pièce d'identité près de votre visage de façon à ce que votre visage et votre pièce d'identité soit clair et lisible.",
-              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
-              instructionEn:
-                "The document is not in your file. Please take a photo and upload it. Ensure the image is sharp, without glare, and all information is clearly visible.",
-              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
-              logNoteFr:
-                "Aucun égoportrait (selfie) avec pièce d'identité au dossier",
-            },
-            {
-              id: "selfie_incomplet",
-              labelFr: "Document incomplet sur la photo",
-              labelEn: "Incomplete document in the photo",
-              instructionFr:
-                "La photo est incomplète, votre visage ou votre pièce d’identité n'est pas totalement visible sur la photo. Veuillez téléverser une nouvelle photo en vous assurant que votre visage et votre pièce d’identité sont clairement visibles.",
-              linkFr: "Voici le lien vers un exemple d'<a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">égoportrait</a> acceptable.",
-              instructionEn:
-                "The photo is incomplete, your face or ID is not fully visible in the photo. Please upload a new photo ensuring both your face and ID are clearly visible.",
-              linkEn: "Here is a link to an acceptable example of a <a href=\"https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png\">selfie</a>.",
-              logNoteFr:
-                "Égoportrait (Selfie) avec pièce d’identité incomplet",
-            },
-            {
-              id: "selfie_maj",
-              labelFr: "Mise à jour du document",
-              labelEn: "Document update",
-              instructionFr:
-                "Pour la réouverture de votre dossier, nous aurons besoin que vous téléversiez la version la plus à jours de ce document dans votre portail du postulant.",
-              instructionEn:
-                "For the reopening of your file, we will need you to upload the most up-to-date version of this document to your applicant portal.",
-              logNoteFr: "Mise à jour de l'égoportrait (Selfie)",
             },
           ],
         },
