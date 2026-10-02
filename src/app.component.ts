@@ -243,7 +243,7 @@ function getTodayDateString(): string {
       } @else {
         <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
           <!-- Top Left: Tuto Marcel Button -->
-          <div class="absolute top-6 left-6 z-10 flex items-center gap-2">
+          <div class="absolute top-6 left-6 z-10">
             <button
               (click)="openTutoMarcel()"
               class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
@@ -256,29 +256,6 @@ function getTodayDateString(): string {
               </div>
               <span>Tuto Marcel</span>
             </button>
-          </div>
-
-          <!-- Top Right: Download Full Source Code / Files -->
-          <div class="absolute top-6 right-6 z-10 flex items-center gap-2">
-            <a
-              href="code-complet-marcel.zip"
-              download="code-complet-marcel.zip"
-              class="flex items-center gap-2.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-md hover:shadow-lg transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-              title="Télécharger l'archive ZIP complète contenant tous les fichiers réels du code (app.component.ts 12 459 lignes)"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              <span>Télécharger le code (.zip)</span>
-            </a>
-            <a
-              href="app.component.txt"
-              target="_blank"
-              class="flex items-center gap-2 px-3.5 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-300 text-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95"
-              title="Afficher app.component.ts complet dans le navigateur"
-            >
-              <span>Voir app.component.ts</span>
-            </a>
           </div>
 
           <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
