@@ -4313,11 +4313,11 @@ export class AppComponent implements OnInit {
 
   // Premier Contact State
   premierContactSubPanelMode = signal<'courriel' | 'note'>('courriel');
-  readonly premierContactIptadOptions: string[] = ['Complété', 'À faire', 'Attribuer'];
-  readonly premierContactSeafOptions: string[] = ['Complété', 'Attribuer'];
-  readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribuer'];
-  readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribuer'];
-  readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initier'];
+  readonly premierContactIptadOptions: string[] = ['Complété', 'À faire', 'Attribué'];
+  readonly premierContactSeafOptions: string[] = ['Complété', 'Attribué'];
+  readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribué'];
+  readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribué'];
+  readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initié'];
   readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'Concluent favorable', 'Concluent défavorable', 'Non Concluent'];
   readonly premierContactAnxQOptions: string[] = ['À faire', 'Complété'];
 
