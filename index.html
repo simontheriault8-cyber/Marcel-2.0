@@ -22,25 +22,6 @@
       background: #94a3b8; 
     }
   </style>
-  <script>
-    (function() {
-      function removeButtons() {
-        document.querySelectorAll('button, a, div').forEach(function(el) {
-          var t = el.innerText || el.textContent || '';
-          if (t.includes('Télécharger le code') || t.includes('Voir app.component.ts')) {
-            el.remove();
-          }
-        });
-      }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', removeButtons);
-      } else {
-        removeButtons();
-      }
-      var observer = new MutationObserver(removeButtons);
-      observer.observe(document.documentElement, { childList: true, subtree: true });
-    })();
-  </script>
 
 <script type="importmap">
 {
@@ -59,7 +40,7 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="./assets/index-DrlfcVGy.js"></script>
+  <script type="module" crossorigin src="./assets/index-C3-CtXh4.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans">
   <app-root></app-root>
