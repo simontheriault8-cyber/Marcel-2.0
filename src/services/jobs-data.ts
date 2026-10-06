@@ -11208,7 +11208,7 @@ export const JOBS_DATA: JobEntry[] = [
     title: "TECHNICIEN EN ÉLECTRICITÉ DES SYSTEMS DE MARINE",
     abbreviation: "TESM",
     requirements:
-      "FORCE RÉGULIÈRE: Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées (Idéal) ou 10e année / Secondaire IV, incluant : Mathématiques appliquées, 10e année / Sec IV et Tout cours de sciences, 10e année / Sec IV (Acceptable). Aucune expérience minimale requise.",
+      "FORCE RÉGULIÈRE: Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées (Idéal) ou 10e année / Secondaire IV, incluant : Mathématiques appliquées, 10e année / Sec IV (Acceptable). Aucune expérience minimale requise.",
     details: [
       {
         force: "FORCE RÉGULIÈRE",
@@ -11228,7 +11228,6 @@ export const JOBS_DATA: JobEntry[] = [
                 education: [
                   "10e année / Secondaire IV, incluant :",
                   "o Mathématiques appliquées, 10e année / Sec IV",
-                  "o Tout cours de sciences, 10e année / Sec IV",
                 ],
                 experience: ["Aucune expérience minimale requise"],
               },
@@ -11240,7 +11239,7 @@ export const JOBS_DATA: JobEntry[] = [
               {
                 level: "Acceptable",
                 education: [
-                  "Être accepté sans condition ou être présentement enrôlé comme étudiant à temps plein, dans un programme d’études à un établissement postsecondaire sélectionné par les FAC",
+                  "Être accepted sans condition ou être présentement enrôlé comme étudiant à temps plein, dans un programme d’études à un établissement postsecondaire sélectionné par les FAC",
                 ],
                 experience: ["Aucune expérience minimale requise"],
               },
@@ -11281,7 +11280,6 @@ export const JOBS_DATA: JobEntry[] = [
                 education: [
                   "10e année / Secondaire IV, incluant :",
                   "o Mathématiques appliquées, 10e année / Sec IV",
-                  "o Tout cours de sciences, 10e année / Sec IV",
                 ],
                 experience: ["Aucune expérience minimale requise"],
               },
@@ -11322,7 +11320,7 @@ export const JOBS_DATA: JobEntry[] = [
     title: "TECHNICIEN EN MÉCANIQUE DES SYSTÈMES DE MARINE",
     abbreviation: "TMSM",
     requirements:
-      "FORCE RÉGULIÈRE & FORCE DE RÉSERVE: Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées (Idéal) ou 10e année / Secondaire IV, incluant : Mathématiques appliquées, 10e année / Sec IV et Tout cours de sciences, 10e année / Sec IV (Acceptable).",
+      "FORCE RÉGULIÈRE & FORCE DE RÉSERVE: Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées (Idéal) ou 10e année / Secondaire IV, incluant : Mathématiques appliquées, 10e année / Sec IV (Acceptable).",
     details: [
       {
         force: "FORCE RÉGULIÈRE",
@@ -11342,7 +11340,6 @@ export const JOBS_DATA: JobEntry[] = [
                 education: [
                   "10e année / Secondaire IV, incluant :",
                   "o Mathématiques appliquées, 10e année / Sec IV",
-                  "o Tout cours de sciences, 10e année / Sec IV",
                 ],
                 experience: ["Aucune expérience minimale requise"],
               },
@@ -11395,7 +11392,6 @@ export const JOBS_DATA: JobEntry[] = [
                 education: [
                   "10e année / Secondaire IV, incluant :",
                   "o Mathématiques appliquées, 10e année / Sec IV",
-                  "o Tout cours de sciences, 10e année / Sec IV",
                 ],
                 experience: ["Aucune expérience minimale requise"],
               },

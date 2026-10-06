@@ -4367,7 +4367,7 @@ export class AppComponent implements OnInit {
   readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribué'];
   readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribué'];
   readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initié'];
-  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'Concluant favorable', 'Concluant défavorable', 'Non Concluant'];
+  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'En attente (dossier soumis)', 'Concluant favorable', 'Concluant défavorable', 'Non Concluant'];
   readonly premierContactAnxQOptions: string[] = ['À faire', 'Complété'];
 
   premierContactNoteIptad = signal<string>('Complété');
