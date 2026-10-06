@@ -2596,7 +2596,6 @@ export const JOB_RULES: JobRule[] = [
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
-        "sci_tech4_sci10",
       ],
       jobs: ["00404"],
       allowPR: true,
@@ -2605,7 +2604,6 @@ export const JOB_RULES: JobRule[] = [
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
-        "sci_tech4_sci10",
       ],
       jobs: ["00405"],
       allowPR: true,
