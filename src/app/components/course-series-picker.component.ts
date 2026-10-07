@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.data';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-course-series-picker',
@@ -21,7 +22,7 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
   template: `
     <div class="relative w-full" id="course-series-picker-container">
       <label class="block font-semibold text-slate-700 mb-1 text-xs">
-        Série du cours :
+        {{ langService.isEnglish() ? 'Course Serial / Session:' : 'Série du cours :' }}
       </label>
 
       <!-- Input Search Container -->
@@ -37,7 +38,7 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
             (input)="onInput($any($event.target).value)"
             (focus)="onFocus()"
             class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
-            placeholder="Rechercher série ou date (ex: 339, 58, sept)..."
+            [placeholder]="langService.isEnglish() ? 'Search serial or date (e.g. 339, 58, Sept)...' : 'Rechercher série ou date (ex: 339, 58, sept)...'"
             id="course-series-search-input"
           />
 
@@ -46,7 +47,7 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
               type="button"
               (mousedown)="onClear($event)"
               class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-              title="Effacer la série"
+              [title]="langService.isEnglish() ? 'Clear serial' : 'Effacer la série'"
               id="clear-course-series-btn"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,7 +65,9 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
           >
             @let filtered = filteredSessions();
             @if (filtered.length === 0) {
-              <div class="p-2 text-slate-400 text-center italic">Aucune série de cours trouvée</div>
+              <div class="p-2 text-slate-400 text-center italic">
+                {{ langService.isEnglish() ? 'No course sessions found' : 'Aucune série de cours trouvée' }}
+              </div>
             }
             @for (session of filtered; track session.id) {
               <button
@@ -82,10 +85,10 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
                     [class.bg-slate-100]="!isCurrentSession(session)"
                     [class.text-slate-700]="!isCurrentSession(session)"
                   >
-                    Série {{ session.serie }}
+                    {{ langService.isEnglish() ? 'Serial' : 'Série' }} {{ session.serie }}
                   </span>
                   <span class="font-medium text-slate-800 truncate">
-                    Du {{ session.dateDebut }} au {{ session.dateFin }}
+                    {{ langService.isEnglish() ? ('From ' + session.dateDebut + ' to ' + session.dateFin) : ('Du ' + session.dateDebut + ' au ' + session.dateFin) }}
                   </span>
                 </div>
 
@@ -104,9 +107,9 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
       @if (selectedSession() || (dateDebut && dateFin)) {
         <div class="mt-1 flex items-center justify-between text-[11px] text-slate-500 px-0.5">
           <span>
-            Dans le courriel :
+            {{ langService.isEnglish() ? 'In email: ' : 'Dans le courriel : ' }}
             <span class="font-semibold text-slate-700">
-              Vos dates de cours : Du {{ getEffectiveDates() }}
+              {{ langService.isEnglish() ? 'Your course dates: From ' : 'Vos dates de cours : Du ' }}{{ getEffectiveDates() }}
             </span>
           </span>
         </div>
@@ -116,6 +119,7 @@ import { CourseSession, COURSE_SESSIONS_LIST } from '../data/course-sessions.dat
 })
 export class CourseSeriesPickerComponent {
   private elementRef = inject(ElementRef);
+  readonly langService = inject(LanguageService);
 
   @Input() serie: string = '';
   @Input() dateDebut: string = '';

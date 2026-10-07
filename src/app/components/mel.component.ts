@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OCCUPATIONS, CMP_OCCUPATIONS } from '../../services/mel.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-mel',
@@ -10,25 +11,36 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
     <div class="h-full flex flex-col p-6 overflow-y-auto min-h-0 bg-slate-50 gap-8">
       <!-- Header -->
       <div class="border-b border-slate-200 pb-4 shrink-0">
-        <h2 class="text-2xl font-bold text-slate-800 font-sans tracking-tight">MEL Acceptability Configuration</h2>
-        <p class="text-slate-500 mt-1">Configure Acceptability of Medical Employment Limitations per Occupation for Canadian Army, Royal Canadian Navy (RCN), and Royal Canadian Air Force (RCAF).</p>
+        <h2 class="text-2xl font-bold text-slate-800 font-sans tracking-tight">
+          {{ langService.isEnglish() ? 'MEL Acceptability Configuration' : 'Configuration de l’acceptabilité des CEM' }}
+        </h2>
+        <p class="text-slate-500 mt-1">
+          {{ langService.isEnglish() 
+            ? 'Configure Acceptability of Medical Employment Limitations per Occupation for Canadian Army, Royal Canadian Navy (RCN), Royal Canadian Air Force (RCAF), and CMP.'
+            : 'Configurez l’acceptabilité des contraintes d’emploi médical (CEM) par groupe professionnel pour l’Armée canadienne, la Marine royale canadienne (MRC), l’Aviation royale canadienne (ARC) et le CPM.'
+          }}
+        </p>
       </div>
       
       <!-- TABLE 1: Army -->
       <div class="flex flex-col gap-3 shrink-0">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
           <span class="inline-block w-3 h-3 rounded-full bg-emerald-600"></span>
-          MEL acceptability for Canadian Army-managed occupations
+          {{ langService.isEnglish() ? 'MEL acceptability for Canadian Army-managed occupations' : 'Acceptabilité CEM pour les métiers gérés par l’Armée canadienne' }}
         </h3>
         <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
           <table class="w-full text-left text-sm border-collapse">
             <thead>
               <tr>
                 <th rowspan="2" class="border-b border-r border-slate-300 bg-slate-200 p-2 text-center font-bold sticky top-0 left-0 z-20 w-64 min-w-[300px]">
-                  Medical Employment Limitations
+                  {{ langService.isEnglish() ? 'Medical Employment Limitations' : 'Contraintes d’emploi médical (CEM)' }}
                 </th>
-                <th [colSpan]="armyOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">Officers</th>
-                <th [colSpan]="armyNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">NCMs</th>
+                <th [colSpan]="armyOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'Officers' : 'Officiers' }}
+                </th>
+                <th [colSpan]="armyNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'NCMs' : 'MR' }}
+                </th>
               </tr>
               <tr>
                 @for (occ of armyOccupations; track occ.id) {
@@ -50,7 +62,7 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                 <tr class="hover:bg-slate-50">
                   <td class="border-b border-r border-slate-300 p-2 text-slate-700 font-medium sticky left-0 bg-white z-10 group-hover:bg-slate-50 text-[11px] leading-tight">
                     <span [class.text-emerald-700]="mel.category === 'Geographic'" [class.text-teal-700]="mel.category === 'Occupational'">
-                      {{ mel.text }}
+                      {{ langService.isEnglish() ? mel.text : (mel.textFr || mel.text) }}
                     </span>
                   </td>
                   @for (occ of armyOccupations; track occ.id) {
@@ -59,10 +71,10 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="mel.text + ' - ' + occ.abbreviation"
+                        [title]="(langService.isEnglish() ? mel.text : (mel.textFr || mel.text)) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
-                        {{ isAcceptable(mel.id, occ.id) ? 'Yes' : 'No' }}
+                        {{ isAcceptable(mel.id, occ.id) ? (langService.isEnglish() ? 'Yes' : 'Oui') : (langService.isEnglish() ? 'No' : 'Non') }}
                       </div>
                     </td>
                   }
@@ -77,17 +89,21 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
       <div class="flex flex-col gap-3 shrink-0">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
           <span class="inline-block w-3 h-3 rounded-full bg-blue-600"></span>
-          MEL acceptability for RCN-managed occupations
+          {{ langService.isEnglish() ? 'MEL acceptability for RCN-managed occupations' : 'Acceptabilité CEM pour les métiers gérés par la MRC' }}
         </h3>
         <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
           <table class="w-full text-left text-sm border-collapse">
             <thead>
               <tr>
                 <th rowspan="2" class="border-b border-r border-slate-300 bg-slate-200 p-2 text-center font-bold sticky top-0 left-0 z-20 w-64 min-w-[300px]">
-                  Medical Employment Limitations
+                  {{ langService.isEnglish() ? 'Medical Employment Limitations' : 'Contraintes d’emploi médical (CEM)' }}
                 </th>
-                <th [colSpan]="rcnOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">Officers</th>
-                <th [colSpan]="rcnNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">NCMs</th>
+                <th [colSpan]="rcnOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'Officers' : 'Officiers' }}
+                </th>
+                <th [colSpan]="rcnNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'NCMs' : 'MR' }}
+                </th>
               </tr>
               <tr>
                 @for (occ of rcnOccupations; track occ.id) {
@@ -109,7 +125,7 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                 <tr class="hover:bg-slate-50">
                   <td class="border-b border-r border-slate-300 p-2 text-slate-700 font-medium sticky left-0 bg-white z-10 group-hover:bg-slate-50 text-[11px] leading-tight">
                     <span [class.text-emerald-700]="mel.category === 'Geographic'" [class.text-teal-700]="mel.category === 'Occupational'">
-                      {{ mel.text }}
+                      {{ langService.isEnglish() ? mel.text : (mel.textFr || mel.text) }}
                     </span>
                   </td>
                   @for (occ of rcnOccupations; track occ.id) {
@@ -118,10 +134,10 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="mel.text + ' - ' + occ.abbreviation"
+                        [title]="(langService.isEnglish() ? mel.text : (mel.textFr || mel.text)) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
-                        {{ isAcceptable(mel.id, occ.id) ? 'Yes' : 'No' }}
+                        {{ isAcceptable(mel.id, occ.id) ? (langService.isEnglish() ? 'Yes' : 'Oui') : (langService.isEnglish() ? 'No' : 'Non') }}
                       </div>
                     </td>
                   }
@@ -135,18 +151,22 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
       <!-- TABLE 3: RCAF -->
       <div class="flex flex-col gap-3 shrink-0">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <span class="inline-block w-3 h-3 rounded-full bg-sky-600"></span>
-          MEL acceptability for RCAF-managed occupations
+          <span class="inline-block w-3 h-3 rounded-full bg-cyan-600"></span>
+          {{ langService.isEnglish() ? 'MEL acceptability for RCAF-managed occupations' : 'Acceptabilité CEM pour les métiers gérés par l’ARC' }}
         </h3>
         <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
           <table class="w-full text-left text-sm border-collapse">
             <thead>
               <tr>
                 <th rowspan="2" class="border-b border-r border-slate-300 bg-slate-200 p-2 text-center font-bold sticky top-0 left-0 z-20 w-64 min-w-[300px]">
-                  Medical Employment Limitations
+                  {{ langService.isEnglish() ? 'Medical Employment Limitations' : 'Contraintes d’emploi médical (CEM)' }}
                 </th>
-                <th [colSpan]="rcafOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">Officers</th>
-                <th [colSpan]="rcafNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">NCMs</th>
+                <th [colSpan]="rcafOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'Officers' : 'Officiers' }}
+                </th>
+                <th [colSpan]="rcafNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'NCMs' : 'MR' }}
+                </th>
               </tr>
               <tr>
                 @for (occ of rcafOccupations; track occ.id) {
@@ -168,7 +188,7 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                 <tr class="hover:bg-slate-50">
                   <td class="border-b border-r border-slate-300 p-2 text-slate-700 font-medium sticky left-0 bg-white z-10 group-hover:bg-slate-50 text-[11px] leading-tight">
                     <span [class.text-emerald-700]="mel.category === 'Geographic'" [class.text-teal-700]="mel.category === 'Occupational'">
-                      {{ mel.text }}
+                      {{ langService.isEnglish() ? mel.text : (mel.textFr || mel.text) }}
                     </span>
                   </td>
                   @for (occ of rcafOccupations; track occ.id) {
@@ -177,10 +197,10 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="mel.text + ' - ' + occ.abbreviation"
+                        [title]="(langService.isEnglish() ? mel.text : (mel.textFr || mel.text)) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
-                        {{ isAcceptable(mel.id, occ.id) ? 'Yes' : 'No' }}
+                        {{ isAcceptable(mel.id, occ.id) ? (langService.isEnglish() ? 'Yes' : 'Oui') : (langService.isEnglish() ? 'No' : 'Non') }}
                       </div>
                     </td>
                   }
@@ -192,20 +212,24 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
       </div>
 
       <!-- TABLE 4: CMP -->
-      <div class="flex flex-col gap-3 shrink-0 pb-6">
+      <div class="flex flex-col gap-3 shrink-0">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
           <span class="inline-block w-3 h-3 rounded-full bg-purple-600"></span>
-          MEL acceptability for CMP-managed occupations
+          {{ langService.isEnglish() ? 'MEL acceptability for CMP-managed occupations' : 'Acceptabilité CEM pour les métiers gérés par le CPM' }}
         </h3>
         <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
           <table class="w-full text-left text-sm border-collapse">
             <thead>
               <tr>
                 <th rowspan="2" class="border-b border-r border-slate-300 bg-slate-200 p-2 text-center font-bold sticky top-0 left-0 z-20 w-64 min-w-[300px]">
-                  Medical Employment Limitations
+                  {{ langService.isEnglish() ? 'Medical Employment Limitations' : 'Contraintes d’emploi médical (CEM)' }}
                 </th>
-                <th [colSpan]="cmpOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">Officers</th>
-                <th [colSpan]="cmpNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">NCMs</th>
+                <th [colSpan]="cmpOfficers.length" class="border-b border-slate-300 bg-blue-100 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'Officers' : 'Officiers' }}
+                </th>
+                <th [colSpan]="cmpNcms.length" class="border-b border-slate-300 bg-blue-50 p-1 text-center font-bold sticky top-0 z-10">
+                  {{ langService.isEnglish() ? 'NCMs' : 'MR' }}
+                </th>
               </tr>
               <tr>
                 @for (occ of cmpOccupations; track occ.id) {
@@ -227,7 +251,7 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                 <tr class="hover:bg-slate-50">
                   <td class="border-b border-r border-slate-300 p-2 text-slate-700 font-medium sticky left-0 bg-white z-10 group-hover:bg-slate-50 text-[11px] leading-tight">
                     <span [class.text-emerald-700]="mel.category === 'Geographic'" [class.text-teal-700]="mel.category === 'Occupational'">
-                      {{ mel.text }}
+                      {{ langService.isEnglish() ? mel.text : (mel.textFr || mel.text) }}
                     </span>
                   </td>
                   @for (occ of cmpOccupations; track occ.id) {
@@ -236,10 +260,10 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="mel.text + ' - ' + occ.abbreviation"
+                        [title]="(langService.isEnglish() ? mel.text : (mel.textFr || mel.text)) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
-                        {{ isAcceptable(mel.id, occ.id) ? 'Yes' : 'No' }}
+                        {{ isAcceptable(mel.id, occ.id) ? (langService.isEnglish() ? 'Yes' : 'Oui') : (langService.isEnglish() ? 'No' : 'Non') }}
                       </div>
                     </td>
                   }
@@ -254,6 +278,7 @@ import { MelService, MEL_LIMITATIONS, ARMY_OCCUPATIONS, RCN_OCCUPATIONS, RCAF_OC
 })
 export class MelComponent {
   private melService = inject(MelService);
+  readonly langService = inject(LanguageService);
 
   limitations = MEL_LIMITATIONS;
   

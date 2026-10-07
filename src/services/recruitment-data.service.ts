@@ -7,6 +7,7 @@ export interface RejectionReason {
   instructionFr: string;
   instructionEn: string;
   logNoteFr: string;
+  logNoteEn?: string;
   linkFr?: string;
   linkEn?: string;
   isConfirmation?: boolean;
@@ -23,6 +24,7 @@ export interface Task {
   nameFr: string;
   nameEn: string;
   section?: string;
+  sectionEn?: string;
   documents: DocumentItem[];
 }
 
@@ -1874,5 +1876,29 @@ export class RecruitmentDataService {
       return this.getGestionnaireTasks();
     }
     return this.data;
+  }
+
+  getTaskName(task: Task, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && task.nameEn ? task.nameEn : task.nameFr;
+  }
+
+  getDocName(doc: DocumentItem, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && doc.nameEn ? doc.nameEn : doc.nameFr;
+  }
+
+  getReasonLabel(reason: RejectionReason, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && reason.labelEn ? reason.labelEn : reason.labelFr;
+  }
+
+  getReasonInstruction(reason: RejectionReason, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && reason.instructionEn ? reason.instructionEn : reason.instructionFr;
+  }
+
+  getLogNote(reason: RejectionReason, lang: "fr" | "en" = "fr"): string {
+    if (lang === "en") {
+      if (reason.logNoteEn) return reason.logNoteEn;
+      if (reason.labelEn) return reason.labelEn;
+    }
+    return reason.logNoteFr;
   }
 }

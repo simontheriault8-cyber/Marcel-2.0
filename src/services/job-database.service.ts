@@ -13,6 +13,7 @@ import {
   RecruitmentCenter,
   RECRUITMENT_CENTERS,
 } from "./jobs-data";
+import { JOB_URLS } from "../app/data/job-urls.data";
 import SIP_DATA from "../../SIP.json";
 
 @Injectable({
@@ -47,8 +48,30 @@ export class JobDatabaseService {
       const category: JobCategory = isOff ? 'officier' : 'mr';
       const element = JOB_ELEMENTS_MAP[job.id] || undefined;
       const isCMP = element === 'CMP';
+      let titleEn = job.titleEn;
+      if (!titleEn) {
+        const urlInfo = (JOB_URLS as Record<string, { fr: string; en: string }>)[job.id];
+        if (urlInfo?.en) {
+          let slug =
+            urlInfo.en.split("/career/")[1] ||
+            urlInfo.en.split(".ca/en/")[1] ||
+            "";
+          slug = slug
+            .replace(/\//g, "")
+            .replace(/\?slug=nep/, "")
+            .replace(/-/g, " ")
+            .trim();
+          if (slug) {
+            titleEn = slug
+              .split(" ")
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(" ");
+          }
+        }
+      }
       return {
         ...job,
+        titleEn: titleEn || job.title,
         category,
         element,
         isCMP,
@@ -453,9 +476,9 @@ export class JobDatabaseService {
 
       // 2. Term-based matching
       const jobTextStrict =
-        `${job.id} ${job.title} ${job.abbreviation}`.toLowerCase();
+        `${job.id} ${job.title} ${job.titleEn || ''} ${job.abbreviation}`.toLowerCase();
       const jobTextLoose =
-        `${job.id} ${job.title} ${job.abbreviation} ${job.requirements}`.toLowerCase();
+        `${job.id} ${job.title} ${job.titleEn || ''} ${job.abbreviation} ${job.requirements}`.toLowerCase();
 
       // We want to make sure EVERY significant term is present in the jobText
       // Except for the math exact expression itself which won't be in the text like "5+5",
@@ -484,5 +507,39 @@ export class JobDatabaseService {
 
   getAllJobs(): JobEntry[] {
     return this.jobs;
+  }
+
+  getCategoryLabel(category: JobCategory, lang: "fr" | "en" = "fr"): string {
+    if (lang === "en") {
+      return category === "officier" ? "Officer" : "Non-Commissioned Member (NCM)";
+    }
+    return category === "officier" ? "Officier" : "Militaire du rang (MR)";
+  }
+
+  getElementLabel(element: MilitaryElement | null | undefined, lang: "fr" | "en" = "fr"): string {
+    if (!element) return "";
+    if (lang === "en") {
+      switch (element) {
+        case "Armée":
+          return "Army";
+        case "Air":
+          return "Air Force";
+        case "Marine":
+          return "Navy";
+        case "CMP":
+          return "MPC";
+        default:
+          return element;
+      }
+    }
+    return element;
+  }
+
+  getRecruitmentCenterName(center: RecruitmentCenter, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && center.nameEn ? center.nameEn : center.name;
+  }
+
+  getRecruitmentCenterFull(center: RecruitmentCenter, lang: "fr" | "en" = "fr"): string {
+    return lang === "en" && center.fullEn ? center.fullEn : center.fullFr;
   }
 }

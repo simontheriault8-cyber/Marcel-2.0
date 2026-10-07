@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
 import { SharedStateService } from "../../services/shared-state.service";
+import { LanguageService } from "../../services/language.service";
 
 @Component({
   selector: "app-scolarite-experience",
@@ -17,7 +18,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                 <div class="p-4 pb-0">
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <h3 class="text-lg font-bold text-slate-800">
-                      Scolarité
+                      {{ langService.isEnglish() ? 'Education' : 'Scolarité' }}
                     </h3>
                     <div class="flex flex-col items-start gap-1.5 text-sm font-medium text-slate-700">
                       <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
@@ -27,7 +28,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           (change)="toggleManualCriterion('etude_anglais')"
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span>Étude en anglais</span>
+                        <span>{{ langService.isEnglish() ? 'Studies in English' : 'Étude en anglais' }}</span>
                       </label>
                       <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
                         <input
@@ -36,7 +37,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           (change)="toggleManualCriterion('etude_hors_canada')"
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span>Étude hors Canada</span>
+                        <span>{{ langService.isEnglish() ? 'Studies outside Canada' : 'Étude hors Canada' }}</span>
                       </label>
                     </div>
                   </div>
@@ -55,9 +56,9 @@ import { SharedStateService } from "../../services/shared-state.service";
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'secondaire'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Secondaire
+                      {{ langService.isEnglish() ? 'Secondary' : 'Secondaire' }}
                     </button>
                     <button
                       (click)="activeScolariteTab.set('specialises')"
@@ -73,9 +74,9 @@ import { SharedStateService } from "../../services/shared-state.service";
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'specialises'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Cours spécialisés
+                      {{ langService.isEnglish() ? 'Specialized courses' : 'Cours spécialisés' }}
                     </button>
                     <button
                       (click)="activeScolariteTab.set('universitaire')"
@@ -91,9 +92,9 @@ import { SharedStateService } from "../../services/shared-state.service";
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'universitaire'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Universitaire
+                      {{ langService.isEnglish() ? 'University' : 'Universitaire' }}
                     </button>
                   </div>
                 </div>
@@ -109,7 +110,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Année scolaire
+                      {{ langService.isEnglish() ? 'School Grade / Year' : 'Année scolaire' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaAnneeScolaire()"
@@ -123,7 +124,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -133,7 +134,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Histoire
+                      {{ langService.isEnglish() ? 'History' : 'Histoire' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaHistoire()"
@@ -147,7 +148,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -157,7 +158,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Langue
+                      {{ langService.isEnglish() ? 'Language' : 'Langue' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaLangue()"
@@ -171,7 +172,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -182,7 +183,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider"
                       >
-                        Mathématique
+                        {{ langService.isEnglish() ? 'Mathematics' : 'Mathématique' }}
                       </h4>
                       <select
                         [ngModel]="selectedProvince()"
@@ -190,7 +191,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">
-                          {{ p.name }}
+                          {{ langService.isEnglish() && p.nameEn ? p.nameEn : p.name }}
                         </option>
                       </select>
                     </div>
@@ -206,14 +207,14 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ m.label }}</span
+                        >{{ formatCriterionLabel(m) }}</span
                       >
                     </label>
                     <div
                       *ngIf="mathCoursesForProvince().length === 0"
                       class="text-sm text-slate-500 italic p-2"
                     >
-                      Aucun cours de mathématiques défini pour cette province.
+                      {{ langService.isEnglish() ? 'No mathematics courses defined for this province.' : 'Aucun cours de mathématiques défini pour cette province.' }}
                     </div>
                   </div>
 
@@ -222,7 +223,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Science
+                      {{ langService.isEnglish() ? 'Science' : 'Science' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaScience()"
@@ -236,7 +237,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -246,7 +247,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Informatique
+                      {{ langService.isEnglish() ? 'Computer Science' : 'Informatique' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaInformatique()"
@@ -260,7 +261,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -274,7 +275,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                   <h4
                     class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                   >
-                    Cours post-secondaire (non universitaire)
+                    {{ langService.isEnglish() ? 'Post-secondary courses (non-university)' : 'Cours post-secondaire (non universitaire)' }}
                   </h4>
                   <label
                     *ngFor="let crit of criteriaCoursSpecialise()"
@@ -288,14 +289,14 @@ import { SharedStateService } from "../../services/shared-state.service";
                     />
                     <span
                       class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                      >{{ crit.label }}</span
+                      >{{ formatCriterionLabel(crit) }}</span
                     >
                   </label>
                   <div
                     *ngIf="criteriaCoursSpecialise().length === 0"
                     class="text-sm text-slate-500 italic p-2"
                   >
-                    Aucun critère défini.
+                    {{ langService.isEnglish() ? 'No criteria defined.' : 'Aucun critère défini.' }}
                   </div>
                 </div>
 
@@ -322,7 +323,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider group-hover:text-slate-700"
                       >
-                        Étude de premier cycle
+                        {{ langService.isEnglish() ? 'Undergraduate Studies' : 'Étude de premier cycle' }}
                       </h4>
                     </label>
 
@@ -364,7 +365,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine du Génie
+                            {{ langService.isEnglish() ? 'Engineering Field' : 'Domaine du Génie' }}
                           </h5>
                         </label>
                       </div>
@@ -386,7 +387,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -434,7 +435,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine des Sciences
+                            {{ langService.isEnglish() ? 'Science Field' : 'Domaine des Sciences' }}
                           </h5>
                         </label>
                       </div>
@@ -456,7 +457,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -500,7 +501,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine des Arts
+                            {{ langService.isEnglish() ? 'Arts Field' : 'Domaine des Arts' }}
                           </h5>
                         </label>
                       </div>
@@ -522,7 +523,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -566,7 +567,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine de la Santé
+                            {{ langService.isEnglish() ? 'Health Field' : 'Domaine de la Santé' }}
                           </h5>
                         </label>
                       </div>
@@ -588,7 +589,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -598,7 +599,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       *ngIf="criteriaUniversitaire1erCycle().length === 0"
                       class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                     >
-                      Aucun critère défini pour le moment.
+                      {{ langService.isEnglish() ? 'No criteria defined at the moment.' : 'Aucun critère défini pour le moment.' }}
                     </div>
                   </div>
 
@@ -620,7 +621,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider group-hover:text-slate-700"
                       >
-                        Étude de cycles supérieurs
+                        {{ langService.isEnglish() ? 'Graduate Studies' : 'Étude de cycles supérieurs' }}
                       </h4>
                     </label>
 
@@ -666,7 +667,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Maîtrise
+                            {{ langService.isEnglish() ? "Master's Degree" : 'Maîtrise' }}
                           </h5>
                         </label>
                       </div>
@@ -688,7 +689,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -736,7 +737,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Doctorat
+                            {{ langService.isEnglish() ? 'Doctorate' : 'Doctorat' }}
                           </h5>
                         </label>
                       </div>
@@ -758,7 +759,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -768,7 +769,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                       *ngIf="criteriaUniversitaireCycleSuperieur().length === 0"
                       class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                     >
-                      Aucun critère défini pour le moment.
+                      {{ langService.isEnglish() ? 'No criteria defined at the moment.' : 'Aucun critère défini pour le moment.' }}
                     </div>
                   </div>
                 </div>
@@ -782,7 +783,7 @@ import { SharedStateService } from "../../services/shared-state.service";
               <div class="bg-slate-50 border-b border-slate-200 shrink-0">
                 <div class="p-4 pb-0">
                   <h3 class="text-lg font-bold text-slate-800 mb-3">
-                    Expérience
+                    {{ langService.isEnglish() ? 'Experience' : 'Expérience' }}
                   </h3>
                 </div>
               </div>
@@ -796,11 +797,11 @@ import { SharedStateService } from "../../services/shared-state.service";
                           Test
                         </span>
                         <h4 class="text-xs font-bold text-indigo-950 uppercase tracking-wide">
-                          Test supplémentaire
+                          {{ langService.isEnglish() ? 'Additional Test' : 'Test supplémentaire' }}
                         </h4>
                       </div>
                       <span class="text-[11px] text-indigo-700 font-medium">
-                        Cocher = Réussi
+                        {{ langService.isEnglish() ? 'Checked = Passed' : 'Cocher = Réussi' }}
                       </span>
                     </div>
 
@@ -819,11 +820,11 @@ import { SharedStateService } from "../../services/shared-state.service";
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">ECE</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testEcePassed()" [class.text-emerald-800]="testEcePassed()" [class.bg-slate-100]="!testEcePassed()" [class.text-slate-600]="!testEcePassed()">
-                                  {{ testEcePassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testEcePassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Évaluation des compétences en communication écrite (00203 - Officier des affaires publiques)
+                                {{ langService.isEnglish() ? 'Written Communication Skills Assessment (00203 - Public Affairs Officer)' : 'Évaluation des compétences en communication écrite (00203 - Officier des affaires publiques)' }}
                               </p>
                             </div>
                           </label>
@@ -844,11 +845,11 @@ import { SharedStateService } from "../../services/shared-state.service";
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">ESOM</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testEsomPassed()" [class.text-emerald-800]="testEsomPassed()" [class.bg-slate-100]="!testEsomPassed()" [class.text-slate-600]="!testEsomPassed()">
-                                  {{ testEsomPassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testEsomPassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Évaluation de sélection des officiers de marine (00207 - Officier de guerre navale)
+                                {{ langService.isEnglish() ? 'Naval Officer Selection Board (00207 - Naval Warfare Officer)' : 'Évaluation de sélection des officiers de marine (00207 - Officier de guerre navale)' }}
                               </p>
                             </div>
                           </label>
@@ -869,11 +870,11 @@ import { SharedStateService } from "../../services/shared-state.service";
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">CEOPM</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testCeopmPassed()" [class.text-emerald-800]="testCeopmPassed()" [class.bg-slate-100]="!testCeopmPassed()" [class.text-slate-600]="!testCeopmPassed()">
-                                  {{ testCeopmPassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testCeopmPassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Centre d’évaluation des officiers de la police militaire (00214 - Officier de la police militaire)
+                                {{ langService.isEnglish() ? 'Military Police Officer Assessment Centre (00214 - Military Police Officer)' : 'Centre d’évaluation des officiers de la police militaire (00214 - Officier de la police militaire)' }}
                               </p>
                             </div>
                           </label>
@@ -903,11 +904,11 @@ import { SharedStateService } from "../../services/shared-state.service";
                                     [class.bg-slate-100]="!testCspnPassed() && !testCspnNotCompleted()"
                                     [class.text-slate-600]="!testCspnPassed() && !testCspnNotCompleted()"
                                   >
-                                    {{ testCspnPassed() ? "Test réussi" : (testCspnNotCompleted() ? "Pas encore complété (Inadmissible)" : "Non coché (Inadmissible)") }}
+                                    {{ testCspnPassed() ? (langService.isEnglish() ? 'Test passed' : 'Test réussi') : (testCspnNotCompleted() ? (langService.isEnglish() ? 'Not completed yet (Ineligible)' : 'Pas encore complété (Inadmissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)')) }}
                                   </span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 mt-0.5">
-                                  Centre de sélection du personnel navigant (00182, 00183, 00184)
+                                  {{ langService.isEnglish() ? 'Aircrew Selection Centre (00182, 00183, 00184)' : 'Centre de sélection du personnel navigant (00182, 00183, 00184)' }}
                                 </p>
                               </div>
                             </label>
@@ -919,14 +920,14 @@ import { SharedStateService } from "../../services/shared-state.service";
                                 (change)="onCspnNotCompletedToggle($any($event.target).checked)"
                                 class="w-3.5 h-3.5 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer"
                               />
-                              <span class="text-xs font-medium text-amber-900">Pas encore complété</span>
+                              <span class="text-xs font-medium text-amber-900">{{ langService.isEnglish() ? 'Not completed yet' : 'Pas encore complété' }}</span>
                             </label>
                           </div>
 
                           @if (testCspnPassed()) {
                             <div class="mt-2 pl-6 pt-2 border-t border-slate-100 space-y-1.5">
                               <p class="text-[11px] font-semibold text-slate-700 mb-1">
-                                Métiers pour lesquels le test est réussi :
+                                {{ langService.isEnglish() ? 'Trades for which test is passed:' : 'Métiers pour lesquels le test est réussi :' }}
                               </p>
                               <div class="grid grid-cols-1 gap-1.5">
                                 <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
@@ -937,7 +938,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00182</span> - SYSTÈMES DE COMBAT
+                                    <span class="font-bold text-indigo-700">00182</span> - {{ langService.isEnglish() ? 'AIR WEAPONS CONTROLLER / ACSO' : 'SYSTÈMES DE COMBAT' }}
                                   </span>
                                 </label>
 
@@ -949,7 +950,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00183</span> - PILOTE
+                                    <span class="font-bold text-indigo-700">00183</span> - {{ langService.isEnglish() ? 'PILOT' : 'PILOTE' }}
                                   </span>
                                 </label>
 
@@ -961,7 +962,7 @@ import { SharedStateService } from "../../services/shared-state.service";
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00184</span> - CONTRÔLE AÉROSPATIAL
+                                    <span class="font-bold text-indigo-700">00184</span> - {{ langService.isEnglish() ? 'AEROSPACE CONTROL' : 'CONTRÔLE AÉROSPATIAL' }}
                                   </span>
                                 </label>
                               </div>
@@ -986,14 +987,14 @@ import { SharedStateService } from "../../services/shared-state.service";
                     />
                     <span
                       class="text-sm text-slate-700 group-hover:text-slate-900 font-medium whitespace-pre-line"
-                      >{{ crit.label }}</span
+                      >{{ formatCriterionLabel(crit) }}</span
                     >
                   </label>
                   <div
                     *ngIf="criteriaExperience().length === 0"
                     class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                   >
-                    Aucune expérience définie.
+                    {{ langService.isEnglish() ? 'No experience defined.' : 'Aucune expérience définie.' }}
                   </div>
                 </div>
               </div>
@@ -1005,6 +1006,7 @@ import { SharedStateService } from "../../services/shared-state.service";
 export class ScolariteExperienceComponent {
   criteriaService = inject(ReorientationCriteriaService);
   sharedState = inject(SharedStateService);
+  readonly langService = inject(LanguageService);
 
   selectedCriteriaIds = this.criteriaService.selectedCriteriaIds;
   activeScolariteTab = this.criteriaService.activeScolariteTab;
@@ -1058,6 +1060,10 @@ export class ScolariteExperienceComponent {
   testCspn00182Passed = this.sharedState.testCspn00182Passed;
   testCspn00183Passed = this.sharedState.testCspn00183Passed;
   testCspn00184Passed = this.sharedState.testCspn00184Passed;
+
+  formatCriterionLabel(crit: any): string {
+    return this.criteriaService.formatCriterionLabel(crit);
+  }
 
   toggleManualCriterion(id: string) {
     this.criteriaService.toggleManualCriterion(id);

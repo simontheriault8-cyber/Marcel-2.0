@@ -34,44 +34,63 @@ import { MelService } from "./services/mel.service";
 import { ReorientationCriteriaService } from "./services/reorientation-criteria.service";
 import { JobEntry, JobCategory, MilitaryElement, RecruitmentCenter, RECRUITMENT_CENTERS, ENROLMENT_HOURS } from "./services/jobs-data";
 import { FormsModule } from "@angular/forms";
+import { LanguageService } from "./services/language.service";
 
 export interface UniteAffectation {
   id: string;
   nom: string;
+  nomEn?: string;
   adresseHtml: string;
+  adresseHtmlEn?: string;
   adressePlain: string;
+  adressePlainEn?: string;
 }
 
 export const UNITES_AFFECTATION: UniteAffectation[] = [
   {
     id: "st-jean",
     nom: "St-Jean sur richelieu",
+    nomEn: "Saint-Jean-sur-Richelieu",
     adresseHtml: "ÉCOLE DE LEADERSHIP ET DE RECRUES DES FORCES CANADIENNES<br>CP 100 SUCC BUREAU-CHEF<br>RICHELAIN QC J0J 1R0",
-    adressePlain: "ÉCOLE DE LEADERSHIP ET DE RECRUES DES FORCES CANADIENNES\nCP 100 SUCC BUREAU-CHEF\nRICHELAIN QC J0J 1R0"
+    adresseHtmlEn: "CANADIAN FORCES LEADERSHIP AND RECRUIT SCHOOL<br>PO BOX 100 STN HEADQUARTERS<br>RICHELAIN QC J0J 1R0",
+    adressePlain: "ÉCOLE DE LEADERSHIP ET DE RECRUES DES FORCES CANADIENNES\nCP 100 SUCC BUREAU-CHEF\nRICHELAIN QC J0J 1R0",
+    adressePlainEn: "CANADIAN FORCES LEADERSHIP AND RECRUIT SCHOOL\nPO BOX 100 STN HEADQUARTERS\nRICHELAIN QC J0J 1R0"
   },
   {
     id: "valcartier",
     nom: "Valcartier",
+    nomEn: "Valcartier",
     adresseHtml: "DETACHEMENT VALCARTIER QUARTIER GENERAL DE LA 2E DIVISION DU CANADA<br>CP 1000 SUCC FORCES<br>COURCELETTE QC G0A 4Z0",
-    adressePlain: "DETACHEMENT VALCARTIER QUARTIER GENERAL DE LA 2E DIVISION DU CANADA\nCP 1000 SUCC FORCES\nCOURCELETTE QC G0A 4Z0"
+    adresseHtmlEn: "2ND CANADIAN DIVISION HEADQUARTERS VALCARTIER DETACHMENT<br>PO BOX 1000 STN FORCES<br>COURCELETTE QC G0A 4Z0",
+    adressePlain: "DETACHEMENT VALCARTIER QUARTIER GENERAL DE LA 2E DIVISION DU CANADA\nCP 1000 SUCC FORCES\nCOURCELETTE QC G0A 4Z0",
+    adressePlainEn: "2ND CANADIAN DIVISION HEADQUARTERS VALCARTIER DETACHMENT\nPO BOX 1000 STN FORCES\nCOURCELETTE QC G0A 4Z0"
   },
   {
     id: "borden",
     nom: "Borden",
+    nomEn: "Borden",
     adresseHtml: "BASE DES FORCES CANADIENNES BORDEN<br>CP 1000 SUCC MAIN<br>BORDEN ON L0M 1C0",
-    adressePlain: "BASE DES FORCES CANADIENNES BORDEN\nCP 1000 SUCC MAIN\nBORDEN ON L0M 1C0"
+    adresseHtmlEn: "CANADIAN FORCES BASE BORDEN<br>PO BOX 1000 STN MAIN<br>BORDEN ON L0M 1C0",
+    adressePlain: "BASE DES FORCES CANADIENNES BORDEN\nCP 1000 SUCC MAIN\nBORDEN ON L0M 1C0",
+    adressePlainEn: "CANADIAN FORCES BASE BORDEN\nPO BOX 1000 STN MAIN\nBORDEN ON L0M 1C0"
   },
   {
     id: "bagotville",
     nom: "Bagotville",
+    nomEn: "Bagotville",
     adresseHtml: "BASE DES FORCES CANADIENNES BAGOTVILLE<br>CP 5000 SUCC BUREAU-CHEF<br>ALOUETTE QC G0V 1A0",
-    adressePlain: "BASE DES FORCES CANADIENNES BAGOTVILLE\nCP 5000 SUCC BUREAU-CHEF\nALOUETTE QC G0V 1A0"
+    adresseHtmlEn: "CANADIAN FORCES BASE BAGOTVILLE<br>PO BOX 5000 STN HEADQUARTERS<br>ALOUETTE QC G0V 1A0",
+    adressePlain: "BASE DES FORCES CANADIENNES BAGOTVILLE\nCP 5000 SUCC BUREAU-CHEF\nALOUETTE QC G0V 1A0",
+    adressePlainEn: "CANADIAN FORCES BASE BAGOTVILLE\nPO BOX 5000 STN HEADQUARTERS\nALOUETTE QC G0V 1A0"
   },
   {
     id: "gagetown",
     nom: "Gagetown",
+    nomEn: "Gagetown",
     adresseHtml: "BASE DE SOUTIEN DE LA 5E DIVISION DU CANADA GAGETOWN<br>CP 17000 SUCC FORCES<br>OROMOCTO NB E2V 4J5",
-    adressePlain: "BASE DE SOUTIEN DE LA 5E DIVISION DU CANADA GAGETOWN\nCP 17000 SUCC FORCES\nOROMOCTO NB E2V 4J5"
+    adresseHtmlEn: "5TH CANADIAN DIVISION SUPPORT BASE GAGETOWN<br>PO BOX 17000 STN FORCES<br>OROMOCTO NB E2V 4J5",
+    adressePlain: "BASE DE SOUTIEN DE LA 5E DIVISION DU CANADA GAGETOWN\nCP 17000 SUCC FORCES\nOROMOCTO NB E2V 4J5",
+    adressePlainEn: "5TH CANADIAN DIVISION SUPPORT BASE GAGETOWN\nPO BOX 17000 STN FORCES\nOROMOCTO NB E2V 4J5"
   }
 ];
 
@@ -200,18 +219,57 @@ function getTodayDateString(): string {
   imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, FormsModule],
   template: `
     @if (!isAuthenticated()) {
-      <div class="h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-4">
+      <div class="h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-4 relative">
+        <!-- Top Right Language Switcher -->
+        <div class="absolute top-6 right-6 z-10">
+          <div class="inline-flex p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+            <button
+              type="button"
+              (click)="langService.setLanguage('fr')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isFrench()"
+              [class.text-white]="langService.isFrench()"
+              [class.shadow-xs]="langService.isFrench()"
+              [class.text-slate-600]="!langService.isFrench()"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="langService.setLanguage('en')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isEnglish()"
+              [class.text-white]="langService.isEnglish()"
+              [class.shadow-xs]="langService.isEnglish()"
+              [class.text-slate-600]="!langService.isEnglish()"
+            >
+              EN
+            </button>
+          </div>
+        </div>
+
         <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-slate-200">
           <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-slate-800 mb-2">Accès restreint</h2>
-          <p class="text-sm text-slate-500 mb-6">Veuillez entrer le mot de passe pour accéder à l'application.</p>
+          <h2 class="text-2xl font-bold text-slate-800 mb-2">
+            {{ langService.isEnglish() ? 'Restricted Access' : 'Accès restreint' }}
+          </h2>
+          <p class="text-sm text-slate-500 mb-6">
+            {{ langService.t("Veuillez entrer le mot de passe pour accéder à l'application.", "Please enter the password to access the application.") }}
+          </p>
           <form (submit)="checkPassword($event)">
             <div class="relative mb-4">
-              <input [type]="showPassword() ? 'text' : 'password'" [ngModel]="passwordInput()" (ngModelChange)="passwordInput.set($event)" [ngModelOptions]="{standalone: true}" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12" placeholder="Mot de passe" />
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                [ngModel]="passwordInput()"
+                (ngModelChange)="passwordInput.set($event)"
+                [ngModelOptions]="{standalone: true}"
+                class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12"
+                [placeholder]="langService.isEnglish() ? 'Password' : 'Mot de passe'"
+              />
               <button type="button" (click)="showPassword.set(!showPassword())" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none">
                 @if (showPassword()) {
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -226,13 +284,15 @@ function getTodayDateString(): string {
               </button>
             </div>
             @if (authError()) {
-              <p class="text-red-500 text-sm mb-4 font-medium animate-pulse">Mot de passe incorrect.</p>
+              <p class="text-red-500 text-sm mb-4 font-medium animate-pulse">
+                {{ langService.isEnglish() ? 'Incorrect password.' : 'Mot de passe incorrect.' }}
+              </p>
             }
-            <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-bold shadow-md active:scale-95 flex justify-center items-center gap-2">
+            <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-bold shadow-md active:scale-95 flex justify-center items-center gap-2 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
               </svg>
-              Déverrouiller
+              <span>{{ langService.isEnglish() ? 'Unlock' : 'Déverrouiller' }}</span>
             </button>
           </form>
         </div>
@@ -247,7 +307,7 @@ function getTodayDateString(): string {
             <button
               (click)="openTutoMarcel()"
               class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-              title="Guide et Tutoriels d'utilisation de MARCEL"
+              [title]="langService.t('Guide et Tutoriels d’utilisation de MARCEL', 'MARCEL User Guide & Tutorials')"
             >
               <div class="w-7 h-7 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 flex items-center justify-center transition-colors shadow-xs">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -256,6 +316,34 @@ function getTodayDateString(): string {
               </div>
               <span>Tuto Marcel</span>
             </button>
+          </div>
+
+          <!-- Top Right: Language Toggle -->
+          <div class="absolute top-6 right-6 z-10">
+            <div class="inline-flex p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+              <button
+                type="button"
+                (click)="langService.setLanguage('fr')"
+                class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+                [class.bg-indigo-600]="langService.isFrench()"
+                [class.text-white]="langService.isFrench()"
+                [class.shadow-xs]="langService.isFrench()"
+                [class.text-slate-600]="!langService.isFrench()"
+              >
+                FR
+              </button>
+              <button
+                type="button"
+                (click)="langService.setLanguage('en')"
+                class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+                [class.bg-indigo-600]="langService.isEnglish()"
+                [class.text-white]="langService.isEnglish()"
+                [class.shadow-xs]="langService.isEnglish()"
+                [class.text-slate-600]="!langService.isEnglish()"
+              >
+                EN
+              </button>
+            </div>
           </div>
 
           <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
@@ -273,18 +361,29 @@ function getTodayDateString(): string {
                   <span
                     class="text-[10px] sm:text-[11px] md:text-xs leading-none uppercase tracking-wider font-semibold text-slate-500 text-center transition-all duration-500 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 absolute w-full px-3 whitespace-nowrap"
                   >
-                    <span class="font-black text-indigo-700">M</span>odule
-                    d'<span class="font-black text-indigo-700">A</span>nalyse et de
-                    <span class="font-black text-indigo-700">R</span>éorientation
-                    des
-                    <span class="font-black text-indigo-700">C</span>andidats à l'<span class="font-black text-indigo-700">E</span>nrôlement pour les
-                    <span class="font-black text-indigo-700">L</span>âches
+                    @if (langService.isEnglish()) {
+                      <span class="font-black text-indigo-700">M</span>odule for
+                      <span class="font-black text-indigo-700">A</span>nalysis and
+                      <span class="font-black text-indigo-700">R</span>eorientation of
+                      <span class="font-black text-indigo-700">C</span>andidates for
+                      <span class="font-black text-indigo-700">E</span>nrolment for
+                      <span class="font-black text-indigo-700">L</span>azy-folks
+                    } @else {
+                      <span class="font-black text-indigo-700">M</span>odule
+                      d'<span class="font-black text-indigo-700">A</span>nalyse et de
+                      <span class="font-black text-indigo-700">R</span>éorientation
+                      des
+                      <span class="font-black text-indigo-700">C</span>andidats à l'<span class="font-black text-indigo-700">E</span>nrôlement pour les
+                      <span class="font-black text-indigo-700">L</span>âches
+                    }
                   </span>
                 </div>
               </div>
             </div>
 
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sélection du Rôle</h1>
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">
+              {{ langService.isEnglish() ? 'Role Selection' : 'Sélection du Rôle' }}
+            </h1>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
               <!-- Left: Gestionnaire de dossier -->
@@ -297,7 +396,9 @@ function getTodayDateString(): string {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Gestionnaire de dossier</h3>
+                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">
+                  {{ langService.isEnglish() ? 'File Manager' : 'Gestionnaire de dossier' }}
+                </h3>
               </div>
 
               <!-- Right: Recruteur -->
@@ -310,7 +411,9 @@ function getTodayDateString(): string {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">Recruteur</h3>
+                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">
+                  {{ langService.isEnglish() ? 'Recruiter' : 'Recruteur' }}
+                </h3>
               </div>
             </div>
 
@@ -323,30 +426,57 @@ function getTodayDateString(): string {
         <!-- Header -->
         <div class="max-w-5xl w-full mx-auto flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 shrink-0">
           <div class="flex items-center gap-4">
-            <button (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer" title="Retour">
+            <button (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer" [title]="langService.isEnglish() ? 'Back' : 'Retour'">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
             <div>
               <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                Gestion des signatures
+                {{ langService.isEnglish() ? 'Signature Management' : 'Gestion des signatures' }}
               </h1>
-              <p class="text-xs text-slate-500 mt-0.5">Personnalisez vos signatures de courriel (Signature normale et Signature OTA).</p>
+              <p class="text-xs text-slate-500 mt-0.5">
+                {{ langService.isEnglish() ? 'Customize your email signatures (Standard signature and OTA signature).' : 'Personnalisez vos signatures de courriel (Signature normale et Signature OTA).' }}
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-3">
+            <!-- Language Toggle in Signature Page -->
+            <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-xs mr-1">
+              <button
+                type="button"
+                (click)="langService.setLanguage('fr')"
+                class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+                [class.bg-white]="langService.isFrench()"
+                [class.text-indigo-700]="langService.isFrench()"
+                [class.shadow-xs]="langService.isFrench()"
+                [class.text-slate-600]="!langService.isFrench()"
+              >
+                FR
+              </button>
+              <button
+                type="button"
+                (click)="langService.setLanguage('en')"
+                class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+                [class.bg-white]="langService.isEnglish()"
+                [class.text-indigo-700]="langService.isEnglish()"
+                [class.shadow-xs]="langService.isEnglish()"
+                [class.text-slate-600]="!langService.isEnglish()"
+              >
+                EN
+              </button>
+            </div>
             <button (click)="resetSignatures()" class="px-4 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 rounded-xl transition-all text-sm font-semibold flex items-center gap-2 active:scale-95 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15H17M4 9a8.001 8.001 0 0113.313-2.24L20 9" />
               </svg>
-              Réinitialiser le bloc actif
+              <span>{{ langService.isEnglish() ? 'Reset active block' : 'Réinitialiser le bloc actif' }}</span>
             </button>
             <button (click)="saveSignatures()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all text-sm font-semibold flex items-center gap-2 shadow-md active:scale-95 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Sauvegarder tout
+              <span>{{ langService.isEnglish() ? 'Save all' : 'Sauvegarder tout' }}</span>
             </button>
           </div>
         </div>
@@ -366,7 +496,7 @@ function getTodayDateString(): string {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Bloc Signature Normale
+              <span>{{ langService.isEnglish() ? 'Standard Signature Block' : 'Bloc Signature Normale' }}</span>
             </button>
             <button
               (click)="signatureSection.set('ota')"
@@ -380,7 +510,7 @@ function getTodayDateString(): string {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              Bloc Signature OTA
+              <span>{{ langService.isEnglish() ? 'OTA Signature Block' : 'Bloc Signature OTA' }}</span>
             </button>
           </div>
 
@@ -395,9 +525,9 @@ function getTodayDateString(): string {
           >
             <span class="inline-block w-2 h-2 rounded-full" [class.bg-blue-600]="signatureSection() === 'normal'" [class.bg-purple-600]="signatureSection() === 'ota'"></span>
             @if (signatureSection() === 'normal') {
-              <span><strong>Utilisation :</strong> Partout (Volet Recruteur &amp; Dossiers locaux GD) sauf dans le volet GD pour les dossiers OTA.</span>
+              <span><strong>{{ langService.isEnglish() ? 'Usage:' : 'Utilisation :' }}</strong> {{ langService.isEnglish() ? 'Everywhere (Recruiter & GD local files) except in GD for OTA files.' : 'Partout (Volet Recruteur & Dossiers locaux GD) sauf dans le volet GD pour les dossiers OTA.' }}</span>
             } @else {
-              <span><strong>Utilisation :</strong> Exclusivement dans le <strong>volet Gestionnaire de dossier (GD)</strong> pour les <strong>dossiers OTA</strong>.</span>
+              <span><strong>{{ langService.isEnglish() ? 'Usage:' : 'Utilisation :' }}</strong> {{ langService.isEnglish() ? 'Exclusively in the File Manager (GD) section for OTA files.' : 'Exclusivement dans le volet Gestionnaire de dossier (GD) pour les dossiers OTA.' }}</span>
             }
           </div>
         </div>
@@ -410,12 +540,14 @@ function getTodayDateString(): string {
               <div class="flex items-center justify-between mb-3 shrink-0">
                 <h2 class="text-md font-bold text-slate-800 flex items-center gap-2">
                   <span class="bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-sans">FR</span>
-                  Signature française (Normale)
+                  <span>{{ langService.isEnglish() ? 'French Signature (Standard)' : 'Signature française (Normale)' }}</span>
                 </h2>
-                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Standard</span>
+                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ langService.isEnglish() ? 'Standard' : 'Standard' }}</span>
               </div>
-              <p class="text-xs text-slate-500 mb-4 shrink-0">Cette signature sera intégrée au bas de vos correspondances régulières rédigées en français.</p>
-              <textarea [(ngModel)]="sigFrTemp" class="w-full flex-1 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-slate-50/30" placeholder="Ajoutez votre signature française normale..."></textarea>
+              <p class="text-xs text-slate-500 mb-4 shrink-0">
+                {{ langService.isEnglish() ? 'This signature will be appended to regular correspondence written in French.' : 'Cette signature sera intégrée au bas de vos correspondances régulières rédigées en français.' }}
+              </p>
+              <textarea [(ngModel)]="sigFrTemp" class="w-full flex-1 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-slate-50/30" [placeholder]="langService.isEnglish() ? 'Add your standard French signature...' : 'Ajoutez votre signature française normale...'"></textarea>
             </div>
 
             <!-- English signature card (Normal) -->
@@ -423,12 +555,14 @@ function getTodayDateString(): string {
               <div class="flex items-center justify-between mb-3 shrink-0">
                 <h2 class="text-md font-bold text-slate-800 flex items-center gap-2">
                   <span class="bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-sans">EN</span>
-                  Signature anglaise (Normale)
+                  <span>{{ langService.isEnglish() ? 'English Signature (Standard)' : 'Signature anglaise (Normale)' }}</span>
                 </h2>
-                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Standard</span>
+                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ langService.isEnglish() ? 'Standard' : 'Standard' }}</span>
               </div>
-              <p class="text-xs text-slate-500 mb-4 shrink-0">Cette signature sera intégrée au bas de vos correspondances régulières rédigées en anglais.</p>
-              <textarea [(ngModel)]="sigEnTemp" class="w-full flex-1 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-slate-50/30" placeholder="Ajoutez votre signature anglaise normale..."></textarea>
+              <p class="text-xs text-slate-500 mb-4 shrink-0">
+                {{ langService.isEnglish() ? 'This signature will be appended to regular correspondence written in English.' : 'Cette signature sera intégrée au bas de vos correspondances régulières rédigées en anglais.' }}
+              </p>
+              <textarea [(ngModel)]="sigEnTemp" class="w-full flex-1 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-slate-50/30" [placeholder]="langService.isEnglish() ? 'Add your standard English signature...' : 'Ajoutez votre signature anglaise normale...'"></textarea>
             </div>
           } @else {
             <!-- French signature card (OTA) -->
@@ -436,12 +570,14 @@ function getTodayDateString(): string {
               <div class="flex items-center justify-between mb-3 shrink-0">
                 <h2 class="text-md font-bold text-slate-800 flex items-center gap-2">
                   <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-sans">FR</span>
-                  Signature française (OTA)
+                  <span>{{ langService.isEnglish() ? 'French Signature (OTA)' : 'Signature française (OTA)' }}</span>
                 </h2>
-                <span class="text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">Dossiers OTA</span>
+                <span class="text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">{{ langService.isEnglish() ? 'OTA Files' : 'Dossiers OTA' }}</span>
               </div>
-              <p class="text-xs text-slate-500 mb-4 shrink-0">Cette signature sera intégrée au bas de vos correspondances pour les dossiers OTA dans le volet GD en français.</p>
-              <textarea [(ngModel)]="sigOtaFrTemp" class="w-full flex-1 p-4 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-purple-50/20" placeholder="Ajoutez votre signature française OTA..."></textarea>
+              <p class="text-xs text-slate-500 mb-4 shrink-0">
+                {{ langService.isEnglish() ? 'This signature will be appended to French correspondence for OTA files in the GD section.' : 'Cette signature sera intégrée au bas de vos correspondances pour les dossiers OTA dans le volet GD en français.' }}
+              </p>
+              <textarea [(ngModel)]="sigOtaFrTemp" class="w-full flex-1 p-4 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-purple-50/20" [placeholder]="langService.isEnglish() ? 'Add your French OTA signature...' : 'Ajoutez votre signature française OTA...'"></textarea>
             </div>
 
             <!-- English signature card (OTA) -->
@@ -449,12 +585,14 @@ function getTodayDateString(): string {
               <div class="flex items-center justify-between mb-3 shrink-0">
                 <h2 class="text-md font-bold text-slate-800 flex items-center gap-2">
                   <span class="bg-purple-100 text-purple-800 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-sans">EN</span>
-                  Signature anglaise (OTA)
+                  <span>{{ langService.isEnglish() ? 'English Signature (OTA)' : 'Signature anglaise (OTA)' }}</span>
                 </h2>
-                <span class="text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">Dossiers OTA</span>
+                <span class="text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">{{ langService.isEnglish() ? 'OTA Files' : 'Dossiers OTA' }}</span>
               </div>
-              <p class="text-xs text-slate-500 mb-4 shrink-0">Cette signature sera intégrée au bas de vos correspondances pour les dossiers OTA dans le volet GD en anglais.</p>
-              <textarea [(ngModel)]="sigOtaEnTemp" class="w-full flex-1 p-4 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-purple-50/20" placeholder="Ajoutez votre signature anglaise OTA..."></textarea>
+              <p class="text-xs text-slate-500 mb-4 shrink-0">
+                {{ langService.isEnglish() ? 'This signature will be appended to English correspondence for OTA files in the GD section.' : 'Cette signature sera intégrée au bas de vos correspondances pour les dossiers OTA dans le volet GD en anglais.' }}
+              </p>
+              <textarea [(ngModel)]="sigOtaEnTemp" class="w-full flex-1 p-4 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm font-mono overflow-y-auto resize-none leading-relaxed bg-purple-50/20" [placeholder]="langService.isEnglish() ? 'Add your English OTA signature...' : 'Ajoutez votre signature anglaise OTA...'"></textarea>
             </div>
           }
         </div>
@@ -465,7 +603,9 @@ function getTodayDateString(): string {
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
-            <span class="text-sm font-semibold">Signatures sauvegardées avec succès !</span>
+            <span class="text-sm font-semibold">
+              {{ langService.isEnglish() ? 'Signatures saved successfully!' : 'Signatures sauvegardées avec succès !' }}
+            </span>
           </div>
         }
       </div>
@@ -476,11 +616,37 @@ function getTodayDateString(): string {
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
         <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <!-- Language Toggle -->
+          <div class="inline-flex p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+            <button
+              type="button"
+              (click)="langService.setLanguage('fr')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isFrench()"
+              [class.text-white]="langService.isFrench()"
+              [class.shadow-xs]="langService.isFrench()"
+              [class.text-slate-600]="!langService.isFrench()"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="langService.setLanguage('en')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isEnglish()"
+              [class.text-white]="langService.isEnglish()"
+              [class.shadow-xs]="langService.isEnglish()"
+              [class.text-slate-600]="!langService.isEnglish()"
+            >
+              EN
+            </button>
+          </div>
+
           <!-- Job Search Button (Intro) -->
           <button
             (click)="toggleJobSearch()"
             class="bg-indigo-100 border border-indigo-200 text-indigo-800 hover:bg-indigo-200 h-10 w-10 rounded-full shadow-sm transition-all font-sans flex items-center justify-center text-sm font-black cursor-pointer active:scale-95"
-            title="Panneau de Réorientation et Métiers"
+            [title]="langService.isEnglish() ? 'Reorientation and Trades Panel' : 'Panneau de Réorientation et Métiers'"
           >
             RÉO
           </button>
@@ -489,7 +655,7 @@ function getTodayDateString(): string {
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            title="Revenir à la page de sélection de rôle"
+            [title]="langService.isEnglish() ? 'Return to role selection page' : 'Revenir à la page de sélection de rôle'"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -505,7 +671,7 @@ function getTodayDateString(): string {
                 d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
               />
             </svg>
-            <span>Changer de rôle</span>
+            <span>{{ langService.isEnglish() ? 'Switch role' : 'Changer de rôle' }}</span>
           </button>
         </div>
 
@@ -532,9 +698,11 @@ function getTodayDateString(): string {
               </svg>
             </div>
             <h1 class="text-3xl font-bold text-slate-800 mb-2">
-              Vérification Initiale
+              {{ langService.isEnglish() ? 'Initial Verification' : 'Vérification Initiale' }}
             </h1>
-            <p class="text-lg text-slate-600">Le postulant est-il mineur ?</p>
+            <p class="text-lg text-slate-600">
+              {{ langService.isEnglish() ? 'Is the applicant a minor?' : 'Le postulant est-il mineur ?' }}
+            </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -542,13 +710,13 @@ function getTodayDateString(): string {
               (click)="startMinorCheck()"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer"
             >
-              Oui
+              {{ langService.isEnglish() ? 'Yes' : 'Oui' }}
             </button>
             <button
               (click)="onRecruiterMinorCheckNon()"
               class="py-4 px-6 bg-white text-slate-800 border-2 border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition-colors shadow-sm active:scale-95 cursor-pointer"
             >
-              Non
+              {{ langService.isEnglish() ? 'No' : 'Non' }}
             </button>
           </div>
         </div>
@@ -558,22 +726,48 @@ function getTodayDateString(): string {
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
         <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <!-- Language Toggle -->
+          <div class="inline-flex p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+            <button
+              type="button"
+              (click)="langService.setLanguage('fr')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isFrench()"
+              [class.text-white]="langService.isFrench()"
+              [class.shadow-xs]="langService.isFrench()"
+              [class.text-slate-600]="!langService.isFrench()"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="langService.setLanguage('en')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isEnglish()"
+              [class.text-white]="langService.isEnglish()"
+              [class.shadow-xs]="langService.isEnglish()"
+              [class.text-slate-600]="!langService.isEnglish()"
+            >
+              EN
+            </button>
+          </div>
+
           <button
             (click)="backToRecruiterMinorCheck()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            title="Revenir à l'étape précédente"
+            [title]="langService.t('Revenir à l’étape précédente', 'Return to previous step')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span>Retour</span>
+            <span>{{ langService.isEnglish() ? 'Back' : 'Retour' }}</span>
           </button>
 
           <!-- Switch Role Button -->
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            title="Revenir à la page de sélection de rôle"
+            [title]="langService.isEnglish() ? 'Return to role selection page' : 'Revenir à la page de sélection de rôle'"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -589,7 +783,7 @@ function getTodayDateString(): string {
                 d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
               />
             </svg>
-            <span>Changer de rôle</span>
+            <span>{{ langService.isEnglish() ? 'Switch role' : 'Changer de rôle' }}</span>
           </button>
         </div>
 
@@ -616,9 +810,11 @@ function getTodayDateString(): string {
               </svg>
             </div>
             <h1 class="text-3xl font-bold text-slate-800 mb-2">
-              Type de dossier
+              {{ langService.isEnglish() ? 'File Type' : 'Type de dossier' }}
             </h1>
-            <p class="text-lg text-slate-600">Le dossier est-il Normal ou PFOR ?</p>
+            <p class="text-lg text-slate-600">
+              {{ langService.isEnglish() ? 'Is the file Standard or ROTP (PFOR)?' : 'Le dossier est-il Normal ou PFOR ?' }}
+            </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -626,13 +822,13 @@ function getTodayDateString(): string {
               (click)="selectRecruiterDossierType('normal')"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
-              <span>Normal</span>
+              <span>{{ langService.isEnglish() ? 'Standard' : 'Normal' }}</span>
             </button>
             <button
               (click)="selectRecruiterDossierType('pfor')"
               class="py-4 px-6 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
-              <span>PFOR</span>
+              <span>{{ langService.isEnglish() ? 'ROTP (PFOR)' : 'PFOR' }}</span>
             </button>
           </div>
         </div>
@@ -641,28 +837,57 @@ function getTodayDateString(): string {
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <!-- Switch Role Button (Intro GD) -->
-        <button
-          (click)="switchRole()"
-          class="absolute top-4 right-4 bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all z-50 font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-          title="Revenir à la page de sélection de rôle"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-indigo-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
+        <!-- Top Bar (Intro GD) -->
+        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <!-- Language Toggle -->
+          <div class="inline-flex p-1 bg-white rounded-xl border border-slate-200 shadow-xs">
+            <button
+              type="button"
+              (click)="langService.setLanguage('fr')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isFrench()"
+              [class.text-white]="langService.isFrench()"
+              [class.shadow-xs]="langService.isFrench()"
+              [class.text-slate-600]="!langService.isFrench()"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="langService.setLanguage('en')"
+              class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+              [class.bg-indigo-600]="langService.isEnglish()"
+              [class.text-white]="langService.isEnglish()"
+              [class.shadow-xs]="langService.isEnglish()"
+              [class.text-slate-600]="!langService.isEnglish()"
+            >
+              EN
+            </button>
+          </div>
+
+          <!-- Switch Role Button (Intro GD) -->
+          <button
+            (click)="switchRole()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="langService.isEnglish() ? 'Return to role selection page' : 'Revenir à la page de sélection de rôle'"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-            />
-          </svg>
-          <span>Changer de rôle</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-indigo-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            <span>{{ langService.isEnglish() ? 'Switch role' : 'Changer de rôle' }}</span>
+          </button>
+        </div>
 
         <div
           class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/50 relative z-0"
@@ -687,9 +912,11 @@ function getTodayDateString(): string {
               </svg>
             </div>
             <h1 class="text-3xl font-bold text-slate-800 mb-2">
-              Type de dossier
+              {{ langService.isEnglish() ? 'File Type' : 'Type de dossier' }}
             </h1>
-            <p class="text-lg text-slate-600">Le postulant est-il Local ou OTA ?</p>
+            <p class="text-lg text-slate-600">
+              {{ langService.isEnglish() ? 'Is the applicant Local or OTA?' : 'Le postulant est-il Local ou OTA ?' }}
+            </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -719,20 +946,46 @@ function getTodayDateString(): string {
           <div
             class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between items-center gap-2 flex-1 min-w-[320px]"
           >
-            <h1
-              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1"
-              [class.text-indigo-800]="selectedRole() === 'recruiter'"
-              [class.text-amber-800]="selectedRole() === 'gestionnaire'"
-            >
-              {{ selectedRole() === 'recruiter' ? 'Recruteur' : ('Gestionnaire de dossier — ' + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local')) }}
-            </h1>
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1.5 w-full px-1">
+              <h1
+                class="text-xs font-black tracking-wider uppercase"
+                [class.text-indigo-800]="selectedRole() === 'recruiter'"
+                [class.text-amber-800]="selectedRole() === 'gestionnaire'"
+              >
+                {{ selectedRole() === 'recruiter' ? (langService.isEnglish() ? 'Recruiter' : 'Recruteur') : ((langService.isEnglish() ? 'File Manager — ' : 'Gestionnaire de dossier — ') + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : (langService.isEnglish() ? 'Local' : 'Local'))) }}
+              </h1>
+
+              <!-- Compact Header Language Toggle -->
+              <div class="inline-flex p-0.5 bg-slate-100 rounded-lg border border-slate-200 shrink-0">
+                <button
+                  type="button"
+                  (click)="langService.setLanguage('fr')"
+                  class="px-2 py-0.5 text-[10px] font-bold rounded-md transition-all cursor-pointer"
+                  [class.bg-indigo-600]="langService.isFrench()"
+                  [class.text-white]="langService.isFrench()"
+                  [class.text-slate-600]="!langService.isFrench()"
+                >
+                  FR
+                </button>
+                <button
+                  type="button"
+                  (click)="langService.setLanguage('en')"
+                  class="px-2 py-0.5 text-[10px] font-bold rounded-md transition-all cursor-pointer"
+                  [class.bg-indigo-600]="langService.isEnglish()"
+                  [class.text-white]="langService.isEnglish()"
+                  [class.text-slate-600]="!langService.isEnglish()"
+                >
+                  EN
+                </button>
+              </div>
+            </div>
 
             <div class="grid grid-cols-2 gap-2 w-full flex-1">
               <!-- Top-Left: Reset -->
               <button
                 (click)="restartApp()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                title="Relancer l'application (Reset)"
+                [title]="langService.isEnglish() ? 'Restart application (Reset)' : 'Relancer l’application (Reset)'"
               >
                 <svg
                   class="h-3.5 w-3.5 shrink-0 text-slate-600"
@@ -754,7 +1007,7 @@ function getTodayDateString(): string {
               <button
                 (click)="toggleJobSearch()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold border border-indigo-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                [title]="selectedRole() === 'gestionnaire' ? 'Panneau d’Enrôlement et Métiers' : 'Panneau de Réorientation et Métiers (RÉO)'"
+                [title]="selectedRole() === 'gestionnaire' ? (langService.isEnglish() ? 'Enrolment and Occupations Panel' : 'Panneau d’Enrôlement et Métiers') : (langService.isEnglish() ? 'Reorientation and Occupations Panel (REO)' : 'Panneau de Réorientation et Métiers (RÉO)')"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -770,14 +1023,14 @@ function getTodayDateString(): string {
                     d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                <span>{{ selectedRole() === 'gestionnaire' ? 'Enrôlement' : 'RÉO' }}</span>
+                <span>{{ selectedRole() === 'gestionnaire' ? (langService.isEnglish() ? 'Enrolment' : 'Enrôlement') : (langService.isEnglish() ? 'REO' : 'RÉO') }}</span>
               </button>
 
               <!-- Bottom-Left: Signature -->
               <button
                 (click)="toggleSignatureSettings()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                title="Gestion de la signature"
+                [title]="langService.isEnglish() ? 'Signature settings' : 'Gestion de la signature'"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -809,7 +1062,7 @@ function getTodayDateString(): string {
                   [class.text-slate-700]="selectedEmailBankTemplate() === ''"
                   [class.border-slate-200]="selectedEmailBankTemplate() === ''"
                   [class.hover:bg-slate-200]="selectedEmailBankTemplate() === ''"
-                  title="Banque de courriels"
+                  [title]="langService.isEnglish() ? 'Email bank' : 'Banque de courriels'"
                 >
                   <div class="flex items-center gap-1.5 min-w-0">
                     <svg
@@ -826,7 +1079,9 @@ function getTodayDateString(): string {
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
-                    <span class="truncate font-semibold">Banque de courriels</span>
+                    <span class="truncate font-semibold">
+                      {{ selectedEmailBankTemplate() ? getSelectedEmailBankTemplateLabel() : (langService.isEnglish() ? 'Email bank' : 'Banque de courriels') }}
+                    </span>
                   </div>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -846,13 +1101,13 @@ function getTodayDateString(): string {
                     class="absolute right-0 top-full mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-slate-800 text-xs animate-in fade-in slide-in-from-top-2 duration-150"
                   >
                     <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1 flex items-center justify-between">
-                      <span>Banque de courriels</span>
+                      <span>{{ langService.isEnglish() ? 'Email bank' : 'Banque de courriels' }}</span>
                       @if (selectedEmailBankTemplate() !== '') {
                         <button
                           (click)="selectEmailBankTemplate('')"
                           class="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer text-[10px]"
                         >
-                          Réinitialiser
+                          {{ langService.isEnglish() ? 'Reset' : 'Réinitialiser' }}
                         </button>
                       }
                     </div>
@@ -865,7 +1120,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'general_reminder'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'general_reminder'"
                       >
-                        <span class="truncate">Courriel de rappel</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Reminder email' : 'Courriel de rappel' }}</span>
                         @if (selectedEmailBankTemplate() === 'general_reminder') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -880,7 +1135,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'verification_edo_vs_pfor'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_edo_vs_pfor'"
                       >
-                        <span class="truncate">Courriel de vérification de programme EDO VS PFOR</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'EDO vs ROTP verification email' : 'Courriel de vérification de programme EDO VS PFOR' }}</span>
                         @if (selectedEmailBankTemplate() === 'verification_edo_vs_pfor') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -895,7 +1150,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
                       >
-                        <span class="truncate">Inadmissibilité - Âge (57 ans et plus)</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Ineligibility - Age (57 and older)' : 'Inadmissibilité - Âge (57 ans et plus)' }}</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_age_57') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -910,7 +1165,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
                       >
-                        <span class="truncate">Inadmissibilité - Résident permanent (< 3 ans)</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Ineligibility - Permanent resident (< 3 years)' : 'Inadmissibilité - Résident permanent (< 3 ans)' }}</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -925,7 +1180,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr'"
                       >
-                        <span class="truncate">Inadmissibilité - Ni citoyen ni résident permanent</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Ineligibility - Neither citizen nor PR' : 'Inadmissibilité - Ni citoyen ni résident permanent' }}</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -940,7 +1195,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
                       >
-                        <span class="truncate">Tentative de communication - Offre d'emploi</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Communication attempt - Job offer' : 'Tentative de communication - Offre d’emploi' }}</span>
                         @if (selectedEmailBankTemplate() === 'tentative_offre_gd') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -955,7 +1210,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
                       >
-                        <span class="truncate">Vérification Dossier Cadet</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Cadet File Verification' : 'Vérification Dossier Cadet' }}</span>
                         @if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -970,7 +1225,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
                       >
-                        <span class="truncate">Bris de bail et entreposage</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Lease break and storage' : 'Bris de bail et entreposage' }}</span>
                         @if (selectedEmailBankTemplate() === 'bris_bail_entreposage') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -985,7 +1240,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_nav_tan'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_nav_tan'"
                       >
-                        <span class="truncate">Demande NAV/TAN & Claims X - CSPN partie 1</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'NAV/TAN Request & Claims X - CSPN Part 1' : 'Demande NAV/TAN & Claims X - CSPN partie 1' }}</span>
                         @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1000,7 +1255,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
                       >
-                        <span class="truncate">Demande d'autorisation pour un CSPN</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Authorization request for a CSPN' : 'Demande d’autorisation pour un CSPN' }}</span>
                         @if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1015,7 +1270,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
                       >
-                        <span class="truncate">Documents requis - Conjoint(e) de fait</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'Required documents - Common-law partner' : 'Documents requis - Conjoint(e) de fait' }}</span>
                         @if (selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1030,7 +1285,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
                       >
-                        <span class="truncate">Demande SDPM pour conjoint militaire</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'DMPS request for military spouse' : 'Demande SDPM pour conjoint militaire' }}</span>
                         @if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1045,7 +1300,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
                       >
-                        <span class="truncate">TEST ESOM / Confirmation</span>
+                        <span class="truncate">{{ langService.isEnglish() ? 'MOST TEST / Confirmation' : 'TEST ESOM / Confirmation' }}</span>
                         @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1079,7 +1334,7 @@ function getTodayDateString(): string {
                     d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                Métiers au dossier du postulant
+                {{ langService.isEnglish() ? 'Applicant File Occupations' : 'Métiers au dossier du postulant' }}
               </h2>
 
               <div class="flex items-center gap-3">
@@ -1087,12 +1342,12 @@ function getTodayDateString(): string {
                   @if (recruiterDossierType() === 'pfor') {
                     <span
                       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-[11px] font-black uppercase tracking-wider select-none shadow-2xs"
-                      title="Dossier configuré comme Postulant PFOR"
+                      [title]="langService.isEnglish() ? 'File configured as ROTP applicant' : 'Dossier configuré comme Postulant PFOR'"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>Postulant PFOR</span>
+                      <span>{{ langService.isEnglish() ? 'ROTP Applicant' : 'Postulant PFOR' }}</span>
                     </span>
                   }
                 } @else {
@@ -1104,7 +1359,7 @@ function getTodayDateString(): string {
                     [class.bg-slate-50]="!sharedState.isPostulantPfor()"
                     [class.border-slate-200]="!sharedState.isPostulantPfor()"
                     [class.text-slate-600]="!sharedState.isPostulantPfor()"
-                    title="Filtrer les métiers admissibles au programme PFOR (CMR / Civil)"
+                    [title]="langService.isEnglish() ? 'Filter occupations eligible for ROTP program (RMC / Civilian)' : 'Filtrer les métiers admissibles au programme PFOR (CMR / Civil)'"
                   >
                     <input
                       type="checkbox"
@@ -1112,19 +1367,19 @@ function getTodayDateString(): string {
                       (change)="sharedState.isPostulantPfor.set(!sharedState.isPostulantPfor())"
                       class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
                     />
-                    <span>Postulant PFOR</span>
+                    <span>{{ langService.isEnglish() ? 'ROTP Applicant' : 'Postulant PFOR' }}</span>
                   </label>
                 }
 
                 <button
                   (click)="switchRole()"
                   class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  title="Revenir à la page de sélection de rôle"
+                  [title]="langService.isEnglish() ? 'Return to role selection page' : 'Revenir à la page de sélection de rôle'"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
-                  <span>Changer de rôle</span>
+                  <span>{{ langService.isEnglish() ? 'Switch role' : 'Changer de rôle' }}</span>
                 </button>
               </div>
             </div>
@@ -1134,13 +1389,14 @@ function getTodayDateString(): string {
               <!-- Slot 1 -->
               <div class="relative flex flex-col gap-1 p-2 bg-slate-50/80 border border-slate-200 rounded-xl">
                 <div class="flex items-center justify-between text-[11px] font-bold">
-                  <span class="uppercase tracking-wider text-slate-500">Choix #1</span>
+                  <span class="uppercase tracking-wider text-slate-500">{{ langService.isEnglish() ? 'Choice #1' : 'Choix #1' }}</span>
                   @if (getDossierJob(1)) {
                     @let job1 = getDossierJob(1)!;
                     @let programs1 = jobService.getJobPrograms(job1.id);
                     <div class="flex flex-wrap gap-1 justify-end max-w-[70%]">
                       @for (prog of getObjectKeys(programs1); track prog) {
                         <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold border"
+                          [title]="programs1[prog] === 'o' ? (langService.isEnglish() ? 'Open' : 'Ouvert') : (programs1[prog] === 'limité' ? (langService.isEnglish() ? 'Limited' : 'Limité') : (langService.isEnglish() ? 'Closed' : 'Fermé'))"
                           [class.bg-emerald-100]="programs1[prog] === 'o'"
                           [class.text-emerald-800]="programs1[prog] === 'o'"
                           [class.border-emerald-200]="programs1[prog] === 'o'"
@@ -1179,13 +1435,13 @@ function getTodayDateString(): string {
                       [disabled]="isDossierFieldDisabled(1)"
                       class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
                       [class.cursor-not-allowed]="isDossierFieldDisabled(1)"
-                      placeholder="Rechercher métier #1..."
+                      [placeholder]="langService.isEnglish() ? 'Search occupation #1...' : 'Rechercher métier #1...'"
                     />
                     @if (sharedState.selectedDossierJobId1() && !isDossierFieldDisabled(1)) {
                       <button
                         (click)="clearDossierJob(1, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        title="Effacer le choix #1"
+                        [title]="langService.isEnglish() ? 'Clear choice #1' : 'Effacer le choix #1'"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1199,7 +1455,7 @@ function getTodayDateString(): string {
                     <div class="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs">
                       @let filtered1 = getFilteredJobsForIndex(1);
                       @if (filtered1.length === 0) {
-                        <div class="p-2 text-slate-400 text-center italic">Aucun métier trouvé</div>
+                        <div class="p-2 text-slate-400 text-center italic">{{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}</div>
                       }
                       @for (job of filtered1; track job.id) {
                         <button
@@ -1207,7 +1463,7 @@ function getTodayDateString(): string {
                           (mousedown)="selectDossierJob(1, job.id)"
                           class="w-full text-left px-2.5 py-1.5 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                         >
-                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ job.title }}</span>
+                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span>
                         </button>
                       }
                     </div>
@@ -1224,7 +1480,7 @@ function getTodayDateString(): string {
                       class="h-3.5 w-3.5 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer accent-rose-600"
                     />
                     <span [class.text-rose-700]="sharedState.dossierJobFailedCe1()" [class.font-bold]="sharedState.dossierJobFailedCe1()">
-                      Ne rencontre pas les CE
+                      {{ langService.isEnglish() ? 'Does not meet ER' : 'Ne rencontre pas les CE' }}
                     </span>
                   </label>
                 }
@@ -1233,13 +1489,14 @@ function getTodayDateString(): string {
               <!-- Slot 2 -->
               <div class="relative flex flex-col gap-1 p-2 bg-slate-50/80 border border-slate-200 rounded-xl">
                 <div class="flex items-center justify-between text-[11px] font-bold">
-                  <span class="uppercase tracking-wider text-slate-500">Choix #2</span>
+                  <span class="uppercase tracking-wider text-slate-500">{{ langService.isEnglish() ? 'Choice #2' : 'Choix #2' }}</span>
                   @if (getDossierJob(2)) {
                     @let job2 = getDossierJob(2)!;
                     @let programs2 = jobService.getJobPrograms(job2.id);
                     <div class="flex flex-wrap gap-1 justify-end max-w-[70%]">
                       @for (prog of getObjectKeys(programs2); track prog) {
                         <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold border"
+                          [title]="programs2[prog] === 'o' ? (langService.isEnglish() ? 'Open' : 'Ouvert') : (programs2[prog] === 'limité' ? (langService.isEnglish() ? 'Limited' : 'Limité') : (langService.isEnglish() ? 'Closed' : 'Fermé'))"
                           [class.bg-emerald-100]="programs2[prog] === 'o'"
                           [class.text-emerald-800]="programs2[prog] === 'o'"
                           [class.border-emerald-200]="programs2[prog] === 'o'"
@@ -1278,13 +1535,13 @@ function getTodayDateString(): string {
                       [disabled]="isDossierFieldDisabled(2)"
                       class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
                       [class.cursor-not-allowed]="isDossierFieldDisabled(2)"
-                      placeholder="Rechercher métier #2..."
+                      [placeholder]="langService.isEnglish() ? 'Search occupation #2...' : 'Rechercher métier #2...'"
                     />
                     @if (sharedState.selectedDossierJobId2() && !isDossierFieldDisabled(2)) {
                       <button
                         (click)="clearDossierJob(2, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        title="Effacer le choix #2"
+                        [title]="langService.isEnglish() ? 'Clear choice #2' : 'Effacer le choix #2'"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1298,7 +1555,7 @@ function getTodayDateString(): string {
                     <div class="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs">
                       @let filtered2 = getFilteredJobsForIndex(2);
                       @if (filtered2.length === 0) {
-                        <div class="p-2 text-slate-400 text-center italic">Aucun métier trouvé</div>
+                        <div class="p-2 text-slate-400 text-center italic">{{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}</div>
                       }
                       @for (job of filtered2; track job.id) {
                         <button
@@ -1306,7 +1563,7 @@ function getTodayDateString(): string {
                           (mousedown)="selectDossierJob(2, job.id)"
                           class="w-full text-left px-2.5 py-1.5 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                         >
-                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ job.title }}</span>
+                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span>
                         </button>
                       }
                     </div>
@@ -1323,7 +1580,7 @@ function getTodayDateString(): string {
                       class="h-3.5 w-3.5 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer accent-rose-600"
                     />
                     <span [class.text-rose-700]="sharedState.dossierJobFailedCe2()" [class.font-bold]="sharedState.dossierJobFailedCe2()">
-                      Ne rencontre pas les CE
+                      {{ langService.isEnglish() ? 'Does not meet ER' : 'Ne rencontre pas les CE' }}
                     </span>
                   </label>
                 }
@@ -1332,13 +1589,14 @@ function getTodayDateString(): string {
               <!-- Slot 3 -->
               <div class="relative flex flex-col gap-1 p-2 bg-slate-50/80 border border-slate-200 rounded-xl">
                 <div class="flex items-center justify-between text-[11px] font-bold">
-                  <span class="uppercase tracking-wider text-slate-500">Choix #3</span>
+                  <span class="uppercase tracking-wider text-slate-500">{{ langService.isEnglish() ? 'Choice #3' : 'Choix #3' }}</span>
                   @if (getDossierJob(3)) {
                     @let job3 = getDossierJob(3)!;
                     @let programs3 = jobService.getJobPrograms(job3.id);
                     <div class="flex flex-wrap gap-1 justify-end max-w-[70%]">
                       @for (prog of getObjectKeys(programs3); track prog) {
                         <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold border"
+                          [title]="programs3[prog] === 'o' ? (langService.isEnglish() ? 'Open' : 'Ouvert') : (programs3[prog] === 'limité' ? (langService.isEnglish() ? 'Limited' : 'Limité') : (langService.isEnglish() ? 'Closed' : 'Fermé'))"
                           [class.bg-emerald-100]="programs3[prog] === 'o'"
                           [class.text-emerald-800]="programs3[prog] === 'o'"
                           [class.border-emerald-200]="programs3[prog] === 'o'"
@@ -1377,13 +1635,13 @@ function getTodayDateString(): string {
                       [disabled]="isDossierFieldDisabled(3)"
                       class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
                       [class.cursor-not-allowed]="isDossierFieldDisabled(3)"
-                      placeholder="Rechercher métier #3..."
+                      [placeholder]="langService.isEnglish() ? 'Search occupation #3...' : 'Rechercher métier #3...'"
                     />
                     @if (sharedState.selectedDossierJobId3() && !isDossierFieldDisabled(3)) {
                       <button
                         (click)="clearDossierJob(3, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        title="Effacer le choix #3"
+                        [title]="langService.isEnglish() ? 'Clear choice #3' : 'Effacer le choix #3'"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1397,7 +1655,7 @@ function getTodayDateString(): string {
                     <div class="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs">
                       @let filtered3 = getFilteredJobsForIndex(3);
                       @if (filtered3.length === 0) {
-                        <div class="p-2 text-slate-400 text-center italic">Aucun métier trouvé</div>
+                        <div class="p-2 text-slate-400 text-center italic">{{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}</div>
                       }
                       @for (job of filtered3; track job.id) {
                         <button
@@ -1405,7 +1663,7 @@ function getTodayDateString(): string {
                           (mousedown)="selectDossierJob(3, job.id)"
                           class="w-full text-left px-2.5 py-1.5 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                         >
-                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ job.title }}</span>
+                          <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span>
                         </button>
                       }
                     </div>
@@ -1422,7 +1680,7 @@ function getTodayDateString(): string {
                       class="h-3.5 w-3.5 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer accent-rose-600"
                     />
                     <span [class.text-rose-700]="sharedState.dossierJobFailedCe3()" [class.font-bold]="sharedState.dossierJobFailedCe3()">
-                      Ne rencontre pas les CE
+                      {{ langService.isEnglish() ? 'Does not meet ER' : 'Ne rencontre pas les CE' }}
                     </span>
                   </label>
                 }
@@ -1438,12 +1696,10 @@ function getTodayDateString(): string {
               <div class="flex items-center gap-3">
                 <span
                   class="bg-indigo-700 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider"
-                  >Mode Mineur</span
+                  >{{ langService.isEnglish() ? 'Minor Mode' : 'Mode Mineur' }}</span
                 >
                 <span class="text-sm font-medium opacity-90"
-                  >Veuillez valider les 4 documents requis (Certificat
-                  naissance, Demande Partie H, ID Parent, Selfie
-                  Parent).</span
+                  >{{ langService.isEnglish() ? 'Please validate the 4 required documents (Birth certificate, Part H application, Parent ID, Parent selfie).' : 'Veuillez valider les 4 documents requis (Certificat naissance, Demande Partie H, ID Parent, Selfie Parent).' }}</span
                 >
               </div>
 
@@ -1451,7 +1707,7 @@ function getTodayDateString(): string {
                 (click)="startMainProgram()"
                 class="px-4 py-2 bg-white text-indigo-900 rounded-lg text-sm font-bold shadow-sm transition-all hover:bg-indigo-50 active:scale-95 flex items-center gap-2 whitespace-nowrap ml-4 shrink-0 cursor-pointer"
               >
-                <span>Procéder à l'évaluation principale</span>
+                <span>{{ langService.isEnglish() ? 'Proceed to main evaluation' : 'Procéder à l’évaluation principale' }}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-4 w-4"
@@ -1481,7 +1737,7 @@ function getTodayDateString(): string {
               <h2
                 class="font-bold text-slate-700 uppercase text-xs sm:text-sm tracking-wider flex items-center gap-2"
               >
-                {{ selectedRole() === 'gestionnaire' ? 'Tâches GD' : 'Tâches du Portail' }}
+                {{ selectedRole() === 'gestionnaire' ? (langService.isEnglish() ? 'File Manager Tasks' : 'Tâches GD') : (langService.isEnglish() ? 'Portal Tasks' : 'Tâches du Portail') }}
               </h2>
               <!-- Tout Conforme Button -->
               @if (selectedRole() !== 'gestionnaire') {
@@ -1497,7 +1753,7 @@ function getTodayDateString(): string {
                   [class.border-emerald-100]="!areAllDocsCompliant()"
                   [class.hover:bg-emerald-100]="!areAllDocsCompliant()"
                   [class.hover:border-emerald-200]="!areAllDocsCompliant()"
-                  [title]="areAllDocsCompliant() ? 'Désactiver la conformité de toutes les tâches' : 'Mettre toutes les tâches instantanément conformes'"
+                  [title]="areAllDocsCompliant() ? (langService.isEnglish() ? 'Disable compliance for all tasks' : 'Désactiver la conformité de toutes les tâches') : (langService.isEnglish() ? 'Mark all tasks compliant instantly' : 'Mettre toutes les tâches instantanément conformes')"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1511,7 +1767,7 @@ function getTodayDateString(): string {
                       clip-rule="evenodd"
                     />
                   </svg>
-                  <span>Tout Conforme</span>
+                  <span>{{ langService.isEnglish() ? 'All Compliant' : 'Tout Conforme' }}</span>
                 </button>
               }
             </div>
@@ -1522,12 +1778,13 @@ function getTodayDateString(): string {
                   <div
                     (click)="toggleGroupCollapse(group.id)"
                     class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold tracking-wider text-slate-800 bg-slate-200/80 hover:bg-slate-300/80 transition-colors select-none border border-slate-300/70 cursor-pointer"
+                    [title]="isGroupCollapsed(group.id) ? (langService.isEnglish() ? 'Expand group' : 'Déplier le groupe') : (langService.isEnglish() ? 'Collapse group' : 'Replier le groupe')"
                   >
                     <span class="flex items-center gap-1.5 min-w-0">
                       @if (selectedRole() === 'gestionnaire') {
-                        <span class="bg-indigo-900 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ group.title }}</span>
+                        <span class="bg-indigo-900 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ getGdGroupTitle(group.title) }}</span>
                       } @else {
-                        <span class="bg-slate-800 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">Groupe {{ group.title }}</span>
+                        <span class="bg-slate-800 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ langService.isEnglish() ? 'Group ' : 'Groupe ' }}{{ group.title }}</span>
                       }
                       <span class="text-[11px] font-semibold text-slate-500 shrink-0">({{ group.tasks.length }})</span>
                       @if (isGroupCompliant(group)) {
@@ -1537,6 +1794,7 @@ function getTodayDateString(): string {
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
+                          <title>{{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}</title>
                           <path
                             fill-rule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -1550,6 +1808,7 @@ function getTodayDateString(): string {
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
+                          <title>{{ langService.isEnglish() ? 'Non-compliant (rejections selected)' : 'Non-conforme (rejets sélectionnés)' }}</title>
                           <path
                             fill-rule="evenodd"
                             d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -1573,7 +1832,7 @@ function getTodayDateString(): string {
                           [class.text-emerald-700]="!isGroupCompliant(group)"
                           [class.border-emerald-300]="!isGroupCompliant(group)"
                           [class.hover:bg-emerald-50]="!isGroupCompliant(group)"
-                          [title]="isGroupCompliant(group) ? 'Désactiver la conformité du groupe' : 'Rendre toutes les tâches du groupe conformes'"
+                          [title]="isGroupCompliant(group) ? (langService.isEnglish() ? 'Disable group compliance' : 'Désactiver la conformité du groupe') : (langService.isEnglish() ? 'Mark all tasks in group compliant' : 'Rendre toutes les tâches du groupe conformes')"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -1587,7 +1846,7 @@ function getTodayDateString(): string {
                               clip-rule="evenodd"
                             />
                           </svg>
-                          <span>Conforme</span>
+                          <span>{{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}</span>
                         </button>
                       }
 
@@ -1610,13 +1869,13 @@ function getTodayDateString(): string {
                     <div class="space-y-1 mt-1">
                       @if (group.tasks.length === 0) {
                         <div class="px-3 py-2 text-center text-[11px] text-slate-400 italic">
-                          Aucune sous-tâche
+                          {{ langService.isEnglish() ? 'No sub-tasks' : 'Aucune sous-tâche' }}
                         </div>
                       }
                       @for (task of group.tasks; track task.nameFr) {
                         <button
                           (click)="selectTask(task)"
-                          class="w-full text-left p-2.5 rounded-lg transition-all duration-200 border border-transparent group relative overflow-hidden flex justify-between items-center"
+                          class="w-full text-left p-2.5 rounded-lg transition-all duration-200 border border-transparent group relative overflow-hidden flex justify-between items-center cursor-pointer"
                           [class.bg-slate-800]="selectedTask() === task"
                           [class.text-white]="selectedTask() === task"
                           [class.shadow-md]="selectedTask() === task"
@@ -1624,7 +1883,7 @@ function getTodayDateString(): string {
                           [class.bg-white]="selectedTask() !== task"
                         >
                           <div class="font-semibold text-xs pr-2 leading-snug">
-                            {{ task.nameFr }}
+                            {{ langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr }}
                           </div>
 
                           <div class="flex items-center gap-1.5 shrink-0">
@@ -1636,6 +1895,7 @@ function getTodayDateString(): string {
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
+                                  <title>{{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}</title>
                                   <path
                                     fill-rule="evenodd"
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -1649,6 +1909,7 @@ function getTodayDateString(): string {
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
+                                  <title>{{ langService.isEnglish() ? 'Non-compliant' : 'Non-conforme' }}</title>
                                   <path
                                     fill-rule="evenodd"
                                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -1673,7 +1934,7 @@ function getTodayDateString(): string {
                 <hr class="my-3 border-t-2 border-slate-300" />
                 <button
                   (click)="selectTask(task)"
-                  class="w-full text-left p-3 rounded-xl transition-all duration-200 border border-transparent group relative overflow-hidden flex justify-between items-center"
+                  class="w-full text-left p-3 rounded-xl transition-all duration-200 border border-transparent group relative overflow-hidden flex justify-between items-center cursor-pointer"
                   [class.bg-slate-800]="selectedTask() === task"
                   [class.text-white]="selectedTask() === task"
                   [class.shadow-md]="selectedTask() === task"
@@ -1681,7 +1942,7 @@ function getTodayDateString(): string {
                   [class.bg-white]="selectedTask() !== task"
                 >
                   <div class="font-semibold text-xs pr-2 leading-snug">
-                    {{ task.nameFr }}
+                    {{ langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr }}
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
                     @if (task.nameFr.includes("Documents Supplémentaires")) {
@@ -1692,6 +1953,7 @@ function getTodayDateString(): string {
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
+                          <title>{{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}</title>
                           <path
                             fill-rule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -1705,6 +1967,7 @@ function getTodayDateString(): string {
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
+                          <title>{{ langService.isEnglish() ? 'Non-compliant' : 'Non-conforme' }}</title>
                           <path
                             fill-rule="evenodd"
                             d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -1733,9 +1996,9 @@ function getTodayDateString(): string {
                 class="font-bold text-slate-700 uppercase text-sm tracking-wider flex items-center gap-2"
               >
                 @if (selectedRole() === 'gestionnaire') {
-                  Construction de courriels et de notes
+                  {{ langService.isEnglish() ? 'Email & Note Builder' : 'Construction de courriels et de notes' }}
                 } @else {
-                  Documents & Vérification
+                  {{ langService.isEnglish() ? 'Documents & Verification' : 'Documents & Vérification' }}
                 }
               </h2>
             </div>
@@ -1747,10 +2010,10 @@ function getTodayDateString(): string {
                     <h3
                       class="text-xl font-bold text-slate-800 mb-1 leading-tight flex items-center gap-2"
                     >
-                      {{ task.nameFr }}
+                      {{ langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr }}
                     </h3>
                     <p class="text-xs text-slate-500 font-medium">
-                      {{ task.nameEn }}
+                      {{ langService.isEnglish() ? task.nameFr : task.nameEn }}
                     </p>
                   </div>
                   <div class="flex items-center gap-3">
@@ -1769,7 +2032,7 @@ function getTodayDateString(): string {
                           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
-                          <span>Courriel</span>
+                          <span>{{ langService.isEnglish() ? 'Email' : 'Courriel' }}</span>
                         </button>
                         <button
                           type="button"
@@ -1804,7 +2067,7 @@ function getTodayDateString(): string {
                           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
-                          <span>Courriel</span>
+                          <span>{{ langService.isEnglish() ? 'Email' : 'Courriel' }}</span>
                         </button>
                         <button
                           type="button"
@@ -1848,14 +2111,14 @@ function getTodayDateString(): string {
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
                         </span>
-                        <span>Triage médical requis</span>
+                        <span>{{ langService.isEnglish() ? 'Medical triage required' : 'Triage médical requis' }}</span>
                       </label>
                     }
 
                     @if (selectedRole() !== 'gestionnaire' && !task.nameFr.includes("Documents Supplémentaires") && !task.nameFr.includes("Courriel d'offre")) {
                       <button
                         (click)="toggleTaskNotCompleted(task)"
-                        class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm active:scale-95 whitespace-nowrap"
+                        class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm active:scale-95 whitespace-nowrap cursor-pointer"
                         [class.bg-red-100]="isTaskNotCompleted(task)"
                         [class.border-red-300]="isTaskNotCompleted(task)"
                         [class.text-red-800]="isTaskNotCompleted(task)"
@@ -1863,8 +2126,9 @@ function getTodayDateString(): string {
                         [class.text-slate-500]="!isTaskNotCompleted(task)"
                         [class.hover:bg-slate-100]="!isTaskNotCompleted(task)"
                         [class.border-slate-300]="!isTaskNotCompleted(task)"
+                        [title]="isTaskNotCompleted(task) ? (langService.isEnglish() ? 'Restore task documents' : 'Restaurer les documents de la tâche') : (langService.isEnglish() ? 'Mark task as not completed in portal' : 'Marquer la tâche comme non complétée dans le portail')"
                       >
-                        Tâche non complétée
+                        {{ langService.isEnglish() ? 'Task not completed' : 'Tâche non complétée' }}
                       </button>
                     }
                   </div>
@@ -1890,14 +2154,12 @@ function getTodayDateString(): string {
                         />
                       </svg>
                       <p class="font-bold text-sm">
-                        Tâche non complétée dans le portail
+                        {{ langService.isEnglish() ? 'Task not completed in portal' : 'Tâche non complétée dans le portail' }}
                       </p>
                       <p
                         class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed"
                       >
-                        Cette tâche est actuellement marquée comme non
-                        complétée. Tous les documents de cette tâche sont
-                        masqués pour le recruteur.
+                        {{ langService.isEnglish() ? 'This task is currently marked as not completed. All documents for this task are hidden for the recruiter.' : 'Cette tâche est actuellement marquée comme non complétée. Tous les documents de cette tâche sont masqués pour le recruteur.' }}
                       </p>
                     </div>
                   }
@@ -1908,9 +2170,9 @@ function getTodayDateString(): string {
                       <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
                         <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <span>Évaluation médicale — {{ evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : 'Local' }}</span>
+                          <span>{{ (langService.isEnglish() ? 'Medical Evaluation — ' : 'Évaluation médicale — ') + (evaluationMedicaleType() === 'Dossier OTA' ? 'OTA' : (langService.isEnglish() ? 'Local' : 'Local')) }}</span>
                         </div>
                       </div>
 
@@ -1918,7 +2180,7 @@ function getTodayDateString(): string {
                         <!-- Checkboxes for Medical Evaluation Options -->
                         <div>
                           <label class="block text-xs font-bold text-slate-700 mb-2">
-                            Options d'évaluation médicale
+                            {{ langService.isEnglish() ? 'Medical evaluation options' : 'Options d’évaluation médicale' }}
                           </label>
                           <div class="space-y-2 text-xs">
                             <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
@@ -1928,7 +2190,7 @@ function getTodayDateString(): string {
                                 (change)="toggleEvaluationMedicalePartie1()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                               />
-                              <span class="font-medium text-slate-700">Évaluation médicale Partie 1</span>
+                              <span class="font-medium text-slate-700">{{ langService.isEnglish() ? 'Medical evaluation Part 1' : 'Évaluation médicale Partie 1' }}</span>
                             </label>
 
                             <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
@@ -1938,7 +2200,7 @@ function getTodayDateString(): string {
                                 (change)="toggleEvaluationMedicalePartie2()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                               />
-                              <span class="font-medium text-slate-700">Évaluation médicale Partie 2</span>
+                              <span class="font-medium text-slate-700">{{ langService.isEnglish() ? 'Medical evaluation Part 2' : 'Évaluation médicale Partie 2' }}</span>
                             </label>
 
                             <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
@@ -1948,7 +2210,7 @@ function getTodayDateString(): string {
                                 (change)="toggleEvaluationMedicalePartie1Et2()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                               />
-                              <span class="font-medium text-slate-700">Évaluation médicale Partie 1 et 2</span>
+                              <span class="font-medium text-slate-700">{{ langService.isEnglish() ? 'Medical evaluation Part 1 and 2' : 'Évaluation médicale Partie 1 et 2' }}</span>
                             </label>
                           </div>
                         </div>
@@ -1963,12 +2225,12 @@ function getTodayDateString(): string {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span>Premier contact — Courriel</span>
+                            <span>{{ langService.isEnglish() ? 'First contact — Email' : 'Premier contact — Courriel' }}</span>
                           } @else {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <span>Premier contact — Note au dossier</span>
+                            <span>{{ langService.isEnglish() ? 'First contact — File note' : 'Premier contact — Note au dossier' }}</span>
                           }
                         </div>
                       </div>
@@ -1983,16 +2245,16 @@ function getTodayDateString(): string {
                                 (change)="togglePremierContactCourriel()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                               />
-                              <span class="text-xs font-bold text-slate-800">Courriel de premier contact</span>
+                              <span class="text-xs font-bold text-slate-800">{{ langService.isEnglish() ? 'First contact email' : 'Courriel de premier contact' }}</span>
                             </label>
                           </div>
 
                           <div class="pt-3 border-t border-slate-100">
                             <label class="block text-xs font-bold text-slate-700 mb-1">
-                              Tâches à compléter présentement
+                              {{ langService.isEnglish() ? 'Tasks to complete currently' : 'Tâches à compléter présentement' }}
                             </label>
                             <p class="text-[11px] text-slate-500 mb-3">
-                              Sélectionnez les tâches requises pour le postulant.
+                              {{ langService.isEnglish() ? 'Select the tasks required for the applicant.' : 'Sélectionnez les tâches requises pour le postulant.' }}
                             </p>
 
                             <div class="space-y-2 text-xs">
@@ -2004,9 +2266,9 @@ function getTodayDateString(): string {
                                   class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                                 />
                                 <div>
-                                  <span class="font-semibold text-slate-800">Évaluation médicale</span>
+                                  <span class="font-semibold text-slate-800">{{ langService.isEnglish() ? 'Medical evaluation' : 'Évaluation médicale' }}</span>
                                   <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">
-                                     {{ evaluationMedicaleType() === 'Dossier OTA' ? 'Rendez-vous fixé au centre de recrutement de Montréal' : 'Planifiez votre évaluation médicale' }}
+                                     {{ evaluationMedicaleType() === 'Dossier OTA' ? (langService.isEnglish() ? 'Appointment scheduled at the Montreal recruiting centre' : 'Rendez-vous fixé au centre de recrutement de Montréal') : (langService.isEnglish() ? 'Schedule your medical evaluation' : 'Planifiez votre évaluation médicale') }}
                                   </p>
                                 </div>
                               </label>
@@ -2019,8 +2281,8 @@ function getTodayDateString(): string {
                                   class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                                 />
                                 <div>
-                                  <span class="font-semibold text-slate-800">Entrevue</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Planifiez votre entrevue</p>
+                                  <span class="font-semibold text-slate-800">{{ langService.isEnglish() ? 'Interview' : 'Entrevue' }}</span>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'Schedule your interview' : 'Planifiez votre entrevue' }}</p>
                                 </div>
                               </label>
 
@@ -2033,7 +2295,7 @@ function getTodayDateString(): string {
                                 />
                                 <div>
                                   <span class="font-semibold text-slate-800">Gambit</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Références, antécédents d'emploi et d'études (Gambit)</p>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'References, employment and education history (Gambit)' : 'Références, antécédents d’emploi et d’études (Gambit)' }}</p>
                                 </div>
                               </label>
 
@@ -2046,7 +2308,7 @@ function getTodayDateString(): string {
                                 />
                                 <div>
                                   <span class="font-semibold text-slate-800">PSPS</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n'est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)</p>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'Criminal record and credit check (PSPS / this task is not in your portal, you will receive an email from app@gambitid.com)' : 'Vérification du casier judiciaire et du dossier de crédit (PSPS/cette tâche n’est pas dans votre portail, vous recevrez un courriel envoyé par app@gambitid.com)' }}</p>
                                 </div>
                               </label>
 
@@ -2059,7 +2321,7 @@ function getTodayDateString(): string {
                                 />
                                 <div>
                                   <span class="font-semibold text-slate-800">Selfie</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Égoportrait (selfie) avec pièce d'identité (Tâche : Pièce d'identité avec photo émise par le gouvernement canadien)</p>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'Selfie with ID (Task: Photo ID issued by Canadian government)' : 'Égoportrait (selfie) avec pièce d’identité (Tâche : Pièce d’identité avec photo émise par le gouvernement canadien)' }}</p>
                                 </div>
                               </label>
 
@@ -2072,7 +2334,7 @@ function getTodayDateString(): string {
                                 />
                                 <div>
                                   <span class="font-semibold text-slate-800">IPTAD</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Évaluation de la personnalité (Inventaire de personnalité des traits auto-descriptifs)</p>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'Personality evaluation (Self-Descriptive Traits Personality Inventory)' : 'Évaluation de la personnalité (Inventaire de personnalité des traits auto-descriptifs)' }}</p>
                                 </div>
                               </label>
 
@@ -2085,7 +2347,7 @@ function getTodayDateString(): string {
                                 />
                                 <div>
                                   <span class="font-semibold text-slate-800">SEAF</span>
-                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">Formulaire de demande d'emploi notée</p>
+                                  <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">{{ langService.isEnglish() ? 'Scored Employment Application Form' : 'Formulaire de demande d’emploi notée' }}</p>
                                 </div>
                               </label>
                             </div>
@@ -2095,7 +2357,7 @@ function getTodayDateString(): string {
                         <!-- Premier contact Note Sub-Panel -->
                         <div class="p-4 space-y-4 rounded-b-xl">
                           <div class="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs text-indigo-900 mb-2">
-                            Renseignez les statuts des composantes pour générer la note au registre du Premier contact.
+                            {{ langService.isEnglish() ? 'Fill in component statuses to generate the First contact log note.' : 'Renseignez les statuts des composantes pour générer la note au registre du Premier contact.' }}
                           </div>
 
                           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -2108,7 +2370,7 @@ function getTodayDateString(): string {
                                 (change)="premierContactNoteIptad.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactIptadOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
@@ -2122,35 +2384,35 @@ function getTodayDateString(): string {
                                 (change)="premierContactNoteSeaf.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactSeafOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Entrevue -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Entrevue :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">{{ langService.isEnglish() ? 'Interview :' : 'Entrevue :' }}</label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
                                 [value]="premierContactNoteEntrevue()"
                                 (change)="premierContactNoteEntrevue.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactEntrevueOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Médical -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Médical :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">{{ langService.isEnglish() ? 'Medical :' : 'Médical :' }}</label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
                                 [value]="premierContactNoteMedical()"
                                 (change)="premierContactNoteMedical.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactMedicalOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
@@ -2164,7 +2426,7 @@ function getTodayDateString(): string {
                                 (change)="premierContactNotePsps.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactPspsOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
@@ -2178,7 +2440,7 @@ function getTodayDateString(): string {
                                 (change)="premierContactNoteGambit.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactGambitOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
@@ -2192,7 +2454,7 @@ function getTodayDateString(): string {
                                 (change)="premierContactNoteAnxQ.set($any($event.target).value)"
                               >
                                 @for (opt of premierContactAnxQOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getPremierContactOptionLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
@@ -2209,7 +2471,7 @@ function getTodayDateString(): string {
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                           </svg>
-                          <span>Avis de fermeture</span>
+                          <span>{{ langService.isEnglish() ? 'Notice of file closure' : 'Avis de fermeture' }}</span>
                         </div>
                       </div>
 
@@ -2222,32 +2484,32 @@ function getTodayDateString(): string {
                               (change)="toggleAvisFermetureCourriel()"
                               class="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                             />
-                            <span class="text-xs font-bold text-slate-800">Générer le courriel Avis de fermeture</span>
+                            <span class="text-xs font-bold text-slate-800">{{ langService.isEnglish() ? 'Generate Notice of file closure email' : 'Générer le courriel Avis de fermeture' }}</span>
                           </label>
                         </div>
 
                         <div class="pt-3 border-t border-slate-100">
                           <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Nombre de jours de délai :
+                            {{ langService.isEnglish() ? 'Deadline (days):' : 'Nombre de jours de délai :' }}
                           </label>
                           <select
                             class="w-full sm:w-48 p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-semibold text-slate-800 cursor-pointer"
                             [value]="avisFermetureDelaiJours()"
                             (change)="onAvisFermetureDelaiChange($any($event.target).value)"
                           >
-                            <option value="3">3 jours</option>
-                            <option value="5">5 jours</option>
-                            <option value="7">7 jours</option>
-                            <option value="14">14 jours</option>
-                            <option value="autre">Autre</option>
+                            <option value="3">{{ langService.isEnglish() ? '3 days' : '3 jours' }}</option>
+                            <option value="5">{{ langService.isEnglish() ? '5 days' : '5 jours' }}</option>
+                            <option value="7">{{ langService.isEnglish() ? '7 days' : '7 jours' }}</option>
+                            <option value="14">{{ langService.isEnglish() ? '14 days' : '14 jours' }}</option>
+                            <option value="autre">{{ langService.isEnglish() ? 'Other' : 'Autre' }}</option>
                           </select>
 
                           @if (avisFermetureDelaiJours() === 'autre') {
                             <div class="mt-3 max-w-xs">
                               <app-calendar-picker
-                                label="Date limite :"
+                                [label]="langService.isEnglish() ? 'Deadline:' : 'Date limite :'"
                                 [value]="avisFermetureDate()"
-                                placeholder="Sélectionner une date..."
+                                [placeholder]="langService.isEnglish() ? 'Select a date...' : 'Sélectionner une date...'"
                                 (dateSelected)="onAvisFermetureDateChange($event)"
                                 (cleared)="onAvisFermetureDateChange('')"
                               ></app-calendar-picker>
@@ -2257,10 +2519,10 @@ function getTodayDateString(): string {
 
                         <div class="pt-3 border-t border-slate-100">
                           <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Tâches à compléter dans le délai prescrit :
+                            {{ langService.isEnglish() ? 'Tasks to complete within the prescribed timeframe:' : 'Tâches à compléter dans le délai prescrit :' }}
                           </label>
                           <p class="text-[11px] text-slate-500 mb-3">
-                            Cochez les tâches requises à inclure dans l'avis de fermeture.
+                            {{ langService.isEnglish() ? 'Check required tasks to include in the closure notice.' : 'Cochez les tâches requises à inclure dans l’avis de fermeture.' }}
                           </p>
 
                           <div class="space-y-2 text-xs">
@@ -2272,7 +2534,7 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                               />
                               <div>
-                                <span class="font-semibold text-slate-800">Planifiez votre entrevue</span>
+                                <span class="font-semibold text-slate-800">{{ langService.isEnglish() ? 'Schedule your interview' : 'Planifiez votre entrevue' }}</span>
                               </div>
                             </label>
 
@@ -2284,7 +2546,7 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                               />
                               <div>
-                                <span class="font-semibold text-slate-800">Planifiez votre évaluation médicale</span>
+                                <span class="font-semibold text-slate-800">{{ langService.isEnglish() ? 'Schedule your medical evaluation' : 'Planifiez votre évaluation médicale' }}</span>
                               </div>
                             </label>
 
@@ -2296,7 +2558,8 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                               />
                               <div>
-                                <span class="font-semibold text-slate-800">Références, antécédents d'emploi et d'études (Gambit)</span>
+                                <span class="font-semibold text-slate-800">Gambit</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">{{ langService.isEnglish() ? 'References, employment and education history (Gambit)' : 'Références, antécédents d’emploi et d’études (Gambit)' }}</p>
                               </div>
                             </label>
 
@@ -2308,7 +2571,8 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                               />
                               <div>
-                                <span class="font-semibold text-slate-800">Vérification du casier judiciaire et du dossier de crédit (PSPS)</span>
+                                <span class="font-semibold text-slate-800">PSPS</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">{{ langService.isEnglish() ? 'Criminal record and credit check (PSPS)' : 'Vérification du casier judiciaire et du dossier de crédit (PSPS)' }}</p>
                               </div>
                             </label>
                           </div>
@@ -2324,7 +2588,7 @@ function getTodayDateString(): string {
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <span>Annexe Q</span>
+                          <span>{{ langService.isEnglish() ? 'Annex Q' : 'Annexe Q' }}</span>
                         </div>
                       </div>
 
@@ -2337,18 +2601,18 @@ function getTodayDateString(): string {
                               (change)="toggleAnnexeQCourriel()"
                               class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                             />
-                            <span class="text-xs font-bold text-slate-800">Générer le courriel Annexe Q</span>
+                            <span class="text-xs font-bold text-slate-800">{{ langService.isEnglish() ? 'Generate Annex Q email' : 'Générer le courriel Annexe Q' }}</span>
                           </label>
                         </div>
 
                         <div class="pt-3 border-t border-slate-100">
                           <label class="block text-xs font-bold text-slate-700 mb-1">
-                            Alpha du postulant :
+                            {{ langService.isEnglish() ? 'Applicant Alpha:' : 'Alpha du postulant :' }}
                           </label>
                           <input
                             type="text"
                             class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-semibold text-slate-800"
-                            placeholder="Entrez le Alpha du postulant (ex: A12345678)..."
+                            [placeholder]="langService.isEnglish() ? 'Enter applicant Alpha (e.g. A12345678)...' : 'Entrez le Alpha du postulant (ex: A12345678)...'"
                             [value]="annexeQAlphaPostulant()"
                             (input)="onAnnexeQAlphaChange($any($event.target).value)"
                           />
@@ -2365,14 +2629,16 @@ function getTodayDateString(): string {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            <span>Informations de l'offre à remplir — {{ task.nameFr }}</span>
+                            <span>{{ (langService.isEnglish() ? 'Offer details to fill in — ' : 'Informations de l’offre à remplir — ') + (langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr) }}</span>
                           </div>
                         </div>
 
                       <div class="p-4 bg-white space-y-3 rounded-b-xl">
                         <!-- Case à cocher pour la génération de courriel d'offre -->
                         <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                          <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Génération de courriel :</div>
+                          <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            {{ langService.isEnglish() ? 'Email generation:' : 'Génération de courriel :' }}
+                          </div>
                           @if (task.nameFr.toLowerCase().includes('subventionn')) {
                             <label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
                               <input
@@ -2381,7 +2647,9 @@ function getTodayDateString(): string {
                                 (change)="toggleOffreEtudesSubventionnees()"
                                 class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
-                              <span class="text-xs font-bold text-slate-800">Générer courriel d'études subventionnées</span>
+                              <span class="text-xs font-bold text-slate-800">
+                                {{ langService.isEnglish() ? 'Generate Subsidized Education offer email' : 'Générer courriel d’études subventionnées' }}
+                              </span>
                             </label>
                           } @else {
                             <label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
@@ -2392,7 +2660,7 @@ function getTodayDateString(): string {
                                 class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
                               <span class="text-xs font-bold text-slate-800">
-                                Générer courriel d'offre normale
+                                {{ langService.isEnglish() ? 'Generate standard offer email' : 'Générer courriel d’offre normale' }}
                               </span>
                             </label>
                           }
@@ -2404,19 +2672,21 @@ function getTodayDateString(): string {
                             <!-- 1. Date d'enrôlement et Heures d'arrivée (Arrivée postulant & Teams invité) -->
                             <div>
                               <app-calendar-picker
-                                label="Date d'enrôlement :"
+                                [label]="langService.isEnglish() ? 'Enrolment date:' : 'Date d’enrôlement :'"
                                 [value]="offreDateEnrolement()"
-                                placeholder="Sélectionner une date..."
+                                [placeholder]="langService.isEnglish() ? 'Select a date...' : 'Sélectionner une date...'"
                                 (dateSelected)="setOffreDateEnrolement($event)"
                                 (cleared)="setOffreDateEnrolement('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Dans le courriel : <span class="font-semibold text-slate-700">Date d'enrôlement : {{ offreDateEnrolement() || 'jour / mois / année' }}</span>
+                                {{ langService.isEnglish() ? 'In email:' : 'Dans le courriel :' }} <span class="font-semibold text-slate-700">{{ langService.isEnglish() ? 'Enrolment date: ' : 'Date d’enrôlement : ' }}{{ offreDateEnrolement() || (langService.isEnglish() ? 'day / month / year' : 'jour / mois / année') }}</span>
                               </p>
                             </div>
 
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1 text-xs">Heures d'arrivée :</label>
+                              <label class="block font-semibold text-slate-700 mb-1 text-xs">
+                                {{ langService.isEnglish() ? 'Arrival times:' : 'Heures d’arrivée :' }}
+                              </label>
                               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                   <div>
@@ -2424,7 +2694,7 @@ function getTodayDateString(): string {
                                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                       </svg>
-                                      <span>Arrivée postulant :</span>
+                                      <span>{{ langService.isEnglish() ? 'Applicant arrival:' : 'Arrivée postulant :' }}</span>
                                     </label>
                                     <select
                                       class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -2442,7 +2712,7 @@ function getTodayDateString(): string {
                                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                       </svg>
-                                      <span>Teams invité :</span>
+                                      <span>{{ langService.isEnglish() ? 'Guest Teams arrival:' : 'Teams invité :' }}</span>
                                     </label>
                                     <select
                                       class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -2470,14 +2740,18 @@ function getTodayDateString(): string {
                             <!-- 3. Date d'arrivée à votre unité -->
                             <div>
                               <app-calendar-picker
-                                label="Date d'arrivée à votre unité :"
+                                [label]="langService.isEnglish() ? 'Arrival date at unit:' : 'Date d’arrivée à votre unité :'"
                                 [value]="offreDateArriveeUnite()"
-                                placeholder="Sélectionner une date d'arrivée..."
+                                [placeholder]="langService.isEnglish() ? 'Select an arrival date...' : 'Sélectionner une date d’arrivée...'"
                                 (dateSelected)="setOffreDateArriveeUnite($event)"
                                 (cleared)="setOffreDateArriveeUnite('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Dans le courriel : <span class="font-semibold text-slate-700">Date d'arrivée : Vous devez vous présenter à {{ getUniteAffectationObj().nom }} le {{ getJourSemaineFr(offreDateArriveeUnite()) || 'jour de la semaine' }} : {{ offreDateArriveeUnite() || 'jour / mois / année' }} au plus tard à 16h00.</span>
+                                @if (langService.isEnglish()) {
+                                  In email: <span class="font-semibold text-slate-700">Arrival date: You must report to {{ getUniteAffectationObj().nom }} on {{ getJourSemaineEn(offreDateArriveeUnite()) || 'day of the week' }}: {{ offreDateArriveeUnite() || 'day / month / year' }} no later than 16:00.</span>
+                                } @else {
+                                  Dans le courriel : <span class="font-semibold text-slate-700">Date d'arrivée : Vous devez vous présenter à {{ getUniteAffectationObj().nom }} le {{ getJourSemaineFr(offreDateArriveeUnite()) || 'jour de la semaine' }} : {{ offreDateArriveeUnite() || 'jour / mois / année' }} au plus tard à 16h00.</span>
+                                }
                               </p>
                             </div>
 
@@ -2496,12 +2770,14 @@ function getTodayDateString(): string {
                             <!-- Dossier Régulier : Formulaire complet existant -->
                             <!-- Ligne 1 : Métier / Programme d'enrôlement -->
                             <div class="relative">
-                              <label class="block font-semibold text-slate-700 mb-1">Métier :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Occupation:' : 'Métier :' }}
+                              </label>
                               <div class="flex items-center border border-slate-300 rounded-lg bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-slate-500 text-xs min-h-[34px] transition-all">
                                 <input
                                   type="text"
                                   class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
-                                  placeholder="Rechercher un métier..."
+                                  [placeholder]="langService.isEnglish() ? 'Search for an occupation...' : 'Rechercher un métier...'"
                                   [value]="offreMetierSearchQuery()"
                                   (input)="onOffreMetierQueryChange($any($event.target).value)"
                                   (focus)="offreMetierDropdownOpen.set(true)"
@@ -2512,7 +2788,7 @@ function getTodayDateString(): string {
                                     type="button"
                                     (click)="clearOffreMetier($event)"
                                     class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                                    title="Effacer métier"
+                                    [title]="langService.isEnglish() ? 'Clear occupation' : 'Effacer métier'"
                                   >
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -2526,7 +2802,9 @@ function getTodayDateString(): string {
                                 <div class="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs">
                                   @let filteredOffreJobs = getFilteredJobsForOffre();
                                   @if (filteredOffreJobs.length === 0) {
-                                    <div class="p-2 text-slate-400 text-center italic">Aucun métier trouvé</div>
+                                    <div class="p-2 text-slate-400 text-center italic">
+                                      {{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}
+                                    </div>
                                   }
                                   @for (job of filteredOffreJobs; track job.id) {
                                     <button
@@ -2534,7 +2812,7 @@ function getTodayDateString(): string {
                                       (mousedown)="selectOffreMetier(job)"
                                       class="w-full text-left px-2.5 py-1.5 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                                     >
-                                      <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ job.title }}</span>
+                                      <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span>
                                       @if (job.element) {
                                         <span
                                           class="text-[9px] font-semibold px-1.5 py-0.5 rounded shrink-0"
@@ -2547,7 +2825,7 @@ function getTodayDateString(): string {
                                           [class.bg-indigo-100]="job.element === 'Marine'"
                                           [class.text-indigo-800]="job.element === 'Marine'"
                                         >
-                                          {{ job.element }}
+                                          {{ getElementLabel(job.element) }}
                                         </span>
                                       }
                                     </button>
@@ -2558,7 +2836,9 @@ function getTodayDateString(): string {
 
                             <div>
                               <div class="flex items-center justify-between mb-1">
-                                <label class="block font-semibold text-slate-700 text-xs">Programme d'enrôlement :</label>
+                                <label class="block font-semibold text-slate-700 text-xs">
+                                  {{ langService.isEnglish() ? 'Enrolment program:' : 'Programme d’enrôlement :' }}
+                                </label>
                                 @if (offreJobType(); as jType) {
                                   <span
                                     class="text-[10px] font-semibold px-2 py-0.5 rounded-full transition-all"
@@ -2567,7 +2847,7 @@ function getTodayDateString(): string {
                                     [class.bg-blue-100]="jType === 'mr'"
                                     [class.text-blue-700]="jType === 'mr'"
                                   >
-                                    {{ jType === 'officier' ? 'Officiers' : 'Militaires du rang (MR)' }}
+                                    {{ jType === 'officier' ? (langService.isEnglish() ? 'Officers' : 'Officiers') : (langService.isEnglish() ? 'Non-Commissioned Members (NCM)' : 'Militaires du rang (MR)') }}
                                   </span>
                                 }
                               </div>
@@ -2576,7 +2856,7 @@ function getTodayDateString(): string {
                                 [value]="offreProgrammeEnrolement()"
                                 (change)="setOffreProgrammeEnrolement($any($event.target).value)"
                               >
-                                <option value="">-- Sélectionner un programme --</option>
+                                <option value="">{{ langService.isEnglish() ? '-- Select a program --' : '-- Sélectionner un programme --' }}</option>
                                 @for (prog of availableOffreProgrammes(); track prog) {
                                   <option [value]="prog">{{ prog }}</option>
                                 }
@@ -2586,15 +2866,17 @@ function getTodayDateString(): string {
                             <!-- Ligne 2 : Élément / Date d'enrôlement -->
                             <div>
                               <div class="flex items-center justify-between mb-1">
-                                <label class="block font-semibold text-slate-700 text-xs">Élément :</label>
+                                <label class="block font-semibold text-slate-700 text-xs">
+                                  {{ langService.isEnglish() ? 'Element:' : 'Élément :' }}
+                                </label>
                                 @if (offreDetectedElement(); as elem) {
                                   @if (elem === 'CMP') {
                                     <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                      CMP : Choix du postulant
+                                      {{ langService.isEnglish() ? 'CMP: Applicant choice' : 'CMP : Choix du postulant' }}
                                     </span>
                                   } @else {
                                     <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                      Auto : {{ elem }}
+                                      {{ langService.isEnglish() ? 'Auto: ' + getElementLabel(elem) : 'Auto : ' + elem }}
                                     </span>
                                   }
                                 }
@@ -2604,63 +2886,69 @@ function getTodayDateString(): string {
                                 [value]="offreElement()"
                                 (change)="setOffreElement($any($event.target).value)"
                               >
-                                <option value="">-- Sélectionner un élément --</option>
+                                <option value="">{{ langService.isEnglish() ? '-- Select an element --' : '-- Sélectionner un élément --' }}</option>
                                 <option value="Air">Air</option>
-                                <option value="Armée">Armée</option>
-                                <option value="Marine">Marine</option>
+                                <option value="Armée">{{ langService.isEnglish() ? 'Army' : 'Armée' }}</option>
+                                <option value="Marine">{{ langService.isEnglish() ? 'Navy' : 'Marine' }}</option>
                               </select>
                             </div>
 
                             <div>
                               <app-calendar-picker
-                                label="Date d'enrôlement :"
+                                [label]="langService.isEnglish() ? 'Enrolment date:' : 'Date d’enrôlement :'"
                                 [value]="offreDateEnrolement()"
-                                placeholder="Sélectionner une date..."
+                                [placeholder]="langService.isEnglish() ? 'Select a date...' : 'Sélectionner une date...'"
                                 (dateSelected)="setOffreDateEnrolement($event)"
                                 (cleared)="setOffreDateEnrolement('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Dans le courriel : <span class="font-semibold text-slate-700">Date d'enrôlement : {{ getOffreDateEnrolementFull() }}</span>
+                                {{ langService.isEnglish() ? 'In email: Enrolment date: ' : 'Dans le courriel : Date d’enrôlement : ' }}<span class="font-semibold text-slate-700">{{ getOffreDateEnrolementFull() }}</span>
                               </p>
                             </div>
 
                             @if (task.nameFr.toLowerCase().includes('subventionn') || offreEtudesSubventionneesChecked()) {
                               <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3 p-2.5 bg-blue-50/50 border border-blue-100 rounded-xl">
                                 <div>
-                                  <label class="block font-semibold text-slate-700 mb-1">Durée du contrat :</label>
+                                  <label class="block font-semibold text-slate-700 mb-1">
+                                    {{ langService.isEnglish() ? 'Contract duration:' : 'Durée du contrat :' }}
+                                  </label>
                                   <input
                                     type="text"
                                     class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all"
-                                    placeholder="ex: 5 ans"
+                                    [placeholder]="langService.isEnglish() ? 'e.g.: 5 years' : 'ex: 5 ans'"
                                     [value]="offreDureeContrat()"
                                     (input)="setOffreDureeContrat($any($event.target).value)"
                                   />
                                 </div>
 
                                 <div>
-                                  <label class="block font-semibold text-slate-700 mb-1">Études subventionnées :</label>
+                                  <label class="block font-semibold text-slate-700 mb-1">
+                                    {{ langService.isEnglish() ? 'Subsidized education:' : 'Études subventionnées :' }}
+                                  </label>
                                   <input
                                     type="text"
                                     class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all"
-                                    placeholder="ex: Baccalauréat"
+                                    [placeholder]="langService.isEnglish() ? 'e.g.: Bachelor’s degree' : 'ex: Baccalauréat'"
                                     [value]="offreEtudesSubventionnees()"
                                     (input)="setOffreEtudesSubventionnees($any($event.target).value)"
                                   />
                                 </div>
 
                                 <div>
-                                  <label class="block font-semibold text-slate-700 mb-1">Durée des études subventionnées :</label>
+                                  <label class="block font-semibold text-slate-700 mb-1">
+                                    {{ langService.isEnglish() ? 'Duration of subsidized education:' : 'Durée des études subventionnées :' }}
+                                  </label>
                                   <select
                                     class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                     [value]="offreDureeEtudesSubventionnees()"
                                     (change)="setOffreDureeEtudesSubventionnees($any($event.target).value)"
                                   >
-                                    <option value="">-- Sélectionner --</option>
-                                    <option value="1 an">1 an</option>
-                                    <option value="2 ans">2 ans</option>
-                                    <option value="3 ans">3 ans</option>
-                                    <option value="4 ans">4 ans</option>
-                                    <option value="5 ans">5 ans</option>
+                                    <option value="">{{ langService.isEnglish() ? '-- Select --' : '-- Sélectionner --' }}</option>
+                                    <option value="1 an">{{ langService.isEnglish() ? '1 year' : '1 an' }}</option>
+                                    <option value="2 ans">{{ langService.isEnglish() ? '2 years' : '2 ans' }}</option>
+                                    <option value="3 ans">{{ langService.isEnglish() ? '3 years' : '3 ans' }}</option>
+                                    <option value="4 ans">{{ langService.isEnglish() ? '4 years' : '4 ans' }}</option>
+                                    <option value="5 ans">{{ langService.isEnglish() ? '5 years' : '5 ans' }}</option>
                                   </select>
                                 </div>
                               </div>
@@ -2669,19 +2957,21 @@ function getTodayDateString(): string {
                             <!-- Ligne 3 : Date d'arrivée à l'unité d'affectation / Heures d'arrivée postulant et invité (toujours ouvert) -->
                             <div>
                               <app-calendar-picker
-                                label="Date d'arrivée à votre unité :"
+                                [label]="langService.isEnglish() ? 'Arrival date at unit:' : 'Date d’arrivée à votre unité :'"
                                 [value]="offreDateArriveeUnite()"
-                                placeholder="Sélectionner une date d'arrivée..."
+                                [placeholder]="langService.isEnglish() ? 'Select an arrival date...' : 'Sélectionner une date d’arrivée...'"
                                 (dateSelected)="setOffreDateArriveeUnite($event)"
                                 (cleared)="setOffreDateArriveeUnite('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Dans le courriel : <span class="font-semibold text-slate-700">Date d'arrivée : {{ getOffreDateArriveeUniteFull() }}</span>
+                                {{ langService.isEnglish() ? 'In email: Arrival date: ' : 'Dans le courriel : Date d’arrivée : ' }}<span class="font-semibold text-slate-700">{{ getOffreDateArriveeUniteFull() }}</span>
                               </p>
                             </div>
 
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1 text-xs">Heures d'arrivée (cérémonie) :</label>
+                              <label class="block font-semibold text-slate-700 mb-1 text-xs">
+                                {{ langService.isEnglish() ? 'Arrival times (ceremony):' : 'Heures d’arrivée (cérémonie) :' }}
+                              </label>
                               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                   <div>
@@ -2689,7 +2979,7 @@ function getTodayDateString(): string {
                                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                       </svg>
-                                      <span>Arrivée postulant :</span>
+                                      <span>{{ langService.isEnglish() ? 'Applicant arrival:' : 'Arrivée postulant :' }}</span>
                                     </label>
                                     <select
                                       class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -2707,7 +2997,7 @@ function getTodayDateString(): string {
                                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                       </svg>
-                                      <span>Arrivée invités :</span>
+                                      <span>{{ langService.isEnglish() ? 'Guests arrival:' : 'Arrivée invités :' }}</span>
                                     </label>
                                     <select
                                       class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -2744,7 +3034,9 @@ function getTodayDateString(): string {
 
                             <!-- Ligne 5 : Lieu de l'enrôlement -->
                             <div class="md:col-span-2">
-                              <label class="block font-semibold text-slate-700 mb-1 text-xs">Lieu de l'enrôlement :</label>
+                              <label class="block font-semibold text-slate-700 mb-1 text-xs">
+                                {{ langService.isEnglish() ? 'Enrolment location:' : 'Lieu de l’enrôlement :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="offreLieuVille()"
@@ -2759,29 +3051,31 @@ function getTodayDateString(): string {
                             <!-- Ligne 6 : Date limite -->
                             <div class="md:col-span-2">
                               <app-calendar-picker
-                                label="Date limite (au plus tard le) :"
+                                [label]="langService.isEnglish() ? 'Deadline (no later than):' : 'Date limite (au plus tard le) :'"
                                 [value]="offreDateElementsManquants()"
-                                placeholder="Sélectionner une date limite..."
+                                [placeholder]="langService.isEnglish() ? 'Select a deadline...' : 'Sélectionner une date limite...'"
                                 (dateSelected)="setOffreDateElementsManquants($event)"
                                 (cleared)="setOffreDateElementsManquants('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Dans le courriel : <span class="font-semibold text-slate-700">au plus tard le{{ offreDateElementsManquants() ? ' ' + offreDateElementsManquants() : '' }}</span>
+                                {{ langService.isEnglish() ? 'In email: no later than' : 'Dans le courriel : au plus tard le' }}<span class="font-semibold text-slate-700">{{ offreDateElementsManquants() ? ' ' + offreDateElementsManquants() : '' }}</span>
                               </p>
                             </div>
 
                             <!-- Ligne 7 : Élément(s) manquant(s) -->
                             <div class="md:col-span-2">
-                              <label class="block font-semibold text-slate-700 mb-1 text-xs">Élément(s) manquant(s) :</label>
+                              <label class="block font-semibold text-slate-700 mb-1 text-xs">
+                                {{ langService.isEnglish() ? 'Missing item(s):' : 'Élément(s) manquant(s) :' }}
+                              </label>
                               <textarea
                                 rows="3"
                                 class="w-full p-2.5 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all resize-y font-medium text-slate-800"
                                 [value]="offreElementsManquants()"
                                 (input)="setOffreElementsManquants($any($event.target).value)"
-                                placeholder="Spécimen de chèque&#10;Élément 2..."
+                                [placeholder]="langService.isEnglish() ? 'Void cheque\nItem 2...' : 'Spécimen de chèque\nÉlément 2...'"
                               ></textarea>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                Écrivez un élément par ligne (appuyez sur Entrée pour chaque nouvel élément). Ils apparaîtront sous forme de liste numérotée dans le courriel.
+                                {{ langService.isEnglish() ? 'Write one item per line (press Enter for each new item). They will appear as a numbered list in the email.' : 'Écrivez un élément par ligne (appuyez sur Entrée pour chaque nouvel élément). Ils apparaîtront sous forme de liste numérotée dans le courriel.' }}
                               </p>
                             </div>
                           }
@@ -2794,7 +3088,7 @@ function getTodayDateString(): string {
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             <label class="block font-bold text-slate-800 text-xs uppercase tracking-wider">
-                              Formulaires Supplémentaires :
+                              {{ langService.isEnglish() ? 'Additional Forms:' : 'Formulaires Supplémentaires :' }}
                             </label>
                           </div>
                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
@@ -2849,7 +3143,7 @@ function getTodayDateString(): string {
                                 (change)="toggleOffreFormulaireCroixSouvenir()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
                               />
-                              <span>Croix du souvenir</span>
+                              <span>{{ langService.isEnglish() ? 'Memorial Cross' : 'Croix du souvenir' }}</span>
                             </label>
 
                             <!-- Désignation de bénéficiaire -->
@@ -2867,7 +3161,7 @@ function getTodayDateString(): string {
                                 (change)="toggleOffreFormulaireBeneficiaire()"
                                 class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0"
                               />
-                              <span>Désignation de bénéficiaire</span>
+                              <span>{{ langService.isEnglish() ? 'Designation of Beneficiary' : 'Désignation de bénéficiaire' }}</span>
                             </label>
                           </div>
                         </div>
@@ -2879,7 +3173,7 @@ function getTodayDateString(): string {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <span>Informations de la note à remplir — {{ task.nameFr }}</span>
+                            <span>{{ (langService.isEnglish() ? 'Log note details to fill in — ' : 'Informations de la note à remplir — ') + (langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr) }}</span>
                           </div>
                         </div>
 
@@ -2887,12 +3181,14 @@ function getTodayDateString(): string {
                           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <!-- Métier (Transférable/partagé) -->
                             <div class="relative">
-                              <label class="block font-semibold text-slate-700 mb-1">Métier :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Occupation:' : 'Métier :' }}
+                              </label>
                               <div class="flex items-center border border-slate-300 rounded-lg bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500 text-xs min-h-[34px] transition-all">
                                 <input
                                   type="text"
                                   class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
-                                  placeholder="Rechercher un métier..."
+                                  [placeholder]="langService.isEnglish() ? 'Search for an occupation...' : 'Rechercher un métier...'"
                                   [value]="offreMetierSearchQuery()"
                                   (input)="onOffreMetierQueryChange($any($event.target).value)"
                                   (focus)="offreMetierDropdownOpen.set(true)"
@@ -2903,7 +3199,7 @@ function getTodayDateString(): string {
                                     type="button"
                                     (click)="clearOffreMetier($event)"
                                     class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                                    title="Effacer métier"
+                                    [title]="langService.isEnglish() ? 'Clear occupation' : 'Effacer métier'"
                                   >
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -2916,7 +3212,9 @@ function getTodayDateString(): string {
                                 <div class="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs">
                                   @let filteredOffreJobs = getFilteredJobsForOffre();
                                   @if (filteredOffreJobs.length === 0) {
-                                    <div class="p-2 text-slate-400 text-center italic">Aucun métier trouvé</div>
+                                    <div class="p-2 text-slate-400 text-center italic">
+                                      {{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}
+                                    </div>
                                   }
                                   @for (job of filteredOffreJobs; track job.id) {
                                     <button
@@ -2924,7 +3222,7 @@ function getTodayDateString(): string {
                                       (mousedown)="selectOffreMetier(job)"
                                       class="w-full text-left px-2.5 py-1.5 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                                     >
-                                      <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ job.title }}</span>
+                                      <span class="font-medium text-slate-800 truncate">{{ job.id }} - {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span>
                                     </button>
                                   }
                                 </div>
@@ -2933,34 +3231,38 @@ function getTodayDateString(): string {
 
                             <!-- Statut civil -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Statut :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Marital status:' : 'Statut :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteStatutCivil()"
                                 (change)="setNoteStatutCivil($any($event.target).value)"
                               >
                                 @for (opt of statutCivilOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getStatutCivilLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
                             <!-- Conjoint -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Conjoint :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Spouse:' : 'Conjoint :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteConjoint()"
                                 (change)="setNoteConjoint($any($event.target).value)"
                               >
                                 @for (opt of ouiNonOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ opt === 'oui' ? (langService.isEnglish() ? 'Yes' : 'oui') : opt }}</option>
                                 }
                               </select>
                               @if (noteConjoint() === 'oui') {
                                 <input
                                   type="text"
                                   class="w-full p-2 mt-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-medium text-slate-800"
-                                  placeholder="Texte du conjoint"
+                                  [placeholder]="langService.isEnglish() ? 'Spouse text' : 'Texte du conjoint'"
                                   [value]="noteConjointTexte()"
                                   (input)="onNoteConjointTexteInput($any($event.target).value)"
                                 />
@@ -2968,12 +3270,14 @@ function getTodayDateString(): string {
                             </div>
                             <!-- Enfant -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Enfant(s) à charge :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Dependent child(ren):' : 'Enfant(s) à charge :' }}
+                              </label>
                               <input
                                 type="number"
                                 min="0"
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-medium text-slate-800"
-                                placeholder="Nombre d'enfants"
+                                [placeholder]="langService.isEnglish() ? 'Number of children' : 'Nombre d’enfants'"
                                 [value]="noteEnfantCount()"
                                 (input)="onEnfantCountChange($any($event.target).value)"
                               />
@@ -3006,11 +3310,13 @@ function getTodayDateString(): string {
 
                             <!-- Plaque IMM -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Plaque IMM :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Licence plate:' : 'Plaque IMM :' }}
+                              </label>
                               <input
                                 type="text"
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-medium text-slate-800"
-                                placeholder="À confirmer"
+                                [placeholder]="langService.isEnglish() ? 'To be confirmed' : 'À confirmer'"
                                 [value]="notePlaqueImm()"
                                 (input)="setNotePlaqueImm($any($event.target).value)"
                               />
@@ -3018,63 +3324,71 @@ function getTodayDateString(): string {
 
                             <!-- Bris de bail -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Bris de bail :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Lease break:' : 'Bris de bail :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteBrisBail()"
                                 (change)="setNoteBrisBail($any($event.target).value)"
                               >
                                 @for (opt of brisBailOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getBrisBailLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Entreposage -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Entreposage :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Storage:' : 'Entreposage :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteEntreposage()"
                                 (change)="setNoteEntreposage($any($event.target).value)"
                               >
                                 @for (opt of entreposageOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getEntreposageLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Serment / Déclaration -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Serment / Déclaration :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Oath / Solemn affirmation:' : 'Serment / Déclaration :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteSermentDeclaration()"
                                 (change)="setNoteSermentDeclaration($any($event.target).value)"
                               >
                                 @for (opt of sermentDeclarationOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getSermentDeclarationLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Invité mil -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Invité mil :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Military guest:' : 'Invité mil :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteInviteMil()"
                                 (change)="setNoteInviteMil($any($event.target).value)"
                               >
                                 @for (opt of ouiNonOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ opt === 'oui' ? (langService.isEnglish() ? 'Yes' : 'oui') : opt }}</option>
                                 }
                               </select>
                               @if (noteInviteMil() === 'oui') {
                                 <input
                                   type="text"
                                   class="w-full p-2 mt-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-medium text-slate-800"
-                                  placeholder="Préciser l'invité"
+                                  [placeholder]="langService.isEnglish() ? 'Specify guest' : 'Préciser l’invité'"
                                   [value]="noteInviteMilTexte()"
                                   (input)="setNoteInviteMilTexte($any($event.target).value)"
                                 />
@@ -3083,25 +3397,29 @@ function getTodayDateString(): string {
 
                             <!-- Svc Mil ant -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Svc Mil ant :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Previous military service:' : 'Svc Mil ant :' }}
+                              </label>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                                 [value]="noteSvcMilAnt()"
                                 (change)="setNoteSvcMilAnt($any($event.target).value)"
                               >
                                 @for (opt of svcMilAntOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
+                                  <option [value]="opt">{{ getSvcMilAntLabel(opt) }}</option>
                                 }
                               </select>
                             </div>
 
                             <!-- Bénéficiaire -->
                             <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Bénéficiaire :</label>
+                              <label class="block font-semibold text-slate-700 mb-1">
+                                {{ langService.isEnglish() ? 'Beneficiary:' : 'Bénéficiaire :' }}
+                              </label>
                               <input
                                 type="text"
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all font-medium text-slate-800"
-                                placeholder="Bénéficiaire"
+                                [placeholder]="langService.isEnglish() ? 'Beneficiary' : 'Bénéficiaire'"
                                 [value]="noteBeneficiaire()"
                                 (input)="setNoteBeneficiaire($any($event.target).value)"
                               />
@@ -3110,9 +3428,9 @@ function getTodayDateString(): string {
                             <!-- Date courriel de confirmation -->
                             <div>
                               <app-calendar-picker
-                                label="Courriel de confirmation envoyé le :"
+                                [label]="langService.isEnglish() ? 'Confirmation email sent on:' : 'Courriel de confirmation envoyé le :'"
                                 [value]="getEffectiveNoteDateCourrielConfirmation()"
-                                placeholder="Sélectionner une date..."
+                                [placeholder]="langService.isEnglish() ? 'Select a date...' : 'Sélectionner une date...'"
                                 (dateSelected)="setNoteDateCourrielConfirmation($event)"
                                 (cleared)="setNoteDateCourrielConfirmation('')"
                               ></app-calendar-picker>
@@ -3131,12 +3449,14 @@ function getTodayDateString(): string {
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
-                          <span>Informations du courriel — {{ task.nameFr }}</span>
+                          <span>{{ (langService.isEnglish() ? 'Email details — ' : 'Informations du courriel — ') + (langService.isEnglish() && task.nameEn ? task.nameEn : task.nameFr) }}</span>
                         </div>
                       </div>
                       <div class="p-4 bg-white space-y-3 rounded-b-xl">
                         <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                          <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Génération de courriel :</div>
+                          <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            {{ langService.isEnglish() ? 'Email generation:' : 'Génération de courriel :' }}
+                          </div>
                           <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <label class="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
                               <input
@@ -3145,7 +3465,9 @@ function getTodayDateString(): string {
                                 (change)="toggleRappelCeremonie()"
                                 class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
-                              <span class="text-xs font-bold text-slate-800">Générer courriel Rappel cérémonie d'assermentation</span>
+                              <span class="text-xs font-bold text-slate-800">
+                                {{ langService.isEnglish() ? 'Generate Enrolment ceremony reminder email' : 'Générer courriel Rappel cérémonie d’assermentation' }}
+                              </span>
                             </label>
                             <label class="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100/80 cursor-pointer transition-colors select-none">
                               <input
@@ -3154,7 +3476,9 @@ function getTodayDateString(): string {
                                 (change)="toggleRappelCeremonieRalliement()"
                                 class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
-                              <span class="text-xs font-bold text-slate-800">Instruction de ralliement ELRFC</span>
+                              <span class="text-xs font-bold text-slate-800">
+                                {{ langService.isEnglish() ? 'CFLRS Joining Instructions' : 'Instruction de ralliement ELRFC' }}
+                              </span>
                             </label>
                           </div>
                         </div>
@@ -3162,9 +3486,9 @@ function getTodayDateString(): string {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                           <div>
                             <app-calendar-picker
-                              label="Date de l'enrôlement :"
+                              [label]="langService.isEnglish() ? 'Enrolment date:' : 'Date de l’enrôlement :'"
                               [value]="rappelCeremonieDate()"
-                              placeholder="Sélectionner une date..."
+                              [placeholder]="langService.isEnglish() ? 'Select a date...' : 'Sélectionner une date...'"
                               (dateSelected)="onRappelCeremonieDateSelected($event)"
                               (cleared)="onRappelCeremonieDateSelected('')"
                             ></app-calendar-picker>
@@ -3176,7 +3500,7 @@ function getTodayDateString(): string {
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Heure postulant :</span>
+                                <span>{{ langService.isEnglish() ? 'Applicant time:' : 'Heure postulant :' }}</span>
                               </label>
                               <select
                                 class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -3193,7 +3517,7 @@ function getTodayDateString(): string {
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
-                                <span>Heure invités :</span>
+                                <span>{{ langService.isEnglish() ? 'Guests time:' : 'Heure invités :' }}</span>
                               </label>
                               <select
                                 class="w-full p-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer shadow-xs"
@@ -3208,7 +3532,9 @@ function getTodayDateString(): string {
                           </div>
 
                           <div class="md:col-span-2">
-                            <label class="block font-semibold text-slate-700 mb-1 text-xs">Centre de recrutement :</label>
+                            <label class="block font-semibold text-slate-700 mb-1 text-xs">
+                              {{ langService.isEnglish() ? 'Recruiting centre:' : 'Centre de recrutement :' }}
+                            </label>
                             <select
                               class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
                               [value]="rappelCeremonieLieu()"
@@ -3230,8 +3556,8 @@ function getTodayDateString(): string {
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div>
-                          <span class="font-bold">Métier(s) au dossier :</span>
-                          <span class="ml-1 font-medium">{{ getDossierJobsSummaryTextFr() }}</span>
+                          <span class="font-bold">{{ langService.isEnglish() ? 'Job(s) on file:' : 'Métier(s) au dossier :' }}</span>
+                          <span class="ml-1 font-medium">{{ langService.isEnglish() ? getDossierJobsSummaryTextEn() : getDossierJobsSummaryTextFr() }}</span>
                         </div>
                       </div>
                     </div>
@@ -3244,7 +3570,7 @@ function getTodayDateString(): string {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
-                            <span>Documents supplémentaires selon la situation du postulant</span>
+                            <span>{{ langService.isEnglish() ? 'Additional documents based on applicant situation' : 'Documents supplémentaires selon la situation du postulant' }}</span>
                           </div>
                         </div>
 
@@ -3284,7 +3610,7 @@ function getTodayDateString(): string {
                                         [class.font-semibold]="isReasonSelected(doc, reason)"
                                         [class.text-blue-900]="isReasonSelected(doc, reason)"
                                       >
-                                        <strong class="font-bold text-slate-800">{{ doc.nameFr }} :</strong> {{ reason.labelFr }}
+                                        <strong class="font-bold text-slate-800">{{ langService.isEnglish() && doc.nameEn ? doc.nameEn : doc.nameFr }} :</strong> {{ langService.isEnglish() && reason.labelEn ? reason.labelEn : reason.labelFr }}
                                       </span>
                                     </div>
                                   </label>
@@ -3305,7 +3631,7 @@ function getTodayDateString(): string {
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                             </svg>
-                            <span>Études subventionnées</span>
+                            <span>{{ langService.isEnglish() ? 'Subsidized education' : 'Études subventionnées' }}</span>
                           </div>
                         </div>
 
@@ -3345,7 +3671,7 @@ function getTodayDateString(): string {
                                         [class.font-semibold]="isReasonSelected(doc, reason)"
                                         [class.text-blue-900]="isReasonSelected(doc, reason)"
                                       >
-                                        <strong class="font-bold text-slate-800">{{ doc.nameFr }} :</strong> {{ reason.labelFr }}
+                                        <strong class="font-bold text-slate-800">{{ langService.isEnglish() && doc.nameEn ? doc.nameEn : doc.nameFr }} :</strong> {{ langService.isEnglish() && reason.labelEn ? reason.labelEn : reason.labelFr }}
                                       </span>
                                     </div>
                                   </label>
@@ -3365,7 +3691,7 @@ function getTodayDateString(): string {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <span>Documents supplémentaires selon les métiers</span>
+                            <span>{{ langService.isEnglish() ? 'Additional documents based on occupations' : 'Documents supplémentaires selon les métiers' }}</span>
                           </div>
 
                           <button
@@ -3378,8 +3704,9 @@ function getTodayDateString(): string {
                             [class.text-slate-500]="!isAdditionalJobDocsCompliant(task)"
                             [class.hover:bg-slate-100]="!isAdditionalJobDocsCompliant(task)"
                             [class.border-slate-300]="!isAdditionalJobDocsCompliant(task)"
+                            [title]="isAdditionalJobDocsCompliant(task) ? (langService.isEnglish() ? 'Mark as non-compliant' : 'Marquer comme non-conforme') : (langService.isEnglish() ? 'Mark all as compliant' : 'Tout marquer comme conforme')"
                           >
-                            Conforme
+                            {{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}
                           </button>
                         </div>
 
@@ -3389,7 +3716,7 @@ function getTodayDateString(): string {
                               <div class="space-y-1 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
                                 <div class="text-xs font-bold text-slate-800 pb-1.5 px-0.5 flex items-center gap-2 border-b border-slate-200/80 mb-1.5">
                                   <span class="inline-block w-2 h-2 rounded-full bg-blue-600"></span>
-                                  <span>Pour {{ job.id }} - {{ job.title }} :</span>
+                                  <span>{{ langService.isEnglish() ? 'For ' + job.id + ' - ' + (job.titleEn || job.title) + ' :' : 'Pour ' + job.id + ' - ' + job.title + ' :' }}</span>
                                 </div>
                                 @for (doc of task.documents; track doc.nameFr) {
                                   @if (!isSubsidizedDoc(doc) && !isTaskBasedAdditionalDoc(doc) && isAdditionalDocRequiredForJob(doc.nameFr, job.id) && shouldShowDoc(task, doc)) {
@@ -3426,7 +3753,7 @@ function getTodayDateString(): string {
                                               [class.font-semibold]="isJobReasonSelected(job, doc, reason)"
                                               [class.text-blue-900]="isJobReasonSelected(job, doc, reason)"
                                             >
-                                              <strong class="font-bold text-slate-800">{{ doc.nameFr }} :</strong> {{ getJobSpecificDocText(job.id, doc.nameFr, true) }}
+                                              <strong class="font-bold text-slate-800">{{ langService.isEnglish() && doc.nameEn ? doc.nameEn : doc.nameFr }} :</strong> {{ getJobSpecificDocText(job.id, doc.nameFr, !langService.isEnglish()) }}
                                             </span>
                                           </div>
                                         </label>
@@ -3446,8 +3773,8 @@ function getTodayDateString(): string {
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <p class="font-semibold text-sm text-slate-700">Aucun document pour cette tâche</p>
-                        <p class="text-xs text-slate-400 mt-1">Le panneau documents et vérification pour cette tâche sera mis à jour ultérieurement.</p>
+                        <p class="font-semibold text-sm text-slate-700">{{ langService.isEnglish() ? 'No documents for this task' : 'Aucun document pour cette tâche' }}</p>
+                        <p class="text-xs text-slate-400 mt-1">{{ langService.isEnglish() ? 'The documents and verification panel for this task will be updated later.' : 'Le panneau documents et vérification pour cette tâche sera mis à jour ultérieurement.' }}</p>
                       </div>
                     }
                     @for (
@@ -3473,16 +3800,15 @@ function getTodayDateString(): string {
                                 stage() === "minor-check" &&
                                 doc.nameFr === "Certificat de naissance"
                               ) {
-                                Certificat de naissance version long avec le nom
-                                des parents
+                                {{ langService.isEnglish() ? 'Long-form birth certificate with parental information' : 'Certificat de naissance version long avec le nom des parents' }}
                               } @else {
-                                {{ doc.nameFr }}
+                                {{ langService.isEnglish() && doc.nameEn ? doc.nameEn : doc.nameFr }}
                               }
                             </div>
                             <div
                               class="text-[10px] text-slate-500 leading-tight truncate"
                             >
-                              {{ doc.nameEn }}
+                              {{ langService.isEnglish() ? doc.nameFr : doc.nameEn }}
                             </div>
                           </div>
 
@@ -3501,7 +3827,7 @@ function getTodayDateString(): string {
                               "
                               [class.border-slate-300]="!isCompliant(task, doc)"
                             >
-                              Conforme
+                              {{ langService.isEnglish() ? 'Compliant' : 'Conforme' }}
                             </button>
                           }
                         </div>
@@ -3512,7 +3838,7 @@ function getTodayDateString(): string {
                             <div
                               class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1"
                             >
-                              Motifs de rejet
+                              {{ langService.isEnglish() ? 'Rejection Reasons' : 'Motifs de rejet' }}
                             </div>
                             @for (reason of doc.reasons; track reason.id) {
                               @if (
@@ -3561,7 +3887,7 @@ function getTodayDateString(): string {
                                     [class.text-slate-800]="
                                       isReasonSelected(doc, reason)
                                     "
-                                    >{{ reason.labelFr }}</span
+                                    >{{ langService.isEnglish() && reason.labelEn ? reason.labelEn : reason.labelFr }}</span
                                   >
                                 </label>
                               }
@@ -3572,7 +3898,7 @@ function getTodayDateString(): string {
                             <div
                               class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-2 ml-1 mt-4"
                             >
-                              Documents supplémentaires
+                              {{ langService.isEnglish() ? 'Additional Documents' : 'Documents supplémentaires' }}
                             </div>
                             @for (reason of doc.reasons; track reason.id) {
                               @if (
@@ -3620,7 +3946,7 @@ function getTodayDateString(): string {
                                     [class.text-slate-800]="
                                       isReasonSelected(doc, reason)
                                     "
-                                    >{{ reason.labelFr }}</span
+                                    >{{ langService.isEnglish() && reason.labelEn ? reason.labelEn : reason.labelFr }}</span
                                   >
                                 </label>
                               }
@@ -3650,7 +3976,7 @@ function getTodayDateString(): string {
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                     />
                   </svg>
-                  <p class="text-sm font-medium">Sélectionnez une option pour afficher les détails</p>
+                  <p class="text-sm font-medium">{{ langService.isEnglish() ? 'Select an option to display details' : 'Sélectionnez une option pour afficher les détails' }}</p>
                 </div>
               }
             </div>
@@ -3678,14 +4004,16 @@ function getTodayDateString(): string {
                 class="font-bold text-slate-700 uppercase text-sm tracking-wider flex items-center gap-2"
               >
                 {{
-                  allTasksCompliant() ? "Instructions, Note & Courriel" : "Courriel & Note"
+                  allTasksCompliant()
+                    ? (langService.isEnglish() ? "Instructions, Note & Email" : "Instructions, Note & Courriel")
+                    : (langService.isEnglish() ? "Email & Note" : "Courriel & Note")
                 }}
               </h2>
 
               <div class="flex items-center gap-3">
                 <button
                   (click)="copyNote()"
-                  class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5"
+                  class="text-xs bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-md shadow-sm border border-slate-300 font-semibold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
                   @if (copiedNote()) {
                     <svg
@@ -3700,7 +4028,7 @@ function getTodayDateString(): string {
                         clip-rule="evenodd"
                       />
                     </svg>
-                    <span class="text-green-700">Note Copiée!</span>
+                    <span class="text-green-700">{{ langService.isEnglish() ? 'Note Copied!' : 'Note Copiée !' }}</span>
                   } @else {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -3716,7 +4044,7 @@ function getTodayDateString(): string {
                         d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
                       />
                     </svg>
-                    <span>Copier Note</span>
+                    <span>{{ langService.isEnglish() ? 'Copy Note' : 'Copier Note' }}</span>
                   }
                 </button>
 
@@ -3727,7 +4055,7 @@ function getTodayDateString(): string {
                     [class.bg-slate-800]="!copiedEmailCaf101()"
                     [class.hover:bg-slate-700]="!copiedEmailCaf101()"
                     [class.bg-green-600]="copiedEmailCaf101()"
-                    title="Exporter vers Outlook - CAF 101"
+                    [title]="langService.isEnglish() ? 'Export to Outlook - CAF 101' : 'Exporter vers Outlook - CAF 101'"
                   >
                     @if (copiedEmailCaf101()) {
                       <svg
@@ -3742,7 +4070,7 @@ function getTodayDateString(): string {
                           clip-rule="evenodd"
                         />
                       </svg>
-                      Copié ! Ouverture d'Outlook...
+                      {{ langService.isEnglish() ? 'Copied! Opening Outlook...' : 'Copié ! Ouverture d’Outlook...' }}
                     } @else {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -3758,7 +4086,7 @@ function getTodayDateString(): string {
                           d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                         />
                       </svg>
-                      Exporter vers Outlook-CAF 101
+                      {{ langService.isEnglish() ? 'Export to Outlook - CAF 101' : 'Exporter vers Outlook-CAF 101' }}
                     }
                   </button>
 
@@ -3768,7 +4096,7 @@ function getTodayDateString(): string {
                     [class.bg-indigo-600]="!copiedEmailLienPa()"
                     [class.hover:bg-indigo-700]="!copiedEmailLienPa()"
                     [class.bg-green-600]="copiedEmailLienPa()"
-                    title="Exporter vers Outlook - Lien PA"
+                    [title]="langService.isEnglish() ? 'Export to Outlook - PA Link' : 'Exporter vers Outlook - Lien PA'"
                   >
                     @if (copiedEmailLienPa()) {
                       <svg
@@ -3783,7 +4111,7 @@ function getTodayDateString(): string {
                           clip-rule="evenodd"
                         />
                       </svg>
-                      Copié ! Ouverture d'Outlook...
+                      {{ langService.isEnglish() ? 'Copied! Opening Outlook...' : 'Copié ! Ouverture d’Outlook...' }}
                     } @else {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -3799,13 +4127,13 @@ function getTodayDateString(): string {
                           d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                         />
                       </svg>
-                      Exporter vers Outlook-Lien PA
+                      {{ langService.isEnglish() ? 'Export to Outlook - PA Link' : 'Exporter vers Outlook-Lien PA' }}
                     }
                   </button>
                 } @else {
                   <button
                     (click)="exportToOutlook()"
-                    class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2"
+                    class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
                     [class.bg-slate-800]="!copiedEmail()"
                     [class.hover:bg-slate-700]="!copiedEmail()"
                     [class.bg-green-600]="copiedEmail()"
@@ -3823,7 +4151,7 @@ function getTodayDateString(): string {
                           clip-rule="evenodd"
                         />
                       </svg>
-                      Copié ! Ouverture d'Outlook...
+                      {{ langService.isEnglish() ? 'Copied! Opening Outlook...' : 'Copié ! Ouverture d’Outlook...' }}
                     } @else {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -3839,7 +4167,7 @@ function getTodayDateString(): string {
                           d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                         />
                       </svg>
-                      Exporter vers Outlook
+                      {{ langService.isEnglish() ? 'Export to Outlook' : 'Exporter vers Outlook' }}
                     }
                   </button>
                 }
@@ -3876,7 +4204,7 @@ function getTodayDateString(): string {
                           d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                         />
                       </svg>
-                      Instructions pour le sgt recruteur
+                      {{ langService.isEnglish() ? 'Instructions for Recruiter Sgt' : 'Instructions pour le sgt recruteur' }}
                     </h3>
                     <div class="flex items-center gap-2.5">
                       <span
@@ -3887,18 +4215,18 @@ function getTodayDateString(): string {
                         [class.text-slate-600]="!isAllDone"
                       >
                         @if (isAllDone) {
-                          ✓ {{ completedCount }}/{{ currentInstructions.length }} complétées
+                          ✓ {{ completedCount }}/{{ currentInstructions.length }} {{ langService.isEnglish() ? 'completed' : 'complétées' }}
                         } @else {
-                          {{ completedCount }}/{{ currentInstructions.length }} complétées
+                          {{ completedCount }}/{{ currentInstructions.length }} {{ langService.isEnglish() ? 'completed' : 'complétées' }}
                         }
                       </span>
                       <button
                         type="button"
                         (click)="toggleAllSgtInstructions(currentInstructions)"
                         class="text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors cursor-pointer"
-                        title="Tout cocher / décocher"
+                        [title]="langService.isEnglish() ? 'Check all / Uncheck all' : 'Tout cocher / décocher'"
                       >
-                        {{ isAllDone ? 'Tout décocher' : 'Tout cocher' }}
+                        {{ isAllDone ? (langService.isEnglish() ? 'Uncheck all' : 'Tout décocher') : (langService.isEnglish() ? 'Check all' : 'Tout cocher') }}
                       </button>
                     </div>
                   </div>
@@ -3932,7 +4260,7 @@ function getTodayDateString(): string {
                           [class.text-slate-800]="!isChecked"
                           [class.font-medium]="!isChecked"
                         >
-                          <span class="text-xs font-semibold mr-1.5 opacity-60">{{ idx + 1 }}.</span>{{ item.text }}
+                          <span class="text-xs font-semibold mr-1.5 opacity-60">{{ idx + 1 }}.</span>{{ langService.isEnglish() && item.textEn ? item.textEn : item.text }}
                         </span>
                       </label>
                     }
@@ -3964,11 +4292,11 @@ function getTodayDateString(): string {
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    Note au Registre (Interne)
+                    {{ langService.isEnglish() ? 'Log Note (Internal)' : 'Note au Registre (Interne)' }}
                     @if (sharedState.includeLinkedEmail() && sharedState.reoMergedNote()) {
                       <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
-                        Fusionnée avec la réorientation
+                        {{ langService.isEnglish() ? 'Merged with reorientation' : 'Fusionnée avec la réorientation' }}
                       </span>
                     }
                   </h3>
@@ -4006,7 +4334,7 @@ function getTodayDateString(): string {
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      1er Courriel au Postulant : CAF 101
+                      {{ langService.isEnglish() ? '1st Email to Applicant: CAF 101' : '1er Courriel au Postulant : CAF 101' }}
                     </h3>
 
                     <button
@@ -4017,7 +4345,7 @@ function getTodayDateString(): string {
                       [class.bg-green-600]="copiedEmailCaf101()"
                     >
                       @if (copiedEmailCaf101()) {
-                        <span>Copié !</span>
+                        <span>{{ langService.isEnglish() ? 'Copied!' : 'Copié !' }}</span>
                       } @else {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -4033,7 +4361,7 @@ function getTodayDateString(): string {
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                           />
                         </svg>
-                        <span>Exporter vers Outlook-CAF 101</span>
+                        <span>{{ langService.isEnglish() ? 'Export to Outlook - CAF 101' : 'Exporter vers Outlook-CAF 101' }}</span>
                       }
                     </button>
                   </div>
@@ -4067,7 +4395,7 @@ function getTodayDateString(): string {
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      2e Courriel au Postulant : Lien PA (Documents scolaires CMC/CMR)
+                      {{ langService.isEnglish() ? '2nd Email to Applicant: PA Link (RMC academic documents)' : '2e Courriel au Postulant : Lien PA (Documents scolaires CMC/CMR)' }}
                     </h3>
 
                     <button
@@ -4078,7 +4406,7 @@ function getTodayDateString(): string {
                       [class.bg-green-600]="copiedEmailLienPa()"
                     >
                       @if (copiedEmailLienPa()) {
-                        <span>Copié !</span>
+                        <span>{{ langService.isEnglish() ? 'Copied!' : 'Copié !' }}</span>
                       } @else {
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -4094,7 +4422,7 @@ function getTodayDateString(): string {
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                           />
                         </svg>
-                        <span>Exporter vers Outlook-Lien PA</span>
+                        <span>{{ langService.isEnglish() ? 'Export to Outlook - PA Link' : 'Exporter vers Outlook-Lien PA' }}</span>
                       }
                     </button>
                   </div>
@@ -4127,11 +4455,17 @@ function getTodayDateString(): string {
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      Courriel au Postulant
+                      {{ langService.isEnglish() ? 'Email to Applicant' : 'Courriel au Postulant' }}
+                      @if (selectedEmailBankTemplate()) {
+                        <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
+                          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+                          {{ getSelectedEmailBankTemplateLabel() }}
+                        </span>
+                      }
                       @if (sharedState.includeLinkedEmail() && sharedState.reoMergedEmailHtml()) {
                         <span class="bg-indigo-100 text-indigo-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 shadow-xs flex items-center gap-1.5 font-sans normal-case tracking-normal">
                           <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
-                          Fusionné avec la réorientation
+                          {{ langService.isEnglish() ? 'Merged with reorientation' : 'Fusionné avec la réorientation' }}
                         </span>
                       }
                     </h3>
@@ -4166,7 +4500,7 @@ function getTodayDateString(): string {
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Courriel & Note (Gestionnaire de dossier)
+                {{ langService.isEnglish() ? 'Email & Note (File Manager)' : 'Courriel & Note (Gestionnaire de dossier)' }}
               </h2>
 
               <div class="flex items-center gap-3">
@@ -4177,7 +4511,7 @@ function getTodayDateString(): string {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      Lieu du test :
+                      {{ langService.isEnglish() ? 'Test location:' : 'Lieu du test :' }}
                     </label>
                     <select
                       [ngModel]="testEsomRecruitmentCenterCity()"
@@ -4199,12 +4533,12 @@ function getTodayDateString(): string {
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-green-700">Note Copiée!</span>
+                    <span class="text-green-700">{{ langService.isEnglish() ? 'Note Copied!' : 'Note Copiée !' }}</span>
                   } @else {
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
-                    <span>Copier Note</span>
+                    <span>{{ langService.isEnglish() ? 'Copy Note' : 'Copier Note' }}</span>
                   }
                 </button>
 
@@ -4219,12 +4553,12 @@ function getTodayDateString(): string {
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    Copié ! Ouverture d'Outlook...
+                    {{ langService.isEnglish() ? 'Copied! Opening Outlook...' : 'Copié ! Ouverture d’Outlook...' }}
                   } @else {
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
-                    Exporter vers Outlook
+                    {{ langService.isEnglish() ? 'Export to Outlook' : 'Exporter vers Outlook' }}
                   }
                 </button>
               </div>
@@ -4236,7 +4570,7 @@ function getTodayDateString(): string {
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>Cochez une ou plusieurs options dans le panneau « Construction de courriels » (Partie 1, Partie 2, Partie 1 et 2, Offre d'emploi, etc.) pour générer le courriel au postulant ainsi que la note au registre.</span>
+                  <span>{{ langService.isEnglish() ? 'Check one or more options in the "Email & Note Builder" panel (Part 1, Part 2, Part 1 & 2, Job Offer, etc.) to generate the email to the applicant and the log note.' : 'Cochez une ou plusieurs options dans le panneau « Construction de courriels » (Partie 1, Partie 2, Partie 1 et 2, Offre d’emploi, etc.) pour générer le courriel au postulant ainsi que la note au registre.' }}</span>
                 </div>
               } @else {
                 <!-- Instructions pour le GD (Demande NAV/TAN) -->
@@ -4250,11 +4584,11 @@ function getTodayDateString(): string {
                       </div>
                       <div class="flex-1">
                         <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                          Instructions pour le gestionnaire de dossier (GD)
+                          {{ langService.isEnglish() ? 'Instructions for File Manager (FM)' : 'Instructions pour le gestionnaire de dossier (GD)' }}
                         </h4>
                         <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
-                          <li>Mettre en attache le message d’autorisation les opérations (Ops CRFC)</li>
-                          <li>Mettre en attache le message d’autorisation officiel (message DRAFT)</li>
+                          <li>{{ langService.isEnglish() ? 'Attach operations authorization message (Ops CFRC)' : 'Mettre en attache le message d’autorisation les opérations (Ops CRFC)' }}</li>
+                          <li>{{ langService.isEnglish() ? 'Attach official authorization message (DRAFT message)' : 'Mettre en attache le message d’autorisation officiel (message DRAFT)' }}</li>
                         </ul>
                       </div>
                     </div>
@@ -4272,11 +4606,11 @@ function getTodayDateString(): string {
                       </div>
                       <div class="flex-1">
                         <h4 class="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                          Instructions pour le gestionnaire de dossier (GD)
+                          {{ langService.isEnglish() ? 'Instructions for File Manager (FM)' : 'Instructions pour le gestionnaire de dossier (GD)' }}
                         </h4>
                         <ul class="text-xs text-amber-900/90 space-y-1 font-medium list-disc list-inside">
-                          <li>Contacter le postulant pour ses disponibilité</li>
-                          <li>Vérifier la disponibilité de l'administrateur de test</li>
+                          <li>{{ langService.isEnglish() ? 'Contact applicant for their availability' : 'Contacter le postulant pour ses disponibilités' }}</li>
+                          <li>{{ langService.isEnglish() ? 'Check test administrator availability' : 'Vérifier la disponibilité de l’administrateur de test' }}</li>
                         </ul>
                       </div>
                     </div>
@@ -4290,7 +4624,7 @@ function getTodayDateString(): string {
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Note au Registre (Dossier du candidat / Interne)</h3>
+                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">{{ langService.isEnglish() ? 'Log Note (Candidate File / Internal)' : 'Note au Registre (Dossier du candidat / Interne)' }}</h3>
                     </div>
                   </div>
                   <div class="p-4 bg-slate-50">
@@ -4309,15 +4643,23 @@ function getTodayDateString(): string {
                       </svg>
                       <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">
                         @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
-                          Courriel - Destinataire : CRFCQcReclamations&#64;forces.gc.ca
+                          {{ langService.isEnglish() ? 'Email - Recipient: CRFCQcReclamations@forces.gc.ca' : 'Courriel - Destinataire : CRFCQcReclamations@forces.gc.ca' }}
                         } @else if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
-                          Courriel - Destinataire : MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND&#64;forces.gc.ca
+                          {{ langService.isEnglish() ? 'Email - Recipient: MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca' : 'Courriel - Destinataire : MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca' }}
                         } @else if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
-                          Courriel - Destinataire : CRFCQcAdmin&#64;forces.gc.ca
+                          {{ langService.isEnglish() ? 'Email - Recipient: CRFCQcAdmin@forces.gc.ca' : 'Courriel - Destinataire : CRFCQcAdmin@forces.gc.ca' }}
                         } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
-                          Courriel - Demande d’autorisation pour un CSPN
+                          {{ langService.isEnglish() ? 'Email - Request for CSPN authorization' : 'Courriel - Demande d’autorisation pour un CSPN' }}
+                        } @else if (selectedEmailBankTemplate() === 'tentative_offre_gd') {
+                          {{ langService.isEnglish() ? 'Email - Communication attempt (Job offer)' : 'Courriel - Tentative de communication (Offre d’emploi)' }}
+                        } @else if (selectedEmailBankTemplate() === 'bris_bail_entreposage') {
+                          {{ langService.isEnglish() ? 'Email - Lease break and storage' : 'Courriel - Bris de bail et entreposage' }}
+                        } @else if (selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
+                          {{ langService.isEnglish() ? 'Email - Required documents (Common-law partner)' : 'Courriel - Documents requis (Conjoint(e) de fait)' }}
+                        } @else if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                          {{ langService.isEnglish() ? 'Email - MOST test confirmation' : 'Courriel - Confirmation test ESOM' }}
                         } @else {
-                          Courriel au Postulant (Bilingue)
+                          {{ langService.isEnglish() ? 'Email to Applicant (Bilingual)' : 'Courriel au Postulant (Bilingue)' }}
                         }
                       </h3>
                     </div>
@@ -4347,6 +4689,7 @@ function getTodayDateString(): string {
   styles: [],
 })
 export class AppComponent implements OnInit {
+  public langService = inject(LanguageService);
   private dataService = inject(RecruitmentDataService);
   private emailScenariosService = inject(EmailScenariosService);
   private sanitizer = inject(DomSanitizer);
@@ -4367,7 +4710,7 @@ export class AppComponent implements OnInit {
   readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribué'];
   readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribué'];
   readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initié'];
-  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'En attente (dossier soumis)', 'Concluant favorable', 'Concluant défavorable', 'Non Concluant'];
+  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'Concluant favorable', 'Concluant défavorable', 'Non Concluant'];
   readonly premierContactAnxQOptions: string[] = ['À faire', 'Complété'];
 
   premierContactNoteIptad = signal<string>('Complété');
@@ -4405,22 +4748,22 @@ export class AppComponent implements OnInit {
 
   // Instructions Sgt Recruteur Checkboxes
   sgtPforInstructions = [
-    { id: 'pfor_1', text: "S'assurer que la liste de Vérification A1 à A35 est bien rempli" },
-    { id: 'pfor_2', text: 'Marquer la tâche "Planifier votre consultation CAF 101" comme complétée' },
-    { id: 'pfor_3', text: 'Réattribuer la tâche "relevés de notes et Diplômes" pour le dépôt de la capture d\'écran de confirmation des documents déposés sur le PA' },
-    { id: 'pfor_4', text: 'Ajouter la note au registre du Postulant' },
-    { id: 'pfor_5', text: 'Tag CCM et Recruteur BPR appropriés' },
-    { id: 'pfor_6', text: 'Basculer vers la Gestion des admissions' },
-    { id: 'pfor_7', text: 'Envoyer les 2 courriels au Postulant : CAF 101 PFOR et Lien PA' },
+    { id: 'pfor_1', text: "S'assurer que la liste de Vérification A1 à A35 est bien rempli", textEn: 'Ensure verification checklist A1 to A35 is properly completed' },
+    { id: 'pfor_2', text: 'Marquer la tâche "Planifier votre consultation CAF 101" comme complétée', textEn: 'Mark task "Schedule your CAF 101 consultation" as completed' },
+    { id: 'pfor_3', text: 'Réattribuer la tâche "relevés de notes et Diplômes" pour le dépôt de la capture d\'écran de confirmation des documents déposés sur le PA', textEn: 'Reassign task "Transcripts and Diplomas" for uploading the screenshot confirming documents submitted on PA' },
+    { id: 'pfor_4', text: 'Ajouter la note au registre du Postulant', textEn: 'Add note to applicant log' },
+    { id: 'pfor_5', text: 'Tag CCM et Recruteur BPR appropriés', textEn: 'Tag appropriate MCC and OPI Recruiter' },
+    { id: 'pfor_6', text: 'Basculer vers la Gestion des admissions', textEn: 'Switch to Admissions Management' },
+    { id: 'pfor_7', text: 'Envoyer les 2 courriels au Postulant : CAF 101 PFOR et Lien PA', textEn: 'Send the 2 emails to applicant: CAF 101 ROTP and PA Link' },
   ];
 
   sgtStandardInstructions = [
-    { id: 'std_1', text: "S'assurer que la liste de vérification A1 à A35 est bien rempli." },
-    { id: 'std_2', text: "Attribuer la tâche : Planifiez votre séance d'information des FAC 101." },
-    { id: 'std_3', text: "Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse." },
-    { id: 'std_4', text: "Ajouter la note au registre du postulant." },
-    { id: 'std_5', text: "Basculer le postulant dans Traitement initial." },
-    { id: 'std_6', text: "Envoyé le courriel au postulant contenant le lien vers le Form et le CAF 101." },
+    { id: 'std_1', text: "S'assurer que la liste de vérification A1 à A35 est bien rempli.", textEn: 'Ensure verification checklist A1 to A35 is properly completed.' },
+    { id: 'std_2', text: "Attribuer la tâche : Planifiez votre séance d'information des FAC 101.", textEn: 'Assign task: Schedule your CAF 101 information session.' },
+    { id: 'std_3', text: "Mettre le marqueur ‘’Dispense requise’’ ou ‘’ÉRA requise’’ au besoin, le Ltv Forest fera l’analyse.", textEn: 'Apply "Waiver required" or "PLAR required" tag as needed, A/SLt Forest will conduct the analysis.' },
+    { id: 'std_4', text: "Ajouter la note au registre du postulant.", textEn: 'Add note to applicant log.' },
+    { id: 'std_5', text: "Basculer le postulant dans Traitement initial.", textEn: 'Switch applicant to Initial Processing.' },
+    { id: 'std_6', text: "Envoyé le courriel au postulant contenant le lien vers le Form et le CAF 101.", textEn: 'Send email to applicant containing the link to the Form and CAF 101.' },
   ];
 
   sgtCheckedInstructions = signal<Set<string>>(new Set<string>());
@@ -4645,6 +4988,10 @@ Thank you for your cooperation.`;
     const en = this.getPremierContactSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -4705,13 +5052,23 @@ Thank you for your cooperation.`;
   getPremierContactEmailHtml(): string {
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000; line-height: normal;">`;
-    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
-    html += this.getPremierContactSectionHtmlFr();
-    html += `<p style="margin-top: 12.0pt;">` + sigFr + `</p>`;
-    html += `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>`;
-    html += this.getPremierContactSectionHtmlEn();
-    html += `<p style="margin-top: 12.0pt;">` + sigEn + `</p>`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>`;
+      html += this.getPremierContactSectionHtmlEn();
+      html += `<p style="margin-top: 12.0pt;">` + sigEn + `</p>`;
+      html += `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>`;
+      html += this.getPremierContactSectionHtmlFr();
+      html += `<p style="margin-top: 12.0pt;">` + sigFr + `</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+      html += this.getPremierContactSectionHtmlFr();
+      html += `<p style="margin-top: 12.0pt;">` + sigFr + `</p>`;
+      html += `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>`;
+      html += this.getPremierContactSectionHtmlEn();
+      html += `<p style="margin-top: 12.0pt;">` + sigEn + `</p>`;
+    }
     html += `</div>`;
     return html;
   }
@@ -4770,6 +5127,10 @@ Thank you for your cooperation.`;
     const en = this.getAnnexeQSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -4792,14 +5153,25 @@ Thank you for your cooperation.`;
     const en = this.getAnnexeQSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
-    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
-      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>` +
-      fr +
-      `<p style="margin-top: 12.0pt;">` + sigFr + `</p>` +
-      `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
-      en +
-      `<p style="margin-top: 12.0pt;">` + sigEn + `</p>` +
-      `</div>`;
+    const isEn = this.langService.isEnglish();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>` +
+        en +
+        `<p style="margin-top: 12.0pt;">` + sigEn + `</p>` +
+        `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
+        fr +
+        `<p style="margin-top: 12.0pt;">` + sigFr + `</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>` +
+        fr +
+        `<p style="margin-top: 12.0pt;">` + sigFr + `</p>` +
+        `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
+        en +
+        `<p style="margin-top: 12.0pt;">` + sigEn + `</p>`;
+    }
+    html += `</div>`;
+    return html;
   }
 
   translateDateToEn(dateStr: string): string {
@@ -4862,6 +5234,10 @@ Thank you for your cooperation.`;
     const en = this.getAvisFermetureSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -4919,15 +5295,26 @@ Thank you for your cooperation.`;
     const en = this.getAvisFermetureSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
 
-    return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
-      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>` +
-      `${fr}` +
-      `<p>${sigFr}</p>` +
-      `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
-      `${en}` +
-      `<p>${sigEn}</p>` +
-      `</div>`;
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>` +
+        `${en}` +
+        `<p>${sigEn}</p>` +
+        `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
+        `${fr}` +
+        `<p>${sigFr}</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>` +
+        `${fr}` +
+        `<p>${sigFr}</p>` +
+        `<p style="margin-top: 12.0pt; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">______________________________________________________________________________</p>` +
+        `${en}` +
+        `<p>${sigEn}</p>`;
+    }
+    html += `</div>`;
+    return html;
   }
 
   getMedicalPartEn(part: string): string {
@@ -5088,34 +5475,55 @@ Thank you for your cooperation.`;
   getMedicalRegisterNoteCombined(): string {
     const medInfo = this.getMedicalPartsInfo();
     if (!medInfo) return '';
+    const isEn = this.langService.isEnglish();
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
-      return `Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
+      return isEn
+        ? `Medical evaluation appointment - ${medInfo.labelEn || medInfo.labelFr} scheduled directly at Montreal recruiting centre (OTA File). Information email sent to applicant to consult details in their portal.`
+        : `Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
     }
-    return `Tâche « Évaluation médicale - ${medInfo.labelFr} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`;
+    return isEn
+      ? `Task "Medical evaluation - ${medInfo.labelEn || medInfo.labelFr}" assigned to applicant in portal. Explanatory email sent to select a time slot at assigned recruiting centre.`
+      : `Tâche « Évaluation médicale - ${medInfo.labelFr} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`;
   }
 
   getMedicalEmailPlain(part: string): string {
+    const isEn = this.langService.isEnglish();
     const partEn = this.getMedicalPartEn(part);
     const fr = this.getMedicalSectionPlainFr(part);
     const en = this.getMedicalSectionPlainEn(partEn);
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    if (isEn) {
+      return `Le message français suivra.\n\nHello,\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\nBonjour,\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\nBonjour,\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\nHello,\n\n${en}\n\n${sigEn}`;
   }
 
   getMedicalEmailHtml(part: string): string {
+    const isEn = this.langService.isEnglish();
     const partEn = this.getMedicalPartEn(part);
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += this.getMedicalSectionHtmlFr(part);
-    html += `<p>` + sigFr + `</p>`;
-    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
-    html += `<p>Hello,</p>`;
-    html += this.getMedicalSectionHtmlEn(partEn);
-    html += `<p>` + sigEn + `</p>`;
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += `<p>Hello,</p>`;
+      html += this.getMedicalSectionHtmlEn(partEn);
+      html += `<p>` + sigEn + `</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += `<p>Bonjour,</p>`;
+      html += this.getMedicalSectionHtmlFr(part);
+      html += `<p>` + sigFr + `</p>`;
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += `<p>Bonjour,</p>`;
+      html += this.getMedicalSectionHtmlFr(part);
+      html += `<p>` + sigFr + `</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += `<p>Hello,</p>`;
+      html += this.getMedicalSectionHtmlEn(partEn);
+      html += `<p>` + sigEn + `</p>`;
+    }
     html += `</div>`;
     return html;
   }
@@ -5125,10 +5533,16 @@ Thank you for your cooperation.`;
   }
 
   getMedicalRegisterNote(part: string): string {
+    const isEn = this.langService.isEnglish();
+    const partEn = this.getMedicalPartEn(part);
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
-      return `Rendez-vous pour l'évaluation médicale - ${part} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
+      return isEn
+        ? `Medical evaluation appointment - ${partEn || part} scheduled directly at Montreal recruiting centre (OTA File). Information email sent to applicant to consult details in their portal.`
+        : `Rendez-vous pour l'évaluation médicale - ${part} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
     }
-    return `Tâche « Évaluation médicale - ${part} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`;
+    return isEn
+      ? `Task "Medical evaluation - ${partEn || part}" assigned to applicant in portal. Explanatory email sent to select a time slot at assigned recruiting centre.`
+      : `Tâche « Évaluation médicale - ${part} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`;
   }
 
   // Auth & Role State
@@ -5712,6 +6126,26 @@ Thank you for your cooperation.`;
     return group.tasks.some((t) => this.hasTaskRejections(t));
   }
 
+  getGdGroupTitle(title: string): string {
+    if (!this.langService.isEnglish()) return title;
+    switch (title) {
+      case "Réception d'un postulant":
+        return "Applicant Intake";
+      case "Suivi de dossier":
+        return "File Follow-up";
+      case "Retour PSPS":
+        return "PSPS Return";
+      case "Courriel d'offre":
+        return "Offer Email";
+      case "Courriel enrôlement":
+        return "Enrolment Email";
+      case "Autre":
+        return "Other";
+      default:
+        return title;
+    }
+  }
+
   getGroupForTask(task: Task): { id: string; title: string } | null {
     if (this.selectedRole() === "gestionnaire") {
       if (task.section) {
@@ -5869,6 +6303,44 @@ Thank you for your cooperation.`;
         });
       }
     });
+
+    // Keep selected job input text in sync with active language
+    effect(() => {
+      const isEn = this.langService.isEnglish();
+      untracked(() => {
+        const id1 = this.sharedState.selectedDossierJobId1();
+        if (id1) {
+          const j1 = this.jobService.getAllJobs().find((j) => j.id === id1);
+          if (j1) {
+            this.sharedState.searchDossierQuery1.set(`${j1.id} - ${isEn && j1.titleEn ? j1.titleEn : j1.title}`);
+          }
+        }
+        const id2 = this.sharedState.selectedDossierJobId2();
+        if (id2) {
+          const j2 = this.jobService.getAllJobs().find((j) => j.id === id2);
+          if (j2) {
+            this.sharedState.searchDossierQuery2.set(`${j2.id} - ${isEn && j2.titleEn ? j2.titleEn : j2.title}`);
+          }
+        }
+        const id3 = this.sharedState.selectedDossierJobId3();
+        if (id3) {
+          const j3 = this.jobService.getAllJobs().find((j) => j.id === id3);
+          if (j3) {
+            this.sharedState.searchDossierQuery3.set(`${j3.id} - ${isEn && j3.titleEn ? j3.titleEn : j3.title}`);
+          }
+        }
+        const om = this.offreMetier();
+        if (om) {
+          const matched = this.jobService.getAllJobs().find((j) => om.startsWith(j.id));
+          if (matched) {
+            const title = isEn && matched.titleEn ? matched.titleEn : matched.title;
+            const updated = `${matched.id} - ${title}`;
+            this.offreMetier.set(updated);
+            this.offreMetierSearchQuery.set(updated);
+          }
+        }
+      });
+    });
   }
 
   // --- DOSSIER JOBS METHODS ---
@@ -5946,17 +6418,18 @@ Thank you for your cooperation.`;
       }
     }
 
+    const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
     if (index === 1) {
       this.sharedState.selectedDossierJobId1.set(jobId);
-      this.sharedState.searchDossierQuery1.set(`${qb.id} - ${qb.title}`);
+      this.sharedState.searchDossierQuery1.set(`${qb.id} - ${title}`);
       this.dossierDropdownOpen1.set(false);
     } else if (index === 2) {
       this.sharedState.selectedDossierJobId2.set(jobId);
-      this.sharedState.searchDossierQuery2.set(`${qb.id} - ${qb.title}`);
+      this.sharedState.searchDossierQuery2.set(`${qb.id} - ${title}`);
       this.dossierDropdownOpen2.set(false);
     } else if (index === 3) {
       this.sharedState.selectedDossierJobId3.set(jobId);
-      this.sharedState.searchDossierQuery3.set(`${qb.id} - ${qb.title}`);
+      this.sharedState.searchDossierQuery3.set(`${qb.id} - ${title}`);
       this.dossierDropdownOpen3.set(false);
     }
   }
@@ -6024,7 +6497,10 @@ Thank you for your cooperation.`;
         const id = this.sharedState.selectedDossierJobId1();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.sharedState.searchDossierQuery1.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.sharedState.searchDossierQuery1.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.sharedState.searchDossierQuery1.set("");
         }
@@ -6033,7 +6509,10 @@ Thank you for your cooperation.`;
         const id = this.sharedState.selectedDossierJobId2();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.sharedState.searchDossierQuery2.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.sharedState.searchDossierQuery2.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.sharedState.searchDossierQuery2.set("");
         }
@@ -6042,7 +6521,10 @@ Thank you for your cooperation.`;
         const id = this.sharedState.selectedDossierJobId3();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.sharedState.searchDossierQuery3.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.sharedState.searchDossierQuery3.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.sharedState.searchDossierQuery3.set("");
         }
@@ -7303,6 +7785,40 @@ Thank you for your cooperation.`;
     this.selectEmailBankTemplate("general_reminder");
   }
 
+  getSelectedEmailBankTemplateLabel(): string {
+    const isEn = this.langService.isEnglish();
+    switch (this.selectedEmailBankTemplate()) {
+      case 'general_reminder':
+        return isEn ? 'Reminder email' : 'Courriel de rappel';
+      case 'verification_edo_vs_pfor':
+        return isEn ? 'EDO vs ROTP verification email' : 'Courriel de vérification de programme EDO VS PFOR';
+      case 'inadmissibilite_age_57':
+        return isEn ? 'Ineligibility - Age (57 and older)' : 'Inadmissibilité - Âge (57 ans et plus)';
+      case 'inadmissibilite_pr_3ans':
+        return isEn ? 'Ineligibility - Permanent resident (< 3 years)' : 'Inadmissibilité - Résident permanent (< 3 ans)';
+      case 'inadmissibilite_non_citoyen_ni_pr':
+        return isEn ? 'Ineligibility - Neither citizen nor PR' : 'Inadmissibilité - Ni citoyen ni résident permanent';
+      case 'tentative_offre_gd':
+        return isEn ? 'Communication attempt - Job offer' : 'Tentative de communication - Offre d’emploi';
+      case 'verification_dossier_cadet':
+        return isEn ? 'Cadet File Verification' : 'Vérification Dossier Cadet';
+      case 'bris_bail_entreposage':
+        return isEn ? 'Lease break and storage' : 'Bris de bail et entreposage';
+      case 'demande_nav_tan':
+        return isEn ? 'NAV/TAN Request & Claims X - CSPN Part 1' : 'Demande NAV/TAN & Claims X - CSPN partie 1';
+      case 'demande_autorisation_cspn':
+        return isEn ? 'Authorization request for a CSPN' : 'Demande d’autorisation pour un CSPN';
+      case 'documents_conjoint_de_fait':
+        return isEn ? 'Required documents - Common-law partner' : 'Documents requis - Conjoint(e) de fait';
+      case 'demande_sdpm_conjoint_militaire':
+        return isEn ? 'DMPS request for military spouse' : 'Demande SDPM pour conjoint militaire';
+      case 'test_esom_confirmation':
+        return isEn ? 'MOST TEST / Confirmation' : 'TEST ESOM / Confirmation';
+      default:
+        return isEn ? 'Email bank' : 'Banque de courriels';
+    }
+  }
+
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (this.isEmailBankDropdownOpen() && !target.closest('.email-bank-dropdown-container')) {
@@ -7542,6 +8058,84 @@ Thank you for your cooperation.`;
     'Armée étrangère'
   ];
 
+  getPremierContactOptionLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'Complété': return 'Completed';
+      case 'À faire': return 'To do';
+      case 'Attribué': return 'Assigned';
+      case 'Initié': return 'Initiated';
+      case 'En attente (type 28)': return 'Pending (type 28)';
+      case 'Concluant favorable': return 'Conclusive favorable';
+      case 'Concluant défavorable': return 'Conclusive unfavorable';
+      case 'Non Concluant': return 'Inconclusive';
+      default: return opt;
+    }
+  }
+
+  getStatutCivilLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'célibataire': return 'single';
+      case 'marié(e)': return 'married';
+      case 'conjoint(e) de fait': return 'common-law';
+      case 'divorcé(e)': return 'divorced';
+      case 'séparé(e)': return 'separated';
+      case 'veuf/veuve': return 'widowed';
+      default: return opt;
+    }
+  }
+
+  getBrisBailLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'Refus du post': return 'Refusal by applicant';
+      case 'Accepté par le post': return 'Accepted by applicant';
+      default: return opt;
+    }
+  }
+
+  getEntreposageLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'Refus du post': return 'Refusal by applicant';
+      case 'Accepté par le post': return 'Accepted by applicant';
+      default: return opt;
+    }
+  }
+
+  getSermentDeclarationLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'Serment': return 'Oath';
+      case 'Déclaration': return 'Solemn affirmation';
+      case 'Serment RP': return 'Oath PR';
+      case 'Déclaration RP': return 'Solemn affirmation PR';
+      default: return opt;
+    }
+  }
+
+  getSvcMilAntLabel(opt: string): string {
+    if (!this.langService.isEnglish()) return opt;
+    switch (opt) {
+      case 'Force régulière': return 'Regular Force';
+      case 'Première réserve': return 'Primary Reserve';
+      case 'Cadets / Rangers': return 'Cadets / Rangers';
+      case 'Armée étrangère': return 'Foreign Military';
+      default: return opt;
+    }
+  }
+
+  getElementLabel(elem: string): string {
+    if (!this.langService.isEnglish()) return elem;
+    switch (elem) {
+      case 'Armée': return 'Army';
+      case 'Marine': return 'Navy';
+      case 'Air': return 'Air';
+      default: return elem;
+    }
+  }
+
   // Helper to dynamically generate child age years
   getEnfantYears(): string[] {
     const currentYear = new Date().getFullYear();
@@ -7611,11 +8205,12 @@ Thank you for your cooperation.`;
   }
 
   getOfferFormattedNote(): string {
-    const metier = this.offreMetier() || '189 génie de construction';
-    const statut = this.noteStatutCivil() || 'célibataire';
+    const isEn = this.langService.isEnglish();
+    const metier = this.offreMetier() || (isEn ? '189 construction engineering' : '189 génie de construction');
+    const statut = this.noteStatutCivil() || (isEn ? 'single' : 'célibataire');
     
     const conjointOpt = this.noteConjoint() || 'N/A';
-    const conjoint = conjointOpt === 'oui' ? (this.noteConjointTexte() || 'À CONFIRMER') : conjointOpt;
+    const conjoint = conjointOpt === 'oui' ? (this.noteConjointTexte() || (isEn ? 'TO CONFIRM' : 'À CONFIRMER')) : conjointOpt;
     
     const count = parseInt(this.noteEnfantCount() || '0', 10);
     let enfant = 'N/A';
@@ -7625,15 +8220,33 @@ Thank you for your cooperation.`;
         .join(', ');
     }
 
-    const plaque = this.notePlaqueImm().trim() || 'À confirmer';
+    const plaque = this.notePlaqueImm().trim() || (isEn ? 'To confirm' : 'À confirmer');
     const brisBail = this.noteBrisBail() || 'N/A';
     const entreposage = this.noteEntreposage() || 'N/A';
-    const serment = this.noteSermentDeclaration() || 'Serment';
+    const serment = this.noteSermentDeclaration() || (isEn ? 'Oath' : 'Serment');
     const inviteMilOpt = this.noteInviteMil() || 'N/A';
-    const inviteMil = inviteMilOpt === 'oui' ? (this.noteInviteMilTexte() || 'À CONFIRMER') : inviteMilOpt;
+    const inviteMil = inviteMilOpt === 'oui' ? (this.noteInviteMilTexte() || (isEn ? 'TO CONFIRM' : 'À CONFIRMER')) : inviteMilOpt;
     const svcMilAnt = this.noteSvcMilAnt() || 'N/A';
     const beneficiaire = this.noteBeneficiaire();
     const dateCourriel = this.getEffectiveNoteDateCourrielConfirmation();
+
+    if (isEn) {
+      let note = `Applicant accepts offer – ${metier}\n`;
+      note += `Status: ${statut}\n`;
+      note += `Spouse: ${conjoint}\n`;
+      note += `Child: ${enfant}\n`;
+      note += `IMM Plate: ${plaque}\n`;
+      note += `Lease break: ${brisBail}\n`;
+      note += `Storage: ${entreposage}\n`;
+      note += `${serment}\n`;
+      note += `Mil guest: ${inviteMil}\n`;
+      note += `Prev Mil Svc: ${svcMilAnt}\n`;
+      note += `Beneficiary: ${beneficiaire}`;
+      if (dateCourriel) {
+        note += `\nConfirmation email sent to applicant on: ${dateCourriel}`;
+      }
+      return note;
+    }
 
     let note = `Postulant accepte l’offre – ${metier}\n`;
     note += `Statut : ${statut}\n`;
@@ -7884,7 +8497,9 @@ Thank you for your cooperation.`;
   }
 
   selectOffreMetier(job: JobEntry) {
-    const text = `${job.id} - ${job.title}`;
+    const isEn = this.langService.isEnglish();
+    const title = isEn && job.titleEn ? job.titleEn : job.title;
+    const text = `${job.id} - ${title}`;
     this.offreMetier.set(text);
     this.offreMetierSearchQuery.set(text);
     this.offreMetierDropdownOpen.set(false);
@@ -8386,6 +9001,7 @@ Thank you for your cooperation.`;
   }
 
   getRejectionReasonsForCompliantNote(): string {
+    const isEn = this.langService.isEnglish();
     const selectedKeys = this.selectedRejectionKeys();
     const taskNotCompletedKeys = this.taskNotCompletedKeys();
     const notes: string[] = [];
@@ -8403,13 +9019,14 @@ Thank you for your cooperation.`;
       }
 
       if (isNotCompleted) {
-        notes.push(`Tâche "${task.nameFr}" non complétée`);
+        const tName = isEn ? (task.nameEn || task.nameFr) : task.nameFr;
+        notes.push(isEn ? `Task "${tName}" not completed` : `Tâche "${tName}" non complétée`);
         hasNormalReassignment = true;
       }
       for (const doc of task.documents) {
         for (const reason of doc.reasons) {
           if (this.isReasonSelected(doc, reason)) {
-            notes.push(reason.logNoteFr);
+            notes.push(isEn && reason.logNoteEn ? reason.logNoteEn : reason.logNoteFr);
             if (!reason.isConfirmation) {
               hasNormalReassignment = true;
             }
@@ -8421,12 +9038,15 @@ Thank you for your cooperation.`;
     if (notes.length === 0) return "";
 
     const combinedReasons = notes.join(" / ");
-    const closureSuffix =
-      "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+    const closureSuffix = isEn
+      ? "Applicant notified of file closure if no action is taken within 30 days."
+      : "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
 
     let noteTxt = "";
     if (hasNormalReassignment) {
-      noteTxt = `${combinedReasons}, la/les tâches réattribuées et courriel explicatif envoyé.`;
+      noteTxt = isEn
+        ? `${combinedReasons}, task(s) reassigned and explanatory email sent.`
+        : `${combinedReasons}, la/les tâches réattribuées et courriel explicatif envoyé.`;
     } else {
       noteTxt = `${combinedReasons}.`;
     }
@@ -8441,13 +9061,14 @@ Thank you for your cooperation.`;
   }
 
   getPforCompliantNoteClean(): string {
+    const isEn = this.langService.isEnglish();
     const jobSlots = [
       { index: 1, job: this.getDossierJob(1), failedCe: this.sharedState.dossierJobFailedCe1() },
       { index: 2, job: this.getDossierJob(2), failedCe: this.sharedState.dossierJobFailedCe2() },
       { index: 3, job: this.getDossierJob(3), failedCe: this.sharedState.dossierJobFailedCe3() },
     ].filter((s): s is { index: number; job: JobEntry; failedCe: boolean } => !!s.job);
 
-    let jobsText = "le métier XXX";
+    let jobsText = isEn ? "occupation XXX" : "le métier XXX";
     if (jobSlots.length > 0) {
       const admissibleJobIds: string[] = [];
       for (const slot of jobSlots) {
@@ -8456,16 +9077,22 @@ Thank you for your cooperation.`;
         }
       }
       if (admissibleJobIds.length > 0) {
-        const label = admissibleJobIds.length > 1 ? "les métiers" : "le métier";
+        const label = isEn
+          ? (admissibleJobIds.length > 1 ? "occupations" : "occupation")
+          : (admissibleJobIds.length > 1 ? "les métiers" : "le métier");
         jobsText = `${label} ${admissibleJobIds.join(", ")}`;
       } else {
         const allJobIds = jobSlots.map(s => s.job.id);
-        const label = allJobIds.length > 1 ? "les métiers" : "le métier";
+        const label = isEn
+          ? (allJobIds.length > 1 ? "occupations" : "occupation")
+          : (allJobIds.length > 1 ? "les métiers" : "le métier");
         jobsText = `${label} ${allJobIds.join(", ")}`;
       }
     }
 
-    let note = `Étape 1 (Terminée) - Courriel FAC101 PFOR et courriel contenant le lien PA envoyés pour ${jobsText}, Tag CCM pour suite du traitement : -Cpl Plourde (DML) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Sgt-Recruteur : Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`;
+    let note = isEn
+      ? `Step 1 (Completed) - CAF101 ROTP email and email containing AP link sent for ${jobsText}, MCC Tag for further processing: -Cpl Plourde (DML) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Recruiter-Sgt: Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`
+      : `Étape 1 (Terminée) - Courriel FAC101 PFOR et courriel contenant le lien PA envoyés pour ${jobsText}, Tag CCM pour suite du traitement : -Cpl Plourde (DML) - Sgt Fournier-Tremblay (DSE) - Sgt Larochelle (DQC), Sgt-Recruteur : Cpl Plourde (DML) – Sgt Plante (DRI) – Sgt David (DCI) – Sgt Fournier-Tremblay (DSE) – Sgt Richer (DQC)`;
 
     const extraRejections = this.getRejectionReasonsForCompliantNote();
     if (extraRejections) {
@@ -8476,6 +9103,7 @@ Thank you for your cooperation.`;
   }
 
   getBigAceCompliantNoteClean(): string {
+    const isEn = this.langService.isEnglish();
     const jobSlots = [
       { index: 1, job: this.getDossierJob(1), failedCe: this.sharedState.dossierJobFailedCe1() },
       { index: 2, job: this.getDossierJob(2), failedCe: this.sharedState.dossierJobFailedCe2() },
@@ -8485,7 +9113,9 @@ Thank you for your cooperation.`;
     let firstLine = "";
 
     if (jobSlots.length === 0) {
-      firstLine = "Étape 1 (En cours) - Big ACE admissible pour les métiers xxx, xxx, xxx.";
+      firstLine = isEn
+        ? "Step 1 (In progress) - Big ACE admissible for occupations xxx, xxx, xxx."
+        : "Étape 1 (En cours) - Big ACE admissible pour les métiers xxx, xxx, xxx.";
     } else {
       const admissibleJobIds: string[] = [];
       const failedCeJobIds: string[] = [];
@@ -8504,39 +9134,71 @@ Thank you for your cooperation.`;
       const parts: string[] = [];
 
       if (admissibleJobIds.length > 0) {
-        const label = admissibleJobIds.length > 1 ? "les métiers" : "le métier";
-        parts.push(`Big ACE admissible pour ${label} ${admissibleJobIds.join(", ")}.`);
+        const label = isEn
+          ? (admissibleJobIds.length > 1 ? "occupations" : "occupation")
+          : (admissibleJobIds.length > 1 ? "les métiers" : "le métier");
+        parts.push(isEn
+          ? `Big ACE admissible for ${label} ${admissibleJobIds.join(", ")}.`
+          : `Big ACE admissible pour ${label} ${admissibleJobIds.join(", ")}.`);
       }
 
       const hasFailedCe = failedCeJobIds.length > 0;
       const hasClosed = closedJobIds.length > 0;
 
       if (hasFailedCe && hasClosed) {
-        const cePart = failedCeJobIds.length > 1
-          ? `les métiers ${failedCeJobIds.join(", ")} (ne rencontrent pas les CE)`
-          : `le métier ${failedCeJobIds[0]} (ne rencontre pas les CE)`;
-        const closedPart = closedJobIds.length > 1
-          ? `les métiers ${closedJobIds.join(", ")} (fermé)`
-          : `le métier ${closedJobIds[0]} (fermé)`;
-        parts.push(`Inadmissible pour ${cePart} et ${closedPart}, retirés du dossier.`);
-      } else if (hasFailedCe) {
-        if (failedCeJobIds.length === 1) {
-          parts.push(`Inadmissible pour le métier ${failedCeJobIds[0]} car il ne rencontre pas les CE et a été retiré du dossier.`);
+        if (isEn) {
+          const cePart = failedCeJobIds.length > 1
+            ? `occupations ${failedCeJobIds.join(", ")} (do not meet EC)`
+            : `occupation ${failedCeJobIds[0]} (does not meet EC)`;
+          const closedPart = closedJobIds.length > 1
+            ? `occupations ${closedJobIds.join(", ")} (closed)`
+            : `occupation ${closedJobIds[0]} (closed)`;
+          parts.push(`Ineligible for ${cePart} and ${closedPart}, removed from file.`);
         } else {
-          parts.push(`Inadmissible pour les métiers ${failedCeJobIds.join(", ")} car ils ne rencontrent pas les CE et ont été retirés du dossier.`);
+          const cePart = failedCeJobIds.length > 1
+            ? `les métiers ${failedCeJobIds.join(", ")} (ne rencontrent pas les CE)`
+            : `le métier ${failedCeJobIds[0]} (ne rencontre pas les CE)`;
+          const closedPart = closedJobIds.length > 1
+            ? `les métiers ${closedJobIds.join(", ")} (fermé)`
+            : `le métier ${closedJobIds[0]} (fermé)`;
+          parts.push(`Inadmissible pour ${cePart} et ${closedPart}, retirés du dossier.`);
+        }
+      } else if (hasFailedCe) {
+        if (isEn) {
+          if (failedCeJobIds.length === 1) {
+            parts.push(`Ineligible for occupation ${failedCeJobIds[0]} because it does not meet EC and was removed from file.`);
+          } else {
+            parts.push(`Ineligible for occupations ${failedCeJobIds.join(", ")} because they do not meet EC and were removed from file.`);
+          }
+        } else {
+          if (failedCeJobIds.length === 1) {
+            parts.push(`Inadmissible pour le métier ${failedCeJobIds[0]} car il ne rencontre pas les CE et a été retiré du dossier.`);
+          } else {
+            parts.push(`Inadmissible pour les métiers ${failedCeJobIds.join(", ")} car ils ne rencontrent pas les CE et ont été retirés du dossier.`);
+          }
         }
       } else if (hasClosed) {
-        if (closedJobIds.length === 1) {
-          parts.push(`Inadmissible pour le métier ${closedJobIds[0]} car il est fermé et a été retiré du dossier.`);
+        if (isEn) {
+          if (closedJobIds.length === 1) {
+            parts.push(`Ineligible for occupation ${closedJobIds[0]} because it is closed and was removed from file.`);
+          } else {
+            parts.push(`Ineligible for occupations ${closedJobIds.join(", ")} because they are closed and were removed from file.`);
+          }
         } else {
-          parts.push(`Inadmissible pour les métiers ${closedJobIds.join(", ")} car ils sont fermés et ont été retirés du dossier.`);
+          if (closedJobIds.length === 1) {
+            parts.push(`Inadmissible pour le métier ${closedJobIds[0]} car il est fermé et a été retiré du dossier.`);
+          } else {
+            parts.push(`Inadmissible pour les métiers ${closedJobIds.join(", ")} car ils sont fermés et ont été retirés du dossier.`);
+          }
         }
       }
 
-      firstLine = `Étape 1 (En cours) - ${parts.join(" ")}`;
+      firstLine = isEn ? `Step 1 (In progress) - ${parts.join(" ")}` : `Étape 1 (En cours) - ${parts.join(" ")}`;
     }
 
-    let note = `${firstLine} Webinaire CAF 101 envoyé, tâche planifiez votre séance d'information des FAC 101 attribuée.`;
+    let note = isEn
+      ? `${firstLine} CAF 101 Webinar sent, task schedule your CAF 101 information session assigned.`
+      : `${firstLine} Webinaire CAF 101 envoyé, tâche planifiez votre séance d'information des FAC 101 attribuée.`;
 
     const extraRejections = this.getRejectionReasonsForCompliantNote();
     if (extraRejections) {
@@ -8547,36 +9209,49 @@ Thank you for your cooperation.`;
   }
 
   getBigAceCompliantNote(): string {
+    const isEn = this.langService.isEnglish();
     let note = this.sharedState.isPostulantPfor() ? this.getPforCompliantNoteClean() : this.getBigAceCompliantNoteClean();
     if (this.triageMedicalRequis()) {
-      note += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      note += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
     }
     return note;
   }
 
   getRejectionAndReminderNoteText(): string {
+    const isEn = this.langService.isEnglish();
     if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
-      return "Courriel de vérification de programme EDO VS PFOR envoyé au postulant.";
+      return isEn
+        ? "EDO vs ROTP program verification email sent to applicant."
+        : "Courriel de vérification de programme EDO VS PFOR envoyé au postulant.";
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
-      return "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
+      return isEn
+        ? "Step 1 (In progress) - Maximum eligibility age exceeded (57 and older): Ineligible for enrolment in CAF, email sent, file closed."
+        : "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
-      return "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
+      return isEn
+        ? "Step 1 (In progress) - Permanent resident under 3 years (Ineligible): Ineligibility email sent (IRCC calculator result +3 years or citizenship required before reapplying), file closed."
+        : "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
-      return "Étape 1 (En cours) - Ni citoyen canadien ni résident permanent (Inadmissible) : Inadmissible pour un enrôlement dans les FAC (citoyenneté canadienne ou résidence permanente requise pour repostuler), courriel envoyé, fermeture du dossier.";
+      return isEn
+        ? "Step 1 (In progress) - Neither Canadian citizen nor permanent resident (Ineligible): Ineligible for enrolment in CAF (Canadian citizenship or permanent residency required to reapply), email sent, file closed."
+        : "Étape 1 (En cours) - Ni citoyen canadien ni résident permanent (Inadmissible) : Inadmissible pour un enrôlement dans les FAC (citoyenneté canadienne ou résidence permanente requise pour repostuler), courriel envoyé, fermeture du dossier.";
     }
 
-    const closureSuffix =
-      " Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+    const closureSuffix = isEn
+      ? " Applicant notified of file closure if no action is taken within 30 days."
+      : " Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
 
     if (
       this.forceGeneralReminder() &&
       this.selectedRejectionKeys().size === 0
     ) {
       return (
-        "Courriel de rappel de tâches envoyé au postulant." + closureSuffix
+        (isEn
+          ? "Task reminder email sent to applicant."
+          : "Courriel de rappel de tâches envoyé au postulant.") + closureSuffix
       );
     }
 
@@ -8598,13 +9273,14 @@ Thank you for your cooperation.`;
       }
 
       if (isNotCompleted) {
-        notes.push(`Tâche "${task.nameFr}" non complétée`);
+        const tName = isEn ? (task.nameEn || task.nameFr) : task.nameFr;
+        notes.push(isEn ? `Task "${tName}" not completed` : `Tâche "${tName}" non complétée`);
         hasNormalReassignment = true;
       }
       for (const doc of task.documents) {
         for (const reason of doc.reasons) {
           if (this.isReasonSelected(doc, reason)) {
-            notes.push(reason.logNoteFr);
+            notes.push(isEn && reason.logNoteEn ? reason.logNoteEn : reason.logNoteFr);
             if (reason.id === "emp_nom_parent") {
               hasNameMismatch = true;
             }
@@ -8619,18 +9295,22 @@ Thank you for your cooperation.`;
     if (notes.length === 0) return "";
 
     const combinedReasons = notes.join(" / ");
-    const prefix = "Étape 1 (en cours) - ";
+    const prefix = isEn ? "Step 1 (In progress) - " : "Étape 1 (en cours) - ";
 
     let noteTxt = "";
 
     if (this.isUnderAge()) {
-      noteTxt = `${prefix}${combinedReasons}. En attente de la confirmation du consentement parental pour continuer le Big ACE.`;
+      noteTxt = isEn
+        ? `${prefix}${combinedReasons}. Awaiting parental consent confirmation to continue Big ACE.`
+        : `${prefix}${combinedReasons}. En attente de la confirmation du consentement parental pour continuer le Big ACE.`;
     } else {
       if (hasNameMismatch) {
         noteTxt = `${prefix}${combinedReasons}.`;
       } else {
         if (hasNormalReassignment) {
-          noteTxt = `${prefix}${combinedReasons}, la/les tâches réattribuées et courriel explicatif envoyé.`;
+          noteTxt = isEn
+            ? `${prefix}${combinedReasons}, task(s) reassigned and explanatory email sent.`
+            : `${prefix}${combinedReasons}, la/les tâches réattribuées et courriel explicatif envoyé.`;
         } else {
           noteTxt = `${prefix}${combinedReasons}.`;
         }
@@ -8652,22 +9332,24 @@ Thank you for your cooperation.`;
     const notes: string[] = [];
 
     // 0. Premier Contact Note
-    if (this.premierContactSubPanelMode() === 'note' && this.selectedTask()?.nameFr === 'Premier contact') {
+    if (this.premierContactSubPanelMode() === 'note' && (this.selectedTask()?.nameFr === 'Premier contact' || this.selectedTask()?.nameEn === 'First contact')) {
+      const isEn = this.langService.isEnglish();
       const noteLines: string[] = [
         `IPTAD : ${this.premierContactNoteIptad()}`,
         `SEAF : ${this.premierContactNoteSeaf()}`,
-        `Entrevue : ${this.premierContactNoteEntrevue()}`,
-        `Médical : ${this.premierContactNoteMedical()}`,
+        `${isEn ? 'Interview' : 'Entrevue'} : ${this.premierContactNoteEntrevue()}`,
+        `${isEn ? 'Medical' : 'Médical'} : ${this.premierContactNoteMedical()}`,
         `PSPS : ${this.premierContactNotePsps()}`,
         `Gambit : ${this.premierContactNoteGambit()}`,
-        `ANX Q : ${this.premierContactNoteAnxQ()}`
+        `${isEn ? 'ANX Q' : 'ANX Q'} : ${this.premierContactNoteAnxQ()}`
       ];
       notes.push(noteLines.join('\n'));
     } else if (this.isPremierContactActive()) {
-      let msg = "Courriel de premier contact envoyé au postulant.";
+      const isEn = this.langService.isEnglish();
+      let msg = isEn ? "First contact email sent to applicant." : "Courriel de premier contact envoyé au postulant.";
       const tasks: string[] = [];
-      if (this.premierContactMedical()) tasks.push("Médical");
-      if (this.premierContactEntrevue()) tasks.push("Entrevue");
+      if (this.premierContactMedical()) tasks.push(isEn ? "Medical" : "Médical");
+      if (this.premierContactEntrevue()) tasks.push(isEn ? "Interview" : "Entrevue");
       if (this.premierContactGambit()) tasks.push("Gambit");
       if (this.premierContactPsps()) tasks.push("PSPS");
       if (this.premierContactSelfie()) tasks.push("Selfie");
@@ -8675,37 +9357,53 @@ Thank you for your cooperation.`;
       if (this.premierContactSeaf()) tasks.push("SEAF");
 
       if (tasks.length > 0) {
-        const tasksStr = tasks.length > 1 
-          ? tasks.slice(0, -1).join(', ') + ' et ' + tasks[tasks.length - 1] 
-          : tasks[0];
-        
-        const attrib = tasks.length > 1 
-          ? 'attribués' 
-          : (tasks[0] === 'Entrevue' ? 'attribuée' : 'attribué');
+        if (isEn) {
+          const tasksStr = tasks.length > 1
+            ? tasks.slice(0, -1).join(', ') + ' and ' + tasks[tasks.length - 1]
+            : tasks[0];
+          msg += ` ${tasksStr} assigned.`;
+        } else {
+          const tasksStr = tasks.length > 1 
+            ? tasks.slice(0, -1).join(', ') + ' et ' + tasks[tasks.length - 1] 
+            : tasks[0];
           
-        msg += ` ${tasksStr} ${attrib}.`;
+          const attrib = tasks.length > 1 
+            ? 'attribués' 
+            : (tasks[0] === 'Entrevue' ? 'attribuée' : 'attribué');
+            
+          msg += ` ${tasksStr} ${attrib}.`;
+        }
       }
       notes.push(msg);
     }
 
     // 0.5. Avis de fermeture Note
     if (this.isAvisFermetureActive()) {
-      notes.push(`courriel d'avis de fermeture :\n\n${this.getAvisFermetureEmailPlain()}`);
+      const isEn = this.langService.isEnglish();
+      notes.push(isEn ? `file closure notice email :\n\n${this.getAvisFermetureEmailPlain()}` : `courriel d'avis de fermeture :\n\n${this.getAvisFermetureEmailPlain()}`);
     }
 
     // 0.6. Annexe Q Note
     if (this.isAnnexeQActive()) {
-      notes.push(`Annexe Q prête à faire\nDocuments PSPS insérés dans CFRIM\nCourriel au CCM envoyé`);
+      const isEn = this.langService.isEnglish();
+      notes.push(isEn
+        ? "Annex Q ready to process\nPSPS documents inserted in CFRIMS\nEmail sent to MCC"
+        : "Annexe Q prête à faire\nDocuments PSPS insérés dans CFRIM\nCourriel au CCM envoyé");
     }
 
     // 1. Medical Evaluation Note
     if (this.isMedicalEvaluationActive()) {
+      const isEn = this.langService.isEnglish();
       const medInfo = this.getMedicalPartsInfo();
       if (medInfo) {
         if (this.evaluationMedicaleType() === 'Dossier OTA') {
-          notes.push(`Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`);
+          notes.push(isEn
+            ? `Medical evaluation appointment - ${medInfo.labelEn || medInfo.labelFr} scheduled directly at Montreal recruiting centre (OTA File). Information email sent to applicant to consult details in their portal.`
+            : `Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`);
         } else {
-          notes.push(`Tâche « Évaluation médicale - ${medInfo.labelFr} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`);
+          notes.push(isEn
+            ? `Task "Medical evaluation - ${medInfo.labelEn || medInfo.labelFr}" assigned to applicant in portal. Explanatory email sent to select a time slot at assigned recruiting centre.`
+            : `Tâche « Évaluation médicale - ${medInfo.labelFr} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`);
         }
       }
     }
@@ -8722,78 +9420,105 @@ Thank you for your cooperation.`;
 
     // 3.5 Rappel cérémonie d'assermentation Note
     if (this.rappelCeremonieChecked()) {
-      notes.push(`Transmission d'un courriel de rappel pour la cérémonie d'assermentation du ${this.rappelCeremonieDate() || '____'}.`);
+      const isEn = this.langService.isEnglish();
+      notes.push(isEn
+        ? `Transmission of a reminder email for swearing-in ceremony on ${this.rappelCeremonieDate() || '____'}.`
+        : `Transmission d'un courriel de rappel pour la cérémonie d'assermentation du ${this.rappelCeremonieDate() || '____'}.`);
     }
 
     // 3.6 Tentative communication pour offre Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'tentative_offre_gd') {
-      let tentativeNote = "Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD";
+      const isEn = this.langService.isEnglish();
+      let tentativeNote = isEn
+        ? "Communication attempt made for offer, email sent to applicant requesting to call back their FM"
+        : "Tentative de communication effectuer pour l'offre, courriel envoyé au postulant lui demandant de rappeler son GD";
       if (this.triageMedicalRequis()) {
-        tentativeNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        tentativeNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return tentativeNote;
     }
 
     // 3.7 Vérification Dossier Cadet Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
-      let cadetNote = "Courriel de vérification de dossier cadet envoyé à MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca.";
+      const isEn = this.langService.isEnglish();
+      let cadetNote = isEn
+        ? "Cadet file verification email sent to MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca."
+        : "Courriel de vérification de dossier cadet envoyé à MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca.";
       if (this.triageMedicalRequis()) {
-        cadetNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        cadetNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return cadetNote;
     }
 
     // 3.8 Bris de bail et entreposage Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'bris_bail_entreposage') {
-      let brisNote = "Transmission des informations et documents requis concernant le bris de bail et l'entreposage.";
+      const isEn = this.langService.isEnglish();
+      let brisNote = isEn
+        ? "Transmission of information and required documents regarding lease break and storage."
+        : "Transmission des informations et documents requis concernant le bris de bail et l'entreposage.";
       if (this.triageMedicalRequis()) {
-        brisNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        brisNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return brisNote;
     }
 
     // 3.9 Demande NAV/TAN & Claims X - CSPN partie 1 Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
-      let navTanNote = "Demande de numéro de NAV/TAN et création de compte claims X envoyée à CRFCQcReclamations@forces.gc.ca pour CSPN partie 1.";
+      const isEn = this.langService.isEnglish();
+      let navTanNote = isEn
+        ? "NAV/TAN number request and claims X account creation sent to CRFCQcReclamations@forces.gc.ca for CFHST part 1."
+        : "Demande de numéro de NAV/TAN et création de compte claims X envoyée à CRFCQcReclamations@forces.gc.ca pour CSPN partie 1.";
       if (this.triageMedicalRequis()) {
-        navTanNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        navTanNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return navTanNote;
     }
 
     // 3.10 Demande d'autorisation pour un CSPN Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
-      let cspnNote = "Demande d’autorisation pour un CSPN envoyée.";
+      const isEn = this.langService.isEnglish();
+      let cspnNote = isEn
+        ? "Authorization request for CFHST sent."
+        : "Demande d’autorisation pour un CSPN envoyée.";
       if (this.triageMedicalRequis()) {
-        cspnNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        cspnNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return cspnNote;
     }
 
     // 3.11 Documents requis - Conjoint(e) de fait Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
-      let cdfNote = "Courriel de demande de documents pour statut de conjoint(e) de fait envoyé au postulant.";
+      const isEn = this.langService.isEnglish();
+      let cdfNote = isEn
+        ? "Document request email for common-law status sent to applicant."
+        : "Courriel de demande de documents pour statut de conjoint(e) de fait envoyé au postulant.";
       if (this.triageMedicalRequis()) {
-        cdfNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        cdfNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return cdfNote;
     }
 
     // 3.12 Demande SDPM pour conjoint militaire Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
-      let sdpmNote = "Demande de SDPM/MPRR pour conjoint militaire envoyée à CRFCQcAdmin@forces.gc.ca.";
+      const isEn = this.langService.isEnglish();
+      let sdpmNote = isEn
+        ? "DMPS/MPRR request for military spouse sent to CRFCQcAdmin@forces.gc.ca."
+        : "Demande de SDPM/MPRR pour conjoint militaire envoyée à CRFCQcAdmin@forces.gc.ca.";
       if (this.triageMedicalRequis()) {
-        sdpmNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        sdpmNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return sdpmNote;
     }
 
     // 3.13 Test ESOM / Confirmation Note (Volet GD)
     if (this.selectedEmailBankTemplate() === 'test_esom_confirmation') {
+      const isEn = this.langService.isEnglish();
       const center = this.getTestEsomCenter();
-      let esomNote = `Courriel de convocation au test ESOM envoyé au candidat (${center.city}).`;
+      let esomNote = isEn
+        ? `Convocation email for MOST test sent to candidate (${center.city}).`
+        : `Courriel de convocation au test ESOM envoyé au candidat (${center.city}).`;
       if (this.triageMedicalRequis()) {
-        esomNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+        esomNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
       return esomNote;
     }
@@ -8814,7 +9539,8 @@ Thank you for your cooperation.`;
     let finalNote = notes.join("\n\n");
 
     if (this.triageMedicalRequis()) {
-      finalNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      const isEn = this.langService.isEnglish();
+      finalNote += isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
     }
 
     return finalNote;
@@ -9149,134 +9875,139 @@ Thank you for your cooperation.`;
   }
 
   getCompliantEmailHtml(): string {
-    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-
     const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
     const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
     const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH BLOCK ---
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += `<p>Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.</p>`;
-    html += `<p>Afin de pouvoir continuer votre processus, vous devrez <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">OBLIGATOIREMENT</span> :</p>`;
+    let frHtml = `<p>Bonjour,</p>`;
+    frHtml += `<p>Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.</p>`;
+    frHtml += `<p>Afin de pouvoir continuer votre processus, vous devrez <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">OBLIGATOIREMENT</span> :</p>`;
     
-    html += `<p><strong>1-Vous informer :</strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://youtu.be/hYzMRYYBnag" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
+    frHtml += `<p><strong>1-Vous informer :</strong></p>`;
+    frHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    frHtml += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://youtu.be/hYzMRYYBnag" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
     if (dossierJobs.length > 0) {
       const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, true)).join(', ');
-      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
+      frHtml += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
     } else {
-      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+      frHtml += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
     }
-    html += `  <li style="margin-bottom: 5px;">Explorer et bien comprendre la section <a href="https://forces.ca/fr/instruction-de-base/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Instruction de base</a> du site Forces.ca</li>`;
-    html += `</ul>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Explorer et bien comprendre la section <a href="https://forces.ca/fr/instruction-de-base/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Instruction de base</a> du site Forces.ca</li>`;
+    frHtml += `</ul>`;
 
-    html += `<p><strong>2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.</span></p>`;
+    frHtml += `<p><strong>2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.</span></p>`;
 
-    html += `<p>Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.</p>`;
+    frHtml += `<p>Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.</p>`;
 
     if (nonMandatoryTasksHtmlFr) {
-      html += nonMandatoryTasksHtmlFr;
+      frHtml += nonMandatoryTasksHtmlFr;
     }
 
-    html += `<p>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</p>`;
-    html += `<p>Merci encore et au plaisir de votre faire votre connaissance.</p>`;
-
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
-
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+    frHtml += `<p>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</p>`;
+    frHtml += `<p>Merci encore et au plaisir de votre faire votre connaissance.</p>`;
+    frHtml += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
     // --- ENGLISH BLOCK ---
-    html += `<p>Hello,</p>`;
-    html += `<p>Thank you very much for providing your documents and selecting your preferred occupation.</p>`;
-    html += `<p>In order to continue your application process, You will be <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">REQUIRED</span> to:</p>`;
+    let enHtml = `<p>Hello,</p>`;
+    enHtml += `<p>Thank you very much for providing your documents and selecting your preferred occupation.</p>`;
+    enHtml += `<p>In order to continue your application process, You will be <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">REQUIRED</span> to:</p>`;
 
-    html += `<p><strong>1- Inform yourself :</strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://youtu.be/oKuX_ROtASw" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
+    enHtml += `<p><strong>1- Inform yourself :</strong></p>`;
+    enHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    enHtml += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://youtu.be/oKuX_ROtASw" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
     if (dossierJobs.length > 0) {
       const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, true)).join(', ');
-      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
+      enHtml += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
     } else {
-      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+      enHtml += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
     }
-    html += `  <li style="margin-bottom: 5px;">Explore and fully understand the <a href="https://forces.ca/en/basic-training/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Basic Training</a> section of the Forces.ca website.</li>`;
-    html += `</ul>`;
+    enHtml += `  <li style="margin-bottom: 5px;">Explore and fully understand the <a href="https://forces.ca/en/basic-training/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Basic Training</a> section of the Forces.ca website.</li>`;
+    enHtml += `</ul>`;
 
-    html += `<p><strong>2-After viewing the video, <span style="font-weight: bold;">Schedule an appointment</span> for a consultation through your portal calendar.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces enrolment Portal link</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">New time slots will open on your portal within 14 days.</span></p>`;
+    enHtml += `<p><strong>2-After viewing the video, <span style="font-weight: bold;">Schedule an appointment</span> for a consultation through your portal calendar.</strong> <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces enrolment Portal link</a>&nbsp;<span style="background-color: #00FF00; padding: 0 4px; font-weight: 500;">New time slots will open on your portal within 14 days.</span></p>`;
 
-    html += `<p>This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.</p>`;
+    enHtml += `<p>This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.</p>`;
 
     if (nonMandatoryTasksHtmlEn) {
-      html += nonMandatoryTasksHtmlEn;
+      enHtml += nonMandatoryTasksHtmlEn;
     }
 
-    html += `<p>If no action is taken, your file will be automatically deactivated after 30 days.</p>`;
-    html += `<p>Thank you again, and we look forward to meeting you.</p>`;
+    enHtml += `<p>If no action is taken, your file will be automatically deactivated after 30 days.</p>`;
+    enHtml += `<p>Thank you again, and we look forward to meeting you.</p>`;
+    enHtml += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
-
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += enHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += frHtml;
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += frHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += enHtml;
+    }
     html += `</div>`;
     return html;
   }
 
   getCompliantEmailPlain(): string {
-    let plain = "";
-
     const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
     const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
     const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH ---
-    plain += `English message will follow.\n\n`;
-    plain += `Bonjour,\n\n`;
-    plain += `Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.\n\n`;
-    plain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
-    plain += `1-Vous informer :\n`;
-    plain += `•\tRegarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://youtu.be/hYzMRYYBnag)\n`;
+    let frPlain = `Bonjour,\n\n`;
+    frPlain += `Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.\n\n`;
+    frPlain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
+    frPlain += `1-Vous informer :\n`;
+    frPlain += `•\tRegarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://youtu.be/hYzMRYYBnag)\n`;
     if (dossierJobs.length > 0) {
       const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, false)).join(', ');
-      plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
+      frPlain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
     } else {
-      plain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+      frPlain += `•\tRegarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
     }
-    plain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/instruction-de-base/)\n\n`;
-    plain += `2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail. Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/) De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.\n\n`;
-    plain += `Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.\n\n`;
+    frPlain += `•\tExplorer et bien comprendre la section Instruction de base du site Forces.ca (https://forces.ca/fr/instruction-de-base/)\n\n`;
+    frPlain += `2-Après avoir regardé la vidéo, Prendre rendez-vous pour une consultation via le calendrier de votre portail. Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/) De nouvelles plages horaires ouvriront d’ici 14 jours sur votre portail.\n\n`;
+    frPlain += `Cette consultation auprès d’un recruteur sera nécessaire afin de valider votre connaissance des professions militaires qui vous intéressent, de la nature du cours de qualification militaire de base (QMB) et des exigences que comporte un engagement au sein de la force régulière des Forces armées canadiennes. Cette consultation n’est pas une entrevue officielle. Lorsque votre dossier sera distribué à un gestionnaire de dossier, celui-ci vous attribuera une tâche pour prendre un rendez-vous avec un conseiller en carrière militaire et c’est avec ce conseiller que vous ferez votre entrevue officielle pour un emploie dans les forces armées canadienne.\n\n`;
     if (nonMandatoryTasksFr) {
-      plain += `${nonMandatoryTasksFr}\n\n`;
+      frPlain += `${nonMandatoryTasksFr}\n\n`;
     }
-    plain += `Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.\n\n`;
-    plain += `Merci encore et au plaisir de votre faire votre connaissance.\n\n`;
-    plain += this.getSignatureFr();
-
-    plain += `\n\n______________________________________________________________________________\n\n`;
+    frPlain += `Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.\n\n`;
+    frPlain += `Merci encore et au plaisir de votre faire votre connaissance.\n\n`;
+    frPlain += this.getSignatureFr();
 
     // --- ENGLISH ---
-    plain += `Hello,\n\n`;
-    plain += `Thank you very much for providing your documents and selecting your preferred occupation.\n\n`;
-    plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
-    plain += `1- Inform yourself :\n`;
-    plain += `•\tWatch and understand the content of the following presentation: Forces 101 Presentation (https://youtu.be/oKuX_ROtASw)\n`;
+    let enPlain = `Hello,\n\n`;
+    enPlain += `Thank you very much for providing your documents and selecting your preferred occupation.\n\n`;
+    enPlain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
+    enPlain += `1- Inform yourself :\n`;
+    enPlain += `•\tWatch and understand the content of the following presentation: Forces 101 Presentation (https://youtu.be/oKuX_ROtASw)\n`;
     if (dossierJobs.length > 0) {
       const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, false)).join(', ');
-      plain += `•\tWatch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
+      enPlain += `•\tWatch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
     } else {
-      plain += `•\tWatch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+      enPlain += `•\tWatch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
     }
-    plain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/basic-training/)\n\n`;
-    plain += `2-After viewing the video, Schedule an appointment for a consultation through your portal calendar. Canadian Armed Forces enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/) New time slots will open on your portal within 14 days.\n\n`;
-    plain += `This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.\n\n`;
+    enPlain += `•\tExplore and fully understand the Basic Training section of the Forces.ca website (https://forces.ca/en/basic-training/)\n\n`;
+    enPlain += `2-After viewing the video, Schedule an appointment for a consultation through your portal calendar. Canadian Armed Forces enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/) New time slots will open on your portal within 14 days.\n\n`;
+    enPlain += `This consultation with a recruiter will be required to validate your understanding of the military occupations that interest you, the nature of the Basic Military Qualification (BMQ), and the requirements associated with enrolling in the Regular Force of the Canadian Armed Forces. This consultation is not an official interview. Once your file has been assigned to a file administrator, you will be given a task to schedule an appointment with a Military Career Counsellor. It is with this counsellor that you will complete your official interview for employment with the Canadian Armed Forces.\n\n`;
     if (nonMandatoryTasksEn) {
-      plain += `${nonMandatoryTasksEn}\n\n`;
+      enPlain += `${nonMandatoryTasksEn}\n\n`;
     }
-    plain += `If no action is taken, your file will be automatically deactivated after 30 days.\n\n`;
-    plain += `Thank you again, and we look forward to meeting you.\n\n`;
-    plain += this.getSignatureEn();
+    enPlain += `If no action is taken, your file will be automatically deactivated after 30 days.\n\n`;
+    enPlain += `Thank you again, and we look forward to meeting you.\n\n`;
+    enPlain += this.getSignatureEn();
 
-    return plain;
+    if (isEn) {
+      return `Le message français suivra.\n\n${enPlain}\n\n______________________________________________________________________________\n\n${frPlain}`;
+    }
+    return `English message will follow.\n\n${frPlain}\n\n______________________________________________________________________________\n\n${enPlain}`;
   }
 
   getPforJobLinkMarkup(jobId: string, isFrench: boolean, isHtml: boolean): string {
@@ -9328,99 +10059,105 @@ Thank you for your cooperation.`;
   }
 
   getCompliantPforEmailHtml(): string {
-    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-
     const nonMandatoryTasksHtmlFr = this.getCompliantNonMandatoryTasksHtml('fr');
     const nonMandatoryTasksHtmlEn = this.getCompliantNonMandatoryTasksHtml('en');
     const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH BLOCK ---
-    html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += `<p>Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.<br>`;
-    html += `Afin de pouvoir continuer votre processus, vous devrez <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">OBLIGATOIREMENT</span> :</p>`;
+    let frHtml = `<p>Bonjour,</p>`;
+    frHtml += `<p>Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.<br>`;
+    frHtml += `Afin de pouvoir continuer votre processus, vous devrez <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">OBLIGATOIREMENT</span> :</p>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>1- Vous informer :</strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://www.youtube.com/watch?v=UaCQUp-_ZUc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
+    frHtml += `<p style="margin-bottom: 5px;"><strong>1- Vous informer :</strong></p>`;
+    frHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    frHtml += `  <li style="margin-bottom: 5px;">Regarder et comprendre le contenu de la présentation suivante : <a href="https://www.youtube.com/watch?v=UaCQUp-_ZUc" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Présentation Forces 101</a></li>`;
     if (dossierJobs.length > 0) {
       const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, true)).join(', ');
-      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
+      frHtml += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}</li>`;
     } else {
-      html += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
+      frHtml += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
     }
-    html += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège Militaire Canadien de St-Jean</li>`;
-    html += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège Militaire Canadien de St-Jean</li>`;
-    html += `</ul>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège Militaire Canadien de St-Jean</li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège Militaire Canadien de St-Jean</li>`;
+    frHtml += `</ul>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>2- Vous assurer que toutes les tâches sur votre portail sont complétées :</strong></p>`;
-    html += `<p style="margin-top: 0; margin-bottom: 15px;">Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a></p>`;
+    frHtml += `<p style="margin-bottom: 5px;"><strong>2- Vous assurer que toutes les tâches sur votre portail sont complétées :</strong></p>`;
+    frHtml += `<p style="margin-top: 0; margin-bottom: 15px;">Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Lien vers le Portail d'enrôlement des Forces armées canadiennes</a></p>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Équipes du CMC St-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">Équipes du CMC Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
-    html += `</ul>`;
+    frHtml += `<p style="margin-bottom: 5px;"><strong>3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
+    frHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMC St-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMC Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    frHtml += `</ul>`;
 
-    html += `<p>Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.</p>`;
+    frHtml += `<p>Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.</p>`;
 
     if (nonMandatoryTasksHtmlFr) {
-      html += nonMandatoryTasksHtmlFr;
+      frHtml += nonMandatoryTasksHtmlFr;
     }
 
-    html += this.getPforCaf101HighDemandWarningHtml('fr');
+    frHtml += this.getPforCaf101HighDemandWarningHtml('fr');
 
-    html += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">Porte ouverte du CMR St-Jean</span></p>`;
-    html += `<p>Nous vous invitons à profiter de la <span style="background-color: #FFFF00;">journée portes ouvertes du Collège militaire royal de Saint-Jean</span>, qui se tiendra le <span style="background-color: #FFFF00; font-weight: bold;">31 octobre 2026 de 8 h 30 à 16 h</span>. <span style="background-color: #FFFF00;">Aucune inscription n'est nécessaire</span>.<br>Venez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.<br>Des visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.<br>Nous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.</p>`;
+    frHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">Porte ouverte du CMR St-Jean</span></p>`;
+    frHtml += `<p>Nous vous invitons à profiter de la <span style="background-color: #FFFF00;">journée portes ouvertes du Collège militaire royal de Saint-Jean</span>, qui se tiendra le <span style="background-color: #FFFF00; font-weight: bold;">31 octobre 2026 de 8 h 30 à 16 h</span>. <span style="background-color: #FFFF00;">Aucune inscription n'est nécessaire</span>.<br>Venez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.<br>Des visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.<br>Nous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.</p>`;
 
-    html += `<p>Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.</p>`;
-
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
-
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+    frHtml += `<p>Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.</p>`;
+    frHtml += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
     // --- ENGLISH BLOCK ---
-    html += `<p>Hello,</p>`;
-    html += `<p>Thank you very much for providing your documents and selecting your preferred occupation.<br>`;
-    html += `In order to continue your application process, You will be <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">REQUIRED</span> to:</p>`;
+    let enHtml = `<p>Hello,</p>`;
+    enHtml += `<p>Thank you very much for providing your documents and selecting your preferred occupation.<br>`;
+    enHtml += `In order to continue your application process, You will be <span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">REQUIRED</span> to:</p>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>1- Inform yourself :</strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=nGGLc_Ynr-I" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
+    enHtml += `<p style="margin-bottom: 5px;"><strong>1- Inform yourself :</strong></p>`;
+    enHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    enHtml += `  <li style="margin-bottom: 5px;">Watch and understand the content of the following presentation: <a href="https://www.youtube.com/watch?v=nGGLc_Ynr-I" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Forces 101 Presentation</a></li>`;
     if (dossierJobs.length > 0) {
       const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, true)).join(', ');
-      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
+      enHtml += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}</li>`;
     } else {
-      html += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
+      enHtml += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
     }
-    html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
-    html += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
-    html += `</ul>`;
+    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
+    enHtml += `</ul>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>2- Ensure all tasks on your portal are completed:</strong></p>`;
-    html += `<p style="margin-top: 0; margin-bottom: 15px;">Please log in to your portal to verify and ensure that all required tasks are completed: <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces Enrolment Portal link</a></p>`;
+    enHtml += `<p style="margin-bottom: 5px;"><strong>2- Ensure all tasks on your portal are completed:</strong></p>`;
+    enHtml += `<p style="margin-top: 0; margin-bottom: 15px;">Please log in to your portal to verify and ensure that all required tasks are completed: <a href="https://www.cafoap-pclfac.forces.gc.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Canadian Armed Forces Enrolment Portal link</a></p>`;
 
-    html += `<p style="margin-bottom: 5px;"><strong>3- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
-    html += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    html += `  <li style="margin-bottom: 5px;">CMC St-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
-    html += `  <li style="margin-bottom: 5px;">CMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
-    html += `</ul>`;
+    enHtml += `<p style="margin-bottom: 5px;"><strong>3- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
+    enHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
+    enHtml += `  <li style="margin-bottom: 5px;">CMC St-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">CMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    enHtml += `</ul>`;
 
-    html += `<p>If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.</p>`;
+    enHtml += `<p>If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.</p>`;
 
     if (nonMandatoryTasksHtmlEn) {
-      html += nonMandatoryTasksHtmlEn;
+      enHtml += nonMandatoryTasksHtmlEn;
     }
 
-    html += this.getPforCaf101HighDemandWarningHtml('en');
+    enHtml += this.getPforCaf101HighDemandWarningHtml('en');
 
-    html += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">RMC Saint-Jean Open House</span></p>`;
-    html += `<p>We invite you to take advantage of the <span style="background-color: #FFFF00;">Royal Military College Saint-Jean Open House</span>, which will be held on <span style="background-color: #FFFF00; font-weight: bold;">October 31, 2026, from 8:30 a.m. to 4:00 p.m.</span> <span style="background-color: #FFFF00;">No registration is required</span>.<br>Come and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.<br>Guided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.<br>We hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.</p>`;
+    enHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">RMC Saint-Jean Open House</span></p>`;
+    enHtml += `<p>We invite you to take advantage of the <span style="background-color: #FFFF00;">Royal Military College Saint-Jean Open House</span>, which will be held on <span style="background-color: #FFFF00; font-weight: bold;">October 31, 2026, from 8:30 a.m. to 4:00 p.m.</span> <span style="background-color: #FFFF00;">No registration is required</span>.<br>Come and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.<br>Guided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.<br>We hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.</p>`;
 
-    html += `<p>If no action is taken in your portal, your file will automatically close within 30 days.</p>`;
+    enHtml += `<p>If no action is taken in your portal, your file will automatically close within 30 days.</p>`;
+    enHtml += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
-
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">Le message français suivra.</span></p>`;
+      html += enHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += frHtml;
+    } else {
+      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+      html += frHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += enHtml;
+    }
     html += `</div>`;
     return html;
   }
@@ -9486,181 +10223,185 @@ Thank you for your cooperation.`;
   }
 
   getCompliantPforEmailPlain(): string {
-    let plain = "";
-
     const nonMandatoryTasksFr = this.getCompliantNonMandatoryTasksPlain('fr');
     const nonMandatoryTasksEn = this.getCompliantNonMandatoryTasksPlain('en');
     const dossierJobs = this.getDossierJobObjects().filter((j) => j.id !== '00003');
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH ---
-    plain += `English message will follow.\n\n`;
-    plain += `Bonjour,\n\n`;
-    plain += `Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.\n`;
-    plain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
-    plain += `1- Vous informer :\n`;
-    plain += `• Regarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://www.youtube.com/watch?v=UaCQUp-_ZUc)\n`;
+    let frPlain = `Bonjour,\n\n`;
+    frPlain += `Merci beaucoup d’avoir fourni vos documents et fait votre choix de profession.\n`;
+    frPlain += `Afin de pouvoir continuer votre processus, vous devrez OBLIGATOIREMENT :\n\n`;
+    frPlain += `1- Vous informer :\n`;
+    frPlain += `• Regarder et comprendre le contenu de la présentation suivante : Présentation Forces 101 (https://www.youtube.com/watch?v=UaCQUp-_ZUc)\n`;
     if (dossierJobs.length > 0) {
       const jobLinksFr = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, true, false)).join(', ');
-      plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
+      frPlain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits : ${jobLinksFr}\n`;
     } else {
-      plain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
+      frPlain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
     }
-    plain += `• Explorer la section Foire aux Questions du site internet du Collège Militaire Canadien de St-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
-    plain += `• Explorer la chaîne Youtube du Collège Militaire Canadien de St-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
-    plain += `2- Vous assurer que toutes les tâches sur votre portail sont complétées :\n`;
-    plain += `Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
-    plain += `3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
-    plain += `• Équipes du CMC St-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
-    plain += `• Équipes du CMC Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
-    plain += `Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.\n\n`;
+    frPlain += `• Explorer la section Foire aux Questions du site internet du Collège Militaire Canadien de St-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
+    frPlain += `• Explorer la chaîne Youtube du Collège Militaire Canadien de St-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    frPlain += `2- Vous assurer que toutes les tâches sur votre portail sont complétées :\n`;
+    frPlain += `Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
+    frPlain += `3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
+    frPlain += `• Équipes du CMC St-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    frPlain += `• Équipes du CMC Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    frPlain += `Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.\n\n`;
 
     if (nonMandatoryTasksFr) {
-      plain += `${nonMandatoryTasksFr}\n\n`;
+      frPlain += `${nonMandatoryTasksFr}\n\n`;
     }
 
-    plain += this.getPforCaf101HighDemandWarningPlain('fr');
+    frPlain += this.getPforCaf101HighDemandWarningPlain('fr');
 
-    plain += `Porte ouverte du CMR St-Jean\n`;
-    plain += `Nous vous invitons à profiter de la journée portes ouvertes du Collège militaire royal de Saint-Jean, qui se tiendra le 31 octobre 2026 de 8 h 30 à 16 h. Aucune inscription n'est nécessaire.\nVenez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.\nDes visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.\nNous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.\n\n`;
+    frPlain += `Porte ouverte du CMR St-Jean\n`;
+    frPlain += `Nous vous invitons à profiter de la journée portes ouvertes du Collège militaire royal de Saint-Jean, qui se tiendra le 31 octobre 2026 de 8 h 30 à 16 h. Aucune inscription n'est nécessaire.\nVenez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.\nDes visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.\nNous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.\n\n`;
 
-    plain += `Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.\n\n`;
-
-    plain += this.getSignatureFr();
-
-    plain += `\n\n______________________________________________________________________________\n\n`;
+    frPlain += `Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.\n\n`;
+    frPlain += this.getSignatureFr();
 
     // --- ENGLISH ---
-    plain += `Hello,\n\n`;
-    plain += `Thank you very much for providing your documents and selecting your preferred occupation.\n`;
-    plain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
-    plain += `1- Inform yourself :\n`;
-    plain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=nGGLc_Ynr-I)\n`;
+    let enPlain = `Hello,\n\n`;
+    enPlain += `Thank you very much for providing your documents and selecting your preferred occupation.\n`;
+    enPlain += `In order to continue your application process, You will be REQUIRED to:\n\n`;
+    enPlain += `1- Inform yourself :\n`;
+    enPlain += `• Watch and understand the content of the following presentation: Forces 101 Presentation (https://www.youtube.com/watch?v=nGGLc_Ynr-I)\n`;
     if (dossierJobs.length > 0) {
       const jobLinksEn = dossierJobs.map((j) => this.getPforJobLinkMarkup(j.id, false, false)).join(', ');
-      plain += `• Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
+      enPlain += `• Watch the video and review the description of the trade(s) you are registered for : ${jobLinksEn}\n`;
     } else {
-      plain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
+      enPlain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
     }
-    plain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
-    plain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
-    plain += `2- Ensure all tasks on your portal are completed:\n`;
-    plain += `Please log in to your portal to verify and ensure that all required tasks are completed: Canadian Armed Forces Enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
-    plain += `3- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
-    plain += `• CMC St-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
-    plain += `• CMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
-    plain += `If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.\n\n`;
+    enPlain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
+    enPlain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    enPlain += `2- Ensure all tasks on your portal are completed:\n`;
+    enPlain += `Please log in to your portal to verify and ensure that all required tasks are completed: Canadian Armed Forces Enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
+    enPlain += `3- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
+    enPlain += `• CMC St-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    enPlain += `• CMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    enPlain += `If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.\n\n`;
 
     if (nonMandatoryTasksEn) {
-      plain += `${nonMandatoryTasksEn}\n\n`;
+      enPlain += `${nonMandatoryTasksEn}\n\n`;
     }
 
-    plain += this.getPforCaf101HighDemandWarningPlain('en');
+    enPlain += this.getPforCaf101HighDemandWarningPlain('en');
 
-    plain += `RMC Saint-Jean Open House\n`;
-    plain += `We invite you to take advantage of the Royal Military College Saint-Jean Open House, which will be held on October 31, 2026, from 8:30 a.m. to 4:00 p.m. No registration is required.\nCome and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.\nGuided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.\nWe hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.\n\n`;
+    enPlain += `RMC Saint-Jean Open House\n`;
+    enPlain += `We invite you to take advantage of the Royal Military College Saint-Jean Open House, which will be held on October 31, 2026, from 8:30 a.m. to 4:00 p.m. No registration is required.\nCome and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.\nGuided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.\nWe hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.\n\n`;
 
-    plain += `If no action is taken in your portal, your file will automatically close within 30 days.\n\n`;
+    enPlain += `If no action is taken in your portal, your file will automatically close within 30 days.\n\n`;
+    enPlain += this.getSignatureEn();
 
-    plain += this.getSignatureEn();
-
-    return plain;
+    if (isEn) {
+      return `Le message français suivra.\n\n${enPlain}\n\n______________________________________________________________________________\n\n${frPlain}`;
+    }
+    return `English message will follow.\n\n${frPlain}\n\n______________________________________________________________________________\n\n${enPlain}`;
   }
 
   getCompliantPforLienPaEmailHtml(): string {
-    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH BLOCK ---
-    html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += `<p>Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
-    html += `<p>Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. <strong>Voici comment procéder pour nous les transmettre :</strong></p>`;
+    let frHtml = `<p>Bonjour,</p>`;
+    frHtml += `<p>Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
+    frHtml += `<p>Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. <strong>Voici comment procéder pour nous les transmettre :</strong></p>`;
 
-    html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    html += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
-    html += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.</li>`;
-    html += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. <strong>(Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</strong></li>`;
-    html += `</ol>`;
+    frHtml += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
+    frHtml += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
+    frHtml += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.</li>`;
+    frHtml += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. <strong>(Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</strong></li>`;
+    frHtml += `</ol>`;
 
-    html += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
+    frHtml += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
 
-    html += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. <strong>(Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</strong></p>`;
+    frHtml += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. <strong>(Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</strong></p>`;
 
-    html += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
+    frHtml += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
 
-    html += `<p>Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
+    frHtml += `<p>Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
 
-    html += `<p>Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.</p>`;
-
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
-
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+    frHtml += `<p>Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.</p>`;
+    frHtml += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
     // --- ENGLISH BLOCK ---
-    html += `<p>Hello,</p>`;
-    html += `<p>Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).</p>`;
-    html += `<p>To continue processing your application, we need supporting academic documentation. <strong>Here's how to proceed to submit it:</strong></p>`;
+    let enHtml = `<p>Hello,</p>`;
+    enHtml += `<p>Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).</p>`;
+    enHtml += `<p>To continue processing your application, we need supporting academic documentation. <strong>Here's how to proceed to submit it:</strong></p>`;
 
-    html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    html += `  <li style="margin-bottom: 10px;">Visit the Canadian Military College (CMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
-    html += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.</li>`;
-    html += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. <strong>(Even if you have already done so on your portal when you begin your online application)</strong></li>`;
-    html += `</ol>`;
+    enHtml += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
+    enHtml += `  <li style="margin-bottom: 10px;">Visit the Canadian Military College (CMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
+    enHtml += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.</li>`;
+    enHtml += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. <strong>(Even if you have already done so on your portal when you begin your online application)</strong></li>`;
+    enHtml += `</ol>`;
 
-    html += `<p><strong>***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
+    enHtml += `<p><strong>***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
 
-    html += `<p>Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. <strong>(Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</strong></p>`;
+    enHtml += `<p>Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. <strong>(Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</strong></p>`;
 
-    html += `<p>If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.</p>`;
+    enHtml += `<p>If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.</p>`;
 
-    html += `<p>For any questions, please feel free to contact us by email to: <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
+    enHtml += `<p>For any questions, please feel free to contact us by email to: <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
 
-    html += `<p>Thank you for your interest in joining the Canadian Armed Forces.</p>`;
+    enHtml += `<p>Thank you for your interest in joining the Canadian Armed Forces.</p>`;
+    enHtml += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
-
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">Le message français suivra.</span></p>`;
+      html += enHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += frHtml;
+    } else {
+      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+      html += frHtml;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += enHtml;
+    }
     html += `</div>`;
     return html;
   }
 
   getCompliantPforLienPaEmailPlain(): string {
-    let plain = "";
+    const isEn = this.langService.isEnglish();
 
     // --- FRENCH ---
-    plain += `English message will follow.\n\n`;
-    plain += `Bonjour,\n\n`;
-    plain += `Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
-    plain += `Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. Voici comment procéder pour nous les transmettre :\n\n`;
-    plain += `1. Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :\n`;
-    plain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
-    plain += `Remarque : Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).\n\n`;
-    plain += `2. Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.\n\n`;
-    plain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
-    plain += `***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***\n\n`;
-    plain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
-    plain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
-    plain += `Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
-    plain += `Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.\n\n`;
-    plain += this.getSignatureFr();
-
-    plain += `\n\n______________________________________________________________________________\n\n`;
+    let frPlain = `Bonjour,\n\n`;
+    frPlain += `Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
+    frPlain += `Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. Voici comment procéder pour nous les transmettre :\n\n`;
+    frPlain += `1. Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :\n`;
+    frPlain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
+    frPlain += `Remarque : Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).\n\n`;
+    frPlain += `2. Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.\n\n`;
+    frPlain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
+    frPlain += `***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***\n\n`;
+    frPlain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
+    frPlain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
+    frPlain += `Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
+    frPlain += `Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.\n\n`;
+    frPlain += this.getSignatureFr();
 
     // --- ENGLISH ---
-    plain += `Hello,\n\n`;
-    plain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
-    plain += `To continue processing your application, we need supporting academic documentation. Here's how to proceed to submit it:\n\n`;
-    plain += `1. Visit the Canadian Military College (CMC) website at the following link:\n`;
-    plain += `Royal Military College of Canada (RMC) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
-    plain += `Note: You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).\n\n`;
-    plain += `2. You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.\n\n`;
-    plain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)\n\n`;
-    plain += `***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
-    plain += `Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
-    plain += `If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.\n\n`;
-    plain += `For any questions, please feel free to contact us by email to: PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
-    plain += `Thank you for your interest in joining the Canadian Armed Forces.\n\n`;
-    plain += this.getSignatureEn();
+    let enPlain = `Hello,\n\n`;
+    enPlain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
+    enPlain += `To continue processing your application, we need supporting academic documentation. Here's how to proceed to submit it:\n\n`;
+    enPlain += `1. Visit the Canadian Military College (CMC) website at the following link:\n`;
+    enPlain += `Royal Military College of Canada (RMC) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
+    enPlain += `Note: You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).\n\n`;
+    enPlain += `2. You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.\n\n`;
+    enPlain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)\n\n`;
+    enPlain += `***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
+    enPlain += `Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
+    enPlain += `If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.\n\n`;
+    enPlain += `For any questions, please feel free to contact us by email to: PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
+    enPlain += `Thank you for your interest in joining the Canadian Armed Forces.\n\n`;
+    enPlain += this.getSignatureEn();
 
-    return plain;
+    if (isEn) {
+      return `Le message français suivra.\n\n${enPlain}\n\n______________________________________________________________________________\n\n${frPlain}`;
+    }
+    return `English message will follow.\n\n${frPlain}\n\n______________________________________________________________________________\n\n${enPlain}`;
   }
 
 
@@ -9887,9 +10628,13 @@ Thank you for your cooperation.`;
   }
 
   getOffreOtaEmailPlain(): string {
-    const fr = "English message will follow.\n\n" + this.getOffreOtaSectionPlainFr();
-    const en = this.getOffreOtaSectionPlainEn();
-    return `${fr}\n\n______________________________________________________________________________\n\n${en}`;
+    const isEn = this.langService.isEnglish();
+    const frBody = this.getOffreOtaSectionPlainFr();
+    const enBody = this.getOffreOtaSectionPlainEn();
+    if (isEn) {
+      return `Le message français suivra.\n\n${enBody}\n\n______________________________________________________________________________\n\n${frBody}`;
+    }
+    return `English message will follow.\n\n${frBody}\n\n______________________________________________________________________________\n\n${enBody}`;
   }
 
   getOffreOtaSectionHtmlFr(): string {
@@ -10139,11 +10884,19 @@ Thank you for your cooperation.`;
   }
 
   getOffreOtaEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000; line-height: 1.4;">`;
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += this.getOffreOtaSectionHtmlFr();
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
-    html += this.getOffreOtaSectionHtmlEn();
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += this.getOffreOtaSectionHtmlEn();
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += this.getOffreOtaSectionHtmlFr();
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += this.getOffreOtaSectionHtmlFr();
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += this.getOffreOtaSectionHtmlEn();
+    }
     html += `</div>`;
     return html;
   }
@@ -10152,6 +10905,7 @@ Thank you for your cooperation.`;
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
       return this.getOffreOtaEmailPlain();
     }
+    const isEn = this.langService.isEnglish();
     const metier = this.offreMetier();
     const prog = this.offreProgrammeEnrolement();
     const elem = this.offreElement();
@@ -10164,8 +10918,7 @@ Thank you for your cooperation.`;
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
-    let fr = "English message will follow.\n\n";
-    fr += "Bonjour,\n\n";
+    let fr = "Bonjour,\n\n";
     fr += "Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.\n\n";
     fr += "Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :\n\n";
     fr += `Métier :    ${metier}\n`;
@@ -10217,7 +10970,10 @@ Thank you for your cooperation.`;
     en += "Thank you, have a nice day\n\n";
     en += this.getSignatureEn();
 
-    return `${fr}\n\n______________________________________________________________________________\n\n${en}`;
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n______________________________________________________________________________\n\n${fr}`;
+    }
+    return `English message will follow.\n\n${fr}\n\n______________________________________________________________________________\n\n${en}`;
   }
 
   private isConjointDeFaitSelected(): boolean {
@@ -10431,6 +11187,7 @@ Thank you for your cooperation.`;
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
       return this.getOffreOtaEmailHtml();
     }
+    const isEn = this.langService.isEnglish();
     const metier = this.offreMetier();
     const prog = this.offreProgrammeEnrolement();
     const elem = this.offreElement();
@@ -10443,61 +11200,66 @@ Thank you for your cooperation.`;
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
-    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-
-    // --- FRENCH BLOCK ---
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
-    html += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
-    html += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}</p>`;
-    html += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
-    html += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
-    html += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
-    html += this.getTeamsLinkHtmlFr();
-    html += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    let fr = `<p>Bonjour,</p>`;
+    fr += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
+    fr += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
+    fr += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}</p>`;
+    fr += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
+    fr += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
+    fr += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
+    fr += this.getTeamsLinkHtmlFr();
+    fr += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
+    fr += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
     if (hasCourseDates) {
-      html += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
+      fr += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
     }
-    html += `</p>`;
+    fr += `</p>`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
-    html += `<p>Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :</p>`;
-    html += elementsHtmlList;
-    html += this.getOffreFormulairesSupplementairesHtml('fr');
-    html += this.getOffreLinksBlockHtml('fr');
-    html += this.getOffreEvenementsParticuliersHtmlFr();
-    html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
-    html += `<p>Merci, bonne journée</p>`;
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+    fr += `<p>Veuillez me faire parvenir les éléments suivant au plus tard le${dateLimiteStr} :</p>`;
+    fr += elementsHtmlList;
+    fr += this.getOffreFormulairesSupplementairesHtml('fr');
+    fr += this.getOffreLinksBlockHtml('fr');
+    fr += this.getOffreEvenementsParticuliersHtmlFr();
+    fr += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
+    fr += `<p>Merci, bonne journée</p>`;
+    fr += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
-
-    // --- ENGLISH BLOCK ---
-    html += `<p>Hello,</p>`;
-    html += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
-    html += `<p>Below you will find the details of the job offer discussed today:</p>`;
-    html += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}</p>`;
-    html += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
-    html += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
-    html += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
-    html += this.getTeamsLinkHtmlEn();
-    html += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    let en = `<p>Hello,</p>`;
+    en += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
+    en += `<p>Below you will find the details of the job offer discussed today:</p>`;
+    en += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}</p>`;
+    en += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
+    en += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
+    en += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
+    en += this.getTeamsLinkHtmlEn();
+    en += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
+    en += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
     if (hasCourseDates) {
-      html += `<br><strong>Your course dates:</strong> ${datesCours}`;
+      en += `<br><strong>Your course dates:</strong> ${datesCours}`;
     }
-    html += `</p>`;
+    en += `</p>`;
     const blocksHtmlEn = this.getElementsManquantsBlocks('en');
-    html += `<p>Please send me the following items no later than${blocksHtmlEn.dateLimiteStr}:</p>`;
-    html += blocksHtmlEn.elementsHtmlList;
-    html += this.getOffreFormulairesSupplementairesHtml('en');
-    html += this.getOffreLinksBlockHtml('en');
-    html += this.getOffreEvenementsParticuliersHtmlEn();
-    html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
-    html += `<p>Thank you, have a nice day</p>`;
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+    en += `<p>Please send me the following items no later than${blocksHtmlEn.dateLimiteStr}:</p>`;
+    en += blocksHtmlEn.elementsHtmlList;
+    en += this.getOffreFormulairesSupplementairesHtml('en');
+    en += this.getOffreLinksBlockHtml('en');
+    en += this.getOffreEvenementsParticuliersHtmlEn();
+    en += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
+    en += `<p>Thank you, have a nice day</p>`;
+    en += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += fr;
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += en;
+    }
     html += `</div>`;
     return html;
   }
@@ -10506,6 +11268,7 @@ Thank you for your cooperation.`;
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
       return this.getOffreOtaEmailPlain();
     }
+    const isEn = this.langService.isEnglish();
     const metier = this.offreMetier();
     const prog = this.offreProgrammeEnrolement();
     const elem = this.offreElement();
@@ -10521,8 +11284,7 @@ Thank you for your cooperation.`;
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
-    let fr = "English message will follow.\n\n";
-    fr += "Bonjour,\n\n";
+    let fr = "Bonjour,\n\n";
     fr += "Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.\n\n";
     fr += "Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :\n\n";
     fr += `Métier : ${metier}\n`;
@@ -10578,13 +11340,17 @@ Thank you for your cooperation.`;
     en += "If you have any further questions, please do not hesitate to contact me. \n\n\n";
     en += this.getSignatureEn();
 
-    return `${fr}\n\n______________________________________________________________________________\n\n${en}`;
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n______________________________________________________________________________\n\n${fr}`;
+    }
+    return `English message will follow.\n\n${fr}\n\n______________________________________________________________________________\n\n${en}`;
   }
 
   getOffreEtudesSubventionneesEmailHtml(): string {
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
       return this.getOffreOtaEmailHtml();
     }
+    const isEn = this.langService.isEnglish();
     const metier = this.offreMetier();
     const prog = this.offreProgrammeEnrolement();
     const elem = this.offreElement();
@@ -10600,59 +11366,64 @@ Thank you for your cooperation.`;
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
-    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-
-    // --- FRENCH BLOCK ---
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += `<p>Bonjour,</p>`;
-    html += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
-    html += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
-    html += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}<br><strong>Durée du contrat :</strong> ${dureeContrat}<br><strong>Études subventionnées :</strong> ${etudesSub}<br><strong>Durée des études subventionnées :</strong> ${dureeEtudesSub}</p>`;
-    html += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
-    html += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
-    html += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
-    html += this.getTeamsLinkHtmlFr();
-    html += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    let fr = `<p>Bonjour,</p>`;
+    fr += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
+    fr += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
+    fr += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}<br><strong>Durée du contrat :</strong> ${dureeContrat}<br><strong>Études subventionnées :</strong> ${etudesSub}<br><strong>Durée des études subventionnées :</strong> ${dureeEtudesSub}</p>`;
+    fr += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
+    fr += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
+    fr += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
+    fr += this.getTeamsLinkHtmlFr();
+    fr += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
+    fr += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
     if (hasCourseDates) {
-      html += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
+      fr += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
     }
-    html += `</p>`;
+    fr += `</p>`;
     const { dateLimiteStr, elementsHtmlList } = this.getElementsManquantsBlocks('fr');
-    html += `<p>Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :</p>`;
-    html += elementsHtmlList;
-    html += this.getOffreFormulairesSupplementairesHtml('fr');
-    html += this.getOffreLinksBlockHtml('fr');
-    html += this.getOffreEvenementsParticuliersHtmlFr();
-    html += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+    fr += `<p>Veuillez prendre connaissance des documents joints au courriel et me retourner les documents suivants au plus tard le${dateLimiteStr} :</p>`;
+    fr += elementsHtmlList;
+    fr += this.getOffreFormulairesSupplementairesHtml('fr');
+    fr += this.getOffreLinksBlockHtml('fr');
+    fr += this.getOffreEvenementsParticuliersHtmlFr();
+    fr += `<p>Pour toute autre question, n’hésitez pas à communiquer avec moi.</p>`;
+    fr += `<p>` + this.getHtmlSignatureFr() + `</p>`;
 
-    html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
-
-    // --- ENGLISH BLOCK ---
-    html += `<p>Hello,</p>`;
-    html += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
-    html += `<p>Below you will find the details of the job offer discussed today:</p>`;
-    html += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}<br><strong>Contract duration:</strong> ${dureeContrat}<br><strong>Subsidized education:</strong> ${etudesSub}<br><strong>Subsidized education duration:</strong> ${dureeEtudesSub}</p>`;
-    html += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
-    html += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
-    html += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
-    html += this.getTeamsLinkHtmlEn();
-    html += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    html += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    let en = `<p>Hello,</p>`;
+    en += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
+    en += `<p>Below you will find the details of the job offer discussed today:</p>`;
+    en += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}<br><strong>Contract duration:</strong> ${dureeContrat}<br><strong>Subsidized education:</strong> ${etudesSub}<br><strong>Subsidized education duration:</strong> ${dureeEtudesSub}</p>`;
+    en += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
+    en += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
+    en += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
+    en += this.getTeamsLinkHtmlEn();
+    en += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
+    en += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
     if (hasCourseDates) {
-      html += `<br><strong>Your course dates:</strong> ${datesCours}`;
+      en += `<br><strong>Your course dates:</strong> ${datesCours}`;
     }
-    html += `</p>`;
+    en += `</p>`;
     const blocksHtmlSubEn = this.getElementsManquantsBlocks('en');
-    html += `<p>Please review the documents attached to this email and return the following documents to me no later than${blocksHtmlSubEn.dateLimiteStr}:</p>`;
-    html += blocksHtmlSubEn.elementsHtmlList;
-    html += this.getOffreFormulairesSupplementairesHtml('en');
-    html += this.getOffreLinksBlockHtml('en');
-    html += this.getOffreEvenementsParticuliersHtmlEn();
-    html += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+    en += `<p>Please review the documents attached to this email and return the following documents to me no later than${blocksHtmlSubEn.dateLimiteStr}:</p>`;
+    en += blocksHtmlSubEn.elementsHtmlList;
+    en += this.getOffreFormulairesSupplementairesHtml('en');
+    en += this.getOffreLinksBlockHtml('en');
+    en += this.getOffreEvenementsParticuliersHtmlEn();
+    en += `<p>If you have any further questions, please do not hesitate to contact me.</p>`;
+    en += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += fr;
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
+      html += en;
+    }
     html += `</div>`;
     return html;
   }
@@ -11262,6 +12033,10 @@ Thank you for your cooperation.`;
     const en = this.getRappelCeremonieSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -11270,13 +12045,23 @@ Thank you for your cooperation.`;
     const en = this.getRappelCeremonieSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p><strong>English message will follow.</strong></p>`;
-    html += fr;
-    html += `<p>${sigFr}</p>`;
-    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
-    html += en;
-    html += `<p>${sigEn}</p>`;
+    if (isEn) {
+      html += `<p><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+    } else {
+      html += `<p><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+    }
     html += `</div>`;
     return html;
   }
@@ -11295,6 +12080,10 @@ Thank you for your cooperation.`;
     const en = this.getTentativeOffreGdSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -11319,24 +12108,49 @@ Thank you for your cooperation.`;
     const en = this.getTentativeOffreGdSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
-    html += fr;
-    html += `<p>${sigFr}</p>`;
-    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
-    html += en;
-    html += `<p>${sigEn}</p>`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+    }
     html += `</div>`;
     return html;
   }
 
   // Vérification Dossier Cadet (Volet GD)
   getVerificationCadetEmailPlain(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getSignatureEn();
+      return `Hello,\n\nCould you please confirm if the following applicant has an assigned cadet service number, and if possible provide their cadet information sheet?\n\nLast Name: \nFirst Name: \nDOB: \n\n${sigEn}`;
+    }
     const sigFr = this.getSignatureFr();
     return `Bonjour,\n\nPourriez-vous me confirmer si le postulant suivant a un matricule attribué comme cadet et si possible avoir sa fiche de renseignements de cadet?\n\nNom : \nPrénom : \nDDN : \n\n${sigFr}`;
   }
 
   getVerificationCadetEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getHtmlSignatureEn();
+      return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Could you please confirm if the following applicant has an assigned cadet service number, and if possible provide their cadet information sheet?</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Last Name: <br>First Name: <br>DOB: </p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigEn}</p>` +
+        `</div>`;
+    }
     const sigFr = this.getHtmlSignatureFr();
     return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
@@ -11384,6 +12198,10 @@ Thank you for your cooperation.`;
     const en = this.getBrisBailEntreposageSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -11428,24 +12246,58 @@ Thank you for your cooperation.`;
     const en = this.getBrisBailEntreposageSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
-    html += fr;
-    html += `<p>${sigFr}</p>`;
-    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
-    html += en;
-    html += `<p>${sigEn}</p>`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+    }
     html += `</div>`;
     return html;
   }
 
   // Demande NAV/TAN & Claims X - CSPN partie 1 (Volet GD)
   getDemandeNavTanEmailPlain(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getSignatureEn();
+      return `Hello,\n\nCould you please provide a NAV/TAN number for the following applicant:\n\nSN: XXXXXXXX\nRANK : APPL/POST CIV\nFIRST NAME : XXXXXXX\nNAME : XXXXXXX\nPON :  281(QUEBEC)\nUIC : 0202(QC)\nPROV OF EMPLOYMENT :  QC\nCFHST Date : day-to day -month-year\n\n${sigEn}`;
+    }
     const sigFr = this.getSignatureFr();
     return `Bonjour,\n\nPourriez-vous nous donner un numéro de NAV/TAN pour le postulant suivant svp:\n\nSN: XXXXXXXX\nRANK : APPL/POST CIV\nFIRST NAME : XXXXXXX\nNAME : XXXXXXX\nPON :  281(QUEBEC)\nUIC : 0202(QC)\nPROV OF EMPLOYMENT :  QC\nDate de CSPN : jour-au jour -mois-année\n\n${sigFr}`;
   }
 
   getDemandeNavTanEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getHtmlSignatureEn();
+      return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Could you please provide a NAV/TAN number for the following applicant:</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+        `SN: XXXXXXXX<br>` +
+        `RANK : APPL/POST CIV<br>` +
+        `FIRST NAME : XXXXXXX<br>` +
+        `NAME : XXXXXXX<br>` +
+        `PON :  281(QUEBEC)<br>` +
+        `UIC : 0202(QC)<br>` +
+        `PROV OF EMPLOYMENT :  QC<br>` +
+        `CFHST Date : day-to day -month-year` +
+        `</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigEn}</p>` +
+        `</div>`;
+    }
     const sigFr = this.getHtmlSignatureFr();
     return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
@@ -11466,11 +12318,32 @@ Thank you for your cooperation.`;
 
   // Demande d'autorisation pour un CSPN (Volet GD)
   getDemandeAutorisationCspnEmailPlain(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getSignatureEn();
+      return `Hello,\n\nHere is an authorization request for a CFHST.\n\nAlpha : XXX\nNM : XXX\nLast Name : XXX\nFirst Name : XXX\nOccupation : XXX\n\n${sigEn}`;
+    }
     const sigFr = this.getSignatureFr();
     return `Bonjour,\n\nVoici une demande d’autorisation pour un CSPN.\n\nAlpha : XXX\nNM : XXX\nNom : XXX\nPrénom : XXX\nMétier : XXX\n\n${sigFr}`;
   }
 
   getDemandeAutorisationCspnEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getHtmlSignatureEn();
+      return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Here is an authorization request for a CFHST.</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+        `Alpha : XXX<br>` +
+        `NM : XXX<br>` +
+        `Last Name : XXX<br>` +
+        `First Name : XXX<br>` +
+        `Occupation : XXX` +
+        `</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigEn}</p>` +
+        `</div>`;
+    }
     const sigFr = this.getHtmlSignatureFr();
     return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
@@ -11516,6 +12389,10 @@ Thank you for your cooperation.`;
     const en = this.getDocumentsConjointDeFaitSectionPlainEn();
     const sigFr = this.getSignatureFr();
     const sigEn = this.getSignatureEn();
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      return `Le message français suivra.\n\n${en}\n\n${sigEn}\n\n______________________________________________________________________________\n\n${fr}\n\n${sigFr}`;
+    }
     return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
   }
 
@@ -11556,24 +12433,55 @@ Thank you for your cooperation.`;
     const en = this.getDocumentsConjointDeFaitSectionHtmlEn();
     const sigFr = this.getHtmlSignatureFr();
     const sigEn = this.getHtmlSignatureEn();
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
-    html += fr;
-    html += `<p>${sigFr}</p>`;
-    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
-    html += en;
-    html += `<p>${sigEn}</p>`;
+    if (isEn) {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>Le message français suivra.</strong></p>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+    } else {
+      html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+      html += fr;
+      html += `<p>${sigFr}</p>`;
+      html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+      html += en;
+      html += `<p>${sigEn}</p>`;
+    }
     html += `</div>`;
     return html;
   }
 
   // Demande SDPM pour conjoint militaire (Volet GD)
   getDemandeSdpmConjointMilitaireEmailPlain(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getSignatureEn();
+      return `Hello,\n\nProcessing requires DMPS/MPRR for the following member:\n\nService Number : XXXXX\nFirst Name : XXXXX\nLAST NAME : XXXXX\nDate of Birth : XXXXX\nReg F\n\n${sigEn}`;
+    }
     const sigFr = this.getSignatureFr();
     return `Bonjour,\n\nLe traitement aurait besoin de SDPM/MPRR pour le membre suivant :\n\nMatricule : XXXXX\nPrénom : XXXXX\nNOM : XXXXX\nDate de naissance : XXXXX\nF rég\n\n${sigFr}`;
   }
 
   getDemandeSdpmConjointMilitaireEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      const sigEn = this.getHtmlSignatureEn();
+      return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Processing requires DMPS/MPRR for the following member:</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+        `Service Number : XXXXX<br>` +
+        `First Name : XXXXX<br>` +
+        `LAST NAME : XXXXX<br>` +
+        `Date of Birth : XXXXX<br>` +
+        `Reg F` +
+        `</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigEn}</p>` +
+        `</div>`;
+    }
     const sigFr = this.getHtmlSignatureFr();
     return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
@@ -11591,13 +12499,26 @@ Thank you for your cooperation.`;
 
   // Test ESOM / Confirmation (Volet GD)
   getTestEsomConfirmationEmailPlain(): string {
+    const isEn = this.langService.isEnglish();
     const center = this.getTestEsomCenter();
+    if (isEn) {
+      const sigEn = this.getSignatureEn();
+      return `Hello,\n\n` +
+        `As part of your chosen occupation, you have an aptitude test to complete: the MOST (Maritime Officer Selection Test).\n\n` +
+        `The purpose of this exam is to evaluate your cognitive abilities in memory, decision-making, and selective attention.\n\n` +
+        `This 60-question multiple choice test takes approximately 1h30.\n\n` +
+        `This test must be taken in person, which is why we invite you to the Recruiting Centre to complete it: ${center.name}\n\n` +
+        `Location: ${center.address}\n` +
+        `Parking: Available on surrounding streets (arrive at least 15 minutes early)\n\n` +
+        `Please confirm your availability by replying to this email.\n\n` +
+        `${sigEn}`;
+    }
     const sigFr = this.getSignatureFr();
-    return `Bonjour M. XXXXXX,\n\n` +
-      `Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).\n\n` +
+    return `Bonjour,\n\n` +
+      `Dans le cadre de votre choix de métier, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).\n\n` +
       `Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.\n\n` +
       `Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.\n\n` +
-      `Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}\n\n` +
+      `Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test : ${center.name}\n\n` +
       `Lieu : ${center.address}\n` +
       `Stationnement : Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)\n\n` +
       `Veuillez confirmer votre disponibilité en répondant à ce courriel.\n\n` +
@@ -11605,14 +12526,31 @@ Thank you for your cooperation.`;
   }
 
   getTestEsomConfirmationEmailHtml(): string {
+    const isEn = this.langService.isEnglish();
     const center = this.getTestEsomCenter();
+    if (isEn) {
+      const sigEn = this.getHtmlSignatureEn();
+      return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">As part of your chosen occupation, you have an aptitude test to complete: the MOST (Maritime Officer Selection Test).</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">The purpose of this exam is to evaluate your cognitive abilities in memory, decision-making, and selective attention.</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">This 60-question multiple choice test takes approximately 1h30.</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">This test must be taken in person, which is why we invite you to the Recruiting Centre to complete it: ${center.name}</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
+        `<strong>Location:</strong> ${center.address}<br>` +
+        `<strong>Parking:</strong> Available on surrounding streets (arrive at least 15 minutes early)` +
+        `</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Please confirm your availability by replying to this email.</p>` +
+        `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">${sigEn}</p>` +
+        `</div>`;
+    }
     const sigFr = this.getHtmlSignatureFr();
     return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
-      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour M. XXXXXX,</p>` +
-      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Dans le cadre de votre choix de métier; XXXXXXXXX, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Dans le cadre de votre choix de métier, vous avez un test d’aptitudes à compléter; le ESOM (examen de sélection des officiers de la marine).</p>` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Cet examen a pour but d’évaluer vos habiletés cognitives dans les domaines de la mémorisation, de la prise de décision et de l’attention sélective.</p>` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test de 60 questions est à choix multiples et il est d’une durée d’environ 1h30.</p>` +
-      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test :  ${center.name}</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Ce test doit se faire en présentiel, c’est pourquoi nous vous invitons au Centre de recrutement pour compléter ce test : ${center.name}</p>` +
       `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">` +
       `<strong>Lieu :</strong> ${center.address}<br>` +
       `<strong>Stationnement :</strong> Disponible dans les rues avoisinantes (arrivez au moins 15 minutes à l’avance)` +
@@ -11623,61 +12561,65 @@ Thank you for your cooperation.`;
   }
 
   getEmailSubject(): string {
+    const isEn = this.langService.isEnglish();
     if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
       return "Forces armées canadiennes/Canadian Armed Forces";
     }
     if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
-      return "Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1";
+      return isEn ? "NAV/TAN number request and claims X account creation - CFHST Part 1" : "Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1";
     }
     if (this.selectedEmailBankTemplate() === "demande_autorisation_cspn") {
-      return "Demande d’autorisation pour un CSPN";
+      return isEn ? "Authorization request for CFHST" : "Demande d’autorisation pour un CSPN";
     }
     if (this.selectedEmailBankTemplate() === "documents_conjoint_de_fait") {
-      return "Documents requis - Statut de conjoint(e) de fait";
+      return isEn ? "Required documents - Common-law status" : "Documents requis - Statut de conjoint(e) de fait";
     }
     if (this.selectedEmailBankTemplate() === "demande_sdpm_conjoint_militaire") {
-      return "Demande SDPM pour conjoint militaire";
+      return isEn ? "DMPS request for military spouse" : "Demande SDPM pour conjoint militaire";
     }
     if (this.selectedEmailBankTemplate() === "test_esom_confirmation") {
-      return "TEST ESOM/ Confirmation";
+      return isEn ? "MOST TEST / Confirmation" : "TEST ESOM / Confirmation";
     }
     if (this.selectedEmailBankTemplate() === "verification_dossier_cadet") {
-      return "(Vérification Dossier Cadet)";
+      return isEn ? "(Cadet File Verification)" : "(Vérification Dossier Cadet)";
     }
     if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
-      return "Bris de bail et Entreposage";
+      return isEn ? "Lease cancellation and Storage" : "Bris de bail et Entreposage";
     }
     if (this.selectedEmailBankTemplate() === "tentative_offre_gd") {
-      return "Tentative de communication - Offre d'emploi";
+      return isEn ? "Communication attempt - Job offer" : "Tentative de communication - Offre d'emploi";
     }
     if (this.selectedEmailBankTemplate() === "verification_edo_vs_pfor") {
-      return "Vérification de programme EDO VS PFOR";
+      return isEn ? "EDO vs ROTP program verification" : "Vérification de programme EDO VS PFOR";
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_age_57") {
-      return "Inadmissibilité - Âge (57 ans et plus)";
+      return isEn ? "Ineligibility - Age (57 and older)" : "Inadmissibilité - Âge (57 ans et plus)";
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
-      return "Inadmissibilité - Résident permanent";
+      return isEn ? "Ineligibility - Permanent resident (< 3 years)" : "Inadmissibilité - Résident permanent (< 3 ans)";
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
+      return isEn ? "Ineligibility - Neither citizen nor PR" : "Inadmissibilité - Ni citoyen ni résident permanent";
     }
     if (this.isPremierContactActive()) {
-      return "Premier contact - Inscription aux Forces armées canadiennes";
+      return isEn ? "First contact - Registration with the Canadian Armed Forces" : "Premier contact - Inscription aux Forces armées canadiennes";
     }
     if (this.isAvisFermetureActive()) {
-      return "Avis de fermeture de dossier";
+      return isEn ? "File closure notice" : "Avis de fermeture de dossier";
     }
     if (this.isAnnexeQActive()) {
-      return "Annexe Q - Attestation de sécurité";
+      return isEn ? "Annex Q - Security clearance" : "Annexe Q - Attestation de sécurité";
     }
     if (this.offreNormaleChecked() || this.offreEtudesSubventionneesChecked()) {
-      return "Offre d'emploi - Forces armées canadiennes";
+      return isEn ? "Job offer - Canadian Armed Forces" : "Offre d'emploi - Forces armées canadiennes";
     }
     if (this.rappelCeremonieChecked()) {
-      return "Rappel - Cérémonie d'assermentation";
+      return isEn ? "Reminder - Enrolment ceremony" : "Rappel - Cérémonie d'assermentation";
     }
     if (this.isMedicalEvaluationActive()) {
-      return "Évaluation médicale - Forces armées canadiennes";
+      return isEn ? "Medical evaluation - Canadian Armed Forces" : "Évaluation médicale - Forces armées canadiennes";
     }
-    return "Suivi de votre candidature - Forces armées canadiennes";
+    return isEn ? "Status of your application - Canadian Armed Forces" : "Suivi de votre candidature - Forces armées canadiennes";
   }
 
   // Consolidated Plain Text Email
@@ -11718,7 +12660,7 @@ Thank you for your cooperation.`;
       scenario.id === "inadmissibilite_pr_3ans" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
-      return this.sharedState.getCustomizedScenarioText(scenario.bodyText);
+      return this.sharedState.getCustomizedScenarioText(scenario.bodyText, this.isOtaDossier, this.langService.isEnglish());
     }
 
     // Standalone full emails if selected alone
@@ -11811,6 +12753,18 @@ Thank you for your cooperation.`;
 
     if (frBlocks.length === 0) return "";
 
+    const isEn = this.langService.isEnglish();
+    if (isEn) {
+      let plain = `Le message français suivra.\n\nHello,\n\n`;
+      plain += enBlocks.join("\n\n--------------------------------------------------\n\n");
+      plain += `\n\n` + this.getSignatureEn();
+
+      plain += `\n\n______________________________________________________________________________\n\nBonjour,\n\n`;
+      plain += frBlocks.join("\n\n--------------------------------------------------\n\n");
+      plain += `\n\n` + this.getSignatureFr();
+      return plain;
+    }
+
     let plain = `English message will follow.\n\nBonjour,\n\n`;
     plain += frBlocks.join("\n\n--------------------------------------------------\n\n");
     plain += `\n\n` + this.getSignatureFr();
@@ -11865,7 +12819,7 @@ Thank you for your cooperation.`;
       scenario.id === "inadmissibilite_pr_3ans" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
-      return this.sharedState.getCustomizedScenarioHtml(scenario.bodyHtml);
+      return this.sharedState.getCustomizedScenarioHtml(scenario.bodyHtml, this.isOtaDossier, this.langService.isEnglish());
     }
 
     // Standalone full emails if selected alone
@@ -11958,14 +12912,25 @@ Thank you for your cooperation.`;
 
     if (frSections.length === 0) return "";
 
+    const isEn = this.langService.isEnglish();
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
-    html += `<p>English message will follow.</p><p>Bonjour,</p>`;
-    html += frSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
-    html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+    if (isEn) {
+      html += `<p>Le message français suivra.</p><p>Hello,</p>`;
+      html += enSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
+      html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
-    html += `<hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><p>Hello,</p>`;
-    html += enSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
-    html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+      html += `<hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><p>Bonjour,</p>`;
+      html += frSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
+      html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+    } else {
+      html += `<p>English message will follow.</p><p>Bonjour,</p>`;
+      html += frSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
+      html += `<p>` + this.getHtmlSignatureFr() + `</p>`;
+
+      html += `<hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><p>Hello,</p>`;
+      html += enSections.join('<hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 20px 0;">');
+      html += `<p>` + this.getHtmlSignatureEn() + `</p>`;
+    }
 
     html += `</div>`;
     return html;
@@ -12471,12 +13436,17 @@ Thank you for your cooperation.`;
 
       // 2. Open Outlook
       if (this.selectedEmailBankTemplate() === 'verification_dossier_cadet') {
-        const mailtoLink = `mailto:MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca?subject=${encodeURIComponent('(Vérification Dossier Cadet)')}`;
+        const mailtoLink = `mailto:MDN.CJRURSCEstJ1RH-CJRRCSUEasternJ1HR.DND@forces.gc.ca?subject=${encodeURIComponent(subject)}`;
         window.location.href = mailtoLink;
         return;
       }
       if (this.selectedEmailBankTemplate() === 'demande_nav_tan') {
         const mailtoLink = `mailto:CRFCQcReclamations@forces.gc.ca?subject=${encodeURIComponent(subject)}`;
+        window.location.href = mailtoLink;
+        return;
+      }
+      if (this.selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+        const mailtoLink = `mailto:CRFCQcAdmin@forces.gc.ca?subject=${encodeURIComponent(subject)}`;
         window.location.href = mailtoLink;
         return;
       }

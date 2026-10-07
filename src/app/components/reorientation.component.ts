@@ -2,6 +2,7 @@ import { Component, computed, signal, inject, effect, untracked } from "@angular
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { JobDatabaseService } from "../../services/job-database.service";
+import { LanguageService } from "../../services/language.service";
 import { SharedStateService } from "../../services/shared-state.service";
 import { MelService, MEL_LIMITATIONS } from "../../services/mel.service";
 import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
@@ -76,7 +77,7 @@ const CMR_JOB_DOMAINS: Record<
           <button
             (click)="resetAll()"
             class="bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all text-slate-600 shrink-0 border border-slate-200 mt-1 cursor-pointer"
-            title="Réinitialiser"
+            [title]="langService.isEnglish() ? 'Reset' : 'Réinitialiser'"
           >
             <svg
               class="w-5 h-5"
@@ -95,7 +96,7 @@ const CMR_JOB_DOMAINS: Record<
           <div>
             <div class="flex items-center gap-3">
               <h2 class="text-xl font-bold text-slate-800">
-                Panneau de Réorientation
+                {{ langService.isEnglish() ? 'Reorientation Panel' : 'Panneau de Réorientation' }}
               </h2>
               @if (jobService.sipDate()) {
                 <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium border border-indigo-100 flex items-center gap-1.5 shadow-sm">
@@ -111,14 +112,12 @@ const CMR_JOB_DOMAINS: Record<
                     <path d="M12 18h.01"></path>
                     <path d="M16 18h.01"></path>
                   </svg>
-                  SIP à jour depuis le {{ jobService.sipDate() }}
+                  {{ langService.isEnglish() ? 'SIP up to date since ' : 'SIP à jour depuis le ' }}{{ jobService.sipDate() }}
                 </span>
               }
             </div>
             <p class="text-sm text-slate-500 mt-1">
-              Évaluation manuelle - Sélectionnez les critères rencontrés par le
-              postulant pour évaluer son profil et générer les options de
-              réorientation.
+              {{ langService.isEnglish() ? 'Manual assessment - Select the criteria met by the applicant to evaluate their profile and generate reorientation options.' : 'Évaluation manuelle - Sélectionnez les critères rencontrés par le postulant pour évaluer son profil et générer les options de réorientation.' }}
             </p>
           </div>
         </div>
@@ -136,7 +135,7 @@ const CMR_JOB_DOMAINS: Record<
             [class.border-slate-200]="activeHeaderOptionsCount() === 0"
             [class.text-slate-700]="activeHeaderOptionsCount() === 0"
             [class.hover:bg-slate-50]="activeHeaderOptionsCount() === 0"
-            title="Options supplémentaires"
+            [title]="langService.isEnglish() ? 'Additional options' : 'Options supplémentaires'"
           >
             <svg
               class="w-4 h-4"
@@ -179,10 +178,10 @@ const CMR_JOB_DOMAINS: Record<
               class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3.5 z-50 flex flex-col gap-2.5"
             >
               <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                <span class="text-xs font-black uppercase tracking-wider text-slate-600">Options du volet</span>
+                <span class="text-xs font-black uppercase tracking-wider text-slate-600">{{ langService.isEnglish() ? 'Section options' : 'Options du volet' }}</span>
                 @if (activeHeaderOptionsCount() > 0) {
                   <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
-                    {{ activeHeaderOptionsCount() }} active(s)
+                    {{ activeHeaderOptionsCount() }} {{ langService.isEnglish() ? 'active' : 'active(s)' }}
                   </span>
                 }
               </div>
@@ -210,7 +209,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Ignorer le SIP
+                    {{ langService.isEnglish() ? 'Ignore SIP' : 'Ignorer le SIP' }}
                   </span>
                 </label>
 
@@ -236,7 +235,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Limitation médicale
+                    {{ langService.isEnglish() ? 'Medical limitation' : 'Limitation médicale' }}
                   </span>
                 </label>
 
@@ -262,7 +261,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Inclure opération de traitement
+                    {{ langService.isEnglish() ? 'Include processing operation' : 'Inclure opération de traitement' }}
                   </span>
                 </label>
               </div>
@@ -288,31 +287,31 @@ const CMR_JOB_DOMAINS: Record<
           >
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-1"
-                >Âge du postulant</label
+                >{{ langService.isEnglish() ? 'Applicant age' : 'Âge du postulant' }}</label
               >
               <input
                 type="number"
                 [ngModel]="age()"
                 (ngModelChange)="age.set($event)"
                 class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
-                placeholder="Ex: 18"
+                [placeholder]="langService.isEnglish() ? 'Ex: 18' : 'Ex: 18'"
               />
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-1"
-                >Statut de citoyenneté</label
+                >{{ langService.isEnglish() ? 'Citizenship status' : 'Statut de citoyenneté' }}</label
               >
               <select
                 [ngModel]="citizenship()"
                 (ngModelChange)="citizenship.set($event)"
                 class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
               >
-                <option value="Canadian Citizen">Citoyen canadien</option>
+                <option value="Canadian Citizen">{{ langService.isEnglish() ? 'Canadian citizen' : 'Citoyen canadien' }}</option>
                 <option value="PR > 3 years">
-                  Résident permanent admissible
+                  {{ langService.isEnglish() ? 'Eligible permanent resident' : 'Résident permanent admissible' }}
                 </option>
                 <option value="PR < 3 years">
-                  Résident permanent inadmissible
+                  {{ langService.isEnglish() ? 'Ineligible permanent resident' : 'Résident permanent inadmissible' }}
                 </option>
               </select>
             </div>
@@ -324,7 +323,7 @@ const CMR_JOB_DOMAINS: Record<
               class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm shrink-0 flex flex-col transition-all duration-200"
             >
               <div class="mb-2 text-sm font-bold text-slate-800">
-                Cote Médicale
+                {{ langService.isEnglish() ? 'Medical Category' : 'Cote Médicale' }}
               </div>
               <!-- 3 petits champs pour la cote médicale (V, CV, H) -->
               <div class="flex items-center justify-center overflow-x-auto pb-1 sm:pb-0 w-full">
@@ -376,21 +375,21 @@ const CMR_JOB_DOMAINS: Record<
               <!-- Medical Employment Limitations Table -->
               <div class="mt-6 border border-slate-300 rounded-lg overflow-hidden w-full text-sm">
                 <div class="bg-blue-100 font-bold text-center py-2 border-b border-slate-300 text-slate-800">
-                  Medical Employment Limitations
+                  {{ langService.isEnglish() ? 'Medical Employment Limitations' : "Contraintes à l'emploi pour raisons médicales" }}
                 </div>
                 
                 <!-- Geographic Section -->
                 <div class="flex flex-col md:flex-row border-b border-slate-300 bg-white">
                   <div class="w-full md:w-32 bg-slate-200 flex items-center justify-center font-bold text-slate-700 border-b md:border-b-0 md:border-r border-slate-300 py-2 md:py-0">
-                    <span class="tracking-wider">Geographic</span>
+                    <span class="tracking-wider">{{ langService.isEnglish() ? 'Geographic' : 'Géographique' }}</span>
                   </div>
                   <div class="flex-1 flex flex-col">
                     @for (mel of geographicLimitations; track mel.id) {
                       <label class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0">
                         <input type="checkbox" 
-                               [checked]="hasMel(mel.id)" 
-                               (change)="toggleMel(mel.id)"
-                               class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer" />
+                                [checked]="hasMel(mel.id)" 
+                                (change)="toggleMel(mel.id)"
+                                class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer" />
                         <span class="text-slate-700 leading-snug">{{ mel.text }}</span>
                       </label>
                     }
@@ -400,15 +399,15 @@ const CMR_JOB_DOMAINS: Record<
                 <!-- Occupational Section -->
                 <div class="flex flex-col md:flex-row bg-white">
                   <div class="w-full md:w-32 bg-slate-200 flex items-center justify-center font-bold text-slate-700 border-b md:border-b-0 md:border-r border-slate-300 py-2 md:py-0">
-                    <span class="tracking-wider">Occupational</span>
+                    <span class="tracking-wider">{{ langService.isEnglish() ? 'Occupational' : 'Professionnel' }}</span>
                   </div>
                   <div class="flex-1 flex flex-col">
                     @for (mel of occupationalLimitations; track mel.id) {
                       <label class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0">
                         <input type="checkbox" 
-                               [checked]="hasMel(mel.id)" 
-                               (change)="toggleMel(mel.id)"
-                               class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer" />
+                                [checked]="hasMel(mel.id)" 
+                                (change)="toggleMel(mel.id)"
+                                class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer" />
                         <span class="text-slate-700 leading-snug">{{ mel.text }}</span>
                       </label>
                     }
@@ -438,10 +437,9 @@ const CMR_JOB_DOMAINS: Record<
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
             <div>
-              <p class="font-bold text-sm">Non admissible</p>
+              <p class="font-bold text-sm">{{ langService.isEnglish() ? 'Ineligible' : 'Non admissible' }}</p>
               <p class="text-xs text-red-700 mt-0.5">
-                Les résidents permanents de moins de trois ans ne sont pas
-                admissibles aux Forces armées canadiennes.
+                {{ langService.isEnglish() ? 'Permanent residents under three years are not eligible for the Canadian Armed Forces.' : 'Les résidents permanents de moins de trois ans ne sont pas admissibles aux Forces armées canadiennes.' }}
               </p>
             </div>
           </div>
@@ -467,12 +465,16 @@ const CMR_JOB_DOMAINS: Record<
             </svg>
             <div>
               <p class="font-bold text-sm">
-                {{ age()! >= 57 ? "Âge maximal d'enrôlement dépassé (57 ans et plus)" : "Âge limite dépassé pour les choix de contrats" }}
+                {{ langService.isEnglish() ? (age()! >= 57 ? 'Maximum enrolment age exceeded (57 and older)' : 'Age limit exceeded for contract choices') : (age()! >= 57 ? "Âge maximal d'enrôlement dépassé (57 ans et plus)" : "Âge limite dépassé pour les choix de contrats") }}
               </p>
               <p class="text-xs text-red-700 mt-0.5">
-                {{ age()! >= 57 
-                  ? "57 ans et plus est automatiquement inadmissible aux Forces armées canadiennes. L'âge maximal d'enrôlement admissible est de 56 ans."
-                  : "La règle de durée des contrats initiaux s'applique : Admissible = 59 - durée du contrat initial ou moins (Inadmissible = 60 - durée du contrat initial ou plus)."
+                {{ langService.isEnglish()
+                  ? (age()! >= 57
+                    ? "57 and older is automatically ineligible for the Canadian Armed Forces. The maximum enrolment age is 56."
+                    : "The initial contract duration rule applies: Eligible = 59 - initial contract duration or less (Ineligible = 60 - initial contract duration or more).")
+                  : (age()! >= 57 
+                    ? "57 ans et plus est automatiquement inadmissible aux Forces armées canadiennes. L'âge maximal d'enrôlement admissible est de 56 ans."
+                    : "La règle de durée des contrats initiaux s'applique : Admissible = 59 - durée du contrat initial ou moins (Inadmissible = 60 - durée du contrat initial ou plus).")
                 }}
               </p>
             </div>
@@ -504,17 +506,14 @@ const CMR_JOB_DOMAINS: Record<
                   <line x1="16" y1="17" x2="8" y2="17"></line>
                   <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                Métiers déjà au dossier du postulant
+                {{ langService.isEnglish() ? 'Occupations already on applicant file' : 'Métiers déjà au dossier du postulant' }}
               </h3>
               <p class="text-xs text-slate-500 mt-1">
-                Recherchez et sélectionnez jusqu'à trois métiers déjà inscrits
-                dans le dossier du candidat pour évaluer instantanément son
-                admissibilité réglementaire (âge de retraite forcée,
-                citoyenneté, et scolarité requise).
+                {{ langService.isEnglish() ? 'Search and select up to three occupations already listed on applicant file to instantly evaluate regulatory eligibility (mandatory retirement age, citizenship, and required education).' : "Recherchez et sélectionnez jusqu'à trois métiers déjà inscrits dans le dossier du candidat pour évaluer instantanément son admissibilité réglementaire (âge de retraite forcée, citoyenneté, et scolarité requise)." }}
               </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               <!-- Field 1 -->
               <div
                 class="relative flex flex-col gap-2 p-4 bg-slate-50/50 border border-slate-200 rounded-xl"
@@ -522,12 +521,12 @@ const CMR_JOB_DOMAINS: Record<
                 <div class="flex items-center justify-between">
                   <span
                     class="text-xs font-bold uppercase tracking-wider text-slate-500"
-                    >Choix Métier #1</span
+                    >{{ langService.isEnglish() ? 'Occupation Choice #1' : 'Choix Métier #1' }}</span
                   >
                   <button
                     *ngIf="hasSelected(1)"
                     (click)="clearDossierJob(1, $event)"
-                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5"
+                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5 cursor-pointer"
                   >
                     <svg
                       class="w-3.5 h-3.5"
@@ -542,7 +541,7 @@ const CMR_JOB_DOMAINS: Record<
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    Retirer
+                    {{ langService.isEnglish() ? 'Remove' : 'Retirer' }}
                   </button>
                 </div>
 
@@ -562,11 +561,11 @@ const CMR_JOB_DOMAINS: Record<
                       [disabled]="isFieldDisabled(1)"
                       class="w-full px-3 py-2 text-sm outline-none bg-transparent"
                       [class.cursor-not-allowed]="isFieldDisabled(1)"
-                      placeholder="Rechercher..."
+                      [placeholder]="langService.isEnglish() ? 'Search...' : 'Rechercher...'"
                     />
                     <button
                       *ngIf="!dropdownOpen1() && !isFieldDisabled(1)"
-                      class="p-1 px-2 text-slate-400"
+                      class="p-1 px-2 text-slate-400 cursor-pointer"
                       (click)="openDropdown(1)"
                     >
                       <svg
@@ -610,19 +609,19 @@ const CMR_JOB_DOMAINS: Record<
                   >
                     @if (filteredDossierJobs1().length === 0) {
                       <div class="p-3 text-xs text-slate-500 italic">
-                        Aucun métier trouvé
+                        {{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}
                       </div>
                     } @else {
                       @for (job of filteredDossierJobs1(); track job.id) {
                         <button
                           (click)="selectDossierJob(1, job.id)"
-                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0"
+                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0 cursor-pointer"
                         >
                           <span class="text-slate-800 font-medium"
                             ><span class="font-bold text-indigo-600 mr-1"
                               >[{{ job.id }}]</span
                             >
-                            {{ job.title }}</span
+                            {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span
                           >
                         </button>
                       }
@@ -647,7 +646,7 @@ const CMR_JOB_DOMAINS: Record<
                         [class.text-rose-800]="!s1.isEligible"
                       >
                         <span>{{
-                          s1.isEligible ? "ADMISSIBLE" : "NON ADMISSIBLE"
+                          s1.isEligible ? (langService.isEnglish() ? "ELIGIBLE" : "ADMISSIBLE") : (langService.isEnglish() ? "NOT ELIGIBLE" : "NON ADMISSIBLE")
                         }}</span>
                         <span
                           class="text-[10px] font-mono bg-white/50 px-1 py-0.5 rounded"
@@ -655,7 +654,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                       </div>
                       <p class="font-semibold text-slate-700 truncate mb-2">
-                        {{ s1.job.title }}
+                        {{ langService.isEnglish() && s1.job.titleEn ? s1.job.titleEn : s1.job.title }}
                       </p>
 
                       @if (s1.job.id !== '00003') {
@@ -670,20 +669,17 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s1.isAgeAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Âge : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Age: ' : 'Âge : ' }}</span>
                               @if (age() === null || age()! <= 0) {
                                 <span class="italic text-slate-500"
-                                  >Non renseigné (Contrat :
-                                  {{ s1.durationYears }} ans - âge max:
-                                  {{ 59 - s1.durationYears }} ans)</span
+                                  >{{ langService.isEnglish() ? 'Not provided (Contract: ' + s1.durationYears + ' yrs - max age: ' + (59 - s1.durationYears) + ' yrs)' : 'Non renseigné (Contrat : ' + s1.durationYears + ' ans - âge max: ' + (59 - s1.durationYears) + ' ans)' }}</span
                                 >
                               } @else {
                                 <span
-                                  >{{ age() }} ans.
-                                  @if (!s1.isAgeAdmissible) {
-                                    {{ s1.ageReason }}
+                                  >@if (!s1.isAgeAdmissible) {
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs.' : 'ans.' }} {{ s1.ageReason }}
                                   } @else {
-                                    OK (Contrat {{ s1.durationYears }} ans).
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs. OK (Contract ' + s1.durationYears + ' yrs).' : 'ans. OK (Contrat ' + s1.durationYears + ' ans).' }}
                                   }
                                 </span>
                               }
@@ -702,19 +698,19 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s1.isCitizenshipAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Statut : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Status: ' : 'Statut : ' }}</span>
                               <span>
                                 @if (citizenship() === "Canadian Citizen") {
-                                  Citoyen canadien (OK).
+                                  {{ langService.isEnglish() ? 'Canadian citizen (OK).' : 'Citoyen canadien (OK).' }}
                                 } @else if (citizenship() === "PR > 3 years") {
-                                  R.P. > 3 ans.
+                                  {{ langService.isEnglish() ? 'P.R. > 3 yrs.' : 'R.P. > 3 ans.' }}
                                   @if (!s1.isCitizenshipAdmissible) {
                                     {{ s1.citizenshipReason }}
                                   } @else {
                                     OK.
                                   }
                                 } @else {
-                                  R.P. < 3 ans (Inadmissible).
+                                  {{ langService.isEnglish() ? 'P.R. < 3 yrs (Ineligible).' : 'R.P. < 3 ans (Inadmissible).' }}
                                 }
                               </span>
                             </div>
@@ -730,7 +726,7 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s1.isEducationAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Scolarité : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Education: ' : 'Scolarité : ' }}</span>
                               <span
                                 [class.text-rose-700]="!s1.isEducationAdmissible"
                                 [class.text-emerald-700]="
@@ -739,8 +735,8 @@ const CMR_JOB_DOMAINS: Record<
                               >
                                 {{
                                   s1.isEducationAdmissible
-                                    ? "Scolarité/expérience rencontrée (OK)."
-                                    : "Scolarité/expérience non rencontrée."
+                                    ? (langService.isEnglish() ? "Education/experience met (OK)." : "Scolarité/expérience rencontrée (OK).")
+                                    : (langService.isEnglish() ? "Education/experience requirements not met." : "Scolarité/expérience non rencontrée.")
                                 }}
                               </span>
                             </div>
@@ -757,17 +753,17 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s1.isExtraTestAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Test de sélection ({{ s1.extraTestName }}) : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Selection test (' + s1.extraTestName + '): ' : 'Test de sélection (' + s1.extraTestName + ') : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s1.isExtraTestAdmissible"
                                   [class.text-emerald-700]="s1.isExtraTestAdmissible"
                                 >
                                   {{
                                     s1.isExtraTestAdmissible
-                                      ? "Test réussi (OK)."
+                                      ? (langService.isEnglish() ? "Test passed (OK)." : "Test réussi (OK).")
                                       : (testCspnNotCompleted() && (s1.job.id === '00182' || s1.job.id === '00183' || s1.job.id === '00184'))
-                                        ? "Pas encore complété (Inadmissible)."
-                                        : "Test non réussi ou non complété."
+                                        ? (langService.isEnglish() ? "Not completed yet (Ineligible)." : "Pas encore complété (Inadmissible).")
+                                        : (langService.isEnglish() ? "Test not passed or not completed." : "Test non réussi ou non complété.")
                                   }}
                                 </span>
                               </div>
@@ -785,14 +781,14 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s1.isMedicalAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Cote médicale : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Medical category: ' : 'Cote médicale : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s1.isMedicalAdmissible"
                                   [class.text-emerald-700]="s1.isMedicalAdmissible"
                                 >
                                   {{
                                     s1.isMedicalAdmissible
-                                      ? "Conforme aux exigences (OK)."
+                                      ? (langService.isEnglish() ? "Meets requirements (OK)." : "Conforme aux exigences (OK).")
                                       : s1.medicalReason
                                   }}
                                 </span>
@@ -810,9 +806,9 @@ const CMR_JOB_DOMAINS: Record<
                             <span>⚠</span>
                             <div>
                               @if (s1.isClosedAdmissionOnly) {
-                                Ce métier est fermé pour admission (ouvert en traitement).
+                                {{ langService.isEnglish() ? 'This occupation is closed for admission (open for processing).' : 'Ce métier est fermé pour admission (ouvert en traitement).' }}
                               } @else {
-                                Ce métier est présentement FERMÉ dans le SIP (aucune vacance).
+                                {{ langService.isEnglish() ? 'This occupation is currently CLOSED in the SIP (no vacancies).' : 'Ce métier est présentement FERMÉ dans le SIP (aucune vacance).' }}
                               }
                             </div>
                           </div>
@@ -830,12 +826,12 @@ const CMR_JOB_DOMAINS: Record<
                 <div class="flex items-center justify-between">
                   <span
                     class="text-xs font-bold uppercase tracking-wider text-slate-500"
-                    >Choix Métier #2</span
+                    >{{ langService.isEnglish() ? 'Occupation Choice #2' : 'Choix Métier #2' }}</span
                   >
                   <button
                     *ngIf="hasSelected(2)"
                     (click)="clearDossierJob(2, $event)"
-                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5"
+                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5 cursor-pointer"
                   >
                     <svg
                       class="w-3.5 h-3.5"
@@ -850,7 +846,7 @@ const CMR_JOB_DOMAINS: Record<
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    Retirer
+                    {{ langService.isEnglish() ? 'Remove' : 'Retirer' }}
                   </button>
                 </div>
 
@@ -870,11 +866,11 @@ const CMR_JOB_DOMAINS: Record<
                       [disabled]="isFieldDisabled(2)"
                       class="w-full px-3 py-2 text-sm outline-none bg-transparent"
                       [class.cursor-not-allowed]="isFieldDisabled(2)"
-                      placeholder="Rechercher..."
+                      [placeholder]="langService.isEnglish() ? 'Search...' : 'Rechercher...'"
                     />
                     <button
                       *ngIf="!dropdownOpen2() && !isFieldDisabled(2)"
-                      class="p-1 px-2 text-slate-400"
+                      class="p-1 px-2 text-slate-400 cursor-pointer"
                       (click)="openDropdown(2)"
                     >
                       <svg
@@ -918,19 +914,19 @@ const CMR_JOB_DOMAINS: Record<
                   >
                     @if (filteredDossierJobs2().length === 0) {
                       <div class="p-3 text-xs text-slate-500 italic">
-                        Aucun métier trouvé
+                        {{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}
                       </div>
                     } @else {
                       @for (job of filteredDossierJobs2(); track job.id) {
                         <button
                           (click)="selectDossierJob(2, job.id)"
-                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0"
+                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0 cursor-pointer"
                         >
                           <span class="text-slate-800 font-medium"
                             ><span class="font-bold text-indigo-600 mr-1"
                               >[{{ job.id }}]</span
                             >
-                            {{ job.title }}</span
+                            {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span
                           >
                         </button>
                       }
@@ -955,7 +951,7 @@ const CMR_JOB_DOMAINS: Record<
                         [class.text-rose-800]="!s2.isEligible"
                       >
                         <span>{{
-                          s2.isEligible ? "ADMISSIBLE" : "NON ADMISSIBLE"
+                          s2.isEligible ? (langService.isEnglish() ? "ELIGIBLE" : "ADMISSIBLE") : (langService.isEnglish() ? "NOT ELIGIBLE" : "NON ADMISSIBLE")
                         }}</span>
                         <span
                           class="text-[10px] font-mono bg-white/50 px-1 py-0.5 rounded"
@@ -963,7 +959,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                       </div>
                       <p class="font-semibold text-slate-700 truncate mb-2">
-                        {{ s2.job.title }}
+                        {{ langService.isEnglish() && s2.job.titleEn ? s2.job.titleEn : s2.job.title }}
                       </p>
 
                       @if (s2.job.id !== '00003') {
@@ -978,20 +974,17 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s2.isAgeAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Âge : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Age: ' : 'Âge : ' }}</span>
                               @if (age() === null || age()! <= 0) {
                                 <span class="italic text-slate-500"
-                                  >Non renseigné (Contrat :
-                                  {{ s2.durationYears }} ans - âge max:
-                                  {{ 59 - s2.durationYears }} ans)</span
+                                  >{{ langService.isEnglish() ? 'Not provided (Contract: ' + s2.durationYears + ' yrs - max age: ' + (59 - s2.durationYears) + ' yrs)' : 'Non renseigné (Contrat : ' + s2.durationYears + ' ans - âge max: ' + (59 - s2.durationYears) + ' ans)' }}</span
                                 >
                               } @else {
                                 <span
-                                  >{{ age() }} ans.
-                                  @if (!s2.isAgeAdmissible) {
-                                    {{ s2.ageReason }}
+                                  >@if (!s2.isAgeAdmissible) {
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs.' : 'ans.' }} {{ s2.ageReason }}
                                   } @else {
-                                    OK (Contrat {{ s2.durationYears }} ans).
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs. OK (Contract ' + s2.durationYears + ' yrs).' : 'ans. OK (Contrat ' + s2.durationYears + ' ans).' }}
                                   }
                                 </span>
                               }
@@ -1010,19 +1003,19 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s2.isCitizenshipAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Statut : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Status: ' : 'Statut : ' }}</span>
                               <span>
                                 @if (citizenship() === "Canadian Citizen") {
-                                  Citoyen canadien (OK).
+                                  {{ langService.isEnglish() ? 'Canadian citizen (OK).' : 'Citoyen canadien (OK).' }}
                                 } @else if (citizenship() === "PR > 3 years") {
-                                  R.P. > 3 ans.
+                                  {{ langService.isEnglish() ? 'P.R. > 3 yrs.' : 'R.P. > 3 ans.' }}
                                   @if (!s2.isCitizenshipAdmissible) {
                                     {{ s2.citizenshipReason }}
                                   } @else {
                                     OK.
                                   }
                                 } @else {
-                                  R.P. < 3 ans (Inadmissible).
+                                  {{ langService.isEnglish() ? 'P.R. < 3 yrs (Ineligible).' : 'R.P. < 3 ans (Inadmissible).' }}
                                 }
                               </span>
                             </div>
@@ -1038,7 +1031,7 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s2.isEducationAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Scolarité : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Education: ' : 'Scolarité : ' }}</span>
                               <span
                                 [class.text-rose-700]="!s2.isEducationAdmissible"
                                 [class.text-emerald-700]="
@@ -1047,8 +1040,8 @@ const CMR_JOB_DOMAINS: Record<
                               >
                                 {{
                                   s2.isEducationAdmissible
-                                    ? "Scolarité/expérience rencontrée (OK)."
-                                    : "Scolarité/expérience non rencontrée."
+                                    ? (langService.isEnglish() ? "Education/experience met (OK)." : "Scolarité/expérience rencontrée (OK).")
+                                    : (langService.isEnglish() ? "Education/experience requirements not met." : "Scolarité/expérience non rencontrée.")
                                 }}
                               </span>
                             </div>
@@ -1065,17 +1058,17 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s2.isExtraTestAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Test de sélection ({{ s2.extraTestName }}) : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Selection test (' + s2.extraTestName + '): ' : 'Test de sélection (' + s2.extraTestName + ') : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s2.isExtraTestAdmissible"
                                   [class.text-emerald-700]="s2.isExtraTestAdmissible"
                                 >
                                   {{
                                     s2.isExtraTestAdmissible
-                                      ? "Test réussi (OK)."
+                                      ? (langService.isEnglish() ? "Test passed (OK)." : "Test réussi (OK).")
                                       : (testCspnNotCompleted() && (s2.job.id === '00182' || s2.job.id === '00183' || s2.job.id === '00184'))
-                                        ? "Pas encore complété (Inadmissible)."
-                                        : "Test non réussi ou non complété."
+                                        ? (langService.isEnglish() ? "Not completed yet (Ineligible)." : "Pas encore complété (Inadmissible).")
+                                        : (langService.isEnglish() ? "Test not passed or not completed." : "Test non réussi ou non complété.")
                                   }}
                                 </span>
                               </div>
@@ -1093,14 +1086,14 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s2.isMedicalAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Cote médicale : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Medical category: ' : 'Cote médicale : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s2.isMedicalAdmissible"
                                   [class.text-emerald-700]="s2.isMedicalAdmissible"
                                 >
                                   {{
                                     s2.isMedicalAdmissible
-                                      ? "Conforme aux exigences (OK)."
+                                      ? (langService.isEnglish() ? "Meets requirements (OK)." : "Conforme aux exigences (OK).")
                                       : s2.medicalReason
                                   }}
                                 </span>
@@ -1118,9 +1111,9 @@ const CMR_JOB_DOMAINS: Record<
                             <span>⚠</span>
                             <div>
                               @if (s2.isClosedAdmissionOnly) {
-                                Ce métier est fermé pour admission (ouvert en traitement).
+                                {{ langService.isEnglish() ? 'This occupation is closed for admission (open for processing).' : 'Ce métier est fermé pour admission (ouvert en traitement).' }}
                               } @else {
-                                Ce métier est présentement FERMÉ dans le SIP (aucune vacance).
+                                {{ langService.isEnglish() ? 'This occupation is currently CLOSED in the SIP (no vacancies).' : 'Ce métier est présentement FERMÉ dans le SIP (aucune vacance).' }}
                               }
                             </div>
                           </div>
@@ -1138,12 +1131,12 @@ const CMR_JOB_DOMAINS: Record<
                 <div class="flex items-center justify-between">
                   <span
                     class="text-xs font-bold uppercase tracking-wider text-slate-500"
-                    >Choix Métier #3</span
+                    >{{ langService.isEnglish() ? 'Occupation Choice #3' : 'Choix Métier #3' }}</span
                   >
                   <button
                     *ngIf="hasSelected(3)"
                     (click)="clearDossierJob(3, $event)"
-                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5"
+                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold transition flex items-center gap-0.5 cursor-pointer"
                   >
                     <svg
                       class="w-3.5 h-3.5"
@@ -1158,7 +1151,7 @@ const CMR_JOB_DOMAINS: Record<
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    Retirer
+                    {{ langService.isEnglish() ? 'Remove' : 'Retirer' }}
                   </button>
                 </div>
 
@@ -1178,11 +1171,11 @@ const CMR_JOB_DOMAINS: Record<
                       [disabled]="isFieldDisabled(3)"
                       class="w-full px-3 py-2 text-sm outline-none bg-transparent"
                       [class.cursor-not-allowed]="isFieldDisabled(3)"
-                      placeholder="Rechercher..."
+                      [placeholder]="langService.isEnglish() ? 'Search...' : 'Rechercher...'"
                     />
                     <button
                       *ngIf="!dropdownOpen3() && !isFieldDisabled(3)"
-                      class="p-1 px-2 text-slate-400"
+                      class="p-1 px-2 text-slate-400 cursor-pointer"
                       (click)="openDropdown(3)"
                     >
                       <svg
@@ -1226,19 +1219,19 @@ const CMR_JOB_DOMAINS: Record<
                   >
                     @if (filteredDossierJobs3().length === 0) {
                       <div class="p-3 text-xs text-slate-500 italic">
-                        Aucun métier trouvé
+                        {{ langService.isEnglish() ? 'No occupation found' : 'Aucun métier trouvé' }}
                       </div>
                     } @else {
                       @for (job of filteredDossierJobs3(); track job.id) {
                         <button
                           (click)="selectDossierJob(3, job.id)"
-                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0"
+                          class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition-colors flex items-center justify-between border-b border-slate-100 last:border-0 cursor-pointer"
                         >
                           <span class="text-slate-800 font-medium"
                             ><span class="font-bold text-indigo-600 mr-1"
                               >[{{ job.id }}]</span
                             >
-                            {{ job.title }}</span
+                            {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}</span
                           >
                         </button>
                       }
@@ -1263,7 +1256,7 @@ const CMR_JOB_DOMAINS: Record<
                         [class.text-rose-800]="!s3.isEligible"
                       >
                         <span>{{
-                          s3.isEligible ? "ADMISSIBLE" : "NON ADMISSIBLE"
+                          s3.isEligible ? (langService.isEnglish() ? "ELIGIBLE" : "ADMISSIBLE") : (langService.isEnglish() ? "NOT ELIGIBLE" : "NON ADMISSIBLE")
                         }}</span>
                         <span
                           class="text-[10px] font-mono bg-white/50 px-1 py-0.5 rounded"
@@ -1271,7 +1264,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                       </div>
                       <p class="font-semibold text-slate-700 truncate mb-2">
-                        {{ s3.job.title }}
+                        {{ langService.isEnglish() && s3.job.titleEn ? s3.job.titleEn : s3.job.title }}
                       </p>
 
                       @if (s3.job.id !== '00003') {
@@ -1286,20 +1279,17 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s3.isAgeAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Âge : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Age: ' : 'Âge : ' }}</span>
                               @if (age() === null || age()! <= 0) {
                                 <span class="italic text-slate-500"
-                                  >Non renseigné (Contrat :
-                                  {{ s3.durationYears }} ans - âge max:
-                                  {{ 59 - s3.durationYears }} ans)</span
+                                  >{{ langService.isEnglish() ? 'Not provided (Contract: ' + s3.durationYears + ' yrs - max age: ' + (59 - s3.durationYears) + ' yrs)' : 'Non renseigné (Contrat : ' + s3.durationYears + ' ans - âge max: ' + (59 - s3.durationYears) + ' ans)' }}</span
                                 >
                               } @else {
                                 <span
-                                  >{{ age() }} ans.
-                                  @if (!s3.isAgeAdmissible) {
-                                    {{ s3.ageReason }}
+                                  >@if (!s3.isAgeAdmissible) {
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs.' : 'ans.' }} {{ s3.ageReason }}
                                   } @else {
-                                    OK (Contrat {{ s3.durationYears }} ans).
+                                    {{ age() }} {{ langService.isEnglish() ? 'yrs. OK (Contract ' + s3.durationYears + ' yrs).' : 'ans. OK (Contrat ' + s3.durationYears + ' ans).' }}
                                   }
                                 </span>
                               }
@@ -1318,19 +1308,19 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s3.isCitizenshipAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Statut : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Status: ' : 'Statut : ' }}</span>
                               <span>
                                 @if (citizenship() === "Canadian Citizen") {
-                                  Citoyen canadien (OK).
+                                  {{ langService.isEnglish() ? 'Canadian citizen (OK).' : 'Citoyen canadien (OK).' }}
                                 } @else if (citizenship() === "PR > 3 years") {
-                                  R.P. > 3 ans.
+                                  {{ langService.isEnglish() ? 'P.R. > 3 yrs.' : 'R.P. > 3 ans.' }}
                                   @if (!s3.isCitizenshipAdmissible) {
                                     {{ s3.citizenshipReason }}
                                   } @else {
                                     OK.
                                   }
                                 } @else {
-                                  R.P. < 3 ans (Inadmissible).
+                                  {{ langService.isEnglish() ? 'P.R. < 3 yrs (Ineligible).' : 'R.P. < 3 ans (Inadmissible).' }}
                                 }
                               </span>
                             </div>
@@ -1346,7 +1336,7 @@ const CMR_JOB_DOMAINS: Record<
                               {{ s3.isEducationAdmissible ? "✓" : "✗" }}
                             </span>
                             <div>
-                              <span class="font-semibold">Scolarité : </span>
+                              <span class="font-semibold">{{ langService.isEnglish() ? 'Education: ' : 'Scolarité : ' }}</span>
                               <span
                                 [class.text-rose-700]="!s3.isEducationAdmissible"
                                 [class.text-emerald-700]="
@@ -1355,8 +1345,8 @@ const CMR_JOB_DOMAINS: Record<
                               >
                                 {{
                                   s3.isEducationAdmissible
-                                    ? "Scolarité/expérience rencontrée (OK)."
-                                    : "Scolarité/expérience non rencontrée."
+                                    ? (langService.isEnglish() ? "Education/experience met (OK)." : "Scolarité/expérience rencontrée (OK).")
+                                    : (langService.isEnglish() ? "Education/experience requirements not met." : "Scolarité/expérience non rencontrée.")
                                 }}
                               </span>
                             </div>
@@ -1373,17 +1363,17 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s3.isExtraTestAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Test de sélection ({{ s3.extraTestName }}) : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Selection test (' + s3.extraTestName + '): ' : 'Test de sélection (' + s3.extraTestName + ') : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s3.isExtraTestAdmissible"
                                   [class.text-emerald-700]="s3.isExtraTestAdmissible"
                                 >
                                   {{
                                     s3.isExtraTestAdmissible
-                                      ? "Test réussi (OK)."
+                                      ? (langService.isEnglish() ? "Test passed (OK)." : "Test réussi (OK).")
                                       : (testCspnNotCompleted() && (s3.job.id === '00182' || s3.job.id === '00183' || s3.job.id === '00184'))
-                                        ? "Pas encore complété (Inadmissible)."
-                                        : "Test non réussi ou non complété."
+                                        ? (langService.isEnglish() ? "Not completed yet (Ineligible)." : "Pas encore complété (Inadmissible).")
+                                        : (langService.isEnglish() ? "Test not passed or not completed." : "Test non réussi ou non complété.")
                                   }}
                                 </span>
                               </div>
@@ -1401,14 +1391,14 @@ const CMR_JOB_DOMAINS: Record<
                                 {{ s3.isMedicalAdmissible ? "✓" : "✗" }}
                               </span>
                               <div>
-                                <span class="font-semibold">Cote médicale : </span>
+                                <span class="font-semibold">{{ langService.isEnglish() ? 'Medical category: ' : 'Cote médicale : ' }}</span>
                                 <span
                                   [class.text-rose-700]="!s3.isMedicalAdmissible"
                                   [class.text-emerald-700]="s3.isMedicalAdmissible"
                                 >
                                   {{
                                     s3.isMedicalAdmissible
-                                      ? "Conforme aux exigences (OK)."
+                                      ? (langService.isEnglish() ? "Meets requirements (OK)." : "Conforme aux exigences (OK).")
                                       : s3.medicalReason
                                   }}
                                 </span>
@@ -1426,9 +1416,9 @@ const CMR_JOB_DOMAINS: Record<
                             <span>⚠</span>
                             <div>
                               @if (s3.isClosedAdmissionOnly) {
-                                Ce métier est fermé pour admission (ouvert en traitement).
+                                {{ langService.isEnglish() ? 'This occupation is closed for admission (open for processing).' : 'Ce métier est fermé pour admission (ouvert en traitement).' }}
                               } @else {
-                                Ce métier est présentement FERMÉ dans le SIP (aucune vacance).
+                                {{ langService.isEnglish() ? 'This occupation is currently CLOSED in the SIP (no vacancies).' : 'Ce métier est présentement FERMÉ dans le SIP (aucune vacance).' }}
                               }
                             </div>
                           </div>
@@ -1452,7 +1442,7 @@ const CMR_JOB_DOMAINS: Record<
                 <div class="p-4 pb-0">
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <h3 class="text-lg font-bold text-slate-800">
-                      Scolarité
+                      {{ langService.isEnglish() ? 'Education' : 'Scolarité' }}
                     </h3>
                     <div class="flex flex-col items-start gap-1.5 text-sm font-medium text-slate-700">
                       <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
@@ -1462,7 +1452,7 @@ const CMR_JOB_DOMAINS: Record<
                           (change)="toggleManualCriterion('etude_anglais')"
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span>Étude en anglais</span>
+                        <span>{{ langService.isEnglish() ? 'Studies in English' : 'Étude en anglais' }}</span>
                       </label>
                       <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
                         <input
@@ -1471,7 +1461,7 @@ const CMR_JOB_DOMAINS: Record<
                           (change)="toggleManualCriterion('etude_hors_canada')"
                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span>Étude hors Canada</span>
+                        <span>{{ langService.isEnglish() ? 'Studies outside Canada' : 'Étude hors Canada' }}</span>
                       </label>
                     </div>
                   </div>
@@ -1490,9 +1480,9 @@ const CMR_JOB_DOMAINS: Record<
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'secondaire'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Secondaire
+                      {{ langService.isEnglish() ? 'Secondary' : 'Secondaire' }}
                     </button>
                     <button
                       (click)="activeScolariteTab.set('specialises')"
@@ -1508,9 +1498,9 @@ const CMR_JOB_DOMAINS: Record<
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'specialises'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Cours spécialisés
+                      {{ langService.isEnglish() ? 'Specialized courses' : 'Cours spécialisés' }}
                     </button>
                     <button
                       (click)="activeScolariteTab.set('universitaire')"
@@ -1526,9 +1516,9 @@ const CMR_JOB_DOMAINS: Record<
                       [class.text-slate-500]="
                         activeScolariteTab() !== 'universitaire'
                       "
-                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg"
+                      class="px-4 py-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors hover:text-blue-600 hover:bg-slate-100/50 rounded-t-lg cursor-pointer"
                     >
-                      Universitaire
+                      {{ langService.isEnglish() ? 'University' : 'Universitaire' }}
                     </button>
                   </div>
                 </div>
@@ -1544,7 +1534,7 @@ const CMR_JOB_DOMAINS: Record<
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Année scolaire
+                      {{ langService.isEnglish() ? 'School Grade / Year' : 'Année scolaire' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaAnneeScolaire()"
@@ -1554,11 +1544,11 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(crit.id)"
                         (change)="toggleManualCriterion(crit.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -1568,7 +1558,7 @@ const CMR_JOB_DOMAINS: Record<
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Histoire
+                      {{ langService.isEnglish() ? 'History' : 'Histoire' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaHistoire()"
@@ -1578,11 +1568,11 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(crit.id)"
                         (change)="toggleManualCriterion(crit.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -1592,7 +1582,7 @@ const CMR_JOB_DOMAINS: Record<
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Langue
+                      {{ langService.isEnglish() ? 'Language' : 'Langue' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaLangue()"
@@ -1602,11 +1592,11 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(crit.id)"
                         (change)="toggleManualCriterion(crit.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -1617,7 +1607,7 @@ const CMR_JOB_DOMAINS: Record<
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider"
                       >
-                        Mathématique
+                        {{ langService.isEnglish() ? 'Mathematics' : 'Mathématique' }}
                       </h4>
                       <select
                         [ngModel]="selectedProvince()"
@@ -1625,7 +1615,7 @@ const CMR_JOB_DOMAINS: Record<
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">
-                          {{ p.name }}
+                          {{ langService.isEnglish() && p.nameEn ? p.nameEn : p.name }}
                         </option>
                       </select>
                     </div>
@@ -1637,18 +1627,18 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(m.id)"
                         (change)="toggleManualCriterion(m.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ m.label }}</span
+                        >{{ formatCriterionLabel(m) }}</span
                       >
                     </label>
                     <div
                       *ngIf="mathCoursesForProvince().length === 0"
                       class="text-sm text-slate-500 italic p-2"
                     >
-                      Aucun cours de mathématiques défini pour cette province.
+                      {{ langService.isEnglish() ? 'No math courses defined for this province.' : 'Aucun cours de mathématiques défini pour cette province.' }}
                     </div>
                   </div>
 
@@ -1657,7 +1647,7 @@ const CMR_JOB_DOMAINS: Record<
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Science
+                      {{ langService.isEnglish() ? 'Science' : 'Science' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaScience()"
@@ -1667,11 +1657,11 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(crit.id)"
                         (change)="toggleManualCriterion(crit.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -1681,7 +1671,7 @@ const CMR_JOB_DOMAINS: Record<
                     <h4
                       class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                     >
-                      Informatique
+                      {{ langService.isEnglish() ? 'Computer Science' : 'Informatique' }}
                     </h4>
                     <label
                       *ngFor="let crit of criteriaInformatique()"
@@ -1691,11 +1681,11 @@ const CMR_JOB_DOMAINS: Record<
                         type="checkbox"
                         [checked]="selectedCriteriaIds().has(crit.id)"
                         (change)="toggleManualCriterion(crit.id)"
-                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <span
                         class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                        >{{ crit.label }}</span
+                        >{{ formatCriterionLabel(crit) }}</span
                       >
                     </label>
                   </div>
@@ -1709,7 +1699,7 @@ const CMR_JOB_DOMAINS: Record<
                   <h4
                     class="text-sm font-semibold text-slate-500 mb-2 px-3 uppercase tracking-wider"
                   >
-                    Cours post-secondaire (non universitaire)
+                    {{ langService.isEnglish() ? 'Post-secondary courses (non-university)' : 'Cours post-secondaire (non universitaire)' }}
                   </h4>
                   <label
                     *ngFor="let crit of criteriaCoursSpecialise()"
@@ -1719,18 +1709,18 @@ const CMR_JOB_DOMAINS: Record<
                       type="checkbox"
                       [checked]="selectedCriteriaIds().has(crit.id)"
                       (change)="toggleManualCriterion(crit.id)"
-                      class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                      class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                     />
                     <span
                       class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                      >{{ crit.label }}</span
+                      >{{ formatCriterionLabel(crit) }}</span
                     >
                   </label>
                   <div
                     *ngIf="criteriaCoursSpecialise().length === 0"
                     class="text-sm text-slate-500 italic p-2"
                   >
-                    Aucun critère défini.
+                    {{ langService.isEnglish() ? 'No criteria defined.' : 'Aucun critère défini.' }}
                   </div>
                 </div>
 
@@ -1752,12 +1742,12 @@ const CMR_JOB_DOMAINS: Record<
                         (change)="
                           toggleManualCriterion('univ_1er_cycle_global')
                         "
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider group-hover:text-slate-700"
                       >
-                        Étude de premier cycle
+                        {{ langService.isEnglish() ? 'Undergraduate Studies' : 'Étude de premier cycle' }}
                       </h4>
                     </label>
 
@@ -1767,7 +1757,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('genie')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -1794,12 +1784,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_1er_cycle_genie')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine du Génie
+                            {{ langService.isEnglish() ? 'Engineering Field' : 'Domaine du Génie' }}
                           </h5>
                         </label>
                       </div>
@@ -1817,11 +1807,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -1833,7 +1823,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('sciences')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -1864,12 +1854,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_1er_cycle_sciences')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine des Sciences
+                            {{ langService.isEnglish() ? 'Sciences Field' : 'Domaine des Sciences' }}
                           </h5>
                         </label>
                       </div>
@@ -1887,11 +1877,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -1903,7 +1893,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('arts')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -1930,12 +1920,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_1er_cycle_arts')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine des Arts
+                            {{ langService.isEnglish() ? 'Arts Field' : 'Domaine des Arts' }}
                           </h5>
                         </label>
                       </div>
@@ -1953,11 +1943,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -1969,7 +1959,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('sante')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -1996,12 +1986,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_1er_cycle_sante')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Domaine de la Santé
+                            {{ langService.isEnglish() ? 'Health Field' : 'Domaine de la Santé' }}
                           </h5>
                         </label>
                       </div>
@@ -2019,11 +2009,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -2033,7 +2023,7 @@ const CMR_JOB_DOMAINS: Record<
                       *ngIf="criteriaUniversitaire1erCycle().length === 0"
                       class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                     >
-                      Aucun critère défini pour le moment.
+                      {{ langService.isEnglish() ? 'No criteria defined at the moment.' : 'Aucun critère défini pour le moment.' }}
                     </div>
                   </div>
 
@@ -2050,12 +2040,12 @@ const CMR_JOB_DOMAINS: Record<
                         (change)="
                           toggleManualCriterion('univ_cycle_sup_global')
                         "
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                       />
                       <h4
                         class="text-sm font-semibold text-slate-500 uppercase tracking-wider group-hover:text-slate-700"
                       >
-                        Étude de cycles supérieurs
+                        {{ langService.isEnglish() ? 'Graduate Studies' : 'Étude de cycles supérieurs' }}
                       </h4>
                     </label>
 
@@ -2065,7 +2055,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('maitrise')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -2096,12 +2086,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_cycle_sup_maitrise')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Maîtrise
+                            {{ langService.isEnglish() ? "Master's Degree" : 'Maîtrise' }}
                           </h5>
                         </label>
                       </div>
@@ -2119,11 +2109,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -2135,7 +2125,7 @@ const CMR_JOB_DOMAINS: Record<
                       >
                         <button
                           (click)="toggleDomaine('doctorat')"
-                          class="focus:outline-none flex-shrink-0"
+                          class="focus:outline-none flex-shrink-0 cursor-pointer"
                         >
                           <svg
                             class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-transform"
@@ -2166,12 +2156,12 @@ const CMR_JOB_DOMAINS: Record<
                             (change)="
                               toggleManualCriterion('univ_cycle_sup_doctorat')
                             "
-                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="w-3.5 h-3.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <h5
                             class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition-colors pt-0.5"
                           >
-                            Doctorat
+                            {{ langService.isEnglish() ? 'Doctorate (Ph.D.)' : 'Doctorat' }}
                           </h5>
                         </label>
                       </div>
@@ -2189,11 +2179,11 @@ const CMR_JOB_DOMAINS: Record<
                             type="checkbox"
                             [checked]="selectedCriteriaIds().has(crit.id)"
                             (change)="toggleManualCriterion(crit.id)"
-                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                            class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                           />
                           <span
                             class="text-sm text-slate-700 group-hover:text-slate-900 font-medium"
-                            >{{ crit.label }}</span
+                            >{{ formatCriterionLabel(crit) }}</span
                           >
                         </label>
                       </div>
@@ -2203,7 +2193,7 @@ const CMR_JOB_DOMAINS: Record<
                       *ngIf="criteriaUniversitaireCycleSuperieur().length === 0"
                       class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                     >
-                      Aucun critère défini pour le moment.
+                      {{ langService.isEnglish() ? 'No criteria defined at the moment.' : 'Aucun critère défini pour le moment.' }}
                     </div>
                   </div>
                 </div>
@@ -2217,7 +2207,7 @@ const CMR_JOB_DOMAINS: Record<
               <div class="bg-slate-50 border-b border-slate-200 shrink-0">
                 <div class="p-4 pb-0">
                   <h3 class="text-lg font-bold text-slate-800 mb-3">
-                    Expérience
+                    {{ langService.isEnglish() ? 'Experience' : 'Expérience' }}
                   </h3>
                 </div>
               </div>
@@ -2231,11 +2221,11 @@ const CMR_JOB_DOMAINS: Record<
                           Test
                         </span>
                         <h4 class="text-xs font-bold text-indigo-950 uppercase tracking-wide">
-                          Test supplémentaire
+                          {{ langService.isEnglish() ? 'Extra test' : 'Test supplémentaire' }}
                         </h4>
                       </div>
                       <span class="text-[11px] text-indigo-700 font-medium">
-                        Cocher = Réussi
+                        {{ langService.isEnglish() ? 'Checked = Passed' : 'Cocher = Réussi' }}
                       </span>
                     </div>
 
@@ -2254,11 +2244,11 @@ const CMR_JOB_DOMAINS: Record<
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">ECE</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testEcePassed()" [class.text-emerald-800]="testEcePassed()" [class.bg-slate-100]="!testEcePassed()" [class.text-slate-600]="!testEcePassed()">
-                                  {{ testEcePassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testEcePassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Évaluation des compétences en communication écrite (00203 - Officier des affaires publiques)
+                                {{ langService.isEnglish() ? 'Written Communication Skills Assessment (00203 - Public Affairs Officer)' : 'Évaluation des compétences en communication écrite (00203 - Officier des affaires publiques)' }}
                               </p>
                             </div>
                           </label>
@@ -2279,11 +2269,11 @@ const CMR_JOB_DOMAINS: Record<
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">ESOM</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testEsomPassed()" [class.text-emerald-800]="testEsomPassed()" [class.bg-slate-100]="!testEsomPassed()" [class.text-slate-600]="!testEsomPassed()">
-                                  {{ testEsomPassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testEsomPassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Évaluation de sélection des officiers de marine (00207 - Officier de guerre navale)
+                                {{ langService.isEnglish() ? 'Naval Officer Selection Board (00207 - Naval Warfare Officer)' : 'Évaluation de sélection des officiers de marine (00207 - Officier de guerre navale)' }}
                               </p>
                             </div>
                           </label>
@@ -2304,11 +2294,11 @@ const CMR_JOB_DOMAINS: Record<
                               <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-800">CEOPM</span>
                                 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [class.bg-emerald-100]="testCeopmPassed()" [class.text-emerald-800]="testCeopmPassed()" [class.bg-slate-100]="!testCeopmPassed()" [class.text-slate-600]="!testCeopmPassed()">
-                                  {{ testCeopmPassed() ? "Réussi (Admissible)" : "Non coché (Inadmissible)" }}
+                                  {{ testCeopmPassed() ? (langService.isEnglish() ? 'Passed (Eligible)' : 'Réussi (Admissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)') }}
                                 </span>
                               </div>
                               <p class="text-[11px] text-slate-500 mt-0.5">
-                                Centre d’évaluation des officiers de la police militaire (00214 - Officier de la police militaire)
+                                {{ langService.isEnglish() ? 'Military Police Officer Assessment Centre (00214 - Military Police Officer)' : 'Centre d’évaluation des officiers de la police militaire (00214 - Officier de la police militaire)' }}
                               </p>
                             </div>
                           </label>
@@ -2338,11 +2328,11 @@ const CMR_JOB_DOMAINS: Record<
                                     [class.bg-slate-100]="!testCspnPassed() && !testCspnNotCompleted()"
                                     [class.text-slate-600]="!testCspnPassed() && !testCspnNotCompleted()"
                                   >
-                                    {{ testCspnPassed() ? "Test réussi" : (testCspnNotCompleted() ? "Pas encore complété (Inadmissible)" : "Non coché (Inadmissible)") }}
+                                    {{ testCspnPassed() ? (langService.isEnglish() ? 'Test passed' : 'Test réussi') : (testCspnNotCompleted() ? (langService.isEnglish() ? 'Not completed yet (Ineligible)' : 'Pas encore complété (Inadmissible)') : (langService.isEnglish() ? 'Unchecked (Ineligible)' : 'Non coché (Inadmissible)')) }}
                                   </span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 mt-0.5">
-                                  Centre de sélection du personnel navigant (00182, 00183, 00184)
+                                  {{ langService.isEnglish() ? 'Aircrew Selection Centre (00182, 00183, 00184)' : 'Centre de sélection du personnel navigant (00182, 00183, 00184)' }}
                                 </p>
                               </div>
                             </label>
@@ -2354,14 +2344,14 @@ const CMR_JOB_DOMAINS: Record<
                                 (change)="onCspnNotCompletedToggle($any($event.target).checked)"
                                 class="w-3.5 h-3.5 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer"
                               />
-                              <span class="text-xs font-medium text-amber-900">Pas encore complété</span>
+                              <span class="text-xs font-medium text-amber-900">{{ langService.isEnglish() ? 'Not completed yet' : 'Pas encore complété' }}</span>
                             </label>
                           </div>
 
                           @if (testCspnPassed()) {
                             <div class="mt-2 pl-6 pt-2 border-t border-slate-100 space-y-1.5">
                               <p class="text-[11px] font-semibold text-slate-700 mb-1">
-                                Métiers pour lesquels le test est réussi :
+                                {{ langService.isEnglish() ? 'Trades for which test is passed:' : 'Métiers pour lesquels le test est réussi :' }}
                               </p>
                               <div class="grid grid-cols-1 gap-1.5">
                                 <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
@@ -2372,7 +2362,7 @@ const CMR_JOB_DOMAINS: Record<
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00182</span> - SYSTÈMES DE COMBAT
+                                    <span class="font-bold text-indigo-700">00182</span> - {{ langService.isEnglish() ? 'AIR WEAPONS CONTROLLER / ACSO' : 'SYSTÈMES DE COMBAT' }}
                                   </span>
                                 </label>
 
@@ -2384,7 +2374,7 @@ const CMR_JOB_DOMAINS: Record<
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00183</span> - PILOTE
+                                    <span class="font-bold text-indigo-700">00183</span> - {{ langService.isEnglish() ? 'PILOT' : 'PILOTE' }}
                                   </span>
                                 </label>
 
@@ -2396,7 +2386,7 @@ const CMR_JOB_DOMAINS: Record<
                                     class="w-3.5 h-3.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <span class="text-xs text-slate-800">
-                                    <span class="font-bold text-indigo-700">00184</span> - CONTRÔLE AÉROSPATIAL
+                                    <span class="font-bold text-indigo-700">00184</span> - {{ langService.isEnglish() ? 'AEROSPACE CONTROL' : 'CONTRÔLE AÉROSPATIAL' }}
                                   </span>
                                 </label>
                               </div>
@@ -2417,18 +2407,18 @@ const CMR_JOB_DOMAINS: Record<
                       type="checkbox"
                       [checked]="selectedCriteriaIds().has(crit.id)"
                       (change)="toggleManualCriterion(crit.id)"
-                      class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                      class="mt-0.5 flex-shrink-0 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                     />
                     <span
                       class="text-sm text-slate-700 group-hover:text-slate-900 font-medium whitespace-pre-line"
-                      >{{ crit.label }}</span
+                      >{{ formatCriterionLabel(crit) }}</span
                     >
                   </label>
                   <div
                     *ngIf="criteriaExperience().length === 0"
                     class="text-sm text-slate-500 italic p-3 text-center border border-dashed border-slate-200 rounded-lg"
                   >
-                    Aucune expérience définie.
+                    {{ langService.isEnglish() ? 'No experience defined.' : 'Aucune expérience définie.' }}
                   </div>
                 </div>
               </div>
@@ -2441,7 +2431,7 @@ const CMR_JOB_DOMAINS: Record<
                 <div class="flex items-center gap-2">
                   <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded tracking-wider leading-none">PFOR</span>
                   <h3 class="text-sm font-bold text-slate-800">
-                    Configuration du Postulant PFOR
+                    {{ langService.isEnglish() ? 'ROTP Applicant Settings' : 'Configuration du Postulant PFOR' }}
                   </h3>
                 </div>
               </div>
@@ -2449,7 +2439,7 @@ const CMR_JOB_DOMAINS: Record<
               <!-- Type de PFOR -->
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-2">
-                  Volet PFOR sélectionné
+                  {{ langService.isEnglish() ? 'Selected ROTP Stream' : 'Volet PFOR sélectionné' }}
                 </label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
@@ -2464,12 +2454,12 @@ const CMR_JOB_DOMAINS: Record<
                     [class.text-slate-700]="pforType() !== 'cmr'"
                   >
                     <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">PFOR CMR</span>
+                      <span class="font-bold text-sm">{{ langService.isEnglish() ? 'RMC ROTP' : 'PFOR CMR' }}</span>
                       @if (pforType() === 'cmr') {
                         <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
                       }
                     </div>
-                    <span class="text-xs text-slate-500">Collège militaire royal du Canada (Kingston / Saint-Jean)</span>
+                    <span class="text-xs text-slate-500">{{ langService.isEnglish() ? 'Royal Military College of Canada (Kingston / Saint-Jean)' : 'Collège militaire royal du Canada (Kingston / Saint-Jean)' }}</span>
                   </button>
 
                   <button
@@ -2484,12 +2474,12 @@ const CMR_JOB_DOMAINS: Record<
                     [class.text-slate-700]="pforType() !== 'civil'"
                   >
                     <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">PFOR Civil</span>
+                      <span class="font-bold text-sm">{{ langService.isEnglish() ? 'Civ U ROTP' : 'PFOR Civil' }}</span>
                       @if (pforType() === 'civil') {
                         <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
                       }
                     </div>
-                    <span class="text-xs text-slate-500">Universités civiles canadiennes subventionnées</span>
+                    <span class="text-xs text-slate-500">{{ langService.isEnglish() ? 'Subsidized Canadian civilian universities' : 'Universités civiles canadiennes subventionnées' }}</span>
                   </button>
                 </div>
               </div>
@@ -2498,7 +2488,7 @@ const CMR_JOB_DOMAINS: Record<
               @if (pforType() === 'cmr') {
                 <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
                   <label class="block text-xs font-bold text-slate-700">
-                    Domaines d'études admis au CMR (cochez les domaines rencontrés) :
+                    {{ langService.isEnglish() ? 'Admitted study domains at RMC (check domains met):' : "Domaines d'études admis au CMR (cochez les domaines rencontrés) :" }}
                   </label>
                   <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <label
@@ -2529,7 +2519,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        Arts
+                        {{ langService.isEnglish() ? 'Arts' : 'Arts' }}
                       </span>
                     </label>
 
@@ -2561,7 +2551,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        Sciences
+                        {{ langService.isEnglish() ? 'Sciences' : 'Sciences' }}
                       </span>
                     </label>
 
@@ -2593,7 +2583,7 @@ const CMR_JOB_DOMAINS: Record<
                         >
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        Génie
+                        {{ langService.isEnglish() ? 'Engineering' : 'Génie' }}
                       </span>
                     </label>
                   </div>
@@ -2617,10 +2607,10 @@ const CMR_JOB_DOMAINS: Record<
             >
               <div class="flex items-center gap-2">
                 <span class="p-1 px-2 rounded bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold font-sans uppercase tracking-wider">
-                  Registre
+                  {{ langService.isEnglish() ? 'Registry' : 'Registre' }}
                 </span>
                 <h3 class="text-sm font-bold text-slate-800">
-                  Note du registre / dossier
+                  {{ langService.isEnglish() ? 'Registry / File note' : 'Note du registre / dossier' }}
                 </h3>
               </div>
 
@@ -2648,7 +2638,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Note copiée !
+                    {{ langService.isEnglish() ? 'Note copied!' : 'Note copiée !' }}
                   } @else {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -2673,7 +2663,7 @@ const CMR_JOB_DOMAINS: Record<
                         d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
                       ></path>
                     </svg>
-                    Copier la note
+                    {{ langService.isEnglish() ? 'Copy note' : 'Copier la note' }}
                   }
                 </button>
               </div>
@@ -2694,33 +2684,37 @@ const CMR_JOB_DOMAINS: Record<
             >
               <div class="flex items-center gap-2 flex-wrap">
                 <h3 class="text-sm font-bold text-slate-800">
-                  {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : 'Courriel de réorientation' }}
+                  {{ (citizenship() === 'PR < 3 years')
+                    ? (langService.isEnglish() ? 'Email - Ineligible permanent resident (File closed)' : 'Courriel - Résident permanent inadmissible (Dossier fermé)')
+                    : (age() !== null && age()! >= 57)
+                    ? (langService.isEnglish() ? 'Email - Maximum age exceeded (File closed)' : 'Courriel - Âge maximal dépassé (Dossier fermé)')
+                    : (langService.isEnglish() ? 'Reorientation email' : 'Courriel de réorientation') }}
                 </h3>
                 @if (citizenship() === 'PR < 3 years') {
                   <span
                     class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                   >
-                    Inadmissible (RP &lt; 3 ans)
+                    {{ langService.isEnglish() ? 'Ineligible (PR < 3 yrs)' : 'Inadmissible (RP < 3 ans)' }}
                   </span>
                 } @else if (age() !== null && age()! >= 57) {
                   <span
                     class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                   >
-                    Inadmissible (57+)
+                    {{ langService.isEnglish() ? 'Ineligible (57+)' : 'Inadmissible (57+)' }}
                   </span>
                 } @else {
                   <div class="flex gap-2" *ngIf="eligibleJobs().length > 0">
                     <span
                       class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
                     >
-                      {{ eligibleJobs().length }} métier(s)
+                      {{ eligibleJobs().length }} {{ langService.isEnglish() ? 'trade(s)' : 'métier(s)' }}
                     </span>
                   </div>
                   <div class="flex gap-2" *ngIf="isPforApplicant() && eligibleJobs().length === 0">
                     <span
                       class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full"
                     >
-                      0 métier PFOR ouvert
+                      {{ langService.isEnglish() ? '0 open ROTP trade' : '0 métier PFOR ouvert' }}
                     </span>
                   </div>
                 }
@@ -2735,7 +2729,7 @@ const CMR_JOB_DOMAINS: Record<
                   [class.hover:bg-emerald-700]="copied()"
                   [class.bg-blue-600]="!copied()"
                   [class.hover:bg-blue-700]="!copied()"
-                  title="Exporter vers Outlook"
+                  [title]="langService.isEnglish() ? 'Export to Outlook' : 'Exporter vers Outlook'"
                 >
                   @if (copied()) {
                     <svg
@@ -2752,7 +2746,7 @@ const CMR_JOB_DOMAINS: Record<
                     >
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    Copié ! Ouverture d'Outlook...
+                    {{ langService.isEnglish() ? 'Copied! Opening Outlook...' : "Copié ! Ouverture d'Outlook..." }}
                   } @else {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -2771,7 +2765,7 @@ const CMR_JOB_DOMAINS: Record<
                       <polyline points="14 4 20 4 20 10"></polyline>
                       <line x1="14" y1="10" x2="20" y2="4"></line>
                     </svg>
-                    Exporter vers Outlook
+                    {{ langService.isEnglish() ? 'Export to Outlook' : 'Exporter vers Outlook' }}
                   }
                 </button>
               </div>
@@ -2789,6 +2783,7 @@ const CMR_JOB_DOMAINS: Record<
   `,
 })
 export class ReorientationComponent {
+  langService = inject(LanguageService);
   jobService = inject(JobDatabaseService);
   sharedState = inject(SharedStateService);
   melService = inject(MelService);
@@ -2821,6 +2816,10 @@ export class ReorientationComponent {
 
   toggleMel(melId: string) {
     this.melService.toggleApplicantLimitation(melId);
+  }
+
+  formatCriterionLabel(crit: ManualCriterion | { id: string; label: string; [key: string]: any }): string {
+    return this.reorientationCriteria.formatCriterionLabel(crit);
   }
 
   constructor() {
@@ -2897,11 +2896,11 @@ export class ReorientationComponent {
   selectedProvince = signal<string>("QC");
 
   readonly PROVINCES = [
-    { id: "QC", name: "Québec" },
-    { id: "ON", name: "Ontario" },
-    { id: "BC", name: "C.-B. / Yukon" },
-    { id: "AB", name: "Alberta / T.N.-O. / Nunavut" },
-    { id: "NB_FR", name: "Nouveau-Brunswick (Franco)" },
+    { id: "QC", name: "Québec", nameEn: "Quebec" },
+    { id: "ON", name: "Ontario", nameEn: "Ontario" },
+    { id: "BC", name: "C.-B. / Yukon", nameEn: "B.C. / Yukon" },
+    { id: "AB", name: "Alberta / T.N.-O. / Nunavut", nameEn: "Alberta / N.W.T. / Nunavut" },
+    { id: "NB_FR", name: "Nouveau-Brunswick (Franco)", nameEn: "New Brunswick (French)" },
   ];
 
   readonly MATH_COURSES: Record<
@@ -5460,6 +5459,7 @@ o Médecine d’urgence`,
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
+        "sci_tech4_sci10",
       ],
       jobs: ["00404"],
       allowPR: true,
@@ -5468,6 +5468,7 @@ o Médecine d’urgence`,
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
+        "sci_tech4_sci10",
       ],
       jobs: ["00405"],
       allowPR: true,
@@ -7906,6 +7907,7 @@ o Médecine d’urgence`,
       (j) =>
         j.id.includes(lowQuery) ||
         j.title.toLowerCase().includes(lowQuery) ||
+        (j.titleEn && j.titleEn.toLowerCase().includes(lowQuery)) ||
         (j.abbreviation && j.abbreviation.toLowerCase().includes(lowQuery)),
     );
   }
@@ -7944,17 +7946,18 @@ o Médecine d’urgence`,
       }
     }
 
+    const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
     if (index === 1) {
       this.selectedDossierJobId1.set(jobId);
-      this.searchDossierQuery1.set(`${qb.id} - ${qb.title}`);
+      this.searchDossierQuery1.set(`${qb.id} - ${title}`);
       this.dropdownOpen1.set(false);
     } else if (index === 2) {
       this.selectedDossierJobId2.set(jobId);
-      this.searchDossierQuery2.set(`${qb.id} - ${qb.title}`);
+      this.searchDossierQuery2.set(`${qb.id} - ${title}`);
       this.dropdownOpen2.set(false);
     } else if (index === 3) {
       this.selectedDossierJobId3.set(jobId);
-      this.searchDossierQuery3.set(`${qb.id} - ${qb.title}`);
+      this.searchDossierQuery3.set(`${qb.id} - ${title}`);
       this.dropdownOpen3.set(false);
     }
   }
@@ -8010,7 +8013,10 @@ o Médecine d’urgence`,
         const id = this.selectedDossierJobId1();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.searchDossierQuery1.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.searchDossierQuery1.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.searchDossierQuery1.set("");
         }
@@ -8019,7 +8025,10 @@ o Médecine d’urgence`,
         const id = this.selectedDossierJobId2();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.searchDossierQuery2.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.searchDossierQuery2.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.searchDossierQuery2.set("");
         }
@@ -8028,7 +8037,10 @@ o Médecine d’urgence`,
         const id = this.selectedDossierJobId3();
         if (id) {
           const qb = this.jobService.getAllJobs().find((j) => j.id === id);
-          if (qb) this.searchDossierQuery3.set(`${qb.id} - ${qb.title}`);
+          if (qb) {
+            const title = this.langService.isEnglish() && qb.titleEn ? qb.titleEn : qb.title;
+            this.searchDossierQuery3.set(`${qb.id} - ${title}`);
+          }
         } else {
           this.searchDossierQuery3.set("");
         }
@@ -8093,7 +8105,7 @@ o Médecine d’urgence`,
             if (id === "sci_tech4_sci10") return isFr ? "Science et technologie de sec 4 ou 10e année" : "Grade 10 Science";
             if (id === "chimie_sec5_11e") return isFr ? "Chimie de sec 5 ou 11e année" : "Grade 11 Chemistry";
             if (id === "physique_sec5_11e") return isFr ? "Physique de sec 5 ou 11e année" : "Grade 11 Physics";
-            return crit.label;
+            return isFr ? crit.label : this.formatCriterionLabel(crit);
         }
         if (id === "base_math_10_gen") return isFr ? "Mathématiques de sec 4/10e (générales)" : "Grade 10 Math (General)";
         if (id === "base_math_10_app") return isFr ? "Mathématiques de sec 4/10e (appliquées)" : "Grade 10 Math (Applied)";
@@ -8298,6 +8310,17 @@ o Médecine d’urgence`,
   getCmrAdmittedDomainsEn(): string {
     const domains: string[] = [];
     if (this.cmrArts()) domains.push("Social Sciences and Humanities");
+    if (this.cmrScience()) domains.push("Science");
+    if (this.cmrGenie()) domains.push("Engineering");
+    if (domains.length === 0) return "";
+    if (domains.length === 1) return domains[0];
+    if (domains.length === 2) return `${domains[0]} and ${domains[1]}`;
+    return `${domains[0]}, ${domains[1]}, and ${domains[2]}`;
+  }
+
+  getCmrAdmittedDomainsNoteEn(): string {
+    const domains: string[] = [];
+    if (this.cmrArts()) domains.push("Arts");
     if (this.cmrScience()) domains.push("Science");
     if (this.cmrGenie()) domains.push("Engineering");
     if (domains.length === 0) return "";
@@ -9183,20 +9206,28 @@ o Médecine d’urgence`,
   }
 
   generateNoteText() {
+    const isEn = this.langService.isEnglish();
     const jobIds = this.eligibleJobs();
     if (jobIds.length === 0)
-      return "Aucun critère sélectionné. Impossible de générer la note.";
+      return isEn
+        ? "No criteria selected. Unable to generate note."
+        : "Aucun critère sélectionné. Impossible de générer la note.";
 
-    let text = "Évaluation de réorientation\n====================\n\n";
+    let text = isEn
+      ? "Reorientation Assessment\n====================\n\n"
+      : "Évaluation de réorientation\n====================\n\n";
     if (this.isPforApplicant()) {
-      text += "Programme PFOR :\n";
+      text += isEn ? "ROTP Program :\n" : "Programme PFOR :\n";
       if (this.pforType() === "cmr") {
-        text += `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${this.getCmrAdmittedDomainsNoteFr() || "Non spécifié"}\n`;
+        const domains = isEn ? (this.getCmrAdmittedDomainsNoteEn() || "Not specified") : (this.getCmrAdmittedDomainsNoteFr() || "Non spécifié");
+        text += isEn
+          ? `- Admitted to Royal Military College (RMC) - Field(s) : ${domains}\n`
+          : `- Admis au Collège militaire royal (CMR) - Domaine(s) : ${domains}\n`;
       } else {
-        text += "- Universités civiles\n";
+        text += isEn ? "- Civilian universities\n" : "- Universités civiles\n";
       }
     } else {
-      text += "Critères rencontrés :\n";
+      text += isEn ? "Criteria met :\n" : "Critères rencontrés :\n";
       const selected = this.selectedCriteriaIds();
       const criteriaArray = Array.from(selected);
       const allMathOptions = Object.values(this.MATH_COURSES).reduce(
@@ -9209,21 +9240,22 @@ o Médecine d’urgence`,
 
         const crit = this.manualCriteria.find((c) => c.id === id);
         if (crit) {
-          text += "- " + crit.label + "\n";
+          text += "- " + (isEn && (crit as any).labelEn ? (crit as any).labelEn : crit.label) + "\n";
         } else {
           const mathOpt = allMathOptions.find((m) => m.id === id);
           if (mathOpt) {
-            text += "- " + mathOpt.label + "\n";
+            text += "- " + (isEn && mathOpt.labelEn ? mathOpt.labelEn : mathOpt.label) + "\n";
           }
         }
       }
     }
 
-    text += "\nMétiers admissibles :\n";
+    text += isEn ? "\nEligible occupations :\n" : "\nMétiers admissibles :\n";
     for (const jId of jobIds) {
       const job = this.jobService.getAllJobs().find((j) => j.id === jId);
       if (job) {
-        text += "- " + job.id + " - " + job.title + "\n";
+        const title = isEn && job.titleEn ? job.titleEn : job.title;
+        text += "- " + job.id + " - " + title + "\n";
       } else {
         text += "- " + jId + "\n";
       }
@@ -9231,15 +9263,20 @@ o Médecine d’urgence`,
 
     if (!this.isPforApplicant()) {
       let hasMissingProofs = false;
-      let missingProofsText = "\nPreuves supplémentaires requises :\n";
+      let missingProofsText = isEn
+        ? "\nAdditional proofs required :\n"
+        : "\nPreuves supplémentaires requises :\n";
       for (const jId of jobIds) {
         const missing = this.getMissingProofs(jId);
-        if (missing.fr.length > 0) {
+        const proofsList = isEn ? (missing.en && missing.en.length > 0 ? missing.en : missing.fr) : missing.fr;
+        if (proofsList.length > 0) {
           hasMissingProofs = true;
           const job = this.jobService.getAllJobs().find((j) => j.id === jId);
-          const title = job ? `${job.id} - ${job.title}` : jId;
-          missingProofsText += `\nPour le métier ${title} :\n`;
-          for (const proof of missing.fr) {
+          const title = job ? `${job.id} - ${isEn && job.titleEn ? job.titleEn : job.title}` : jId;
+          missingProofsText += isEn
+            ? `\nFor occupation ${title} :\n`
+            : `\nPour le métier ${title} :\n`;
+          for (const proof of proofsList) {
             missingProofsText += `- ${proof}\n`;
           }
         }
@@ -9257,12 +9294,17 @@ o Médecine d’urgence`,
   noteCopied = signal(false);
 
   generateNoteRegistry(): string {
+    const isEn = this.langService.isEnglish();
     if (this.age() !== null && this.age()! >= 57) {
-      return "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
+      return isEn
+        ? "Step 1 (In progress) - Maximum eligibility age exceeded (57 and older): Ineligible for enrolment in CAF, email sent, file closed."
+        : "Étape 1 (En cours) - Âge maximal d'admissibilité dépassé (57 ans et plus) : Inadmissible pour un enrôlement dans les FAC, courriel envoyé, fermeture du dossier.";
     }
 
     if (this.citizenship() === "PR < 3 years") {
-      return "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
+      return isEn
+        ? "Step 1 (In progress) - Permanent resident under 3 years (Ineligible): Ineligibility email sent (IRCC calculator result +3 years or citizenship required before reapplying), file closed."
+        : "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.";
     }
 
     const dossierIds = [
@@ -9274,117 +9316,133 @@ o Médecine d’urgence`,
     let metierRaison = "";
 
     if (dossierIds.length === 0) {
-      metierRaison = "aucun métier sélectionné au dossier";
+      metierRaison = isEn ? "no occupation selected in file" : "aucun métier sélectionné au dossier";
     } else {
       const parts: string[] = [];
       for (const id of dossierIds) {
         if (id === "00003") {
-          parts.push(`00003 : Sans métier`);
+          parts.push(isEn ? `00003 : Without trade` : `00003 : Sans métier`);
           continue;
         }
         const s = this.evaluateJobAdmissibility(id);
-        let reasonFr = "";
+        let reasonStr = "";
         if (s) {
-          const reasonsFrList: string[] = [];
+          const reasonsList: string[] = [];
           if (s.isJobClosed) {
             if (s.isClosedAdmissionOnly) {
-              reasonsFrList.push("Fermé admission");
+              reasonsList.push(isEn ? "Closed admission" : "Fermé admission");
             } else {
-              reasonsFrList.push(this.isPforApplicant() ? "Fermé PFOR" : "Fermé");
+              reasonsList.push(this.isPforApplicant() ? (isEn ? "Closed ROTP" : "Fermé PFOR") : (isEn ? "Closed" : "Fermé"));
             }
           }
           if (!s.isAgeAdmissible) {
-            reasonsFrList.push("Âge");
+            reasonsList.push(isEn ? "Age" : "Âge");
           }
           if (!s.isCitizenshipAdmissible) {
-            reasonsFrList.push("Citoyenneté requise");
+            reasonsList.push(isEn ? "Citizenship required" : "Citoyenneté requise");
           }
           if (!s.isEducationAdmissible) {
             if (this.isPforApplicant() && this.pforType() === "cmr") {
               const cmrInfo = CMR_JOB_DOMAINS[id];
               if (!cmrInfo) {
-                reasonsFrList.push("Non offert au CMR (PFOR)");
+                reasonsList.push(isEn ? "Not offered at RMC (ROTP)" : "Non offert au CMR (PFOR)");
               } else {
-                reasonsFrList.push(`Non admis au CMR en ${this.getCmrJobRequiredDomainsFr(id)}`);
+                reasonsList.push(isEn
+                  ? `Not admitted to RMC in ${this.getCmrJobRequiredDomainsEn(id)}`
+                  : `Non admis au CMR en ${this.getCmrJobRequiredDomainsFr(id)}`);
               }
             } else if (this.isPforApplicant() && this.pforType() === "civil") {
-              reasonsFrList.push("Non offert en PFOR Civil");
+              reasonsList.push(isEn ? "Not offered in Civilian ROTP" : "Non offert en PFOR Civil");
             } else {
-              reasonsFrList.push("Scolarité/Expérience");
+              reasonsList.push(isEn ? "Education/Experience" : "Scolarité/Expérience");
             }
           }
           if (!s.isMedicalAdmissible) {
-            reasonsFrList.push("Limitation médicale");
+            reasonsList.push(isEn ? "Medical limitation" : "Limitation médicale");
           }
-          if (s.isExtraTestRequired && !s.isExtraTestAdmissible && s.extraTestReasonFr) {
-            reasonsFrList.push(`Test ${s.extraTestName}`);
+          if (s.isExtraTestRequired && !s.isExtraTestAdmissible && (isEn ? s.extraTestReasonEn : s.extraTestReasonFr)) {
+            reasonsList.push(`Test ${s.extraTestName}`);
           }
 
-          if (reasonsFrList.length > 0) {
-            reasonFr = reasonsFrList.join(", ");
+          if (reasonsList.length > 0) {
+            reasonStr = reasonsList.join(", ");
           } else {
-            reasonFr = "Admissible";
+            reasonStr = isEn ? "Eligible" : "Admissible";
           }
         }
-        parts.push(`(${id} : ${reasonFr})`);
+        parts.push(`(${id} : ${reasonStr})`);
       }
       metierRaison = parts.join(", ");
     }
 
     const isPRAdmissible = this.citizenship() === "PR > 3 years";
     const prDemandText = isPRAdmissible
-      ? " et relevés de notes du pays d'origine demandés"
+      ? (isEn ? " and transcripts from country of origin requested" : " et relevés de notes du pays d'origine demandés")
       : "";
 
-    let reoPrefix = "Réorientation nécessaire car inadmissible pour";
+    let reoPrefix = isEn
+      ? "Reorientation required because ineligible for"
+      : "Réorientation nécessaire car inadmissible pour";
+
     if (this.isPforApplicant() && this.pforType() === "cmr") {
-      const cmrDomains = this.getCmrAdmittedDomainsNoteFr();
+      const cmrDomains = isEn ? this.getCmrAdmittedDomainsNoteEn() : this.getCmrAdmittedDomainsNoteFr();
       if (cmrDomains) {
-        reoPrefix = `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
+        reoPrefix = isEn
+          ? `Admitted RMC (${cmrDomains}) - Reorientation required because`
+          : `Admis CMR (${cmrDomains}) - Réorientation nécessaire car`;
       } else {
-        reoPrefix = "PFOR CMR - Réorientation nécessaire car";
+        reoPrefix = isEn
+          ? "ROTP RMC - Reorientation required because"
+          : "PFOR CMR - Réorientation nécessaire car";
       }
     } else if (this.isPforApplicant() && this.pforType() === "civil") {
-      reoPrefix = "PFOR Civil - Réorientation nécessaire car";
+      reoPrefix = isEn
+        ? "Civilian ROTP - Reorientation required because"
+        : "PFOR Civil - Réorientation nécessaire car";
     }
 
-    const reoNote = `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.`;
+    const closureSuffix = isEn
+      ? "Applicant notified of file closure if no action is taken within 30 days."
+      : "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+
+    const reoNote = isEn
+      ? `Step 1 (In progress) - ${reoPrefix} : ${metierRaison}, reorientation email sent${prDemandText}, awaiting applicant reply. ${closureSuffix}`
+      : `Étape 1 (En cours) - ${reoPrefix} : ${metierRaison}, courriel de réo envoyé${prDemandText}, en attente de la réponse du postulant. ${closureSuffix}`;
 
     if ((this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && this.sharedState.taskNote()) {
       const taskNoteRaw = this.sharedState.taskNote();
 
-      // Extrait le message médical s'il est présent
       let medicalSuffix = "";
-      const medicalMarker = "MÉDICAL - TRIAGE PAR MED CHU REQUIS";
-      if (taskNoteRaw.toUpperCase().includes(medicalMarker)) {
-        medicalSuffix = "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      const medicalMarkerFr = "MÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      const medicalMarkerEn = "MEDICAL - TRIAGE BY UHC RMO REQUIRED";
+      if (taskNoteRaw.toUpperCase().includes(medicalMarkerFr) || taskNoteRaw.toUpperCase().includes(medicalMarkerEn)) {
+        medicalSuffix = isEn ? "\n\nMEDICAL - TRIAGE BY UHC RMO REQUIRED" : "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
       }
 
-      // Normalise les notes en extrayant le préfixe et le suffixe commun
-      const prefixRegex = /^Étape 1 \((En cours|en cours)\)\s*-\s*/i;
-      const suffixString = "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+      const prefixRegex = /^(Étape 1 \((En cours|en cours)\)|Step 1 \((In progress|in progress)\))\s*-\s*/i;
 
-      // Pour la note de tâche
       let taskHasPrefix = prefixRegex.test(taskNoteRaw);
       let taskClean = taskNoteRaw.replace(prefixRegex, "").trim();
-      // On retire la partie médicale pour le nettoyage
-      const medicalIndex = taskClean.toUpperCase().indexOf(medicalMarker);
-      if (medicalIndex !== -1) {
-        taskClean = taskClean.substring(0, medicalIndex).trim();
-      }
-      // On retire le suffixe de fermeture de dossier
-      const suffixIndexTask = taskClean.toLowerCase().indexOf(suffixString.toLowerCase());
+      const medIdxFr = taskClean.toUpperCase().indexOf(medicalMarkerFr);
+      if (medIdxFr !== -1) taskClean = taskClean.substring(0, medIdxFr).trim();
+      const medIdxEn = taskClean.toUpperCase().indexOf(medicalMarkerEn);
+      if (medIdxEn !== -1) taskClean = taskClean.substring(0, medIdxEn).trim();
+
+      const suffixIndexTask = taskClean.toLowerCase().indexOf(closureSuffix.toLowerCase());
       if (suffixIndexTask !== -1) {
         taskClean = taskClean.substring(0, suffixIndexTask).trim();
+      }
+      const suffixIndexTaskFr = taskClean.toLowerCase().indexOf("postulant averti de la fermeture".toLowerCase());
+      if (suffixIndexTaskFr !== -1) {
+        taskClean = taskClean.substring(0, suffixIndexTaskFr).trim();
       }
       if (taskClean.endsWith(".")) {
         taskClean = taskClean.slice(0, -1).trim();
       }
 
-      // Pour la note de réorientation
       let reoHasPrefix = prefixRegex.test(reoNote);
       let reoClean = reoNote.replace(prefixRegex, "").trim();
-      const suffixIndexReo = reoClean.toLowerCase().indexOf(suffixString.toLowerCase());
+      const suffixIndexReo = reoClean.toLowerCase().indexOf(closureSuffix.toLowerCase());
       if (suffixIndexReo !== -1) {
         reoClean = reoClean.substring(0, suffixIndexReo).trim();
       }
@@ -9392,23 +9450,21 @@ o Médecine d’urgence`,
         reoClean = reoClean.slice(0, -1).trim();
       }
 
-      // Combine les textes principaux
       let combinedCore = "";
       if (taskClean && reoClean) {
         if (taskClean === reoClean) {
           combinedCore = taskClean;
         } else {
-          combinedCore = `${taskClean} ET ${reoClean}`;
+          combinedCore = isEn ? `${taskClean} AND ${reoClean}` : `${taskClean} ET ${reoClean}`;
         }
       } else {
         combinedCore = taskClean || reoClean;
       }
 
-      // Restaure le préfixe si l'une des deux notes l'avait
       const hasPrefix = taskHasPrefix || reoHasPrefix;
-      const finalPrefix = hasPrefix ? "Étape 1 (En cours) - " : "";
+      const finalPrefix = hasPrefix ? (isEn ? "Step 1 (In progress) - " : "Étape 1 (En cours) - ") : "";
 
-      return `${finalPrefix}${combinedCore}. ${suffixString}${medicalSuffix}`;
+      return `${finalPrefix}${combinedCore}. ${closureSuffix}${medicalSuffix}`;
     }
 
     return reoNote;
@@ -9684,131 +9740,111 @@ o Médecine d’urgence`,
       rawHtml.includes("Bonjour,");
     const mergeTasks = (this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && hasTasks;
 
+    const isEn = this.langService.isEnglish();
+
     if (this.age() !== null && this.age()! >= 57) {
       if (isHtml) {
-        let h = "";
-        h +=
-          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
-        h += '<p class="mt-4">Bonjour,</p>\n';
-        h +=
-          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.</p>\n';
-        h += '<p class="mt-4">Votre dossier sera fermé.</p>\n';
-        h +=
-          '<p class="mt-4">Merci de votre intérêt à joindre les Forces armées canadienne!</p>\n';
-        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
-        h +=
-          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
-        h += '<p class="mt-4">Hello,</p>\n';
-        h +=
-          '<p class="mt-4">Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.</p>\n';
-        h += '<p class="mt-4">Your file will be closed.</p>\n';
-        h +=
-          '<p class="mt-4">Thank you for your interest in joining the Canadian Armed Forces!</p>\n';
-        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
-        return h;
+        const fr = '<p class="mt-4">Bonjour,</p>\n' +
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.</p>\n' +
+          '<p class="mt-4">Votre dossier sera fermé.</p>\n' +
+          '<p class="mt-4">Merci de votre intérêt à joindre les Forces armées canadienne!</p>\n' +
+          '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        const en = '<p class="mt-4">Hello,</p>\n' +
+          '<p class="mt-4">Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.</p>\n' +
+          '<p class="mt-4">Your file will be closed.</p>\n' +
+          '<p class="mt-4">Thank you for your interest in joining the Canadian Armed Forces!</p>\n' +
+          '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        if (isEn) {
+          return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">Le message français suivra.</span></p>\n' +
+            en +
+            '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n' +
+            fr;
+        }
+        return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n' +
+          fr +
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n' +
+          en;
       } else {
-        let p = "";
-        p += "English message will follow.\n\n";
-        p += "Bonjour,\n\n";
-        p +=
-          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.\n\n";
-        p += "Votre dossier sera fermé.\n\n";
-        p += "Merci de votre intérêt à joindre les Forces armées canadienne!\n\n";
-        p += this.sharedState.getSignatureFr() + "\n\n";
-        p +=
-          "______________________________________________________________________________\n\n";
-        p += "Hello,\n\n";
-        p +=
-          "Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.\n\n";
-        p += "Your file will be closed.\n\n";
-        p += "Thank you for your interest in joining the Canadian Armed Forces!\n\n";
-        p += this.sharedState.getSignatureEn();
-        return p;
+        const fr = "Bonjour,\n\n" +
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous dépassez l’âge maximal d’admissibilité (56 ans) pour un enrôlement dans les Forces armées canadiennes (FAC). Toute personne ayant 57 ans ou plus est automatiquement inadmissible à un emploie dans les FAC.\n\n" +
+          "Votre dossier sera fermé.\n\n" +
+          "Merci de votre intérêt à joindre les Forces armées canadienne!\n\n" +
+          this.sharedState.getSignatureFr();
+        const en = "Hello,\n\n" +
+          "Following the analysis of your application file, we have determined that you exceed the maximum eligibility age (56 years) for enrollment in the Canadian Armed Forces (CAF). Anyone aged 57 or older is automatically ineligible for employment in the CAF.\n\n" +
+          "Your file will be closed.\n\n" +
+          "Thank you for your interest in joining the Canadian Armed Forces!\n\n" +
+          this.sharedState.getSignatureEn();
+        if (isEn) {
+          return "Le message français suivra.\n\n" + en + "\n\n______________________________________________________________________________\n\n" + fr;
+        }
+        return "English message will follow.\n\n" + fr + "\n\n______________________________________________________________________________\n\n" + en;
       }
     }
 
     if (this.citizenship() === "PR < 3 years") {
       if (isHtml) {
-        let h = "";
-        h +=
-          '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
-        h += '<p class="mt-4">Bonjour,</p>\n';
-        h +=
-          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.</p>\n';
-        h +=
-          '<p class="mt-4">Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.</p>\n';
-        h +=
-          '<p class="mt-4">Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l\'avenir, vous devez :</p>\n';
-        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
-        h += '  <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>\n';
-        h += '  <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d\'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>\n';
-        h += '</ul>\n';
-        h +=
-          '<p class="mt-4">Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l\'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>\n';
-        h +=
-          '<p class="mt-4">Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>\n';
-        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
-        h +=
-          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
-        h += '<p class="mt-4">Hello,</p>\n';
-        h +=
-          '<p class="mt-4">Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.</p>\n';
-        h +=
-          '<p class="mt-4">To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.</p>\n';
-        h +=
-          '<p class="mt-4">In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>\n';
-        h += '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n';
-        h += '  <li><strong>Either obtain Canadian citizenship;</strong></li>\n';
-        h += '  <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>\n';
-        h += '</ul>\n';
-        h +=
-          '<p class="mt-4">Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>\n';
-        h +=
-          '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.</p>\n';
-        h += '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
-        return h;
+        const fr = '<p class="mt-4">Bonjour,</p>\n' +
+          '<p class="mt-4">Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.</p>\n' +
+          '<p class="mt-4">Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.</p>\n' +
+          '<p class="mt-4">Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l\'avenir, vous devez :</p>\n' +
+          '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n' +
+          '  <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>\n' +
+          '  <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d\'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>\n' +
+          '</ul>\n' +
+          '<p class="mt-4">Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l\'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>\n' +
+          '<p class="mt-4">Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>\n' +
+          '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+        const en = '<p class="mt-4">Hello,</p>\n' +
+          '<p class="mt-4">Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.</p>\n' +
+          '<p class="mt-4">To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.</p>\n' +
+          '<p class="mt-4">In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>\n' +
+          '<ul class="list-disc pl-5 mt-2 mb-4 text-sm text-slate-700" style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">\n' +
+          '  <li><strong>Either obtain Canadian citizenship;</strong></li>\n' +
+          '  <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>\n' +
+          '</ul>\n' +
+          '<p class="mt-4">Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>\n' +
+          '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.</p>\n' +
+          '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+        if (isEn) {
+          return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">Le message français suivra.</span></p>\n' +
+            en +
+            '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n' +
+            fr;
+        }
+        return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n' +
+          fr +
+          '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n' +
+          en;
       } else {
-        let p = "";
-        p += "English message will follow.\n\n";
-        p += "Bonjour,\n\n";
-        p +=
-          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.\n\n";
-        p +=
-          "Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.\n\n";
-        p +=
-          "Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :\n";
-        p += "  - Soit obtenir la citoyenneté canadienne ;\n";
-        p += "  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.\n\n";
-        p +=
-          "Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.\n\n";
-        p += "Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.\n\n";
-        p += this.sharedState.getSignatureFr() + "\n\n";
-        p +=
-          "______________________________________________________________________________\n\n";
-        p += "Hello,\n\n";
-        p +=
-          "Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.\n\n";
-        p +=
-          "To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.\n\n";
-        p +=
-          "In order to become eligible and be able to reapply or proceed with an application in the future, you must:\n";
-        p += "  - Either obtain Canadian citizenship;\n";
-        p += "  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.\n\n";
-        p +=
-          "Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.\n\n";
-        p += "Thank you for your interest in the Canadian Armed Forces.\n\n";
-        p += this.sharedState.getSignatureEn();
-        return p;
+        const fr = "Bonjour,\n\n" +
+          "Suite à l’analyse de votre dossier de candidature, nous constatons que vous êtes présentement inadmissible à un enrôlement dans les Forces armées canadiennes (FAC) sous le statut de résident permanent.\n\n" +
+          "Pour être admissible à un enrôlement dans les FAC à titre de résident permanent, vous devez avoir accumulé au moins trois ans (1 095 jours) de présence physique au Canada.\n\n" +
+          "Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :\n" +
+          "  - Soit obtenir la citoyenneté canadienne ;\n" +
+          "  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.\n\n" +
+          "Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.\n\n" +
+          "Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.\n\n" +
+          this.sharedState.getSignatureFr();
+        const en = "Hello,\n\n" +
+          "Following the analysis of your application file, we regret to inform you that you are currently ineligible for enrolment in the Canadian Armed Forces (CAF) under permanent resident status.\n\n" +
+          "To be eligible for enrolment in the CAF as a permanent resident, you must have accumulated at least three years (1,095 days) of physical presence in Canada.\n\n" +
+          "In order to become eligible and be able to reapply or proceed with an application in the future, you must:\n" +
+          "  - Either obtain Canadian citizenship;\n" +
+          "  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.\n\n" +
+          "Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.\n\n" +
+          "Thank you for your interest in the Canadian Armed Forces.\n\n" +
+          this.sharedState.getSignatureEn();
+        if (isEn) {
+          return "Le message français suivra.\n\n" + en + "\n\n______________________________________________________________________________\n\n" + fr;
+        }
+        return "English message will follow.\n\n" + fr + "\n\n______________________________________________________________________________\n\n" + en;
       }
     }
 
     if (isHtml) {
       // ------------------ HTML VERSION ------------------
       let h = "";
-
-      // Top notice
-      h +=
-        '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
 
       const isPforCmr = this.isPforApplicant() && this.pforType() === "cmr";
       const isPforCivil = this.isPforApplicant() && this.pforType() === "civil";
@@ -10113,8 +10149,8 @@ o Médecine d’urgence`,
       // Signature French
       h += '<p>' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
 
-      // Divider
-      h += '<hr class="my-6 border-slate-200" />\n';
+      const hFr = h;
+      h = "";
 
       // ======================================
       // ENGLISH SECTION
@@ -10420,12 +10456,21 @@ o Médecine d’urgence`,
 
       // Signature English
       h += '<p>' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+      const hEn = h;
 
-      return h;
+      if (isEn) {
+        return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">Le message français suivra.</span></p>\n' +
+          hEn +
+          '<hr class="my-6 border-slate-200" />\n' +
+          hFr;
+      }
+      return '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n' +
+        hFr +
+        '<hr class="my-6 border-slate-200" />\n' +
+        hEn;
     } else {
       // ------------------ PLAIN TEXT VERSION ------------------
       let p = "";
-      p += "English message will follow.\n\n";
 
       const isPforCmr = this.isPforApplicant() && this.pforType() === "cmr";
       const isPforCivil = this.isPforApplicant() && this.pforType() === "civil";
@@ -10693,10 +10738,8 @@ o Médecine d’urgence`,
 
       // Signature French
       p += this.sharedState.getSignatureFr() + "\n\n";
-
-      // Divider
-      p +=
-        "______________________________________________________________________________\n\n";
+      const pFr = p;
+      p = "";
 
       // ENGLISH SECTION
       p += "Hello,\n\n";
@@ -10958,8 +11001,18 @@ o Médecine d’urgence`,
 
       // Signature English
       p += this.sharedState.getSignatureEn() + "\n";
+      const pEn = p;
 
-      return p;
+      if (isEn) {
+        return "Le message français suivra.\n\n" +
+          pEn +
+          "\n\n______________________________________________________________________________\n\n" +
+          pFr;
+      }
+      return "English message will follow.\n\n" +
+        pFr +
+        "\n\n______________________________________________________________________________\n\n" +
+        pEn;
     }
   }
 

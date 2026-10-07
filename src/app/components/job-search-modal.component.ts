@@ -12,6 +12,7 @@ import { CommonModule } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
+import { LanguageService } from "../../services/language.service";
 import { JobEntry } from "../../services/jobs-data";
 import { ReorientationComponent } from "./reorientation.component";
 import { PforComponent } from "./pfor.component";
@@ -66,11 +67,11 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 </svg>
               </button>
               <span class="truncate max-w-[300px]">{{
-                selectedJob()?.title
+                langService.isEnglish() && selectedJob()?.titleEn ? selectedJob()?.titleEn : selectedJob()?.title
               }}</span>
             } @else {
               <span class="bg-indigo-600 text-white text-[11px] font-black px-1.5 py-0.5 rounded tracking-wider leading-none">RÉO</span>
-              <span class="hidden sm:inline">Portail Carrière</span>
+              <span class="hidden sm:inline">{{ langService.isEnglish() ? 'Career Portal' : 'Portail Carrière' }}</span>
             }
           </div>
 
@@ -88,7 +89,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 [class.text-slate-400]="activeTab() !== 'reorientation'"
                 [class.hover:text-white]="activeTab() !== 'reorientation'"
               >
-                Réorientation
+                {{ langService.isEnglish() ? 'Reorientation' : 'Réorientation' }}
               </button>
               <button
                 (click)="setTab('pfor')"
@@ -98,7 +99,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 [class.text-slate-400]="activeTab() !== 'pfor'"
                 [class.hover:text-white]="activeTab() !== 'pfor'"
               >
-                PFOR
+                {{ langService.isEnglish() ? 'ROTP' : 'PFOR' }}
               </button>
             }
             <button
@@ -109,7 +110,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
               [class.text-slate-400]="activeTab() !== 'catalogue'"
               [class.hover:text-white]="activeTab() !== 'catalogue'"
             >
-              Catalogue
+              {{ langService.isEnglish() ? 'Catalogue' : 'Catalogue' }}
             </button>
           </div>
         </div>
@@ -189,7 +190,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
             [class.text-white]="activeTab() === 'reorientation'"
             [class.text-slate-400]="activeTab() !== 'reorientation'"
           >
-            Réorientation
+            {{ langService.isEnglish() ? 'Reorientation' : 'Réorientation' }}
           </button>
           <button
             (click)="setTab('pfor')"
@@ -198,7 +199,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
             [class.text-white]="activeTab() === 'pfor'"
             [class.text-slate-400]="activeTab() !== 'pfor'"
           >
-            PFOR
+            {{ langService.isEnglish() ? 'ROTP' : 'PFOR' }}
           </button>
         }
         <button
@@ -226,7 +227,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
             <div class="flex-1 overflow-y-auto p-6 min-h-0">
               <div class="mb-6 border-b border-slate-200 pb-4">
                 <h2 class="text-2xl font-bold text-slate-800 mb-2">
-                  {{ job.title }}
+                  {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}
                 </h2>
                 <div class="flex flex-wrap gap-2">
                   <span
@@ -242,16 +243,16 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                   @if (isOfficerJob(job.id)) {
                     <span
                       class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-bold border border-purple-200 flex items-center gap-1 shadow-sm"
-                      title="Officier"
+                      [title]="langService.isEnglish() ? 'Officer' : 'Officier'"
                     >
-                      Officier (Off)
+                      {{ langService.isEnglish() ? 'Officer (Off)' : 'Officier (Off)' }}
                     </span>
                   } @else {
                     <span
                       class="bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200 flex items-center gap-1 shadow-sm"
-                      title="Militaire du rang"
+                      [title]="langService.isEnglish() ? 'Non-Commissioned Member' : 'Militaire du rang'"
                     >
-                      Militaire du rang (MR)
+                      {{ langService.isEnglish() ? 'Non-Commissioned Member (NCM)' : 'Militaire du rang (MR)' }}
                     </span>
                   }
 
@@ -272,7 +273,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                       [class.text-indigo-800]="job.element === 'Marine'"
                       [class.border-indigo-200]="job.element === 'Marine'"
                     >
-                      Élément : {{ job.element === 'CMP' ? 'CMP (Choix du postulant)' : job.element }}
+                      {{ langService.isEnglish() ? 'Element: ' : 'Élément : ' }}{{ job.element === 'CMP' ? (langService.isEnglish() ? 'CMP (Applicant choice)' : 'CMP (Choix du postulant)') : (langService.isEnglish() && job.element === 'Armée' ? 'Army' : (langService.isEnglish() && job.element === 'Marine' ? 'Navy' : job.element)) }}
                     </span>
                   }
 
@@ -294,7 +295,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                       </svg>
-                      Citoyen canadien (CC)
+                      {{ langService.isEnglish() ? 'Canadian Citizen (CC)' : 'Citoyen canadien (CC)' }}
                     </span>
                     <span
                       class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 flex items-center gap-1 shadow-sm"
@@ -312,12 +313,12 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                       </svg>
-                      Résident permanent (RP)
+                      {{ langService.isEnglish() ? 'Permanent Resident (PR)' : 'Résident permanent (RP)' }}
                     </span>
                   } @else {
                     <span
                       class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 flex items-center gap-1 shadow-sm"
-                      title="Admissible aux citoyens canadiens uniquement"
+                      [title]="langService.isEnglish() ? 'Eligible for Canadian citizens only' : 'Admissible aux citoyens canadiens uniquement'"
                     >
                       <svg
                         class="w-3.5 h-3.5"
@@ -332,7 +333,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                       </svg>
-                      Citoyen canadien uniquement (CC)
+                      {{ langService.isEnglish() ? 'Canadian Citizen only (CC)' : 'Citoyen canadien uniquement (CC)' }}
                     </span>
                   }
 
@@ -358,7 +359,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                         [class.bg-amber-500]="programs[prog] === 'limité'"
                         [class.bg-rose-500]="programs[prog] === 'f'"
                       ></span>
-                      {{ prog }} : {{ programs[prog] === 'o' ? 'Ouvert' : programs[prog] === 'limité' ? 'Limité' : 'Fermé' }}
+                      {{ prog }} : {{ programs[prog] === 'o' ? (langService.isEnglish() ? 'Open' : 'Ouvert') : programs[prog] === 'limité' ? (langService.isEnglish() ? 'Limited' : 'Limité') : (langService.isEnglish() ? 'Closed' : 'Fermé') }}
                     </span>
                   }
                   @if (getObjectKeys(programs).length === 0) {
@@ -374,7 +375,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                         class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-semibold border border-emerald-200"
                         title="{{ contract.program }}"
                       >
-                        Contrat initial: {{ contract.duration }}
+                        {{ langService.isEnglish() ? 'Initial contract: ' : 'Contrat initial: ' }}{{ contract.duration }}
                         @if (contract.program !== "Enrôlement direct") {
                           ({{ contract.program }})
                         }
@@ -388,7 +389,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
               @if (job.medicalStandard) {
                 <div class="mb-6">
                   <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2">
-                    Profil médical minimal requis
+                    {{ langService.isEnglish() ? 'Minimum Required Medical Profile' : 'Profil médical minimal requis' }}
                   </h3>
                   <div class="flex flex-wrap gap-2">
                     <span class="inline-flex flex-col items-center bg-slate-50 border border-slate-200 rounded-md px-3 py-1 shadow-sm">
@@ -443,13 +444,13 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                           >
                             <tr>
                               <th class="p-3 border border-slate-300 w-1/4">
-                                CANDIDATS
+                                {{ langService.isEnglish() ? 'CANDIDATES' : 'CANDIDATS' }}
                               </th>
                               <th class="p-3 border border-slate-300 w-1/2">
-                                SCOLARITÉ
+                                {{ langService.isEnglish() ? 'EDUCATION' : 'SCOLARITÉ' }}
                               </th>
                               <th class="p-3 border border-slate-300 w-1/4">
-                                EXPÉRIENCE
+                                {{ langService.isEnglish() ? 'EXPERIENCE' : 'EXPÉRIENCE' }}
                               </th>
                             </tr>
                           </thead>
@@ -646,10 +647,10 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 <input
                   #searchInput
                   type="text"
-                  placeholder="Rechercher par titre, ID, abréviation..."
+                  [placeholder]="langService.isEnglish() ? 'Search by title, ID, abbreviation...' : 'Rechercher par titre, ID, abréviation...'"
                   class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                   (input)="onSearch(searchInput.value)"
-                  aria-label="Rechercher un métier"
+                  [attr.aria-label]="langService.isEnglish() ? 'Search for an occupation' : 'Rechercher un métier'"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -680,7 +681,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                       <h3
                         class="font-bold text-slate-800 text-lg group-hover:text-indigo-700 transition-colors"
                       >
-                        {{ job.title }}
+                        {{ langService.isEnglish() && job.titleEn ? job.titleEn : job.title }}
                       </h3>
 
                       <div
@@ -747,22 +748,22 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                           @if (isJobRp(job.id)) {
                             <span
                               class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 font-sans text-[10px] font-bold uppercase tracking-wider"
-                              title="Citoyen canadien"
+                              [title]="langService.isEnglish() ? 'Canadian Citizen' : 'Citoyen canadien'"
                             >
                               CC
                             </span>
                             <span
                               class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200 font-sans text-[10px] font-bold uppercase tracking-wider"
-                              title="Résident permanent"
+                              [title]="langService.isEnglish() ? 'Permanent Resident' : 'Résident permanent'"
                             >
-                              RP
+                              {{ langService.isEnglish() ? 'PR' : 'RP' }}
                             </span>
                           } @else {
                             <span
                               class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 font-sans text-[10px] font-bold uppercase tracking-wider"
-                              title="Citoyen canadien seulement"
+                              [title]="langService.isEnglish() ? 'Canadian Citizen only' : 'Citoyen canadien seulement'"
                             >
-                              CC seulement
+                              {{ langService.isEnglish() ? 'CC only' : 'CC seulement' }}
                             </span>
                           }
 
@@ -770,7 +771,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                           @if (job.medicalStandard) {
                             <span
                               class="bg-white text-slate-600 px-1.5 py-0.5 rounded border border-slate-200 font-mono tracking-tighter text-[11px]"
-                              title="Norme médicale minimale requise (V CV H G O A)"
+                              [title]="langService.isEnglish() ? 'Minimum required medical standard (V CV H G O A)' : 'Norme médicale minimale requise (V CV H G O A)'"
                             >
                               V{{job.medicalStandard.v}} CV{{job.medicalStandard.cv}} H{{job.medicalStandard.h}} G{{job.medicalStandard.g}} O{{job.medicalStandard.o}} A{{job.medicalStandard.a}}
                             </span>
@@ -851,7 +852,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 </div>
               } @empty {
                 <div class="text-center py-12 text-slate-400">
-                  <p>Aucun métier trouvé.</p>
+                  <p>{{ langService.isEnglish() ? 'No occupation found.' : 'Aucun métier trouvé.' }}</p>
                 </div>
               }
             </div>
@@ -894,6 +895,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
 export class JobSearchModalComponent {
   jobService = inject(JobDatabaseService);
   sharedState = inject(SharedStateService);
+  readonly langService = inject(LanguageService);
   private sanitizer = inject(DomSanitizer);
 
   setTab(tab: ModalTab) {

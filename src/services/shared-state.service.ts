@@ -226,7 +226,7 @@ export class SharedStateService {
     }
   }
 
-  getCustomizedScenarioText(bodyText: string, isOta = this.isOtaDossier()): string {
+  getCustomizedScenarioText(bodyText: string, isOta = this.isOtaDossier(), isEn = false): string {
     let text = bodyText;
     const sigFr = this.getSignatureFr(isOta);
     const sigEn = this.getSignatureEn(isOta);
@@ -236,11 +236,20 @@ export class SharedStateService {
     
     let regexEn = new RegExp("Sincerely,[\\s\\S]*?Help Centre \\| Canadian Armed Forces", "g");
     text = text.replace(regexEn, sigEn ? sigEn : "");
+
+    if (isEn && text.includes("______________________________________________________________________________")) {
+      const parts = text.split("______________________________________________________________________________");
+      if (parts.length === 2) {
+        let frPart = parts[0].replace(/^English message will follow\.?\s*/i, "").trim();
+        let enPart = parts[1].replace(/^Le message français suivra\.?\s*/i, "").trim();
+        return `Le message français suivra.\n\n${enPart}\n\n______________________________________________________________________________\n\n${frPart}`;
+      }
+    }
     
     return text;
   }
 
-  getCustomizedScenarioHtml(bodyHtml: string, isOta = this.isOtaDossier()): string {
+  getCustomizedScenarioHtml(bodyHtml: string, isOta = this.isOtaDossier(), isEn = false): string {
     let html = bodyHtml;
     const htmlSigFr = this.getHtmlSignatureFr(isOta);
     const htmlSigEn = this.getHtmlSignatureEn(isOta);
@@ -253,6 +262,29 @@ export class SharedStateService {
     
     let regexEn = new RegExp("<p>Sincerely,<\\/p>[\\s\\S]*?Canadian Armed Forces(?:<\\/a>)?<\\/p>", "g");
     html = html.replace(regexEn, htmlSigEn ? "<p>" + htmlSigEn + "</p>" : "");
+
+    if (isEn && html.includes("______________________________________________________________________________")) {
+      const sep = "<br><p>______________________________________________________________________________</p><br>";
+      const fallbackSep = "<p>______________________________________________________________________________</p>";
+      let parts = html.includes(sep) ? html.split(sep) : html.split(fallbackSep);
+      if (parts.length === 2) {
+        let frPart = parts[0]
+          .replace(/<p><span style="[^"]*">English message will follow\.?<\/span><\/p>/gi, "")
+          .replace(/<p><strong>English message will follow\.?<\/strong><\/p>/gi, "")
+          .replace(/<p>English message will follow\.?<\/p>/gi, "")
+          .replace(/<div[^>]*>/i, "")
+          .trim();
+        let enPart = parts[1]
+          .replace(/<\/div>\s*$/i, "")
+          .trim();
+        return `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+<p><span style="background-color: yellow;">Le message français suivra.</span></p>
+${enPart}
+<br><p>______________________________________________________________________________</p><br>
+${frPart}
+</div>`;
+      }
+    }
     
     return html;
   }

@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnitSession, UNITS_LIST } from '../data/units.data';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-unit-picker',
@@ -21,7 +22,7 @@ import { UnitSession, UNITS_LIST } from '../data/units.data';
   template: `
     <div class="relative w-full" id="unit-picker-container">
       <label class="block font-semibold text-slate-700 mb-1 text-xs">
-        Unité d'affectation :
+        {{ langService.isEnglish() ? 'Posting Unit:' : 'Unité d’affectation :' }}
       </label>
 
       <!-- Input Search Container -->
@@ -37,7 +38,7 @@ import { UnitSession, UNITS_LIST } from '../data/units.data';
             (input)="onInput($any($event.target).value)"
             (focus)="onFocus()"
             class="w-full px-2.5 py-1.5 text-xs outline-none bg-transparent font-medium text-slate-800"
-            placeholder="Rechercher unité (ex: 3229, St-Jean)..."
+            [placeholder]="langService.isEnglish() ? 'Search unit (e.g. 3229, St-Jean)...' : 'Rechercher unité (ex: 3229, St-Jean)...'"
             id="unit-search-input"
           />
 
@@ -46,7 +47,7 @@ import { UnitSession, UNITS_LIST } from '../data/units.data';
               type="button"
               (mousedown)="onClear($event)"
               class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-              title="Effacer l'unité"
+              [title]="langService.isEnglish() ? 'Clear unit' : 'Effacer l’unité'"
               id="clear-unit-btn"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,7 +65,9 @@ import { UnitSession, UNITS_LIST } from '../data/units.data';
           >
             @let filtered = filteredUnits();
             @if (filtered.length === 0) {
-              <div class="p-2 text-slate-400 text-center italic">Aucune unité trouvée</div>
+              <div class="p-2 text-slate-400 text-center italic">
+                {{ langService.isEnglish() ? 'No units found' : 'Aucune unité trouvée' }}
+              </div>
             }
             @for (unit of filtered; track unit.id) {
               <button
@@ -104,6 +107,7 @@ import { UnitSession, UNITS_LIST } from '../data/units.data';
 })
 export class UnitPickerComponent {
   private elementRef = inject(ElementRef);
+  readonly langService = inject(LanguageService);
 
   @Input() selectedId: string = '';
 

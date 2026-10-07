@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Output, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { LanguageService } from "../../services/language.service";
 
 @Component({
   selector: "app-tuto-marcel",
@@ -14,10 +15,38 @@ import { CommonModule } from "@angular/common";
           </div>
           <div>
             <h1 class="text-base font-black text-slate-900 leading-none">
-              Tutoriel MARCEL
+              {{ langService.isEnglish() ? 'MARCEL Tutorial' : 'Tutoriel MARCEL' }}
             </h1>
-            <p class="text-[11px] text-slate-500 mt-1">Vidéo de formation</p>
+            <p class="text-[11px] text-slate-500 mt-1">
+              {{ langService.isEnglish() ? 'Training video' : 'Vidéo de formation' }}
+            </p>
           </div>
+        </div>
+
+        <!-- Language toggle in header -->
+        <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-xs">
+          <button
+            type="button"
+            (click)="langService.setLanguage('fr')"
+            class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+            [class.bg-white]="langService.isFrench()"
+            [class.text-indigo-700]="langService.isFrench()"
+            [class.shadow-xs]="langService.isFrench()"
+            [class.text-slate-600]="!langService.isFrench()"
+          >
+            FR
+          </button>
+          <button
+            type="button"
+            (click)="langService.setLanguage('en')"
+            class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer"
+            [class.bg-white]="langService.isEnglish()"
+            [class.text-indigo-700]="langService.isEnglish()"
+            [class.shadow-xs]="langService.isEnglish()"
+            [class.text-slate-600]="!langService.isEnglish()"
+          >
+            EN
+          </button>
         </div>
       </header>
 
@@ -32,10 +61,10 @@ import { CommonModule } from "@angular/common";
 
           <div class="space-y-1">
             <h2 class="text-lg font-black text-slate-900">
-              Vidéo de formation MARCEL
+              {{ langService.isEnglish() ? 'MARCEL Training Video' : 'Vidéo de formation MARCEL' }}
             </h2>
             <p class="text-xs text-slate-500">
-              Cliquez ci-dessous pour visionner le tutoriel sur YouTube :
+              {{ langService.isEnglish() ? 'Click below to watch the tutorial on YouTube:' : 'Cliquez ci-dessous pour visionner le tutoriel sur YouTube :' }}
             </p>
           </div>
 
@@ -48,7 +77,7 @@ import { CommonModule } from "@angular/common";
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
             </svg>
-            <span>Regarder la vidéo sur YouTube</span>
+            <span>{{ langService.isEnglish() ? 'Watch video on YouTube' : 'Regarder la vidéo sur YouTube' }}</span>
           </a>
 
           <!-- LE SEUL BOUTON DE RETOUR VERS LE CHOIX DE RÔLE -->
@@ -61,7 +90,7 @@ import { CommonModule } from "@angular/common";
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span>Retour au choix de rôle</span>
+              <span>{{ langService.isEnglish() ? 'Back to role selection' : 'Retour au choix de rôle' }}</span>
             </button>
           </div>
         </div>
@@ -69,15 +98,17 @@ import { CommonModule } from "@angular/common";
 
       <!-- FOOTER -->
       <footer class="py-4 text-center text-xs text-slate-400">
-        MARCEL 2.0 — Outil d'aide au recrutement FAC
+        {{ langService.isEnglish() ? 'MARCEL 2.0 — CAF Recruitment Assistant Tool' : "MARCEL 2.0 — Outil d'aide au recrutement FAC" }}
       </footer>
     </div>
   `,
 })
 export class TutoMarcelComponent {
+  readonly langService = inject(LanguageService);
   @Output() close = new EventEmitter<void>();
 
   onBackToRoleChoice() {
     this.close.emit();
   }
 }
+

@@ -2,6 +2,7 @@ import { Injectable, computed, signal, inject } from "@angular/core";
 import { JobDatabaseService } from "./job-database.service";
 import { MelService, MEL_LIMITATIONS } from "./mel.service";
 import { SharedStateService } from "./shared-state.service";
+import { LanguageService } from "./language.service";
 import { JobEntry } from "./jobs-data";
 import {
   ManualCriterion,
@@ -29,11 +30,246 @@ export class ReorientationCriteriaService {
   private jobService = inject(JobDatabaseService);
   private melService = inject(MelService);
   private sharedState = inject(SharedStateService);
+  readonly langService = inject(LanguageService);
 
   readonly PROVINCES = PROVINCES;
   readonly MATH_COURSES = MATH_COURSES;
   readonly MANUAL_CRITERIA = MANUAL_CRITERIA;
   readonly JOB_RULES = JOB_RULES;
+
+  formatCriterionLabel(crit: ManualCriterion | { id: string; label: string; [key: string]: any }): string {
+    if (!crit) return "";
+    if (!this.langService.isEnglish()) {
+      return crit.label || "";
+    }
+    const id = crit.id;
+
+    // School Grade / Year
+    if (id === "des_12e_annee") return "High School Diploma or Grade 12 completed";
+    if (id === "aens") return "School Equivalency Attestation (AENS)";
+    if (id === "sec4_24_credits") return "Grade 10 completed (24 credits)";
+
+    // History
+    if (id === "histoire_sec4") return "Grade 10 History / Sec 4 History";
+
+    // Language
+    if (id === "francais_sec4_10e") return "Grade 10 English or French";
+    if (id === "francais_sec5_11e") return "Grade 11 English or French";
+    if (id === "anglais_sec5_12e") return "Grade 12 / Sec 5 English";
+    if (id === "etude_anglais") return "Studies in English";
+    if (id === "etude_hors_canada") return "Studies outside Canada";
+
+    // Science
+    if (id === "sci_tech4_sci10") return "Grade 10 Science & Technology";
+    if (id === "chimie_sec5_11e") return "Grade 11 Chemistry";
+    if (id === "physique_sec5_11e") return "Grade 11 Physics";
+
+    // Computer Science
+    if (id === "info_sec5_12e") return "Grade 12 Computer Science Course";
+    if (id === "info_prog_11e") return "Grade 11 Computer Programming";
+
+    // Specialized Courses
+    if (id === "cs_autre_dep") return "Other Vocational Diploma (DVS)";
+    if (id === "cs_autre_dec") return "Other College Diploma (DCS)";
+    if (id === "cs_photo_multimedia") return "DCS in Photography, Photojournalism, Multimedia or Graphic Design";
+    if (id === "cs_sec_incendie") return "DVS/DCS in Fire Safety Techniques";
+    if (id === "cs_tech_lab_med") return "Diploma in accredited Medical Laboratory Technology (DCS in Biomedical Analysis)";
+    if (id === "cs_tech_radio_med") return "Diploma in accredited Medical Radiation Technology (DCS in Diagnostic Radiography)";
+    if (id === "cs_tech_ing_biomed") return "Accredited Biomedical Engineering Technology Diploma from a Canadian institution";
+    if (id === "cs_tech_policieres") return "Police Technology / Police Foundations";
+    if (id === "cs_dep_cuisine") return "DVS in Professional Cooking";
+    if (id === "cs_etude_musique") return "Post-secondary studies in Music";
+    if (id === "cs_dep_refrigeration") return "DVS in Refrigeration";
+    if (id === "cs_dep_electricite") return "DVS in Electricity";
+    if (id === "cs_dep_plomberie_chauffage") return "DVS in Plumbing and Heating";
+    if (id === "cs_aec_eaux") return "ACS in Water Treatment";
+    if (id === "cs_dep_charpenterie") return "DVS in Carpentry";
+    if (id === "cs_cert_assist_dentaire") return "National Dental Assisting Examining Board Certificate";
+    if (id === "cs_dep_arpentage_topo") return "DVS in Surveying and Topography";
+    if (id === "cs_dep_sante_infirmiers") return "DVS in Health, Assistance and Nursing Care";
+    if (id === "cs_dip_cyber") return "Post-secondary Diploma in a Cybersecurity-related field";
+    if (id === "cs_dip_genie_sci_app") return "Post-secondary Diploma in Engineering, Engineering Tech, or Applied Sciences";
+    if (id === "cs_cert_soins_param") return "Certificate or Diploma in an accredited Paramedic Training Program";
+    if (id === "cs_tea_m") return "Transport Canada accredited AME-M (Aircraft Maintenance) Diploma";
+    if (id === "cs_tea_e") return "Transport Canada accredited AME-E (Aircraft Avionics) Diploma";
+    if (id === "cs_tea_s") return "Transport Canada accredited AME-S (Aircraft Structures) Diploma";
+
+    // University
+    if (id === "univ_1er_cycle_global") return "Undergraduate Studies";
+    if (id === "univ_1er_cycle_genie") return "Engineering Field";
+    if (id === "univ_1er_cycle_sciences") return "Science Field";
+    if (id === "univ_1er_cycle_arts") return "Arts Field";
+    if (id === "univ_1er_cycle_sante") return "Health Field";
+    if (id === "univ_cycle_sup_global") return "Graduate Studies";
+    if (id === "univ_cycle_sup_maitrise") return "Master's Degree";
+    if (id === "univ_cycle_sup_doctorat") return "Doctorate";
+
+    if (id === "bacc_genie_aerospatiale_aeronautique") return "Aerospace / Aeronautical Engineering";
+    if (id === "bacc_genie_architecture_navale") return "Naval Architecture Engineering";
+    if (id === "bacc_genie_tech_fisheries_memorial") return "Bachelor of Tech (Engineering & Applied Science) - Marine Institute Memorial Univ.";
+    if (id === "bacc_genie_batiment") return "Building Engineering";
+    if (id === "bacc_genie_chimie_chimique") return "Chemical Engineering";
+    if (id === "bacc_genie_civil") return "Civil Engineering";
+    if (id === "bacc_genie_communications") return "Communications Engineering";
+    if (id === "bacc_genie_conception_systemes") return "Systems Design Engineering";
+    if (id === "bacc_genie_cyber_systemes") return "Cyber Systems Engineering";
+    if (id === "bacc_genie_electricite_electrique") return "Electrical Engineering";
+    if (id === "bacc_genie_electromecanique") return "Electromechanical Engineering";
+    if (id === "bacc_genie_energie") return "Energy Engineering";
+    if (id === "bacc_genie_environnemental") return "Environmental Engineering";
+    if (id === "bacc_genie_fabrication") return "Manufacturing Engineering";
+    if (id === "bacc_genie_systemes_electriques_genie") return "Electrical Systems Engineering";
+    if (id === "bacc_genie_systemes_electroniques_genie") return "Electronic Systems Engineering";
+    if (id === "bacc_genie_geologie") return "Geological Engineering";
+    if (id === "bacc_genie_geomatique") return "Geomatics Engineering";
+    if (id === "bacc_genie_gestion") return "Management Engineering";
+    if (id === "bacc_genie_industriel_seul") return "Industrial Engineering";
+    if (id === "bacc_genie_informatique") return "Computer Engineering";
+    if (id === "bacc_genie_ingenierie_gestion") return "Engineering & Management";
+    if (id === "bacc_genie_integration") return "Systems Integration Engineering";
+    if (id === "bacc_genie_logiciel") return "Software Engineering";
+    if (id === "bacc_genie_marine") return "Marine Engineering";
+    if (id === "bacc_genie_maritime") return "Maritime Engineering";
+    if (id === "bacc_genie_materiaux") return "Materials Engineering";
+    if (id === "bacc_genie_materiels") return "Materials & Equipment Engineering";
+    if (id === "bacc_genie_mecanique") return "Mechanical Engineering";
+    if (id === "bacc_genie_mecatronique") return "Mechatronics Engineering";
+    if (id === "bacc_genie_metallurgique") return "Metallurgical Engineering";
+    if (id === "bacc_genie_microelectronique") return "Microelectronics Engineering";
+    if (id === "bacc_genie_minier") return "Mining Engineering";
+    if (id === "bacc_genie_nanotechnologie") return "Nanotechnology Engineering";
+    if (id === "bacc_genie_nucleaire") return "Nuclear Engineering";
+    if (id === "bacc_genie_operations_logistique") return "Operations & Logistics Engineering";
+    if (id === "bacc_genie_ordinateurs") return "Computer Systems Engineering";
+    if (id === "bacc_genie_physique") return "Engineering Physics";
+    if (id === "bacc_genie_physique_technique") return "Technical Physics Engineering";
+    if (id === "bacc_genie_processus") return "Process Engineering";
+    if (id === "bacc_genie_production_automatisee") return "Automated Production Engineering";
+    if (id === "bacc_genie_spatiale") return "Space Engineering";
+    if (id === "bacc_genie_systemes_ingenierie_informatique") return "Software & Systems Engineering";
+    if (id === "bacc_genie_systemes_electricite") return "Electrical Systems";
+    if (id === "bacc_genie_systemes_electromecaniques") return "Electromechanical Systems";
+    if (id === "bacc_genie_systemes_electroniques") return "Electronic Systems";
+    if (id === "bacc_genie_systemes_industriels") return "Industrial Systems";
+    if (id === "bacc_genie_systemes_informatique") return "Computer Systems";
+    if (id === "bacc_genie_systemes_logiciel") return "Software Systems";
+    if (id === "bacc_genie_systemes_mecanique") return "Mechanical Systems";
+    if (id === "bacc_genie_systemes_mecatronique") return "Mechatronics Systems";
+    if (id === "bacc_genie_tech_sci_nautiques_cap_breton") return "BTech - Nautical Sciences (Cape Breton Univ.)";
+    if (id === "bacc_genie_vehicules_automoteurs") return "Automotive Engineering";
+
+    if (id === "bacc_sci_arpentage") return "Surveying";
+    if (id === "bacc_sci_bsc_genie_protection_incendie") return "BSc Fire Protection Engineering";
+    if (id === "bacc_sci_chimie") return "Chemistry";
+    if (id === "bacc_sci_donnees") return "Data Science";
+    if (id === "bacc_sci_environnementales") return "Environmental Science";
+    if (id === "bacc_sci_geologie") return "Geology";
+    if (id === "bacc_sci_geomatique") return "Geomatics";
+
+    // Experience Criteria
+    if (id === "exp_permis_conduire") return "Valid Driver's License (Class 5 / G)";
+    if (id === "exp_sec_incendie") return "Fire Safety / Firefighting Experience or Certificate";
+    if (id === "exp_photo_design") return "Photography or Graphic Design Experience";
+    if (id === "exp_scslm") return "CSMLS / SCSLM Certification";
+    if (id === "exp_acorplm") return "ACORPLM Certification";
+    if (id === "exp_permis_reglementation") return "Unrestricted license or registration (active status) issued by a provincial or territorial regulatory authority";
+    if (id === "exp_lettre_conformite") return "Letter of Good Standing issued by the applicant's regulatory authority";
+    if (id === "exp_lab_6mois") return "At least 6 months full/part-time experience in a clinical medical lab in last 2 years";
+    if (id === "exp_permis_rad") return "Valid Radiation Technology License / Registration from recognized authority";
+    if (id === "exp_assoc_actrm" || id === "exp_association_actrm") return "CAMRT / ACTRM Association Membership or reciprocal agreement";
+    if (id === "exp_lettre_reglementation" || id === "exp_lettre_reglementation_en_regle") return "Letter of Good Standing from Regulatory Authority";
+    if (id === "exp_tech_eb6" || id === "exp_tech_eb_6mois") return "Biomedical Electronics Technologist experience (6+ months in last 2 years)";
+    if (id === "exp_mus_pro") return "Experience as a professional musician in a variety of ensembles and diverse musical styles, e.g. self-employed, or full-time with an orchestra/band";
+    if (id === "exp_ensembles" || id === "exp_mus_ensembles") return "Experience as a musician in a variety of ensembles and diverse musical styles, e.g. self-employed, or full-time with an orchestra/band";
+    if (id === "exp_etudiant_musique" || id === "exp_mus_etudiant") return "Student working towards a Diploma or Bachelor's Degree in Music Performance at a recognized college, conservatory, or university";
+    if (id === "exp_sceau_rouge" || id === "exp_sceau_rouge_cuisine") return "Interprovincial Red Seal Standards Certificate";
+    if (id === "exp_permis_assistant_dentaire") return "Valid Dental Assistant License from Canadian Regulatory Authority";
+    if (id === "exp_lettre_dentaire_en_regle") return "Letter from Professional Regulatory Authority certifying 'Good Standing'";
+    if (id === "exp_permis_infirmier_auxiliaire") return "Valid License to practice as Licensed/Registered Practical Nurse";
+    if (id === "exp_cert_peroperatoire") return "Certification as LPN/RPN in Perioperative Care";
+    if (id === "exp_permis_paramedical") return "Current License/Certification as Paramedic from Canadian Regulatory Authority";
+    if (id === "exp_00189") return "At least 3 months relevant experience in Construction, Facilities, Fire, Environment, Geomatics, Project Mgmt, or Military";
+    if (id === "exp_permis_physiotherapie") return "Active License to practice as Physiotherapist from Provincial/Territorial Regulatory Body";
+    if (id === "exp_lettre_physiotherapie_regle") return "Letter from Regulatory Body certifying 'Good Standing'";
+    if (id === "exp_cert_bned") return "National Dental Examining Board of Canada (NDEB) Certificate";
+    if (id === "exp_permis_medecine_dentaire") return "Unrestricted License to practice Dentistry from Canadian Provincial/Territorial Authority";
+    if (id === "exp_lettre_dentiste_regle") return "Letter from Professional Regulatory Authority certifying 'Good Standing'";
+    if (id === "exp_cv_dentiste_5ans") return "Curriculum Vitae covering up to 5 years of experience as a Dentist";
+    if (id === "exp_permis_pharmacie") return "Unrestricted License to practice Pharmacy in Good Standing";
+    if (id === "exp_lettre_pharmacie_regle") return "Letter from Professional Regulatory Body certifying 'Good Standing'";
+    if (id === "exp_permis_soins_infirmiers") return "Active License in Nursing as Registered Nurse or Nurse Practitioner";
+    if (id === "exp_permis_travail_social") return "Active Unrestricted License as Social Worker from Provincial/Territorial Authority";
+    if (id === "exp_lettre_travail_social_regle") return "Letter from Professional Regulatory Body certifying 'Good Standing'";
+    if (id === "exp_00203") return "At least 1 year cumulative experience in Communications, Journalism, Marketing, Public Affairs, Public Relations, Social Media, etc.";
+    if (id === "exp_permis_droit") return "Licensed to practice Law in a Canadian province or territory";
+    if (id === "exp_lettre_barreau_regle") return "'Member in Good Standing' of a Provincial/Territorial Law Society/Bar";
+    if (id === "exp_00208_bacc") return "At least 1 year full-time work in HR, Selection, Social Sciences Research, or Career Counseling";
+    if (id === "exp_00211_maitrise") return "At least 3 years cumulative full-time experience in Curriculum Dev, Educational Consulting, Instruction, Personnel Training, etc.";
+    if (id === "exp_00349_leader_foi") return "Accredited and recognized Faith Leader within a Faith Tradition supervising in Canada";
+    if (id === "exp_00349_endosse_ciamc") return "Endorsed as Chaplain by the ICCMC";
+    if (id === "exp_00349_entrevue_aum") return "Passed interview and deemed suitable by Chaplain General selection committee";
+    if (id === "exp_00374_cert_permis") return "Physician Assistant Certification Council of Canada (PACCC) Certificate & active License";
+    if (id === "exp_00374_lettre_regle") return "Letter from Regulatory Authority or Clinical Supervisor certifying 'Good Standing'";
+    if (id === "exp_00390_residence") return "Completion of specialized residency accredited by Royal College of Physicians and Surgeons of Canada";
+    if (id === "exp_00390_certification") return "Royal College of Physicians and Surgeons of Canada Certification & Fellowship";
+    if (id === "exp_00390_permis") return "Valid unrestricted Medical License to practice as Specialist in Canada";
+    if (id === "exp_00390_attestation") return "Certificate of Professional Conduct / Good Standing from Medical Regulatory Authority";
+    if (id === "exp_00390_civil") return "Full-time clinical employment in a civilian healthcare facility";
+    if (id === "exp_00393_autorisation") return "Unrestricted License to practice Family Medicine in Canada";
+    if (id === "exp_00393_lettre_regle") return "Letter from Provincial/Territorial Regulatory Authority certifying 'Good Standing'";
+    if (id === "exp_00393_certification") return "Certification in Family Medicine from College of Family Physicians of Canada";
+    if (id === "exp_00398_gestion") return "Minimum 2 years full-time cumulative management experience in healthcare in last 5 years";
+    if (id === "exp_cv_recent") return "Recent up-to-date Curriculum Vitae (CV)";
+
+    // Math courses
+    if (id === "qc_10_gen") return "Math CST IV / 416 (Grade 10 Applied)";
+    if (id === "qc_10_app") return "Math TS IV / 426 (Grade 10 Advanced)";
+    if (id === "qc_10_adv") return "Math SN IV / 436 (Grade 10 Advanced/Theoretical)";
+    if (id === "qc_11_gen") return "Math CST V / 514 (Grade 11 General)";
+    if (id === "qc_11_app") return "Math TS V / 526 (Grade 11 Applied)";
+    if (id === "qc_11_adv") return "Math SN V / 536 (Grade 11 Advanced/Theoretical)";
+    if (id === "qc_12_cegep201") return "CEGEP 201 Applied or Theoretical / Grade 12";
+
+    if (id === "on_10_app") return "MFM2P (Grade 10 Applied)";
+    if (id === "on_10_adv") return "MPM2D (Grade 10 Advanced)";
+    if (id === "on_11_gen") return "MEL3E (Grade 11 General)";
+    if (id === "on_11_app") return "MBF3C (Grade 11 Applied)";
+    if (id === "on_11_adv") return "MCF3M / MCR3U (Grade 11 Advanced)";
+    if (id === "on_12_gen") return "MEL4E (Grade 12 General)";
+    if (id === "on_12_app") return "MAP4C (Grade 12 Applied)";
+    if (id === "on_12_adv") return "MCT4C / MDM4U / MCV4U / MHF4U (Grade 12 Advanced)";
+
+    if (id === "bc_10_gen") return "Workplace / Essential Math 10 (Grade 10 General)";
+    if (id === "bc_10_app") return "Foundations / Applications 10 (Grade 10 Applied)";
+    if (id === "bc_10_adv") return "Principles / Foundations & Pre-calculus 10 (Grade 10 Advanced)";
+    if (id === "bc_11_gen") return "Workplace / Essential Math 11 (Grade 11 General)";
+    if (id === "bc_11_app") return "Foundations 11 (Grade 11 Applied)";
+    if (id === "bc_11_adv") return "Principles / Pre-calculus 11 (Grade 11 Advanced)";
+    if (id === "bc_12_gen") return "Foundations 12 / Computer Science 12 (Grade 12 General)";
+    if (id === "bc_12_app") return "Applications 12 (Grade 12 Applied)";
+    if (id === "bc_12_adv") return "Principles 12 / Pre-calculus 12 / Calculus (Grade 12 Advanced)";
+
+    if (id === "ab_10_gen") return "Math 10-4 (Grade 10 General)";
+    if (id === "ab_10_app") return "Math 10-3 (Grade 10 Applied)";
+    if (id === "ab_10_adv") return "Math 10C (Grade 10 Advanced)";
+    if (id === "ab_11_gen") return "Math 20-4 (Grade 11 General)";
+    if (id === "ab_11_app") return "Math 20-3 / 20-2 (Grade 11 Applied)";
+    if (id === "ab_11_adv") return "Math 20-1 (Grade 11 Advanced)";
+    if (id === "ab_12_app") return "Math 30-3 / 30-2 (Grade 12 Applied)";
+    if (id === "ab_12_adv") return "Math 30-1 / Math 31 (Grade 12 Advanced)";
+
+    if (id === "nbfr_10_gen") return "30231A (Grade 10 General)";
+    if (id === "nbfr_10_app") return "30231BC (Grade 10 Applied)";
+    if (id === "nbfr_11_gen") return "30311A / 30321A (Grade 11 General)";
+    if (id === "nbfr_11_app") return "30311B / 30321B (Grade 11 Applied)";
+    if (id === "nbfr_11_adv") return "30331C (Grade 11 Advanced)";
+    if (id === "nbfr_12_app") return "30411B (Grade 12 Applied)";
+    if (id === "nbfr_12_adv") return "30411C / 30421C / 31411 (Grade 12 Advanced)";
+
+    if ((crit as any).labelEn) return (crit as any).labelEn;
+
+    return crit.label || "";
+  }
 
   // Candidate profile signals
   age = signal<number | null>(null);
@@ -1410,7 +1646,7 @@ export class ReorientationCriteriaService {
           return isFr
             ? "Physique de sec 5 ou 11e année"
             : "Grade 11 Physics";
-        return crit.label;
+        return isFr ? crit.label : this.formatCriterionLabel(crit);
       }
       if (id === "base_math_10_gen")
         return isFr

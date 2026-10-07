@@ -27,11 +27,11 @@ export interface JobRule {
 
 
 export const PROVINCES = [
-    { id: "QC", name: "Québec" },
-    { id: "ON", name: "Ontario" },
-    { id: "BC", name: "C.-B. / Yukon" },
-    { id: "AB", name: "Alberta / T.N.-O. / Nunavut" },
-    { id: "NB_FR", name: "Nouveau-Brunswick (Franco)" },
+    { id: "QC", name: "Québec", nameEn: "Quebec" },
+    { id: "ON", name: "Ontario", nameEn: "Ontario" },
+    { id: "BC", name: "C.-B. / Yukon", nameEn: "B.C. / Yukon" },
+    { id: "AB", name: "Alberta / T.N.-O. / Nunavut", nameEn: "Alberta / N.W.T. / Nunavut" },
+    { id: "NB_FR", name: "Nouveau-Brunswick (Franco)", nameEn: "New Brunswick (French)" },
   ];
 
 
@@ -2596,6 +2596,7 @@ export const JOB_RULES: JobRule[] = [
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
+        "sci_tech4_sci10",
       ],
       jobs: ["00404"],
       allowPR: true,
@@ -2604,6 +2605,7 @@ export const JOB_RULES: JobRule[] = [
       requiredCriteriaIds: [
         "sec4_24_credits",
         "base_math_10_app",
+        "sci_tech4_sci10",
       ],
       jobs: ["00405"],
       allowPR: true,

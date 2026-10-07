@@ -10,6 +10,7 @@ import {
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { LanguageService } from "../../services/language.service";
 
 @Component({
   selector: "app-calendar-picker",
@@ -39,14 +40,14 @@ import { CommonModule } from "@angular/common";
               type="button"
               (click)="onClear($event)"
               class="p-0.5 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer"
-              title="Effacer la date"
+              [title]="langService.isEnglish() ? 'Clear date' : 'Effacer la date'"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           } @else {
-            <span class="text-slate-400 italic">{{ placeholder || 'Aucune date sélectionnée' }}</span>
+            <span class="text-slate-400 italic">{{ placeholder || (langService.isEnglish() ? 'No date selected' : 'Aucune date sélectionnée') }}</span>
           }
         </div>
 
@@ -56,12 +57,12 @@ import { CommonModule } from "@angular/common";
             type="button"
             (click)="toggleCalendar($event)"
             class="px-2.5 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-lg font-medium text-xs flex items-center gap-1.5 transition cursor-pointer shadow-sm active:scale-95"
-            [title]="buttonText || 'Choisir une date dans le calendrier'"
+            [title]="buttonText || (langService.isEnglish() ? 'Pick a date in the calendar' : 'Choisir une date dans le calendrier')"
           >
             <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>{{ buttonText || 'Calendrier' }}</span>
+            <span>{{ buttonText || (langService.isEnglish() ? 'Calendar' : 'Calendrier') }}</span>
           </button>
 
           <!-- Calendar Popup -->
@@ -82,21 +83,21 @@ import { CommonModule } from "@angular/common";
                   type="button"
                   (click)="prevMonth($event)"
                   class="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition cursor-pointer"
-                  title="Mois précédent"
+                  [title]="langService.isEnglish() ? 'Previous month' : 'Mois précédent'"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <div class="flex items-center justify-center gap-1 font-bold text-slate-800 text-center min-w-[130px]">
-                  <span>{{ monthsFrList[currentMonth()] }}</span>
+                  <span>{{ currentMonthName() }}</span>
                   <span>{{ currentYear() }}</span>
                 </div>
                 <button
                   type="button"
                   (click)="nextMonth($event)"
                   class="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition cursor-pointer"
-                  title="Mois suivant"
+                  [title]="langService.isEnglish() ? 'Next month' : 'Mois suivant'"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -106,7 +107,7 @@ import { CommonModule } from "@angular/common";
 
               <!-- Days of Week Headers -->
               <div class="grid grid-cols-7 gap-1 text-center font-semibold text-[10px] text-slate-400 mb-1 shrink-0">
-                @for (dayName of daysOfWeekShort; track dayName) {
+                @for (dayName of currentDaysOfWeek(); track dayName) {
                   <div>{{ dayName }}</div>
                 }
               </div>
@@ -141,7 +142,7 @@ import { CommonModule } from "@angular/common";
                   (click)="selectToday($event)"
                   class="text-indigo-600 hover:text-indigo-800 font-medium hover:underline cursor-pointer"
                 >
-                  Aujourd'hui
+                  {{ langService.isEnglish() ? 'Today' : 'Aujourd’hui' }}
                 </button>
                 <div class="flex items-center gap-2">
                   @if (value) {
@@ -150,7 +151,7 @@ import { CommonModule } from "@angular/common";
                       (click)="onClear($event)"
                       class="text-rose-500 hover:text-rose-700 hover:underline cursor-pointer"
                     >
-                      Effacer
+                      {{ langService.isEnglish() ? 'Clear' : 'Effacer' }}
                     </button>
                   }
                   <button
@@ -158,7 +159,7 @@ import { CommonModule } from "@angular/common";
                     (click)="isOpen.set(false)"
                     class="text-slate-500 hover:text-slate-700 hover:underline cursor-pointer"
                   >
-                    Fermer
+                    {{ langService.isEnglish() ? 'Close' : 'Fermer' }}
                   </button>
                 </div>
               </div>
@@ -175,11 +176,12 @@ import { CommonModule } from "@angular/common";
 })
 export class CalendarPickerComponent {
   private elementRef = inject(ElementRef);
+  readonly langService = inject(LanguageService);
 
   @Input() label: string = "";
   @Input() value: string = "";
-  @Input() placeholder: string = "Sélectionner une date...";
-  @Input() buttonText: string = "Calendrier";
+  @Input() placeholder: string = "";
+  @Input() buttonText: string = "";
   @Input() helperText: string = "";
   @Input() position: 'auto' | 'top' | 'bottom' = 'auto';
   @Input() align: 'right' | 'left' = 'right';
@@ -192,11 +194,26 @@ export class CalendarPickerComponent {
   currentYear = signal<number>(2026);
   currentMonth = signal<number>(new Date().getMonth());
 
-  monthsFrList = [
+  readonly monthsFrList = [
     "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
     "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
   ];
-  daysOfWeekShort = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
+  readonly monthsEnList = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  readonly daysOfWeekFr = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
+  readonly daysOfWeekEn = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+  readonly currentMonthName = computed(() => {
+    const list = this.langService.isEnglish() ? this.monthsEnList : this.monthsFrList;
+    return list[this.currentMonth()];
+  });
+
+  readonly currentDaysOfWeek = computed(() => {
+    return this.langService.isEnglish() ? this.daysOfWeekEn : this.daysOfWeekFr;
+  });
 
   calendarGrid = computed(() => {
     const year = this.currentYear();
