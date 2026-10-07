@@ -10078,8 +10078,8 @@ Thank you for your cooperation.`;
     } else {
       frHtml += `  <li style="margin-bottom: 5px;">Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits <a href="https://forces.ca/fr/carrieres/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Carrières | Forces armées canadiennes</a></li>`;
     }
-    frHtml += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège Militaire Canadien de St-Jean</li>`;
-    frHtml += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège Militaire Canadien de St-Jean</li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Explorer la section <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Foire aux Questions</a> du site internet du Collège militaire royal de Saint-Jean</li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Explorer la <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">chaîne Youtube</a> du Collège militaire royal de Saint-Jean</li>`;
     frHtml += `</ul>`;
 
     frHtml += `<p style="margin-bottom: 5px;"><strong>2- Vous assurer que toutes les tâches sur votre portail sont complétées :</strong></p>`;
@@ -10087,8 +10087,8 @@ Thank you for your cooperation.`;
 
     frHtml += `<p style="margin-bottom: 5px;"><strong>3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :</strong></p>`;
     frHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMC St-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
-    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMC Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMR Saint-Jean, les Remparts : <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    frHtml += `  <li style="margin-bottom: 5px;">Équipes du CMR du Canada situé à Kingston, les Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
     frHtml += `</ul>`;
 
     frHtml += `<p>Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.</p>`;
@@ -10099,8 +10099,8 @@ Thank you for your cooperation.`;
 
     frHtml += this.getPforCaf101HighDemandWarningHtml('fr');
 
-    frHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">Porte ouverte du CMR St-Jean</span></p>`;
-    frHtml += `<p>Nous vous invitons à profiter de la <span style="background-color: #FFFF00;">journée portes ouvertes du Collège militaire royal de Saint-Jean</span>, qui se tiendra le <span style="background-color: #FFFF00; font-weight: bold;">31 octobre 2026 de 8 h 30 à 16 h</span>. <span style="background-color: #FFFF00;">Aucune inscription n'est nécessaire</span>.<br>Venez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.<br>Des visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.<br>Nous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.</p>`;
+    frHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">Journée portes ouvertes et visites - Futurs étudiants - Collège militaire royal de Saint-Jean</span></p>`;
+    frHtml += `<p>Nous vous invitons à profiter de la <span style="background-color: #00FF00; padding: 0 2px;">journée portes ouvertes du Collège militaire royal de Saint-Jean</span>, qui se tiendra le <span style="background-color: #00FF00; font-weight: bold; padding: 0 2px;">31 octobre 2026 de 8 h 30 à 16 h</span>. <span style="background-color: #00FF00; padding: 0 2px;">Aucune inscription n'est nécessaire</span>.<br>Venez découvrir le milieu de vie des aspirants de marine et élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les aspirants de marine et élèves-officiers ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.<br>Des visites guidées d'environ 60 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.<br>Nous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.</p>`;
 
     frHtml += `<p>Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.</p>`;
     frHtml += `<p>` + this.getHtmlSignatureFr() + `</p>`;
@@ -10119,8 +10119,8 @@ Thank you for your cooperation.`;
     } else {
       enHtml += `  <li style="margin-bottom: 5px;">Watch the video and review the description of the trade(s) you are registered for. <a href="https://forces.ca/en/careers/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Careers | Canadian Armed Forces</a></li>`;
     }
-    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Canadian Military College Saint-Jean</li>`;
-    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Canadian Military College Saint-jean</li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Frequently Asked Questions</a> section of the Royal Military College Saint-Jean</li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">Explore the <a href="https://www.youtube.com/@cmrsjrmcsj" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Youtube Channel</a> of the Royal Military College Saint-Jean</li>`;
     enHtml += `</ul>`;
 
     enHtml += `<p style="margin-bottom: 5px;"><strong>2- Ensure all tasks on your portal are completed:</strong></p>`;
@@ -10128,8 +10128,8 @@ Thank you for your cooperation.`;
 
     enHtml += `<p style="margin-bottom: 5px;"><strong>3- If you are a high-level athlete, you can visit the websites of sports teams: </strong></p>`;
     enHtml += `<ul style="margin-top: 0; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
-    enHtml += `  <li style="margin-bottom: 5px;">CMC St-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
-    enHtml += `  <li style="margin-bottom: 5px;">CMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">RMC Saint-Jean Sports teams Les Remparts: <a href="https://gorempartsgo.ca" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">gorempartsgo.ca</a></li>`;
+    enHtml += `  <li style="margin-bottom: 5px;">RMC Kingston Sports teams The Paladins: <a href="https://gopaladinsgo.ca/" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Royal Military College of Canada - Official Athletics Website</a></li>`;
     enHtml += `</ul>`;
 
     enHtml += `<p>If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.</p>`;
@@ -10140,20 +10140,20 @@ Thank you for your cooperation.`;
 
     enHtml += this.getPforCaf101HighDemandWarningHtml('en');
 
-    enHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #FFFF00; font-weight: bold;">RMC Saint-Jean Open House</span></p>`;
-    enHtml += `<p>We invite you to take advantage of the <span style="background-color: #FFFF00;">Royal Military College Saint-Jean Open House</span>, which will be held on <span style="background-color: #FFFF00; font-weight: bold;">October 31, 2026, from 8:30 a.m. to 4:00 p.m.</span> <span style="background-color: #FFFF00;">No registration is required</span>.<br>Come and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.<br>Guided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.<br>We hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.</p>`;
+    enHtml += `<p style="margin-bottom: 5px;"><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">Open House and Visits - Prospective Students - Royal Military College Saint-Jean</span></p>`;
+    enHtml += `<p>We invite you to take advantage of the <span style="background-color: #00FF00; padding: 0 2px;">Royal Military College Saint-Jean Open House</span>, which will be held on <span style="background-color: #00FF00; font-weight: bold; padding: 0 2px;">October 31, 2026, from 8:30 a.m. to 4:00 p.m.</span> <span style="background-color: #00FF00; padding: 0 2px;">No registration is required</span>.<br>Come and discover the life of naval and officer cadets, tour the College facilities, and meet professors, naval and officer cadets, as well as recruiters who will be available to answer your questions.<br>Guided tours of approximately 60 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.<br>We hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.</p>`;
 
     enHtml += `<p>If no action is taken in your portal, your file will automatically close within 30 days.</p>`;
     enHtml += `<p>` + this.getHtmlSignatureEn() + `</p>`;
 
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
     if (isEn) {
-      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">Le message français suivra.</span></p>`;
+      html += `<p><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">Le message français suivra.</span></p>`;
       html += enHtml;
       html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
       html += frHtml;
     } else {
-      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+      html += `<p><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">English message will follow.</span></p>`;
       html += frHtml;
       html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
       html += enHtml;
@@ -10240,13 +10240,13 @@ Thank you for your cooperation.`;
     } else {
       frPlain += `• Regarder la vidéo et description du ou des métier/s pour lesquels vous êtes inscrits Carrières | Forces armées canadiennes (https://forces.ca/fr/carrieres/)\n`;
     }
-    frPlain += `• Explorer la section Foire aux Questions du site internet du Collège Militaire Canadien de St-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
-    frPlain += `• Explorer la chaîne Youtube du Collège Militaire Canadien de St-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    frPlain += `• Explorer la section Foire aux Questions du site internet du Collège militaire royal de Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp)\n`;
+    frPlain += `• Explorer la chaîne Youtube du Collège militaire royal de Saint-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
     frPlain += `2- Vous assurer que toutes les tâches sur votre portail sont complétées :\n`;
     frPlain += `Veuillez vous connecter à votre portail afin de vous assurer que toutes les tâches sont complétées : Lien vers le Portail d'enrôlement des Forces armées canadiennes (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
     frPlain += `3- Si vous êtes un athlète de haut-niveau, vous pouvez vous rendre sur les sites internets des équipes sportives :\n`;
-    frPlain += `• Équipes du CMC St-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
-    frPlain += `• Équipes du CMC Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    frPlain += `• Équipes du CMR Saint-Jean, les Remparts : gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    frPlain += `• Équipes du CMR du Canada situé à Kingston, les Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
     frPlain += `Si vous êtes un athlète de haut-niveau, il est possible pour vous de communiquer avec l’une des équipes pour vous informer au sujet des différentes équipes et des sélections de ces équipes. Pour savoir avec laquelle des équipes communiquer, n’hésitez pas à poser la question au centre de recrutement qui traite votre dossier.\n\n`;
 
     if (nonMandatoryTasksFr) {
@@ -10255,8 +10255,8 @@ Thank you for your cooperation.`;
 
     frPlain += this.getPforCaf101HighDemandWarningPlain('fr');
 
-    frPlain += `Porte ouverte du CMR St-Jean\n`;
-    frPlain += `Nous vous invitons à profiter de la journée portes ouvertes du Collège militaire royal de Saint-Jean, qui se tiendra le 31 octobre 2026 de 8 h 30 à 16 h. Aucune inscription n'est nécessaire.\nVenez découvrir le milieu de vie des élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les étudiants ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.\nDes visites guidées d'environ 30 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.\nNous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.\n\n`;
+    frPlain += `Journée portes ouvertes et visites - Futurs étudiants - Collège militaire royal de Saint-Jean\n`;
+    frPlain += `Nous vous invitons à profiter de la journée portes ouvertes du Collège militaire royal de Saint-Jean, qui se tiendra le 31 octobre 2026 de 8 h 30 à 16 h. Aucune inscription n'est nécessaire.\nVenez découvrir le milieu de vie des aspirants de marine et élèves-officiers, visiter les installations du Collège et rencontrer les professeurs, les aspirants de marine et élèves-officiers ainsi que les recruteurs qui seront disponibles pour répondre à vos questions.\nDes visites guidées d'environ 60 minutes sont offertes en continu tout au long de la journée, vous permettant d'arriver au moment qui vous convient le mieux.\nNous espérons avoir l'occasion de vous accueillir et de vous faire découvrir tout ce que le Collège militaire royal de Saint-Jean peut vous offrir dans le cadre de votre futur parcours académique et militaire.\n\n`;
 
     frPlain += `Si vous ne prenez aucune action dans votre portail, votre dossier fermera automatiquement dans 30 jours.\n\n`;
     frPlain += this.getSignatureFr();
@@ -10273,13 +10273,13 @@ Thank you for your cooperation.`;
     } else {
       enPlain += `• Watch the video and review the description of the trade(s) you are registered for. Careers | Canadian Armed Forces (https://forces.ca/en/careers/)\n`;
     }
-    enPlain += `• Explore the Frequently Asked Questions section of the Canadian Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
-    enPlain += `• Explore the Youtube Channel of the Canadian Military College Saint-jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
+    enPlain += `• Explore the Frequently Asked Questions section of the Royal Military College Saint-Jean (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp)\n`;
+    enPlain += `• Explore the Youtube Channel of the Royal Military College Saint-Jean (https://www.youtube.com/@cmrsjrmcsj)\n\n`;
     enPlain += `2- Ensure all tasks on your portal are completed:\n`;
     enPlain += `Please log in to your portal to verify and ensure that all required tasks are completed: Canadian Armed Forces Enrolment Portal link (https://www.cafoap-pclfac.forces.gc.ca/)\n\n`;
     enPlain += `3- If you are a high-level athlete, you can visit the websites of sports teams: \n`;
-    enPlain += `• CMC St-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
-    enPlain += `• CMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
+    enPlain += `• RMC Saint-Jean Sports teams Les Remparts: gorempartsgo.ca (https://gorempartsgo.ca)\n`;
+    enPlain += `• RMC Kingston Sports teams The Paladins: Royal Military College of Canada - Official Athletics Website (https://gopaladinsgo.ca/)\n\n`;
     enPlain += `If you are a high-performance athlete, you may contact one of the teams to learn more about the different teams and their selection processes. If you are unsure which team to contact, please do not hesitate to ask the recruiting centre handling your application.\n\n`;
 
     if (nonMandatoryTasksEn) {
@@ -10288,8 +10288,8 @@ Thank you for your cooperation.`;
 
     enPlain += this.getPforCaf101HighDemandWarningPlain('en');
 
-    enPlain += `RMC Saint-Jean Open House\n`;
-    enPlain += `We invite you to take advantage of the Royal Military College Saint-Jean Open House, which will be held on October 31, 2026, from 8:30 a.m. to 4:00 p.m. No registration is required.\nCome and discover the life of officer cadets, tour the College facilities, and meet professors, students, as well as recruiters who will be available to answer your questions.\nGuided tours of approximately 30 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.\nWe hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.\n\n`;
+    enPlain += `Open House and Visits - Prospective Students - Royal Military College Saint-Jean\n`;
+    enPlain += `We invite you to take advantage of the Royal Military College Saint-Jean Open House, which will be held on October 31, 2026, from 8:30 a.m. to 4:00 p.m. No registration is required.\nCome and discover the life of naval and officer cadets, tour the College facilities, and meet professors, naval and officer cadets, as well as recruiters who will be available to answer your questions.\nGuided tours of approximately 60 minutes are offered continuously throughout the day, allowing you to arrive at whatever time suits you best.\nWe hope to have the opportunity to welcome you and show you everything that Royal Military College Saint-Jean has to offer as part of your future academic and military journey.\n\n`;
 
     enPlain += `If no action is taken in your portal, your file will automatically close within 30 days.\n\n`;
     enPlain += this.getSignatureEn();
@@ -10349,12 +10349,12 @@ Thank you for your cooperation.`;
 
     let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
     if (isEn) {
-      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">Le message français suivra.</span></p>`;
+      html += `<p><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">Le message français suivra.</span></p>`;
       html += enHtml;
       html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
       html += frHtml;
     } else {
-      html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
+      html += `<p><span style="background-color: #00FF00; font-weight: bold; padding: 0 4px;">English message will follow.</span></p>`;
       html += frHtml;
       html += `<br><hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"><br>`;
       html += enHtml;
