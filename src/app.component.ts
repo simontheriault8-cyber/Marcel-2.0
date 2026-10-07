@@ -4395,7 +4395,7 @@ function getTodayDateString(): string {
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      {{ langService.isEnglish() ? '2nd Email to Applicant: PA Link (RMC academic documents)' : '2e Courriel au Postulant : Lien PA (Documents scolaires CMC/CMR)' }}
+                      {{ langService.isEnglish() ? '2nd Email to Applicant: PA Link (RMC academic documents)' : '2e Courriel au Postulant : Lien PA (Documents scolaires CMR)' }}
                     </h3>
 
                     <button
@@ -10309,14 +10309,14 @@ Thank you for your cooperation.`;
     frHtml += `<p>Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. <strong>Voici comment procéder pour nous les transmettre :</strong></p>`;
 
     frHtml += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    frHtml += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
+    frHtml += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
     frHtml += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.</li>`;
     frHtml += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. <strong>(Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</strong></li>`;
     frHtml += `</ol>`;
 
     frHtml += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
 
-    frHtml += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. <strong>(Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</strong></p>`;
+    frHtml += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors. <strong>(Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</strong></p>`;
 
     frHtml += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
 
@@ -10331,14 +10331,14 @@ Thank you for your cooperation.`;
     enHtml += `<p>To continue processing your application, we need supporting academic documentation. <strong>Here's how to proceed to submit it:</strong></p>`;
 
     enHtml += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    enHtml += `  <li style="margin-bottom: 10px;">Visit the Canadian Military College (CMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
+    enHtml += `  <li style="margin-bottom: 10px;">Visit the Royal Military College of Canada (RMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
     enHtml += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.</li>`;
     enHtml += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. <strong>(Even if you have already done so on your portal when you begin your online application)</strong></li>`;
     enHtml += `</ol>`;
 
     enHtml += `<p><strong>***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
 
-    enHtml += `<p>Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. <strong>(Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</strong></p>`;
+    enHtml += `<p>Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by RMC Saint-Jean for junior applicants. <strong>(Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</strong></p>`;
 
     enHtml += `<p>If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.</p>`;
 
@@ -10370,13 +10370,13 @@ Thank you for your cooperation.`;
     let frPlain = `Bonjour,\n\n`;
     frPlain += `Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
     frPlain += `Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. Voici comment procéder pour nous les transmettre :\n\n`;
-    frPlain += `1. Visitez le site web du Collège Militaire Canadien (CMC) à l’adresse suivante :\n`;
+    frPlain += `1. Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :\n`;
     frPlain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
     frPlain += `Remarque : Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).\n\n`;
     frPlain += `2. Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.\n\n`;
     frPlain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
     frPlain += `***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***\n\n`;
-    frPlain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire Canadien Kingston pour les postulantes et postulants seniors, et par le CMC Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
+    frPlain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
     frPlain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
     frPlain += `Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
     frPlain += `Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.\n\n`;
@@ -10386,13 +10386,13 @@ Thank you for your cooperation.`;
     let enPlain = `Hello,\n\n`;
     enPlain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
     enPlain += `To continue processing your application, we need supporting academic documentation. Here's how to proceed to submit it:\n\n`;
-    enPlain += `1. Visit the Canadian Military College (CMC) website at the following link:\n`;
+    enPlain += `1. Visit the Royal Military College of Canada (RMC) website at the following link:\n`;
     enPlain += `Royal Military College of Canada (RMC) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
     enPlain += `Note: You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).\n\n`;
     enPlain += `2. You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.\n\n`;
     enPlain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)\n\n`;
     enPlain += `***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
-    enPlain += `Once the required documents have been received, your file will be reviewed by the Canadian Military College Kingston for senior applicants, and by CMC Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
+    enPlain += `Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by RMC Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
     enPlain += `If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.\n\n`;
     enPlain += `For any questions, please feel free to contact us by email to: PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
     enPlain += `Thank you for your interest in joining the Canadian Armed Forces.\n\n`;
