@@ -6187,6 +6187,9 @@ Thank you for your cooperation.`;
   }
 
   areAllDocsCompliant = computed(() => {
+    if (this.selectedRole() === "recruiter") {
+      return this.allTasksCompliant();
+    }
     const tasks = this.visibleTasks().filter((t) => !t.nameFr.includes("Documents Supplémentaires"));
     if (tasks.length === 0) return false;
     const currentCompliant = this.compliantDocKeys();
@@ -7125,9 +7128,71 @@ Thank you for your cooperation.`;
     return task.documents.some((d) => this.isCompliant(task, d));
   }
 
+  isRecruiterMandatoryTask(task: Task): boolean {
+    const name = task.nameFr;
+    if (
+      name.includes("Relevé") ||
+      name.includes("Relevés") ||
+      name.startsWith("Pièce d'identité avec photo") ||
+      name.includes("Certificat de naissance")
+    ) {
+      return true;
+    }
+    if (this.isUnderAge() && name.includes("Consentement du parent")) {
+      return true;
+    }
+    return false;
+  }
+
   allTasksCompliant = computed(() => {
     const tasks = this.visibleTasks();
     if (tasks.length === 0) return false;
+
+    if (this.selectedRole() === "recruiter") {
+      // Dans le volet recruteur, dans la vérification des documents, les seuls tâches au portail
+      // qui ne permettent plus au postulant d'être conforme sont : relevés de notes, pièce d'identité et certificat de naissance canadien.
+      const mandatoryTasks = tasks.filter((t) => this.isRecruiterMandatoryTask(t));
+      if (mandatoryTasks.length === 0) return false;
+
+      return mandatoryTasks.every((task) => {
+        // Tâche non complétée bloque la conformité
+        if (this.isTaskNotCompleted(task)) {
+          return false;
+        }
+
+        const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
+        if (isIdentity) {
+          // Doit avoir au moins une pièce d'identité valide (hors selfie) marquée conforme
+          const hasCompliantId = task.documents.some(
+            (d) =>
+              !d.nameFr.toLowerCase().includes("selfie") &&
+              !d.nameFr.toLowerCase().includes("invalide") &&
+              this.isCompliant(task, d)
+          );
+          if (!hasCompliantId) return false;
+
+          // Aucun motif de rejet bloquant sur les pièces d'identité (hors selfie)
+          const hasBlockingIdRejection = task.documents.some(
+            (d) =>
+              !d.nameFr.toLowerCase().includes("selfie") &&
+              this.hasRejections(d)
+          );
+          if (hasBlockingIdRejection) return false;
+
+          return true;
+        }
+
+        // Pour Relevés de notes et Certificat de naissance (ou Consentement parent si mineur) :
+        // Aucun motif de rejet permis
+        if (task.documents.some((d) => this.hasRejections(d))) {
+          return false;
+        }
+
+        // Doit être conforme
+        return this.isTaskCompliant(task);
+      });
+    }
+
     return tasks.every((task) => {
       // Le formulaire MDN 2977 n'est pas obligatoire pour la conformité finale
       if (task.nameFr.includes("MDN 2977")) {
@@ -8898,15 +8963,14 @@ Thank you for your cooperation.`;
 
     for (const [task, items] of structure.entries()) {
       const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
-      const isFormNote = task.nameFr.includes("Formulaire de demande d'emploi notée") || task.nameFr.includes("Formulaire de demande d’emploi noté");
-      const isMdn2977 = task.nameFr.includes("MDN 2977");
+      const isMandatory = this.isRecruiterMandatoryTask(task);
 
       if (isIdentity) {
         const selfieItems = items.filter(i => i.doc.nameFr.toLowerCase().includes("selfie"));
         if (selfieItems.length > 0) {
           relevantTasks.push({ task, items: selfieItems, notCompleted: false });
         }
-      } else if (isFormNote || isMdn2977) {
+      } else if (!isMandatory) {
         const notCompleted = this.taskNotCompletedKeys().has(task.nameFr);
         if (items.length > 0 || notCompleted) {
           relevantTasks.push({ task, items, notCompleted });
@@ -8932,7 +8996,12 @@ Thank you for your cooperation.`;
           groupedItems.get(item.doc)!.push(item);
         }
         for (const [doc, docItems] of groupedItems.entries()) {
-          const labels = docItems.map((i) => i.reason.labelFr);
+          const labels = docItems.map((i) => {
+            if (task.nameFr.includes("Documents Supplémentaires")) {
+              return this.getDisplayLabelForAdditionalDoc(i.doc, i.reason);
+            }
+            return i.reason.labelFr;
+          });
           let labelsStr = "";
           if (labels.length === 1) {
             labelsStr = labels[0];
@@ -8976,7 +9045,18 @@ Thank you for your cooperation.`;
           groupedItems.get(item.doc)!.push(item);
         }
         for (const [doc, docItems] of groupedItems.entries()) {
-          const labels = docItems.map((i) => i.reason.labelEn || i.reason.labelFr);
+          const labels = docItems.map((i) => {
+            if (task.nameFr.includes("Documents Supplémentaires")) {
+              const dossierJobs = this.getDossierJobObjects();
+              const matchingJobs = dossierJobs.filter((j) => this.isAdditionalDocRequiredForJob(i.doc.nameFr, j.id));
+              if (matchingJobs.length > 0) {
+                const texts = matchingJobs.map((j) => this.getJobSpecificDocText(j.id, i.doc.nameFr, false));
+                return Array.from(new Set(texts)).join(" — ");
+              }
+              return i.reason.labelEn || i.reason.labelFr;
+            }
+            return i.reason.labelEn || i.reason.labelFr;
+          });
           let labelsStr = "";
           if (labels.length === 1) {
             labelsStr = labels[0];
@@ -9020,15 +9100,14 @@ Thank you for your cooperation.`;
 
     for (const [task, items] of structure.entries()) {
       const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
-      const isFormNote = task.nameFr.includes("Formulaire de demande d'emploi notée") || task.nameFr.includes("Formulaire de demande d’emploi noté");
-      const isMdn2977 = task.nameFr.includes("MDN 2977");
+      const isMandatory = this.isRecruiterMandatoryTask(task);
 
       if (isIdentity) {
         const selfieItems = items.filter(i => i.doc.nameFr.toLowerCase().includes("selfie"));
         if (selfieItems.length > 0) {
           relevantTasks.push({ task, items: selfieItems, notCompleted: false });
         }
-      } else if (isFormNote || isMdn2977) {
+      } else if (!isMandatory) {
         const notCompleted = this.taskNotCompletedKeys().has(task.nameFr);
         if (items.length > 0 || notCompleted) {
           relevantTasks.push({ task, items, notCompleted });
@@ -9058,7 +9137,12 @@ Thank you for your cooperation.`;
           groupedItems.get(item.doc)!.push(item);
         }
         for (const [doc, docItems] of groupedItems.entries()) {
-          const labels = docItems.map((i) => i.reason.labelFr);
+          const labels = docItems.map((i) => {
+            if (task.nameFr.includes("Documents Supplémentaires")) {
+              return this.getDisplayLabelForAdditionalDoc(i.doc, i.reason);
+            }
+            return i.reason.labelFr;
+          });
           let labelsStr = "";
           if (labels.length === 1) {
             labelsStr = labels[0];
@@ -9109,7 +9193,18 @@ Thank you for your cooperation.`;
           groupedItems.get(item.doc)!.push(item);
         }
         for (const [doc, docItems] of groupedItems.entries()) {
-          const labels = docItems.map((i) => i.reason.labelEn || i.reason.labelFr);
+          const labels = docItems.map((i) => {
+            if (task.nameFr.includes("Documents Supplémentaires")) {
+              const dossierJobs = this.getDossierJobObjects();
+              const matchingJobs = dossierJobs.filter((j) => this.isAdditionalDocRequiredForJob(i.doc.nameFr, j.id));
+              if (matchingJobs.length > 0) {
+                const texts = matchingJobs.map((j) => this.getJobSpecificDocText(j.id, i.doc.nameFr, false));
+                return Array.from(new Set(texts)).join(" — ");
+              }
+              return i.reason.labelEn || i.reason.labelFr;
+            }
+            return i.reason.labelEn || i.reason.labelFr;
+          });
           let labelsStr = "";
           if (labels.length === 1) {
             labelsStr = labels[0];
