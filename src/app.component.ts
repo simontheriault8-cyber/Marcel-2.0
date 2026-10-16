@@ -843,7 +843,7 @@ function getTodayDateString(): string {
 
                 @if (isEmailBankDropdownOpen()) {
                   <div
-                    class="absolute right-0 top-full mt-1.5 w-max min-w-[320px] max-w-[95vw] bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-slate-800 text-xs animate-in fade-in slide-in-from-top-2 duration-150"
+                    class="absolute right-0 top-full mt-1.5 w-max whitespace-nowrap bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-slate-800 text-xs animate-in fade-in slide-in-from-top-2 duration-150"
                   >
                     <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1 flex items-center justify-between">
                       <span>Banque de courriels</span>
