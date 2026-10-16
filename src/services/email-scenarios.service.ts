@@ -747,6 +747,116 @@ Canadian Forces Recruiting Centre Quebec
 Military Personnel Command / Canadian Armed Forces
 Help Centre | Canadian Armed Forces`;
 
+    // SCENARIO: Anomalie Portail d'admission et transmission de relevés de notes
+    const anomPortailAdmissionHtml = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><span style="background-color: yellow;">English message will follow.</span></p>
+        <p>Bonjour,</p>
+        <p>Si vous recevez ce courriel, c’est que nous avons remarqué une possible anomalie dans la soumission de vos documents sur le Portail d’admission du Collège Militaire Royal.</p>
+        <p>Votre dossier est dans l’un des scénarios suivants :</p>
+        <ol style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li style="margin-bottom: 10px;"><strong>Vous n’avez toujours pas téléversé vos relevés de notes</strong> sur le portail d’admission du CMR. C’est important de compléter votre profil d’admission le plus rapidement possible afin que nous puissions faire avancer votre dossier dans les prochains mois.</li>
+          <li style="margin-bottom: 10px;"><strong>Vous vous êtes rendu sur le Portail d’admission</strong>, mais vous n’avez pas complété votre profil en entier. Vous avez quitté le portail sans avoir vu la page « confirmation d’application ».</li>
+        </ol>
+        <p>Voici un exemple de la page <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #2563eb; text-decoration: underline;">Confirmation d'application</a>.</p>
+        <p>Si vous avez complété votre profil et avez vu la page « confirmation d’application », il est important de prendre une capture d’écran de cette page et de la téléverser sur votre profil de recrutement via la tâche « relevés de notes et diplômes ».</p>
+        <p>Votre tâche « relevés de notes et diplômes » vous sera réattribuée pour que vous soyez en mesure de le faire.</p>
+        <p>Finalement, si tout cela a déjà été fait, vous pouvez répondre directement à ce courriel, nous validerons que nous avons bel et bien la capture d’écran, et inscrirons la tâche comme complétée.</p>
+        <p>Si vous avez des questions, n’hésitez pas.</p>
+        <p>Cordialement,</p>
+        <p>L’équipe de recrutement des Forces armées canadiennes<br>
+        Centre de recrutement des Forces canadiennes Québec<br>
+        Commandement du Personnel militaire / Forces armées canadiennes<br>
+        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
+        
+        <br><p>______________________________________________________________________________</p><br>
+
+        <p>Hello,</p>
+        <p>You are receiving this email because we have identified a possible issue with the submission of your documents through the Royal Military College of Canada (RMC) Admissions Portal.</p>
+        <p>Your application may fall into one of the following situations:</p>
+        <ol style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li style="margin-bottom: 10px;"><strong>You have not yet uploaded your transcripts</strong> to the RMC Admissions Portal. Please complete your admissions profile as soon as possible so that we can continue processing your application in the coming months.</li>
+          <li style="margin-bottom: 10px;"><strong>Your application may not have been fully submitted.</strong> If you exited the portal before reaching the “Application Confirmation” page, your application may not have been fully submitted.</li>
+        </ol>
+        <p>Here is an example page: <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #2563eb; text-decoration: underline;">Confirmation d'application</a>.</p>
+        <p>If you have completed your application and reached the “Application Confirmation” page, please take a screenshot of that page and upload it to your recruitment profile under the “Transcripts and Diplomas” task.</p>
+        <p>This task will be reassigned to you so that you can upload the required screenshot.</p>
+        <p>If you have already completed all of the steps above, simply reply to this email to let us know. We will verify that we have received your screenshot and mark the task as complete.</p>
+        <p>If you have any questions or require assistance, please do not hesitate to contact us.</p>
+        <p>Sincerely,</p>
+        <p>The Canadian Armed Forces Recruiting Team<br>
+        Canadian Forces Recruiting Centre Quebec<br>
+        Military Personnel Command / Canadian Armed Forces<br>
+        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
+      </div>
+    `;
+
+    const anomPortailAdmissionText = `English message will follow.
+
+Bonjour,
+
+Si vous recevez ce courriel, c’est que nous avons remarqué une possible anomalie dans la soumission de vos documents sur le Portail d’admission du Collège Militaire Royal.
+
+Votre dossier est dans l’un des scénarios suivants :
+
+1. Vous n’avez toujours pas téléversé vos relevés de notes sur le portail d’admission du CMR. C’est important de compléter votre profil d’admission le plus rapidement possible afin que nous puissions faire avancer votre dossier dans les prochains mois.
+
+2. Vous vous êtes rendu sur le Portail d’admission, mais vous n’avez pas complété votre profil en entier. Vous avez quitté le portail sans avoir vu la page « confirmation d’application ».
+
+Voici un exemple de la page Confirmation d'application : https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png
+
+Si vous avez complété votre profil et avez vu la page « confirmation d’application », il est important de prendre une capture d’écran de cette page et de la téléverser sur votre profil de recrutement via la tâche « relevés de notes et diplômes ».
+
+Votre tâche « relevés de notes et diplômes » vous sera réattribuée pour que vous soyez en mesure de le faire.
+
+Finalement, si tout cela a déjà été fait, vous pouvez répondre directement à ce courriel, nous validerons que nous avons bel et bien la capture d’écran, et inscrirons la tâche comme complétée.
+
+Si vous avez des questions, n’hésitez pas.
+
+Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes
+
+______________________________________________________________________________
+
+Hello,
+
+You are receiving this email because we have identified a possible issue with the submission of your documents through the Royal Military College of Canada (RMC) Admissions Portal.
+
+Your application may fall into one of the following situations:
+
+1. You have not yet uploaded your transcripts to the RMC Admissions Portal. Please complete your admissions profile as soon as possible so that we can continue processing your application in the coming months.
+
+2. Your application may not have been fully submitted. If you exited the portal before reaching the “Application Confirmation” page, your application may not have been fully submitted.
+
+Here is an example of the Confirmation d'application page: https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png
+
+If you have completed your application and reached the “Application Confirmation” page, please take a screenshot of that page and upload it to your recruitment profile under the “Transcripts and Diplomas” task.
+
+This task will be reassigned to you so that you can upload the required screenshot.
+
+If you have already completed all of the steps above, simply reply to this email to let us know. We will verify that we have received your screenshot and mark the task as complete.
+
+If you have any questions or require assistance, please do not hesitate to contact us.
+
+Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+    this.scenarios.set("anom_portail_admission", {
+      id: "anom_portail_admission",
+      subjectFr: "Action requise : Portail d’admission et transmission de relevés de notes",
+      subjectEn: "Action Required: Admission Portal and Transcript Submission",
+      bodyHtml: anomPortailAdmissionHtml,
+      bodyText: anomPortailAdmissionText,
+    });
+
     this.scenarios.set("inadmissibilite_non_citoyen_ni_pr", {
       id: "inadmissibilite_non_citoyen_ni_pr",
       subjectFr: "Forces armées canadiennes/Canadian Armed Forces",

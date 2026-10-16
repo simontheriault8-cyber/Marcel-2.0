@@ -843,7 +843,7 @@ function getTodayDateString(): string {
 
                 @if (isEmailBankDropdownOpen()) {
                   <div
-                    class="absolute right-0 top-full mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-slate-800 text-xs animate-in fade-in slide-in-from-top-2 duration-150"
+                    class="absolute right-0 top-full mt-1.5 w-max min-w-[320px] max-w-[95vw] bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 text-slate-800 text-xs animate-in fade-in slide-in-from-top-2 duration-150"
                   >
                     <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1 flex items-center justify-between">
                       <span>Banque de courriels</span>
@@ -865,7 +865,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'general_reminder'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'general_reminder'"
                       >
-                        <span class="truncate">Courriel de rappel</span>
+                        <span class="whitespace-nowrap">Courriel de rappel</span>
                         @if (selectedEmailBankTemplate() === 'general_reminder') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -880,7 +880,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'verification_edo_vs_pfor'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_edo_vs_pfor'"
                       >
-                        <span class="truncate">Courriel de vérification de programme EDO VS PFOR</span>
+                        <span class="whitespace-nowrap">Courriel de vérification de programme EDO VS PFOR</span>
                         @if (selectedEmailBankTemplate() === 'verification_edo_vs_pfor') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -895,7 +895,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_age_57'"
                       >
-                        <span class="truncate">Inadmissibilité - Âge (57 ans et plus)</span>
+                        <span class="whitespace-nowrap">Inadmissibilité - Âge (57 ans et plus)</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_age_57') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -910,7 +910,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans'"
                       >
-                        <span class="truncate">Inadmissibilité - Résident permanent (< 3 ans)</span>
+                        <span class="whitespace-nowrap">Inadmissibilité - Résident permanent (< 3 ans)</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_pr_3ans') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -925,8 +925,23 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr'"
                       >
-                        <span class="truncate">Inadmissibilité - Ni citoyen ni résident permanent</span>
+                        <span class="whitespace-nowrap">Inadmissibilité - Ni citoyen ni résident permanent</span>
                         @if (selectedEmailBankTemplate() === 'inadmissibilite_non_citoyen_ni_pr') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('anom_portail_admission')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'anom_portail_admission'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'anom_portail_admission'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'anom_portail_admission'"
+                      >
+                        <span class="whitespace-nowrap">Vérification de dépôt de relevé de note au portail du CMR</span>
+                        @if (selectedEmailBankTemplate() === 'anom_portail_admission') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -940,7 +955,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'tentative_offre_gd'"
                       >
-                        <span class="truncate">Tentative de communication - Offre d'emploi</span>
+                        <span class="whitespace-nowrap">Tentative de communication - Offre d'emploi</span>
                         @if (selectedEmailBankTemplate() === 'tentative_offre_gd') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -955,7 +970,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'verification_dossier_cadet'"
                       >
-                        <span class="truncate">Vérification Dossier Cadet</span>
+                        <span class="whitespace-nowrap">Vérification Dossier Cadet</span>
                         @if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -970,7 +985,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'bris_bail_entreposage'"
                       >
-                        <span class="truncate">Bris de bail et entreposage</span>
+                        <span class="whitespace-nowrap">Bris de bail et entreposage</span>
                         @if (selectedEmailBankTemplate() === 'bris_bail_entreposage') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -985,7 +1000,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_nav_tan'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_nav_tan'"
                       >
-                        <span class="truncate">Demande NAV/TAN & Claims X - CSPN partie 1</span>
+                        <span class="whitespace-nowrap">Demande NAV/TAN & Claims X - CSPN partie 1</span>
                         @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1000,7 +1015,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_autorisation_cspn'"
                       >
-                        <span class="truncate">Demande d'autorisation pour un CSPN</span>
+                        <span class="whitespace-nowrap">Demande d'autorisation pour un CSPN</span>
                         @if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1015,7 +1030,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'documents_conjoint_de_fait'"
                       >
-                        <span class="truncate">Documents requis - Conjoint(e) de fait</span>
+                        <span class="whitespace-nowrap">Documents requis - Conjoint(e) de fait</span>
                         @if (selectedEmailBankTemplate() === 'documents_conjoint_de_fait') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1030,7 +1045,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire'"
                       >
-                        <span class="truncate">Demande SDPM pour conjoint militaire</span>
+                        <span class="whitespace-nowrap">Demande SDPM pour conjoint militaire</span>
                         @if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -1045,7 +1060,7 @@ function getTodayDateString(): string {
                         [class.font-bold]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
                         [class.text-indigo-900]="selectedEmailBankTemplate() === 'test_esom_confirmation'"
                       >
-                        <span class="truncate">TEST ESOM / Confirmation</span>
+                        <span class="whitespace-nowrap">TEST ESOM / Confirmation</span>
                         @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -8632,6 +8647,9 @@ Thank you for your cooperation.`;
     if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
       return "Étape 1 (En cours) - Ni citoyen canadien ni résident permanent (Inadmissible) : Inadmissible pour un enrôlement dans les FAC (citoyenneté canadienne ou résidence permanente requise pour repostuler), courriel envoyé, fermeture du dossier.";
     }
+    if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
+      return "Étape 1 (en cours) - Courriel de vérification de dépôt des relevés de notes dans le portail du CMR, tâche Relevés de notes réattribuées.";
+    }
 
     const closureSuffix =
       " Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
@@ -8905,6 +8923,9 @@ Thank you for your cooperation.`;
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
       return this.emailScenariosService.getScenario("inadmissibilite_non_citoyen_ni_pr") || null;
+    }
+    if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
+      return this.emailScenariosService.getScenario("anom_portail_admission") || null;
     }
 
     if (
@@ -11754,6 +11775,9 @@ Thank you for your cooperation.`;
     if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
       return "Inadmissibilité - Résident permanent";
     }
+    if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
+      return "Action requise : Portail d’admission et transmission de relevés de notes";
+    }
     if (this.isPremierContactActive()) {
       return "Premier contact - Inscription aux Forces armées canadiennes";
     }
@@ -11811,6 +11835,8 @@ Thank you for your cooperation.`;
       scenario.id === "verification_edo_vs_pfor" ||
       scenario.id === "inadmissibilite_age_57" ||
       scenario.id === "inadmissibilite_pr_3ans" ||
+      scenario.id === "inadmissibilite_non_citoyen_ni_pr" ||
+      scenario.id === "anom_portail_admission" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
       return this.sharedState.getCustomizedScenarioText(scenario.bodyText);
@@ -11958,6 +11984,8 @@ Thank you for your cooperation.`;
       scenario.id === "verification_edo_vs_pfor" ||
       scenario.id === "inadmissibilite_age_57" ||
       scenario.id === "inadmissibilite_pr_3ans" ||
+      scenario.id === "inadmissibilite_non_citoyen_ni_pr" ||
+      scenario.id === "anom_portail_admission" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
       return this.sharedState.getCustomizedScenarioHtml(scenario.bodyHtml);
