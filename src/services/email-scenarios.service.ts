@@ -864,6 +864,180 @@ Help Centre | Canadian Armed Forces`;
       bodyHtml: inadmissibiliteNonCitoyenNiPrHtml,
       bodyText: inadmissibiliteNonCitoyenNiPrText,
     });
+
+    // SCENARIO: Inadmissibilité - Scolarité
+    const inadmissibiliteScolariteHtml = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><span style="background-color: yellow;">English message will follow.</span></p>
+        <p>Bonjour,</p>
+        <p>Suite à l’analyse de votre dossier de candidature, nous constatons que vous ne rencontrez pas les critères d’entrée académique minimale pour joindre les Forces armées canadiennes.</p>
+        <p>Voici les 3 façons de répondre aux critères d’entrée académique minimale :</p>
+        <ol style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li style="margin-bottom: 8px;">
+            <strong>24 crédits de secondaire 4 incluant la réussite des cours suivants :</strong>
+            <ul style="padding-left: 20px; margin-top: 4px; list-style-type: disc;">
+              <li>Cours Langue d'enseignement (français ou anglais);</li>
+              <li>Cours Deuxième langue (anglais ou français);</li>
+              <li>Cours de Mathématiques (doit être CST 4, SN 4 ou TS 4);</li>
+              <li>Sciences et Technologie (ou Sciences et Technologies appliquées);</li>
+              <li>Histoire du Québec et du Canada;</li>
+              <li>Arts</li>
+            </ul>
+          </li>
+          <li style="margin-bottom: 8px;"><strong>Diplôme d’études professionnelles (DEP) complété.</strong></li>
+          <li style="margin-bottom: 8px;"><strong>Attestation d’études de niveau secondaire (AENS) avec le relevé de réussite des examens du TENS</strong> (option la plus rapide)</li>
+        </ol>
+        <p><strong>Remarque :</strong> La réussite du Test de développement général (TDG), d’une Attestation de spécialisation professionnelle (ASP) ou les Certificats de formation à un métier semi-spécialisé (CFMS) ne sont pas acceptés.</p>
+        <p><strong>Pour les études faites à l’étranger</strong>, veuillez nous faire parvenir vos relevés de notes et diplômes originaux ou une traduction dans une des deux langues officielles du Canada et aussi fournir une évaluation comparative de vos études faites à l’étranger. Vous pouvez communiquer avec un des six membres de l'Alliance canadienne des services d'évaluation de diplômes afin d’obtenir leur rapport d’évaluation comparative avant de nous recontacter afin que nous puissions valider vos acquis scolaires.</p>
+        <p>Pour obtenir de l’information additionnelle à ce sujet, consultez les liens suivants :<br>
+        <a href="https://www.cicdi.ca" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">www.cicdi.ca</a><br>
+        <a href="https://canalliance.org/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">https://canalliance.org/</a></p>
+        <p><em><strong>Remarque :</strong> Les documents académiques obtenus à l’étranger sans rapport d’évaluation comparative sont irrecevables.</em></p>
+        <hr style="border: none; border-top: 1px solid #000; margin: 16px 0;">
+        <p>Voici un lien qui pourrait vous être utile : <a href="https://www.challengeu.ca/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">ChallengeU - Plateforme en ligne - Formation à distance</a></p>
+        <p>Nous fermerons votre dossier d’enrôlement en attendant que vous communiquiez avec votre centre de recrutement afin de nous fournir les relevés de notes ou diplômes nécessaires à la rencontre des critères d’entrée académique.</p>
+        <p>Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.</p>
+        <p>Cordialement,</p>
+        <p>L’équipe de recrutement des Forces armées canadiennes<br>
+        Centre de recrutement des Forces canadiennes Québec<br>
+        Commandement du Personnel militaire / Forces armées canadiennes<br>
+        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
+        
+        <br><p>______________________________________________________________________________</p><br>
+
+        <p>Hello,</p>
+        <p>Following the review of your application file, we have determined that you do not meet the minimum academic entry criteria to join the Canadian Armed Forces.</p>
+        <p>Here are the 3 ways to meet the minimum academic entry criteria:</p>
+        <ol style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
+          <li style="margin-bottom: 8px;">
+            <strong>24 Secondary 4 credits, including successful completion of the following courses:</strong>
+            <ul style="padding-left: 20px; margin-top: 4px; list-style-type: disc;">
+              <li>Language of instruction course (French or English);</li>
+              <li>Second language course (English or French);</li>
+              <li>Mathematics course (must be CST 4, SN 4 or TS 4);</li>
+              <li>Science and Technology (or Applied Science and Technology);</li>
+              <li>History of Quebec and Canada;</li>
+              <li>Arts</li>
+            </ul>
+          </li>
+          <li style="margin-bottom: 8px;"><strong>Completed Vocational Studies Diploma (DEP / DVS).</strong></li>
+          <li style="margin-bottom: 8px;"><strong>Secondary School Equivalency Attestation (AENS / SSEA) with the General Educational Development test results (TENS)</strong> (fastest option)</li>
+        </ol>
+        <p><strong>Note:</strong> General Development Tests (TDG / GDT), Attestations of Vocational Specialization (ASP / AVS), and Training Certificates for a Semi-Skilled Trade (CFMS / TCST) are not accepted.</p>
+        <p><strong>For studies completed abroad</strong>, please send us your original transcripts and diplomas or a certified translation in one of Canada's two official languages, along with a comparative evaluation of your foreign studies. You may contact one of the six members of the Alliance of Credential Evaluation Services of Canada to obtain their comparative evaluation report before contacting us again so that we can validate your academic credentials.</p>
+        <p>For more information on this subject, please consult the following links:<br>
+        <a href="https://www.cicdi.ca" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">www.cicdi.ca</a><br>
+        <a href="https://canalliance.org/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">https://canalliance.org/</a></p>
+        <p><em><strong>Note:</strong> Academic documents obtained abroad without a comparative evaluation report are inadmissible.</em></p>
+        <hr style="border: none; border-top: 1px solid #000; margin: 16px 0;">
+        <p>Here is a link that may be useful to you: <a href="https://www.challengeu.ca/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">ChallengeU - Online Platform - Distance Learning</a></p>
+        <p>We will be closing your enrolment file while awaiting your contact with your recruiting centre once you can provide the transcripts or diplomas required to meet the academic entry criteria.</p>
+        <p>Thank you for your interest in joining the Canadian Armed Forces.</p>
+        <p>Sincerely,</p>
+        <p>The Canadian Armed Forces Recruiting Team<br>
+        Canadian Forces Recruiting Centre Quebec<br>
+        Military Personnel Command / Canadian Armed Forces<br>
+        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
+      </div>
+    `;
+
+    const inadmissibiliteScolariteText = `English message will follow.
+
+Bonjour,
+
+Suite à l’analyse de votre dossier de candidature, nous constatons que vous ne rencontrez pas les critères d’entrée académique minimale pour joindre les Forces armées canadiennes.
+
+Voici les 3 façons de répondre aux critères d’entrée académique minimale :
+
+1. 24 crédits de secondaire 4 incluant la réussite des cours suivants :
+- Cours Langue d'enseignement (français ou anglais);
+- Cours Deuxième langue (anglais ou français);
+- Cours de Mathématiques (doit être CST 4, SN 4 ou TS 4);
+- Sciences et Technologie (ou Sciences et Technologies appliquées);
+- Histoire du Québec et du Canada;
+- Arts
+
+2. Diplôme d’études professionnelles (DEP) complété.
+
+3. Attestation d’études de niveau secondaire (AENS) avec le relevé de réussite des examens du TENS (option la plus rapide)
+
+Remarque : La réussite du Test de développement général (TDG), d’une Attestation de spécialisation professionnelle (ASP) ou les Certificats de formation à un métier semi-spécialisé (CFMS) ne sont pas acceptés.
+
+Pour les études faites à l’étranger, veuillez nous faire parvenir vos relevés de notes et diplômes originaux ou une traduction dans une des deux langues officielles du Canada et aussi fournir une évaluation comparative de vos études faites à l’étranger. Vous pouvez communiquer avec un des six membres de l'Alliance canadienne des services d'évaluation de diplômes afin d’obtenir leur rapport d’évaluation comparative avant de nous recontacter afin que nous puissions valider vos acquis scolaires.
+
+Pour obtenir de l’information additionnelle à ce sujet, consultez les liens suivants :
+www.cicdi.ca
+https://canalliance.org/
+
+Remarque : Les documents académiques obtenus à l’étranger sans rapport d’évaluation comparative sont irrecevables.
+
+______________________________________________________________________________
+
+Voici un lien qui pourrait vous être utile : ChallengeU - Plateforme en ligne - Formation à distance (https://www.challengeu.ca/)
+
+Nous fermerons votre dossier d’enrôlement en attendant que vous communiquiez avec votre centre de recrutement afin de nous fournir les relevés de notes ou diplômes nécessaires à la rencontre des critères d’entrée académique.
+
+Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.
+
+Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes
+
+______________________________________________________________________________
+
+Hello,
+
+Following the review of your application file, we have determined that you do not meet the minimum academic entry criteria to join the Canadian Armed Forces.
+
+Here are the 3 ways to meet the minimum academic entry criteria:
+
+1. 24 Secondary 4 credits, including successful completion of the following courses:
+- Language of instruction course (French or English);
+- Second language course (English or French);
+- Mathematics course (must be CST 4, SN 4 or TS 4);
+- Science and Technology (or Applied Science and Technology);
+- History of Quebec and Canada;
+- Arts
+
+2. Completed Vocational Studies Diploma (DEP / DVS).
+
+3. Secondary School Equivalency Attestation (AENS / SSEA) with the General Educational Development test results (TENS) (fastest option)
+
+Note: General Development Tests (TDG / GDT), Attestations of Vocational Specialization (ASP / AVS), and Training Certificates for a Semi-Skilled Trade (CFMS / TCST) are not accepted.
+
+For studies completed abroad, please send us your original transcripts and diplomas or a certified translation in one of Canada's two official languages, along with a comparative evaluation of your foreign studies. You may contact one of the six members of the Alliance of Credential Evaluation Services of Canada to obtain their comparative evaluation report before contacting us again so that we can validate your academic credentials.
+
+For more information on this subject, please consult the following links:
+www.cicdi.ca
+https://canalliance.org/
+
+Note: Academic documents obtained abroad without a comparative evaluation report are inadmissible.
+
+______________________________________________________________________________
+
+Here is a link that may be useful to you: ChallengeU - Online Platform - Distance Learning (https://www.challengeu.ca/)
+
+We will be closing your enrolment file while awaiting your contact with your recruiting centre once you can provide the transcripts or diplomas required to meet the academic entry criteria.
+
+Thank you for your interest in joining the Canadian Armed Forces.
+
+Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+    this.scenarios.set("inadmissibilite_scolarite", {
+      id: "inadmissibilite_scolarite",
+      subjectFr: "Forces armées canadiennes",
+      subjectEn: "Canadian Armed Forces",
+      bodyHtml: inadmissibiliteScolariteHtml,
+      bodyText: inadmissibiliteScolariteText,
+    });
   }
 
   getScenario(id: string): EmailScenario | undefined {

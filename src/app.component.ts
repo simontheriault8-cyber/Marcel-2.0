@@ -934,6 +934,21 @@ function getTodayDateString(): string {
                       </button>
 
                       <button
+                        (click)="selectEmailBankTemplate('inadmissibilite_scolarite')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'inadmissibilite_scolarite'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_scolarite'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_scolarite'"
+                      >
+                        <span class="whitespace-nowrap">Inadmissibilité - Scolarité</span>
+                        @if (selectedEmailBankTemplate() === 'inadmissibilite_scolarite') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
                         (click)="selectEmailBankTemplate('anom_portail_admission')"
                         class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
                         [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'anom_portail_admission'"
@@ -8647,6 +8662,9 @@ Thank you for your cooperation.`;
     if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
       return "Étape 1 (En cours) - Ni citoyen canadien ni résident permanent (Inadmissible) : Inadmissible pour un enrôlement dans les FAC (citoyenneté canadienne ou résidence permanente requise pour repostuler), courriel envoyé, fermeture du dossier.";
     }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_scolarite") {
+      return "Postulant Inadmissible pour la scolarité. Fermeture de dossier et courriel explicatif envoyé avec les options possible pour devenir admissible.";
+    }
     if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
       return "Étape 1 (en cours) - Courriel de vérification de dépôt des relevés de notes dans le portail du CMR, tâche Relevés de notes réattribuées.";
     }
@@ -8923,6 +8941,9 @@ Thank you for your cooperation.`;
     }
     if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr") {
       return this.emailScenariosService.getScenario("inadmissibilite_non_citoyen_ni_pr") || null;
+    }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_scolarite") {
+      return this.emailScenariosService.getScenario("inadmissibilite_scolarite") || null;
     }
     if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
       return this.emailScenariosService.getScenario("anom_portail_admission") || null;
@@ -11775,6 +11796,9 @@ Thank you for your cooperation.`;
     if (this.selectedEmailBankTemplate() === "inadmissibilite_pr_3ans") {
       return "Inadmissibilité - Résident permanent";
     }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_non_citoyen_ni_pr" || this.selectedEmailBankTemplate() === "inadmissibilite_scolarite") {
+      return "Forces armées canadiennes";
+    }
     if (this.selectedEmailBankTemplate() === "anom_portail_admission") {
       return "Action requise : Portail d’admission et transmission de relevés de notes";
     }
@@ -11836,6 +11860,7 @@ Thank you for your cooperation.`;
       scenario.id === "inadmissibilite_age_57" ||
       scenario.id === "inadmissibilite_pr_3ans" ||
       scenario.id === "inadmissibilite_non_citoyen_ni_pr" ||
+      scenario.id === "inadmissibilite_scolarite" ||
       scenario.id === "anom_portail_admission" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
@@ -11985,6 +12010,7 @@ Thank you for your cooperation.`;
       scenario.id === "inadmissibilite_age_57" ||
       scenario.id === "inadmissibilite_pr_3ans" ||
       scenario.id === "inadmissibilite_non_citoyen_ni_pr" ||
+      scenario.id === "inadmissibilite_scolarite" ||
       scenario.id === "anom_portail_admission" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {

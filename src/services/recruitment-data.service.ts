@@ -85,6 +85,63 @@ export class RecruitmentDataService {
           ],
         },
         {
+          nameFr: "Relevé de note d'étude fait à l'étranger traduit dans une langue officielle",
+          nameEn: "Foreign study transcript translated into an official language",
+          reasons: [
+            {
+              id: "relev_etrang_trad_flou",
+              labelFr: "Floue / illisible",
+              labelEn: "Blurred / Illegible",
+              instructionFr:
+                "Le document est floue et illisible. Veuillez prendre une nouvelle photo et la téléverser à nouveau. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+              instructionEn:
+                "The document is blurred and illegible. Please take a new photo and upload it again. Ensure the image is sharp, without glare, and all information is clearly visible.",
+              logNoteFr: "Relevé de note d'étude fait à l'étranger traduit dans une langue officielle flou",
+            },
+            {
+              id: "relev_etrang_trad_incomp",
+              labelFr: "Document incomplet sur la photo",
+              labelEn: "Incomplete document in the photo",
+              instructionFr:
+                "Le document est incomplet sur la photo, il manque des pages ou le document n’est pas totalement visible. Veuillez téléverser une ou plusieurs photos du document en vous assurant que l’image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+              instructionEn:
+                "The document is incomplete in the photo, pages are missing, or it is not fully visible. Please upload one or more photos of the document, ensuring the image is sharp, without glare, and all information is clearly visible.",
+              logNoteFr: "Relevé de note d'étude fait à l'étranger traduit dans une langue officielle incomplet",
+            },
+            {
+              id: "relev_etrang_trad_inexist",
+              labelFr: "Inexistant au dossier",
+              labelEn: "Missing from file",
+              instructionFr:
+                "Le document n’est pas à votre dossier. Veuillez en prendre une photo nette, sans reflet et où toutes les informations sont bien lisibles, puis la téléverser sur votre portail. S'il n'est pas déjà rédigé dans l'une de ces deux langues, le document original doit obligatoirement être traduit en français ou en anglais par une firme de traduction officielle avant d'être téléversé.",
+              instructionEn:
+                "The document is missing from your file. Please take a clear photo, without glare and with all information fully legible, then upload it to your portal. If the original document is not already in one of these two languages, it must be translated into French or English by an official translation agency before being uploaded.",
+              logNoteFr: "Aucun relevé de note d'étude fait à l'étranger traduit dans une langue officielle au dossier",
+            },
+            {
+              id: "relev_etrang_trad_non_traduit",
+              labelFr: "Non traduit",
+              labelEn: "Not translated",
+              instructionFr:
+                "Le document soumis n'est pas rédigé dans une des deux langues officielles du Canada (français ou anglais). Le document original doit obligatoirement être traduit en français ou en anglais par une firme de traduction officielle avant d'être téléversé sur le portail.",
+              instructionEn:
+                "The submitted document is not in one of Canada's two official languages (English or French). The original document must be translated into French or English by an official translation agency before being uploaded to the portal.",
+              logNoteFr: "Relevé de note d'étude fait à l'étranger non traduit",
+            },
+            {
+              id: "relev_etrang_eval_comparative",
+              labelFr: "Évaluation comparative",
+              labelEn: "Comparative evaluation",
+              instructionFr:
+                "Nous vous remercions d'avoir fourni l'évaluation comparative de vos études faites à l'étranger. Toutefois, afin de valider vos acquis scolaires, vous devez également nous fournir votre relevé de notes original. Veuillez en prendre une photo nette, sans reflet et où toutes les informations sont bien lisibles, puis la téléverser sur votre portail. S'il n'est pas déjà rédigé en français ou en anglais, le document original doit obligatoirement être accompagné d'une traduction officielle effectuée par une firme de traduction reconnue.",
+              instructionEn:
+                "Thank you for providing the comparative evaluation of your foreign studies. However, in order to validate your educational background, you must also provide your original transcript. Please take a clear photo, without glare and with all information fully legible, then upload it to your portal. If the original document is not already in English or French, it must be accompanied by an official translation completed by a certified translation agency.",
+              logNoteFr:
+                "Évaluation comparative reçue, mais relevé de notes original (ou traduit) manquant au dossier",
+            },
+          ],
+        },
+        {
           nameFr: "Lettre d'admission sans condition Université civil canadienne",
           nameEn: "Unconditional admission letter Canadian civilian university",
           reasons: [
