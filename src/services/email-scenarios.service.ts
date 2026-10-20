@@ -778,7 +778,7 @@ Help Centre | Canadian Armed Forces`;
           <li style="margin-bottom: 10px;"><strong>You have not yet uploaded your transcripts</strong> to the RMC Admissions Portal. Please complete your admissions profile as soon as possible so that we can continue processing your application in the coming months.</li>
           <li style="margin-bottom: 10px;"><strong>Your application may not have been fully submitted.</strong> If you exited the portal before reaching the “Application Confirmation” page, your application may not have been fully submitted.</li>
         </ol>
-        <p>Here is an example page: <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #2563eb; text-decoration: underline;">Confirmation d'application</a>.</p>
+        <p>Here is an example page: <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #2563eb; text-decoration: underline;">Application Confirmation</a>.</p>
         <p>If you have completed your application and reached the “Application Confirmation” page, please take a screenshot of that page and upload it to your recruitment profile under the “Transcripts and Diplomas” task.</p>
         <p>This task will be reassigned to you so that you can upload the required screenshot.</p>
         <p>If you have already completed all of the steps above, simply reply to this email to let us know. We will verify that we have received your screenshot and mark the task as complete.</p>
@@ -832,7 +832,7 @@ Your application may fall into one of the following situations:
 
 2. Your application may not have been fully submitted. If you exited the portal before reaching the “Application Confirmation” page, your application may not have been fully submitted.
 
-Here is an example of the Confirmation d'application page: https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png
+Here is an example of the Application Confirmation page: https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png
 
 If you have completed your application and reached the “Application Confirmation” page, please take a screenshot of that page and upload it to your recruitment profile under the “Transcripts and Diplomas” task.
 

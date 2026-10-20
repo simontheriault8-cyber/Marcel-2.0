@@ -4437,7 +4437,7 @@ export class AppComponent implements OnInit {
   sgtPforInstructions = [
     { id: 'pfor_1', text: "S'assurer que la liste de Vérification A1 à A35 est bien rempli" },
     { id: 'pfor_2', text: 'Marquer la tâche "Planifier votre consultation CAF 101" comme complétée' },
-    { id: 'pfor_3', text: 'Réattribuer la tâche "relevés de notes et Diplômes" pour le dépôt de la capture d\'écran de confirmation des documents déposés sur le PA' },
+    { id: 'pfor_3', text: 'Attribuer la tâche "4.5 - Autres exigences en matière de sécurité" pour le dépôt de la capture d\'écran de confirmation des documents déposés sur le PA' },
     { id: 'pfor_4', text: 'Ajouter la note au registre du Postulant' },
     { id: 'pfor_5', text: 'Tag CCM et Recruteur BPR appropriés' },
     { id: 'pfor_6', text: 'Basculer vers la Gestion des admissions' },
@@ -9709,20 +9709,22 @@ Thank you for your cooperation.`;
     // --- FRENCH BLOCK ---
     html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
     html += `<p>Bonjour,</p>`;
-    html += `<p>Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
-    html += `<p>Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. <strong>Voici comment procéder pour nous les transmettre :</strong></p>`;
+    html += `<p>Nous vous remercions de votre intérêt envers les Forces armées canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
+    html += `<p>Afin de poursuivre le traitement de votre demande, le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous vos documents scolaires.</p>`;
+    html += `<p><strong>Voici comment procéder pour leur transmettre :</strong></p>`;
 
     html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
     html += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
     html += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.</li>`;
-    html += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</li>`;
+    html += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les téléverser sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</li>`;
+    html += `  <li style="margin-bottom: 10px;">Il est très important que vous fassiez une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez cette capture d’écran sur votre portail du Postulant en ligne sous la tâche Autres exigences en matière de sécurité. (Voici un exemple de la page <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Confirmation d'application</a>)</li>`;
     html += `</ol>`;
 
     html += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
 
-    html += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)</p>`;
+    html += `<p>Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors.</p>`;
 
-    html += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
+    html += `<p>S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serez informé par courriel ou en recevant des tâches supplémentaires sur votre portail.</p>`;
 
     html += `<p>Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
 
@@ -9735,21 +9737,23 @@ Thank you for your cooperation.`;
     // --- ENGLISH BLOCK ---
     html += `<p>Hello,</p>`;
     html += `<p>Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).</p>`;
-    html += `<p>To continue processing your application, we need supporting academic documentation. <strong>Here's how to proceed to submit it:</strong></p>`;
+    html += `<p>To continue processing your application, the Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of your educational documents.</p>`;
+    html += `<p><strong>Here's how to proceed to submit them:</strong></p>`;
 
     html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    html += `  <li style="margin-bottom: 10px;">Visit the Royal Military College of Canada (RMC) website at the following link:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Royal Military College of Canada (RMC)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
+    html += `  <li style="margin-bottom: 10px;">Visit the Royal Military College of Canada (RMC) website at the following address:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Royal Military College of Canada (RMC) (rmc.ca)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
     html += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.</li>`;
-    html += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)</li>`;
+    html += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your Forces.ca portal at the beginning of your recruitment process)</li>`;
+    html += `  <li style="margin-bottom: 10px;">It is very important that you take a screenshot of the confirmation page showing that your documents have been successfully submitted, and then upload this screenshot to your online Applicant portal under the Other Security Requirements task. (Here is an example of the <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Application Confirmation</a> page)</li>`;
     html += `</ol>`;
 
-    html += `<p><strong>***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
+    html += `<p><strong>***Applicants who studied outside Canada, the United Kingdom, the United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
 
-    html += `<p>Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by CMR Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)</p>`;
+    html += `<p>Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by CMR Saint-Jean for junior applicants.</p>`;
 
     html += `<p>If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.</p>`;
 
-    html += `<p>For any questions, please feel free to contact us by email to: <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
+    html += `<p>If you have any questions, please feel free to contact us by email at <a href="mailto:PFOR_CRFC_Quebec@Forces.gc.ca" style="color: #4f46e5; text-decoration: underline;">PFOR_CRFC_Quebec@Forces.gc.ca</a>.</p>`;
 
     html += `<p>Thank you for your interest in joining the Canadian Armed Forces.</p>`;
 
@@ -9765,16 +9769,18 @@ Thank you for your cooperation.`;
     // --- FRENCH ---
     plain += `English message will follow.\n\n`;
     plain += `Bonjour,\n\n`;
-    plain += `Nous vous remercions de votre intérêt envers les Forces Armées Canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
-    plain += `Afin de poursuivre le traitement de votre demande, nous devons obtenir vos documents scolaires. Voici comment procéder pour nous les transmettre :\n\n`;
+    plain += `Nous vous remercions de votre intérêt envers les Forces armées canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
+    plain += `Afin de poursuivre le traitement de votre demande, le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous vos documents scolaires.\n\n`;
+    plain += `Voici comment procéder pour leur transmettre :\n\n`;
     plain += `1. Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :\n`;
     plain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
     plain += `Remarque : Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).\n\n`;
     plain += `2. Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.\n\n`;
-    plain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les télécharger sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
+    plain += `3. Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les téléverser sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)\n\n`;
+    plain += `4. Il est très important que vous fassiez une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez cette capture d’écran sur votre portail du Postulant en ligne sous la tâche Autres exigences en matière de sécurité. (Voici un exemple de la page Confirmation d'application : https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png)\n\n`;
     plain += `***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***\n\n`;
-    plain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors. (Faites une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez la sur votre portail du Postulant en ligne)\n\n`;
-    plain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serai informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
+    plain += `Une fois que les documents requis auront été reçus, votre dossier sera examiné par le Collège militaire royal du Canada (Kingston) pour les postulantes et postulants seniors, et par le CMR Saint-Jean pour les postulantes et postulants juniors.\n\n`;
+    plain += `S’il est établi que vous satisfaisiez aux exigences minimales et que le Collège décide de traiter votre demande, le centre de recrutement pourra continuer le traitement de votre dossier et vous en serez informé par courriel ou en recevant des tâches supplémentaires sur votre portail.\n\n`;
     plain += `Si vous avez des questions, n’hésitez pas à communiquer avec nous par courriel à PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
     plain += `Nous vous remercions de votre intérêt à joindre les Forces armées canadiennes.\n\n`;
     plain += this.getSignatureFr();
@@ -9784,16 +9790,18 @@ Thank you for your cooperation.`;
     // --- ENGLISH ---
     plain += `Hello,\n\n`;
     plain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
-    plain += `To continue processing your application, we need supporting academic documentation. Here's how to proceed to submit it:\n\n`;
-    plain += `1. Visit the Royal Military College of Canada (RMC) website at the following link:\n`;
-    plain += `Royal Military College of Canada (RMC) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
+    plain += `To continue processing your application, the Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of your educational documents.\n\n`;
+    plain += `Here's how to proceed to submit them:\n\n`;
+    plain += `1. Visit the Royal Military College of Canada (RMC) website at the following address:\n`;
+    plain += `Admissions - Royal Military College of Canada (RMC) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
     plain += `Note: You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).\n\n`;
     plain += `2. You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.\n\n`;
-    plain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your portal when you begin your online application)\n\n`;
-    plain += `***Applicants who studied outside Canada, United Kingdom, United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
-    plain += `Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by CMR Saint-Jean for junior applicants. (Make sure you take a screenshot of the confirmation page for the deposit of your document and upload them on your online profile)\n\n`;
+    plain += `3. You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your Forces.ca portal at the beginning of your recruitment process)\n\n`;
+    plain += `4. It is very important that you take a screenshot of the confirmation page showing that your documents have been successfully submitted, and then upload this screenshot to your online Applicant portal under the Other Security Requirements task. (Here is an example of the Application Confirmation page: https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png)\n\n`;
+    plain += `***Applicants who studied outside Canada, the United Kingdom, the United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***\n\n`;
+    plain += `Once the required documents have been received, your file will be reviewed by the Royal Military College of Canada (Kingston) for senior applicants, and by CMR Saint-Jean for junior applicants.\n\n`;
     plain += `If it is determined that you meet the minimum requirements and the College decides to process your application, the recruitment centre will be able to continue processing your file, and you will be informed either by email or by receiving additional tasks on your portal.\n\n`;
-    plain += `For any questions, please feel free to contact us by email to: PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
+    plain += `If you have any questions, please feel free to contact us by email at PFOR_CRFC_Quebec@Forces.gc.ca.\n\n`;
     plain += `Thank you for your interest in joining the Canadian Armed Forces.\n\n`;
     plain += this.getSignatureEn();
 
