@@ -191,146 +191,6 @@ Help Centre | Canadian Armed Forces`;
       bodyText: generalReminderText,
     });
 
-    // SCENARIO: File closed due to basic academic requirements
-    const fileClosedAcademicsHtml = `
-      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
-        <p><span style="background-color: yellow;">English message will follow.</span></p>
-        <p>Bonjour,</p>
-        <p>L’évaluation des documents que vous avez fournis nous indique que vous n’êtes pas admissible à un enrôlement au sein des Forces armées canadiennes.</p>
-        <p>Voici les 3 façons de répondre au critère d’entrée académique minimum :</p>
-        <ul>
-          <li>24 crédits de secondaire 4 ou 5 (les crédits de formation professionnelle ne sont pas acceptés dans le calcul)</li>
-          <li>Diplôme d’étude professionnelles (DEP) complété.</li>
-          <li>Attestation d’études de niveau secondaire (AENS)</li>
-        </ul>
-        <p><em>Remarque : La réussite du Test de développement général (TDG) n’est pas acceptée.</em></p>
-        <p>Voici un lien qui pourrait vous être utile : <a href="https://www.challengeu.ca/">ChallengeU - Plateforme en ligne - Formation à distance</a></p>
-        <p>Pour les études faites à l’étranger, communiquez avec un des six membres de l'Alliance canadienne des services d'évaluation de diplômes afin d’obtenir le rapport d’étude comparative avant de nous recontacter afin que nous puissions valider vos acquis scolaires.</p>
-        <p>Pour obtenir de l’information additionnelle à ce sujet, consultez les liens suivants :</p>
-        <ul>
-          <li><a href="http://www.cicdi.ca">www.cicdi.ca</a></li>
-          <li><a href="https://canalliance.org/">https://canalliance.org/</a></li>
-        </ul>
-        <p>Pour le moment vous ne répondez pas au critère d’entré académique minimum. Par conséquent, nous devons malheureusement procéder à la fermeture de votre dossier de candidature.</p>
-        <p>Si vous répondez à ces critères un jour, vous devez appeler un centre de recrutement pour poursuivre votre demande d’enrôlement.</p>
-        <p>Nous vous remercions de votre intérêt envers les Forces armées canadiennes et vous souhaitons du succès dans vos projets futurs.</p>
-        <p><strong>Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.</strong></p>
-        <p>Cordialement,</p>
-        <p>L’équipe de recrutement des Forces armées canadiennes<br>
-        Centre de recrutement des Forces canadiennes Québec<br>
-        Commandement du Personnel militaire / Forces armées canadiennes<br>
-        <a href="https://forces.ca/fr/centre-dassistance/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance | Forces armées canadiennes</a></p>
-        
-        <br><p>______________________________________________________________________________</p><br>
-
-        <p>Hello,</p>
-        <p>The evaluation of the documents you provided indicates that you are not eligible for enrollment in the Canadian Armed Forces.</p>
-        <p>Here are the 3 ways to meet the minimum academic entry requirement:</p>
-        <ul>
-          <li>24 credits of Secondary 4 or 5 (vocational training credits are not accepted in the calculation)</li>
-          <li>Completed Diploma of Vocational Studies (DVS)</li>
-          <li>Secondary School Equivalency Attestation (TENS)</li>
-        </ul>
-        <p><em>Note: Successful completion of the General Development Test (GDT) is not accepted.</em></p>
-        <p>Here is a link that might be useful: <a href="https://www.challengeu.ca/">ChallengeU - Online Platform - Distance Learning</a></p>
-        <p>For studies completed abroad, please contact one of the six members of the Canadian Alliance of Credential Evaluation Services to obtain a comparative evaluation report before contacting us again so we can validate your educational background.</p>
-        <p>For additional information on this subject, please consult the following links:</p>
-        <ul>
-          <li><a href="http://www.cicdi.ca">www.cicdi.ca</a></li>
-          <li><a href="https://canalliance.org/">https://canalliance.org/</a></li>
-        </ul>
-        <p>At the moment you do not meet the minimum academic entry requirement. Therefore, we must unfortunately close your application file.</p>
-        <p>If you meet these criteria in the future, you must contact a recruiting centre to pursue your enrollment application.</p>
-        <p>We thank you for your interest in the Canadian Armed Forces and wish you success in your future endeavors.</p>
-        <p><strong>If you do not take any action, your file will be automatically deactivated after 30 days.</strong></p>
-        <p>Sincerely,</p>
-        <p>The Canadian Armed Forces Recruiting Team<br>
-        Canadian Forces Recruiting Centre Quebec<br>
-        Military Personnel Command / Canadian Armed Forces<br>
-        <a href="https://forces.ca/en/help-centre/#/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre | Canadian Armed Forces</a></p>
-      </div>
-    `;
-
-    const fileClosedAcademicsText = `English message will follow.
-
-Bonjour,
-
-L’évaluation des documents que vous avez fournis nous indique que vous n’êtes pas admissible à un enrôlement au sein des Forces armées canadiennes.
-
-Voici les 3 façons de répondre au critère d’entrée académique minimum :
-- 24 crédits de secondaire 4 ou 5 (les crédits de formation professionnelle ne sont pas acceptés dans le calcul)
-- Diplôme d’étude professionnelles (DEP) complété.
-- Attestation d’études de niveau secondaire (AENS)
-
-Remarque : La réussite du Test de développement général (TDG) n’est pas acceptée.
-
-Voici un lien qui pourrait vous être utile : ChallengeU - Plateforme en ligne - Formation à distance (https://www.challengeu.ca/)
-
-Pour les études faites à l’étranger, communiquez avec un des six membres de l'Alliance canadienne des services d'évaluation de diplômes afin d’obtenir le rapport d’étude comparative avant de nous recontacter afin que nous puissions valider vos acquis scolaires.
-
-Pour obtenir de l’information additionnelle à ce sujet, consultez les liens suivants :
-- www.cicdi.ca
-- https://canalliance.org/
-
-Pour le moment vous ne répondez pas au critère d’entré académique minimum. Par conséquent, nous devons malheureusement procéder à la fermeture de votre dossier de candidature.
-
-Si vous répondez à ces critères un jour, vous devez appeler un centre de recrutement pour poursuivre votre demande d’enrôlement.
-
-Nous vous remercions de votre intérêt envers les Forces armées canadiennes et vous souhaitons du succès dans vos projets futurs.
-
-Si vous ne prenez aucune action, votre dossier sera désactivé automatiquement après 30 jours.
-
-Cordialement,
-
-L’équipe de recrutement des Forces armées canadiennes
-Centre de recrutement des Forces canadiennes Québec
-Commandement du Personnel militaire / Forces armées canadiennes
-Centre d’assistance | Forces armées canadiennes
-
-______________________________________________________________________________
-
-Hello,
-
-The evaluation of the documents you provided indicates that you are not eligible for enrollment in the Canadian Armed Forces.
-
-Here are the 3 ways to meet the minimum academic entry requirement:
-- 24 credits of Secondary 4 or 5 (vocational training credits are not accepted in the calculation)
-- Completed Diploma of Vocational Studies (DVS)
-- Secondary School Equivalency Attestation (TENS)
-
-Note: Successful completion of the General Development Test (GDT) is not accepted.
-
-Here is a link that might be useful: ChallengeU - Online Platform - Distance Learning (https://www.challengeu.ca/)
-
-For studies completed abroad, please contact one of the six members of the Canadian Alliance of Credential Evaluation Services to obtain a comparative evaluation report before contacting us again so we can validate your educational background.
-
-For additional information on this subject, please consult the following links:
-- www.cicdi.ca
-- https://canalliance.org/
-
-At the moment you do not meet the minimum academic entry requirement. Therefore, we must unfortunately close your application file.
-
-If you meet these criteria in the future, you must contact a recruiting centre to pursue your enrollment application.
-
-We thank you for your interest in the Canadian Armed Forces and wish you success in your future endeavors.
-
-If you do not take any action, your file will be automatically deactivated after 30 days.
-
-Sincerely,
-
-The Canadian Armed Forces Recruiting Team
-Canadian Forces Recruiting Centre Quebec
-Military Personnel Command / Canadian Armed Forces
-Help Centre | Canadian Armed Forces`;
-
-    this.scenarios.set("educ_non_admissible", {
-      id: "educ_non_admissible",
-      subjectFr: "Forces armées canadiennes/Canadian Armed Forces",
-      subjectEn: "Forces armées canadiennes/Canadian Armed Forces",
-      bodyHtml: fileClosedAcademicsHtml,
-      bodyText: fileClosedAcademicsText,
-    });
-
     // SCENARIO: Verification Programme EDO VS PFOR
     const verificationEdoVsPforHtml = `
       <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
@@ -589,7 +449,17 @@ Help Centre | Canadian Armed Forces`;
         <p>Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :</p>
         <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
           <li><strong>Soit obtenir la citoyenneté canadienne ;</strong></li>
-          <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.</li>
+          <li><strong>Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC)</strong> prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien. Vous devez également fournir l'un des documents justificatifs suivants :
+            <ul style="padding-left: 20px; margin-top: 6px; list-style-type: disc;">
+              <li>Visas d'étudiant / permis d'études</li>
+              <li>Permis de travail</li>
+              <li>Fiches du visiteur</li>
+              <li>Tampons d'entrée et de sortie</li>
+              <li>Rapports sur les antécédents de voyage de l'ASFC</li>
+              <li>Documents de résidence permanente</li>
+              <li>Dossiers scolaires ou d'emploi</li>
+            </ul>
+          </li>
         </ul>
         <p>Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.</p>
         <p>Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.</p>
@@ -607,7 +477,17 @@ Help Centre | Canadian Armed Forces`;
         <p>In order to become eligible and be able to reapply or proceed with an application in the future, you must:</p>
         <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px;">
           <li><strong>Either obtain Canadian citizenship;</strong></li>
-          <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory.</li>
+          <li><strong>Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator</strong> proving that you have accumulated more than three years (1,095 days) on Canadian territory. You must also provide one of the following supporting documents:
+            <ul style="padding-left: 20px; margin-top: 6px; list-style-type: disc;">
+              <li>Student visas/study permits</li>
+              <li>Work permits</li>
+              <li>Visitor records</li>
+              <li>Entry/exit stamps</li>
+              <li>CBSA travel history reports</li>
+              <li>PR documentation</li>
+              <li>Educational or employment records</li>
+            </ul>
+          </li>
         </ul>
         <p>Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.</p>
         <p>Thank you for your interest in the Canadian Armed Forces.</p>
@@ -629,7 +509,14 @@ Pour être admissible à un enrôlement dans les FAC à titre de résident perma
 
 Pour devenir admissible et pouvoir poser à nouveau votre candidature ou poursuivre votre processus à l'avenir, vous devez :
   - Soit obtenir la citoyenneté canadienne ;
-  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien.
+  - Soit fournir le résultat officiel du calculateur de présence physique d'Immigration, Réfugiés et Citoyenneté Canada (IRCC) prouvant que vous avez accumulé plus de trois ans (1 095 jours) sur le territoire canadien. Vous devez également fournir l'un des documents justificatifs suivants :
+      • Visas d'étudiant / permis d'études
+      • Permis de travail
+      • Fiches du visiteur
+      • Tampons d'entrée et de sortie
+      • Rapports sur les antécédents de voyage de l'ASFC
+      • Documents de résidence permanente
+      • Dossiers scolaires ou d'emploi
 
 Puisque vous ne remplissez pas cette condition pour le moment, votre dossier de candidature actuel sera fermé. Dès que vous respecterez l'une de ces conditions, nous vous invitons à déposer une nouvelle candidature.
 
@@ -652,7 +539,14 @@ To be eligible for enrolment in the CAF as a permanent resident, you must have a
 
 In order to become eligible and be able to reapply or proceed with an application in the future, you must:
   - Either obtain Canadian citizenship;
-  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory.
+  - Or provide the official result from the Immigration, Refugees and Citizenship Canada (IRCC) physical presence calculator proving that you have accumulated more than three years (1,095 days) on Canadian territory. You must also provide one of the following supporting documents:
+      • Student visas/study permits
+      • Work permits
+      • Visitor records
+      • Entry/exit stamps
+      • CBSA travel history reports
+      • PR documentation
+      • Educational or employment records
 
 Since you do not meet this condition at this time, your current application file will be closed. As soon as you satisfy one of these requirements, you are welcome to submit a new application.
 

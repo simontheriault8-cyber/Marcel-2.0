@@ -3123,7 +3123,7 @@ export class ReorientationComponent {
     },
     {
       id: "sec4_24_credits",
-      label: "24 crédit de sec 4/10e années complété",
+      label: "24 crédits de sec 4 et les cours obligatoires/10e année complété",
       category: "Année scolaire",
     },
     {

@@ -8958,16 +8958,6 @@ Thank you for your cooperation.`;
 
     const keysArray = Array.from(this.selectedRejectionKeys()) as string[];
 
-    // Trigger for "File Closed due to Basic Academic Criteria"
-    const fileClosedAcademics = keysArray.some((k) =>
-      k.includes("educ_non_admissible"),
-    );
-    if (fileClosedAcademics) {
-      return (
-        this.emailScenariosService.getScenario("educ_non_admissible") || null
-      );
-    }
-
     // Trigger for "Parental Consent Required"
     // Checks for 'naiss_parents' (Birth Cert) OR 'emp_nom_parent' (Now in Consent Task)
     const needsParentalConsent = keysArray.some(
