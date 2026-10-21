@@ -409,11 +409,11 @@ export const CMR_JOB_DOMAINS: Record<
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
                   <span class="w-2 h-2 rounded-full bg-rose-600"></span>
-                  Inadmissible au PFOR
+                  Inadmissible aux CMC, Réo MR ou Ucivil
                 </h3>
                 @if (cmrRefused()) {
                   <span class="text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full border border-rose-200">
-                    Refus CMR actif
+                    Refus CMC actif
                   </span>
                 } @else if (cmrMinCriteriaNotMet()) {
                   <span class="text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
@@ -423,11 +423,11 @@ export const CMR_JOB_DOMAINS: Record<
               </div>
 
               <p class="text-xs text-slate-500">
-                Cochez une option si le candidat ne peut pas être admis au PFOR (CMR) afin d'activer le processus de réorientation vers les métiers de militaire du rang :
+                Cochez une option si le candidat ne peut pas être admis aux CMC afin d'activer le processus de réorientation vers les métiers de militaire du rang ou en université civile :
               </p>
 
               <div class="flex flex-col gap-2">
-                <!-- Case à cocher : Admissibilité refusé par le CMR -->
+                <!-- Case à cocher : Admissibilité refusé par les CMC -->
                 <label
                   class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all select-none"
                   [class.bg-rose-50]="cmrRefused()"
@@ -452,10 +452,10 @@ export const CMR_JOB_DOMAINS: Record<
                         <line x1="15" y1="9" x2="9" y2="15"></line>
                         <line x1="9" y1="9" x2="15" y2="15"></line>
                       </svg>
-                      Admissibilité refusé par le CMR
+                      Admissibilité refusé par les CMC
                     </span>
                     <span class="text-[10px]" [class.text-rose-700]="cmrRefused()" [class.text-slate-500]="!cmrRefused()">
-                      Le postulant a été refusé par le CMR et doit être réorienté vers les métiers de militaire du rang
+                      Le postulant a été refusé par les CMC et doit être réorienté vers les métiers de militaire du rang
                     </span>
                   </div>
                 </label>
@@ -689,7 +689,7 @@ export const CMR_JOB_DOMAINS: Record<
                 </div>
                 @if (cmrRefused()) {
                   <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
-                    Refus CMR actif
+                    Refus CMC actif
                   </span>
                 } @else if (cmrMinCriteriaNotMet()) {
                   <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
@@ -804,7 +804,7 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMR (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
+                    {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMC (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
                   </h3>
                   @if (citizenship() === 'PR < 3 years') {
                     <span
@@ -1430,8 +1430,8 @@ export class PforComponent {
       } else if (this.pforType() === "cmr") {
         if (this.cmrRefused()) {
           isEligible = false;
-          reasonFr = "Candidat non admis au Collège militaire royal du Canada (CMR). Réorientation nécessaire.";
-          reasonEn = "Candidate not admitted to the Royal Military College of Canada (RMC). Reorientation required.";
+          reasonFr = "Candidat non admis aux Collèges militaires royaux du Canada (CMC). Réorientation nécessaire.";
+          reasonEn = "Candidate not admitted to the Canadian Military Colleges (CMC). Reorientation required.";
         } else if (this.cmrMinCriteriaNotMet()) {
           isEligible = false;
           reasonFr = "Critère minimal pour le PFOR non rencontré (DES requis). Réorientation nécessaire.";
@@ -1663,8 +1663,8 @@ export class PforComponent {
     if (this.pforType() === "cmr") {
       if (this.cmrRefused()) {
         isEducationAdmissible = false;
-        educationReason = "Admissibilité refusée par le CMR pour le Programme de formation des officiers (PFOR).";
-        educationReasonEn = "Admission refused by RMC for the Regular Officer Training Plan (ROTP).";
+        educationReason = "Admissibilité refusée par les CMC pour le Programme de formation des officiers (PFOR).";
+        educationReasonEn = "Admission refused by CMC for the Regular Officer Training Plan (ROTP).";
       } else if (this.cmrMinCriteriaNotMet()) {
         isEducationAdmissible = false;
         educationReason = "Critère minimal pour le PFOR non rencontré (diplôme d'études secondaires requis).";
@@ -1816,7 +1816,7 @@ export class PforComponent {
         reoPrefix = "PFOR - Âge limite dépassé - Réorientation nécessaire car";
       } else if (this.pforType() === "cmr") {
         if (this.cmrRefused()) {
-          reoPrefix = "Refus d'admission CMR - Réorientation nécessaire";
+          reoPrefix = "Refus d'admission CMC - Réorientation nécessaire";
         } else if (this.cmrMinCriteriaNotMet()) {
           reoPrefix = "Critère minimal PFOR non rencontré (DES manquant) - Réorientation nécessaire";
         } else {
@@ -2505,26 +2505,28 @@ export class PforComponent {
           `<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). <strong>${this.formatCmrMinCriteriaParagraphFr()}</strong></p>\n`;
       } else {
         h +=
-          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous n’avez pas été admis(e) par le CMR.</strong></p>\n';
+          '<p class="mt-4 mb-4">Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par les Collèges Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous n’avez pas été admis(e) par les CMC.</strong></p>\n';
       }
       h +=
         '<p class="mt-4 mb-4">Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.<br>Voici les différentes options qui s’offrent à vous :</p>\n';
 
-      h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
       if (this.cmrMinCriteriaNotMet()) {
+        h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
         h +=
           "  <li>Vous pouvez choisir un métier de membre du rang parmi la liste suivante.</li>\n";
         h +=
           "  <li>Vous pouvez demander la fermeture de votre dossier et retenter votre chance pour le PFOR lorsque vous aurez obtenu votre diplôme d’études secondaires (DES).</li>\n";
+        h += "</ul>\n";
       } else {
+        h += '<ol class="list-decimal pl-6 space-y-2 mb-4">\n';
         h +=
-          "  <li>Vous pouvez retentez votre chance lors de la prochaine campagne PFOR l’an prochain.</li>\n";
+          "  <li>Vous pouvez retentez votre chance lors de la prochaine campagne PFOR en septembre de l’année prochaine si vous voulez étudier dans l’un des CMC, sinon;</li>\n";
         h +=
-          '  <li>Vous pouvez vous inscrire dans une Université civile dans un programme de Baccalauréat admissible pour les métiers qui vous intéressent et nous fournir la lettre d’admission à temps pleins et sans conditions. <span style="background-color: #fef08a; padding: 1px 3px;">(Cela ne garantit pas que vous serez admis dans le volet Civil du PFOR)</span> <a href="https://forces.ca/fr/programmes-admissibles/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Liste des programmes admissibles par métier</a></li>\n';
+          "  <li>Le PFOR est aussi possible dans une université civil canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.</li>\n";
         h +=
-          "  <li>Vous pouvez aussi choisir un métier de membre du rang parmi la liste suivante.</li>\n";
+          "  <li>Vous pouvez aussi choisir un métier de militaire du rang. Il existe un programme d’étude subventionné pour certains métiers de militaire du rang. Si ce programme vous intéresse, veuillez communiquer avec votre centre de recrutement pour valider les possibilités, sinon voici une liste de métiers militaire du rang pour lesquels vous rencontré les critères académiques.</li>\n";
+        h += "</ol>\n";
       }
-      h += "</ul>\n";
 
       // NCM Jobs List
       h +=
@@ -2547,9 +2549,7 @@ export class PforComponent {
 
       if (!this.cmrMinCriteriaNotMet()) {
         h +=
-          '<p class="mt-4 mb-4">Il existe aussi un programme d’étude subventionné pour certains métiers de militaire du rang. Si un tel programme vous intéresse, veuillez consulter les informations que vous trouverez à ce lien : <a href="https://forces.ca/fr/programmes-etudes-subventionnees/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">PIESMR | Programmes d’études subventionnées | Forces armées canadiennes</a>.</p>\n';
-        h +=
-          "<p class=\"mt-4 mb-6\">Si vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel.</p>\n";
+          "<p class=\"mt-4 mb-6\">Si vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel ou communiquer avec votre centre de recrutement.</p>\n";
       } else {
         h +=
           "<p class=\"mt-4 mb-6\">Si vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.</p>\n";
@@ -2606,26 +2606,28 @@ export class PforComponent {
           `<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). <strong>${this.formatCmrMinCriteriaParagraphEn()}</strong></p>\n`;
       } else {
         h +=
-          '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have not been offered admission to RMC.</strong></p>\n';
+          '<p class="mt-4 mb-4">Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Canadian Military Colleges (CMC) for the Regular Officer Training Plan (ROTP), <strong>you have not been admitted by the CMC.</strong></p>\n';
       }
       h +=
         '<p class="mt-4 mb-4">However, this does not mean that your recruiting process must come to an end at this time.<br>The following options remain available to you:</p>\n';
 
-      h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
       if (this.cmrMinCriteriaNotMet()) {
+        h += '<ul class="list-disc pl-6 space-y-2 mb-4">\n';
         h +=
           "  <li>You may choose a Non-Commissioned Member (NCM) occupation from the following list.</li>\n";
         h +=
           "  <li>You may request to close your application file and reapply for the ROTP once you have obtained your high school diploma.</li>\n";
+        h += "</ul>\n";
       } else {
+        h += '<ol class="list-decimal pl-6 space-y-2 mb-4">\n';
         h +=
-          "  <li>You may reapply during next year’s ROTP selection campaign.</li>\n";
+          "  <li>You may reapply during the next ROTP selection campaign in September of next year if you wish to study at one of the CMCs, otherwise;</li>\n";
         h +=
-          '  <li>You may apply in a civilian university in a bachelor\'s degree program that meets the educational requirements for the occupations that interest you and provide us with an unconditional full-time letter of acceptance. <span style="background-color: #fef08a; padding: 1px 3px;">(Please note that this does not guarantee admission through the Civilian University ROTP entry plan.)</span> <a href="https://forces.ca/en/eligible-programmes/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">List of Eligible Programs by Occupation</a></li>\n';
+          "  <li>The ROTP is also available at a Canadian civilian university. To be eligible, you will need to provide an unconditional full-time admission letter in a field of study that corresponds to the officer occupation of your choice. Eligibility is not guaranteed, however; an assessment of your academic potential will be taken into account. Please contact your recruiting centre to confirm that your choice of occupation and your choice of study program are compatible.</li>\n";
         h +=
-          "  <li>You may also choose a Non-Commissioned Member (NCM) occupation</li>\n";
+          "  <li>You may also choose a Non-Commissioned Member (NCM) occupation. There is a subsidized education program for certain Non-Commissioned Member occupations. If you are interested in this program, please contact your recruiting centre to explore the possibilities; otherwise, here is a list of Non-Commissioned Member occupations for which you meet the academic criteria.</li>\n";
+        h += "</ol>\n";
       }
-      h += "</ul>\n";
 
       // NCM Jobs List English
       h +=
@@ -2648,9 +2650,7 @@ export class PforComponent {
 
       if (!this.cmrMinCriteriaNotMet()) {
         h +=
-          '<p class="mt-4 mb-4">There is also a subsidized education program available for certain Non-Commissioned Member (NCM) occupations. If such a program interests you, please consult the information available at the following link: <a href="https://forces.ca/en/paid-education-programs/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">NCMSTEP | Paid Education Programs | Canadian Armed Forces</a>.</p>\n';
-        h +=
-          "<p class=\"mt-4 mb-6\">If you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email.</p>\n";
+          "<p class=\"mt-4 mb-6\">If you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email or contact your recruiting centre.</p>\n";
       } else {
         h +=
           "<p class=\"mt-4 mb-6\">If you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.</p>\n";
@@ -2707,7 +2707,7 @@ export class PforComponent {
           `Malheureusement, si vous recevez ce courriel, c’est pour vous informer que vous ne rencontrez pas les critères minimaux d’admissibilité pour le Programme de formation des officiers de la force régulière (PFOR). ${this.formatCmrMinCriteriaParagraphFr()}\n\n`;
       } else {
         t +=
-          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royale du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous n’avez pas été admis(e) par le CMR.\n\n";
+          "Malheureusement, si vous recevez ce courriel, c’est pour vous informer que suite à l’évaluation de vos relevés de notes et de votre potentiel académique par les Collèges Militaire Canadien (CMC) pour le Programme de formation des officiers de la force régulière (PFOR), vous n’avez pas été admis(e) par les CMC.\n\n";
       }
       t +=
         "Toutefois, cela ne signifie pas que votre processus de recrutement doit se terminer maintenant.\n";
@@ -2720,11 +2720,11 @@ export class PforComponent {
           "• Vous pouvez demander la fermeture de votre dossier et retenter votre chance pour le PFOR lorsque vous aurez obtenu votre diplôme d’études secondaires (DES).\n\n";
       } else {
         t +=
-          "• Vous pouvez retentez votre chance lors de la prochaine campagne PFOR l’an prochain.\n";
+          "1. Vous pouvez retentez votre chance lors de la prochaine campagne PFOR en septembre de l’année prochaine si vous voulez étudier dans l’un des CMC, sinon;\n";
         t +=
-          "• Vous pouvez vous inscrire dans une Université civile dans un programme de Baccalauréat admissible pour les métiers qui vous intéressent et nous fournir la lettre d’admission à temps pleins et sans conditions. (Cela ne garantit pas que vous serez admis dans le volet Civil du PFOR) Liste des programmes admissibles par métier (https://forces.ca/fr/programmes-admissibles/)\n";
+          "2. Le PFOR est aussi possible dans une université civil canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.\n";
         t +=
-          "• Vous pouvez aussi choisir un métier de membre du rang parmi la liste suivante.\n\n";
+          "3. Vous pouvez aussi choisir un métier de militaire du rang. Il existe un programme d’étude subventionné pour certains métiers de militaire du rang. Si ce programme vous intéresse, veuillez communiquer avec votre centre de recrutement pour valider les possibilités, sinon voici une liste de métiers militaire du rang pour lesquels vous rencontré les critères académiques.\n\n";
       }
 
       t += "Métiers de militaire du rang admissibles :\n";
@@ -2743,9 +2743,7 @@ export class PforComponent {
 
       if (!this.cmrMinCriteriaNotMet()) {
         t +=
-          "\nIl existe aussi un programme d’étude subventionné pour certains métiers de militaire du rang. Si un tel programme vous intéresse, veuillez consulter les informations que vous trouverez à ce lien : PIESMR | Programmes d’études subventionnées | Forces armées canadiennes (https://forces.ca/fr/programmes-etudes-subventionnees/).\n\n";
-        t +=
-          "Si vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel.\n\n";
+          "\nSi vous trouvez un métier qui vous intéresse dans ce programme ou si vous désirez avoir plus d’information, veuillez répondre directement à ce courriel ou communiquer avec votre centre de recrutement.\n\n";
       } else {
         t +=
           "\nSi vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.\n\n";
@@ -2794,7 +2792,7 @@ export class PforComponent {
           `Unfortunately, if you have received this email, it is to inform you that you do not meet the minimum eligibility requirements for the Regular Officer Training Plan (ROTP). ${this.formatCmrMinCriteriaParagraphEn()}\n\n`;
       } else {
         t +=
-          "Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have not been offered admission to RMC.\n\n";
+          "Unfortunately, if you have received this email, it is to inform you that, following the assessment of your academic transcripts and academic potential by the Canadian Military Colleges (CMC) for the Regular Officer Training Plan (ROTP), you have not been admitted by the CMC.\n\n";
       }
       t +=
         "However, this does not mean that your recruiting process must come to an end at this time.\n";
@@ -2807,11 +2805,11 @@ export class PforComponent {
           "• You may request to close your application file and reapply for the ROTP once you have obtained your high school diploma.\n\n";
       } else {
         t +=
-          "• You may reapply during next year’s ROTP selection campaign.\n";
+          "1. You may reapply during the next ROTP selection campaign in September of next year if you wish to study at one of the CMCs, otherwise;\n";
         t +=
-          "• You may apply in a civilian university in a bachelor's degree program that meets the educational requirements for the occupations that interest you and provide us with an unconditional full-time letter of acceptance. (Please note that this does not guarantee admission through the Civilian University ROTP entry plan.) List of Eligible Programs by Occupation (https://forces.ca/en/eligible-programmes/)\n";
+          "2. The ROTP is also available at a Canadian civilian university. To be eligible, you will need to provide an unconditional full-time admission letter in a field of study that corresponds to the officer occupation of your choice. Eligibility is not guaranteed, however; an assessment of your academic potential will be taken into account. Please contact your recruiting centre to confirm that your choice of occupation and your choice of study program are compatible.\n";
         t +=
-          "• You may also choose a Non-Commissioned Member (NCM) occupation\n\n";
+          "3. You may also choose a Non-Commissioned Member (NCM) occupation. There is a subsidized education program for certain Non-Commissioned Member occupations. If you are interested in this program, please contact your recruiting centre to explore the possibilities; otherwise, here is a list of Non-Commissioned Member occupations for which you meet the academic criteria.\n\n";
       }
 
       t += "Eligible Non-Commissioned Member occupations:\n";
@@ -2830,9 +2828,7 @@ export class PforComponent {
 
       if (!this.cmrMinCriteriaNotMet()) {
         t +=
-          "\nThere is also a subsidized education program available for certain Non-Commissioned Member (NCM) occupations. If such a program interests you, please consult the information available at the following link: NCMSTEP | Paid Education Programs | Canadian Armed Forces (https://forces.ca/en/paid-education-programs/).\n\n";
-        t +=
-          "If you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email.\n\n";
+          "\nIf you find an occupation that interests you within this program, or if you would like more information, please reply directly to this email or contact your recruiting centre.\n\n";
       } else {
         t +=
           "\nIf you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.\n\n";

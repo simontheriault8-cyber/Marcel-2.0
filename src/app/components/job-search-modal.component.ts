@@ -98,7 +98,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
                 [class.text-slate-400]="activeTab() !== 'pfor'"
                 [class.hover:text-white]="activeTab() !== 'pfor'"
               >
-                PFOR
+                Réorientation PFOR
               </button>
             }
             <button
@@ -198,7 +198,7 @@ type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
             [class.text-white]="activeTab() === 'pfor'"
             [class.text-slate-400]="activeTab() !== 'pfor'"
           >
-            PFOR
+            Réorientation PFOR
           </button>
         }
         <button
