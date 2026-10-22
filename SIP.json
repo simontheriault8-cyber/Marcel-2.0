@@ -389,7 +389,7 @@
     },
     "00183": {
       "PFOR": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "PFOEP": {
@@ -489,7 +489,7 @@
     },
     "00195": {
       "PFOR": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "PFOS": {
@@ -591,7 +591,7 @@
     },
     "00214": {
       "PFOR": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "EDO": {
@@ -1115,6 +1115,8 @@
     }
   },
   "gestionDesAttentes": [
-    "00183"
+    "00183",
+    "00195",
+    "00214"
   ]
 }

@@ -11628,4 +11628,18 @@ export const JOBS_DATA: JobEntry[] = [
       },
     ],
   },
+  {
+    id: "00410",
+    title: "Spécialiste en soins infirmiers praticiens",
+    titleEn: "Nurse Practitioner Specialist",
+    abbreviation: "INF PRAT",
+    requirements: "Exige un diplôme en sciences infirmières.",
+    details: [],
+    contracts: [
+      {
+        program: "PFOR",
+        duration: "10 ans",
+      },
+    ],
+  },
 ];

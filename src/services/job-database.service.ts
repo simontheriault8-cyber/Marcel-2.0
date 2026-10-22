@@ -372,9 +372,15 @@ export class JobDatabaseService {
     return !!(jobPrograms && jobPrograms['PFOR']);
   }
 
+  readonly PFOR_CIVIL_ONLY_IDS = new Set([
+    "00190", "00191", "00194", "00195", "00197", "00198",
+    "00211", "00349", "00374", "00390", "00393", "00410",
+  ]);
+
   isPforJob(jobIdOrEntry: string | JobEntry, phase?: 'admission' | 'traitement' | 'both'): boolean {
     const job = typeof jobIdOrEntry === 'string' ? this.getJobById(jobIdOrEntry) : jobIdOrEntry;
     if (!job) return false;
+    if (this.PFOR_CIVIL_ONLY_IDS.has(job.id)) return true;
     if (this.hasPforProgram(job.id, phase)) return true;
     if (job.contracts && job.contracts.some(c => (c.program || '').toUpperCase() === 'PFOR')) return true;
     return false;

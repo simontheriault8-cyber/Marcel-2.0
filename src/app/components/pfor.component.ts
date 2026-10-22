@@ -39,6 +39,22 @@ export const CMR_JOB_DOMAINS: Record<
   "00398": { arts: true, genie: false, science: false }, // Administration du personnel
 };
 
+// Métiers offerts sous le PFOR exclusivement en université civile (provenant du document PDF Métiers par programme CMR)
+export const PFOR_CIVIL_ONLY_JOB_IDS = new Set<string>([
+  "00190", // Dentiste
+  "00191", // Médecin
+  "00194", // Pharmacien
+  "00195", // Officier en soins infirmiers
+  "00197", // Aumônier
+  "00198", // Affaires juridiques
+  "00211", // Travailleur social
+  "00349", // Physiothérapeute
+  "00374", // Spécialiste en médecine de laboratoire
+  "00390", // Dentiste militaire spécialiste
+  "00393", // Officier des services de santé
+  "00410", // Spécialiste en soins infirmiers praticiens
+]);
+
 @Component({
   selector: "app-pfor",
   standalone: true,
@@ -320,9 +336,41 @@ export const CMR_JOB_DOMAINS: Record<
               </button>
             </div>
 
+            <!-- Case à cocher : Postulant pas encore évaluer par les CMC -->
+            <label
+              class="p-3 rounded-lg border flex items-center gap-3 cursor-pointer transition-all select-none"
+              [class.bg-indigo-50]="postulantNonEvalueCmc()"
+              [class.border-indigo-400]="postulantNonEvalueCmc()"
+              [class.text-indigo-950]="postulantNonEvalueCmc()"
+              [class.shadow-xs]="postulantNonEvalueCmc()"
+              [class.bg-white]="!postulantNonEvalueCmc()"
+              [class.border-slate-200]="!postulantNonEvalueCmc()"
+              [class.text-slate-800]="!postulantNonEvalueCmc()"
+            >
+              <input
+                type="checkbox"
+                id="postulant-non-evalue-cmc-checkbox"
+                [checked]="postulantNonEvalueCmc()"
+                (change)="togglePostulantNonEvalueCmc($any($event.target).checked)"
+                class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+              />
+              <div class="flex flex-col">
+                <span class="text-xs font-bold flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Postulant pas encore évaluer par les CMC
+                </span>
+                <span class="text-[11px] text-slate-500">
+                  Réorientation avant la réception de l'évaluation du CMR (inclut tous les métiers PFOR au CMR sauf ceux en gestion des attentes).
+                </span>
+              </div>
+            </label>
+
             <!-- Si PFOR CMR : Sélection des domaines d'admission -->
             @if (pforType() === 'cmr') {
-              @if (!cmrRefused() && !cmrMinCriteriaNotMet()) {
+              @if (!postulantNonEvalueCmc() && !cmrRefused() && !cmrMinCriteriaNotMet()) {
                 <div class="mt-2 p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
                   <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block">
@@ -399,12 +447,23 @@ export const CMR_JOB_DOMAINS: Record<
                     </label>
                   </div>
                 </div>
+              } @else if (postulantNonEvalueCmc()) {
+                <div class="mt-2 p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl flex items-center gap-2.5 text-xs text-indigo-900">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600 shrink-0">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>
+                    <strong>Évaluation CMC en attente :</strong> Tous les métiers PFOR au CMR sont inclus comme options au candidat (à l'exception de ceux en gestion des attentes).
+                  </span>
+                </div>
               }
             }
           </div>
 
           <!-- NOUVEAU PANNEAU : INADMISSIBLE AU PFOR (SI CMR) -->
-          @if (pforType() === 'cmr') {
+          @if (pforType() === 'cmr' && !postulantNonEvalueCmc()) {
             <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col gap-3">
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
@@ -804,7 +863,7 @@ export const CMR_JOB_DOMAINS: Record<
               >
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="text-sm font-bold text-slate-800">
-                    {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMC (Réorientation MR)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation'))) }}
+                    {{ (citizenship() === 'PR < 3 years') ? 'Courriel - Résident permanent inadmissible (Dossier fermé)' : (age() !== null && age()! >= 57) ? 'Courriel - Âge maximal dépassé (Dossier fermé)' : (cmrMinCriteriaNotMet() ? 'Courriel - Critère minimal non rencontré (Réorientation MR)' : (cmrRefused() ? 'Courriel - Refus CMC (Réorientation MR)' : (postulantNonEvalueCmc() ? 'Courriel - Gestion des attentes (Évaluation CMC en attente)' : (isAttentesMode() ? 'Courriel - Gestion des attentes' : 'Courriel de réorientation')))) }}
                   </h3>
                   @if (citizenship() === 'PR < 3 years') {
                     <span
@@ -823,6 +882,12 @@ export const CMR_JOB_DOMAINS: Record<
                       class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200"
                     >
                       {{ eligibleNcmEvaluation().openJobs.length }} métier(s) MR ouvert(s)
+                    </span>
+                  } @else if (postulantNonEvalueCmc()) {
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200"
+                    >
+                      Évaluation CMC en attente
                     </span>
                   } @else if (isAttentesMode()) {
                     <span
@@ -981,6 +1046,7 @@ export class PforComponent {
   cmrGenie = signal<boolean>(false);
   cmrRefused = signal<boolean>(false);
   cmrMinCriteriaNotMet = signal<boolean>(false);
+  postulantNonEvalueCmc = signal<boolean>(false);
 
   selectedDossierJobId1 = signal<string>("");
   selectedDossierJobId2 = signal<string>("");
@@ -994,6 +1060,19 @@ export class PforComponent {
     ].filter(Boolean).filter((id) => id !== "00003");
     return dossierIds.filter((id) => this.jobService.isJobInGestionDesAttentes(id));
   });
+
+  getCivilOnlyAttentesJobsInDossier(): string[] {
+    const dossierIds = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean).filter((id) => id !== "00003");
+    return dossierIds.filter(
+      (id) =>
+        PFOR_CIVIL_ONLY_JOB_IDS.has(id) &&
+        this.jobService.isJobInGestionDesAttentes(id)
+    );
+  }
 
   isAttentesMode = computed(() => {
     return this.attentesJobsInDossier().length > 0;
@@ -1211,9 +1290,12 @@ export class PforComponent {
   readonly JOB_URLS = JOB_URLS;
 
   allPforJobs = computed(() => {
-    return this.jobService.getAllJobs().filter((j) => {
-      return this.jobService.isPforJob(j);
-    });
+    return this.jobService
+      .getAllJobs()
+      .filter((j) => {
+        return this.jobService.isPforJob(j) || PFOR_CIVIL_ONLY_JOB_IDS.has(j.id);
+      })
+      .sort((a, b) => a.id.localeCompare(b.id));
   });
 
   currentSipPhase = computed<"admission" | "traitement" | "both">(() => {
@@ -1229,6 +1311,7 @@ export class PforComponent {
   onCmrRefusedChange(checked: boolean) {
     this.cmrRefused.set(checked);
     if (checked) {
+      this.postulantNonEvalueCmc.set(false);
       this.cmrMinCriteriaNotMet.set(false);
       this.cmrArts.set(false);
       this.cmrScience.set(false);
@@ -1239,7 +1322,20 @@ export class PforComponent {
   onCmrMinCriteriaChange(checked: boolean) {
     this.cmrMinCriteriaNotMet.set(checked);
     if (checked) {
+      this.postulantNonEvalueCmc.set(false);
       this.cmrRefused.set(false);
+      this.cmrArts.set(false);
+      this.cmrScience.set(false);
+      this.cmrGenie.set(false);
+    }
+  }
+
+  togglePostulantNonEvalueCmc(checked: boolean) {
+    this.postulantNonEvalueCmc.set(checked);
+    if (checked) {
+      this.pforType.set("cmr");
+      this.cmrRefused.set(false);
+      this.cmrMinCriteriaNotMet.set(false);
       this.cmrArts.set(false);
       this.cmrScience.set(false);
       this.cmrGenie.set(false);
@@ -1320,6 +1416,9 @@ export class PforComponent {
     }
 
     if (this.pforType() === "cmr") {
+      if (this.postulantNonEvalueCmc()) {
+        return true;
+      }
       const hasCmrDomain =
         this.cmrArts() || this.cmrScience() || this.cmrGenie();
       return hasCmrDomain || this.eligiblePforJobs().length > 0;
@@ -1340,20 +1439,29 @@ export class PforComponent {
         return [];
       }
 
-      const arts = this.cmrArts();
-      const science = this.cmrScience();
-      const genie = this.cmrGenie();
+      if (this.postulantNonEvalueCmc()) {
+        // Inclure tous les métiers PFOR au CMR sauf ceux qui sont dans la section gestion des attentes du fichier SIP
+        for (const jId of Object.keys(CMR_JOB_DOMAINS)) {
+          if (!this.jobService.isJobInGestionDesAttentes(jId)) {
+            candidateJobIds.push(jId);
+          }
+        }
+      } else {
+        const arts = this.cmrArts();
+        const science = this.cmrScience();
+        const genie = this.cmrGenie();
 
-      if (!arts && !science && !genie) {
-        return [];
-      }
+        if (!arts && !science && !genie) {
+          return [];
+        }
 
-      for (const [jId, cmrInfo] of Object.entries(CMR_JOB_DOMAINS)) {
-        const match =
-          (arts && cmrInfo.arts) ||
-          (science && cmrInfo.science) ||
-          (genie && cmrInfo.genie);
-        if (match) candidateJobIds.push(jId);
+        for (const [jId, cmrInfo] of Object.entries(CMR_JOB_DOMAINS)) {
+          const match =
+            (arts && cmrInfo.arts) ||
+            (science && cmrInfo.science) ||
+            (genie && cmrInfo.genie);
+          if (match) candidateJobIds.push(jId);
+        }
       }
     } else {
       // PFOR Civil
@@ -1577,6 +1685,7 @@ export class PforComponent {
     this.cmrGenie.set(false);
     this.cmrRefused.set(false);
     this.cmrMinCriteriaNotMet.set(false);
+    this.postulantNonEvalueCmc.set(false);
     this.selectedDossierJobId1.set("");
     this.selectedDossierJobId2.set("");
     this.selectedDossierJobId3.set("");
@@ -1757,7 +1866,19 @@ export class PforComponent {
 
     let reoNote = "";
 
-    if (this.isAttentesMode()) {
+    if (this.postulantNonEvalueCmc()) {
+      let metiersFormatted = "aucun métier";
+      if (dossierIds.length > 0) {
+        const parts = dossierIds.map((id) => {
+          if (id === "00003") return "00003 - Sans métier";
+          const j = this.jobService.getJobById(id);
+          return j ? `${j.title} (${id})` : id;
+        });
+        metiersFormatted = parts.join(", ");
+      }
+
+      reoNote = `Étape 1 (en cours) - ${metiersFormatted} - Courriel de gestion des attentes envoyé avec plusieurs options proposés. En attente de la réponse du postulant.`;
+    } else if (this.isAttentesMode()) {
       let admissionPart = "";
       if (this.isCandidateTooOld()) {
         admissionPart = "PFOR - Âge limite dépassé";
@@ -1848,9 +1969,11 @@ export class PforComponent {
       }
 
       const prefixRegex = /^Étape 1 \((En cours|en cours)\)\s*-\s*/i;
-      const suffixString = this.isAttentesMode()
-        ? "Traitement continu, possible changement de métier selon choix du postulant."
-        : "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
+      const suffixString = this.postulantNonEvalueCmc()
+        ? "En attente de la réponse du postulant."
+        : this.isAttentesMode()
+          ? "Traitement continu, possible changement de métier selon choix du postulant."
+          : "Postulant averti de la fermeture de son dossier si aucune action n'est prise d'ici 30 jours.";
 
       const taskHasPrefix = prefixRegex.test(taskNoteRaw);
       let taskClean = taskNoteRaw.replace(prefixRegex, "").trim();
@@ -1892,7 +2015,11 @@ export class PforComponent {
       }
 
       const hasPrefix = taskHasPrefix || reoHasPrefix;
-      const finalPrefix = hasPrefix ? "Étape 1 (En cours) - " : "";
+      const finalPrefix = hasPrefix
+        ? this.postulantNonEvalueCmc()
+          ? "Étape 1 (en cours) - "
+          : "Étape 1 (En cours) - "
+        : "";
 
       return `${finalPrefix}${combinedCore}. ${suffixString}${medicalSuffix}`;
     }
@@ -1908,6 +2035,369 @@ export class PforComponent {
       setTimeout(() => this.noteCopied.set(false), 2000);
     } catch (err) {
       console.error("Failed to copy note", err);
+    }
+  }
+
+  buildPostulantNonEvalueCmcEmail(isHtml: boolean): string {
+    const dossierChoices = [
+      this.selectedDossierJobId1(),
+      this.selectedDossierJobId2(),
+      this.selectedDossierJobId3(),
+    ].filter(Boolean);
+
+    const rawHtml = this.sharedState.taskEmailHtmlFr();
+    const rawTxt = this.sharedState.taskEmailFr();
+    const hasTasks =
+      !!rawHtml &&
+      this.sharedState.hasReassignedTasks() &&
+      rawHtml.includes("Bonjour,");
+    const mergeTasks =
+      (this.sharedState.includeLinkedEmail() ||
+        (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) &&
+      hasTasks;
+
+    const allEligibleJobs = this.eligiblePforJobs().filter(
+      (j) => !dossierChoices.includes(j.id),
+    );
+
+    const civilAttentesJobs = this.getCivilOnlyAttentesJobsInDossier();
+    const hasCivilAttentes = civilAttentesJobs.length > 0;
+
+    let civilAttentesTextFr = "";
+    let civilAttentesTextEn = "";
+    if (hasCivilAttentes) {
+      if (civilAttentesJobs.length === 1 && civilAttentesJobs[0] === "00195") {
+        civilAttentesTextFr =
+          "Pour les postulants au métier d’officier en soins infirmiers, votre dossier sera fermé et vous pourrez communiquer avec nous vers la fin de l’été prochain afin de demander la réouverture de votre dossier et présenter une nouvelle demande à ce moment-là.";
+        civilAttentesTextEn =
+          "For Nursing Officer applicants, your file will be closed and you may contact us towards the end of next summer to request the reopening of your file and submit a new application at that time.";
+      } else if (civilAttentesJobs.length === 1) {
+        const j = this.jobService.getJobById(civilAttentesJobs[0]);
+        const titleFr = j ? j.title.toLowerCase() : civilAttentesJobs[0];
+        const titleEn = j ? j.title : civilAttentesJobs[0];
+        civilAttentesTextFr = `Pour les postulants au métier d’${titleFr}, votre dossier sera fermé et vous pourrez communiquer avec nous vers la fin de l’été prochain afin de demander la réouverture de votre dossier et présenter une nouvelle demande à ce moment-là.`;
+        civilAttentesTextEn = `For ${titleEn} applicants, your file will be closed and you may contact us towards the end of next summer to request the reopening of your file and submit a new application at that time.`;
+      } else {
+        const titlesFr = civilAttentesJobs.map((id) => {
+          const j = this.jobService.getJobById(id);
+          return j ? j.title.toLowerCase() : id;
+        });
+        const titlesEn = civilAttentesJobs.map((id) => {
+          const j = this.jobService.getJobById(id);
+          return j ? j.title : id;
+        });
+        civilAttentesTextFr = `Pour les postulants aux métiers suivants (${titlesFr.join(", ")}), votre dossier sera fermé et vous pourrez communiquer avec nous vers la fin de l’été prochain afin de demander la réouverture de votre dossier et présenter une nouvelle demande à ce moment-là.`;
+        civilAttentesTextEn = `For applicants to the following occupations (${titlesEn.join(", ")}), your file will be closed and you may contact us towards the end of next summer to request the reopening of your file and submit a new application at that time.`;
+      }
+    }
+
+    if (isHtml) {
+      let h = "";
+      h +=
+        '<p><span style="background-color: yellow; font-weight: bold; padding: 2px 4px; border-radius: 3px;">English message will follow.</span></p>\n';
+
+      // FRENCH SECTION
+      h += '<p class="mt-4">Bonjour,</p>\n';
+
+      if (mergeTasks) {
+        let taskPartHtml = "";
+        if (rawHtml.includes("<!-- START_TASK_BODY_FR -->")) {
+          const frParts = rawHtml.split("<!-- START_TASK_BODY_FR -->");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
+            if (frBodyPart.length > 0) {
+              taskPartHtml = frBodyPart[0].trim();
+            }
+          }
+        } else {
+          const frParts = rawHtml.split("<p>Bonjour,</p>");
+          if (frParts.length > 1) {
+            const frBodyPart = frParts[1].split("<p>En raison du volume");
+            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
+              taskPartHtml = frBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtml) {
+          h +=
+            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :</p>\n';
+          h += taskPartHtml + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      h +=
+        '<p class="mt-4">Ceci est un courriel de suivi concernant les choix de métiers que vous avez sélectionnés. Votre dossier n’a toujours pas été évalué par les Collèges militaires canadiens (CMC). Toutefois, un ou plusieurs des métiers que vous avez choisis sont déjà considérés comme complets pour la présente année en raison du grand nombre de candidatures reçues jusqu’à maintenant.</p>\n';
+      h +=
+        '<p class="mt-4">Si vous recevez ce courriel, c’est parce que ces métiers constituaient les seuls choix figurant à votre dossier. Vous avez donc les deux options suivantes :</p>\n';
+
+      h += '<ol class="list-decimal pl-5 mt-3 mb-4 space-y-3">\n';
+      h +=
+        '  <li><strong>Conserver votre ou vos choix actuels de métiers</strong><br>Dans ce cas, nous procéderons à la fermeture de votre dossier pour la présente campagne de recrutement, puisque votre candidature ne pourra pas être traitée cette année. Vous pourrez toutefois présenter une nouvelle demande lors de la prochaine campagne.</li>\n';
+      h +=
+        '  <li><strong>Sélectionner d\'autres métiers</strong><br>Vous pouvez nous communiquer d’autres métiers qui pourraient vous intéresser. Nous procéderons alors à la mise à jour de votre dossier, ce qui permettra à votre candidature de poursuivre son traitement.</li>\n';
+      h += '</ol>\n';
+
+      h +=
+        '<p class="mt-4">Veuillez noter que si vous choisissez la deuxième option, il est possible que vous receviez un autre courriel de réorientation une fois l’évaluation des CMC complétée, si votre domaine d’études ne correspond pas aux exigences du métier choisi ou dans l’éventualité où vous ne seriez pas admissible aux CMC.</p>\n';
+
+      // Liste des métiers PFOR au CMR admissibles
+      h += '<div class="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h += '  <p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">Officiers (PFOR au CMR) :</p>\n';
+      if (allEligibleJobs.length === 0) {
+        h += '  <p class="mt-2 text-slate-700 italic">Aucun métier PFOR au CMR ouvert correspondant n\'est disponible actuellement.</p>\n';
+      } else {
+        h += '  <ul class="list-disc pl-5 space-y-1">\n';
+        for (const j of allEligibleJobs) {
+          const link = this.getJobLinkMarkup(j.id, true, true);
+          h += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+        }
+        h += '  </ul>\n';
+      }
+      h += '</div>\n';
+
+      if (hasCivilAttentes) {
+        h += `<p class="mt-4">${civilAttentesTextFr}</p>\n`;
+      }
+
+      h +=
+        '<p class="mt-4">Sachez également que les métiers que vous avez sélectionnés sont extrêmement populaires et qu’il se pourrait que, même l’an prochain, l’admission demeure très compétitive.</p>\n';
+
+      h +=
+        '<p class="mt-4">Si vous avez des questions ou souhaitez nous faire part de votre décision, vous pouvez répondre directement à ce courriel.</p>\n';
+
+      h +=
+        '<p class="mt-4">Merci de votre intérêt envers les Forces armées canadiennes.<br>Bonne journée,</p>\n';
+
+      h += '<p>' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
+
+      h += '<hr class="my-6 border-slate-200" />\n';
+
+      // ENGLISH SECTION
+      h += '<p class="mt-4">Hello,</p>\n';
+
+      if (mergeTasks) {
+        const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
+        let taskPartHtmlEn = "";
+        if (rawHtmlEn.includes("<!-- START_TASK_BODY_EN -->")) {
+          const enParts = rawHtmlEn.split("<!-- START_TASK_BODY_EN -->");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
+            if (enBodyPart.length > 0) {
+              taskPartHtmlEn = enBodyPart[0].trim();
+            }
+          }
+        } else {
+          const enParts = rawHtmlEn.split("<p>Hello,</p>");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<p>Due to a high volume");
+            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+              taskPartHtmlEn = enBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartHtmlEn) {
+          h +=
+            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
+          h +=
+            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:</p>\n';
+          h += taskPartHtmlEn + "\n";
+          h += "</div>\n";
+        }
+      }
+
+      h +=
+        '<p class="mt-4">This is a follow-up email regarding the occupational choices you have selected. Your file has not yet been evaluated by the Canadian Military Colleges (CMC). However, one or more of the occupations you have chosen are already considered full for the current year due to the high volume of applications received so far.</p>\n';
+      h +=
+        '<p class="mt-4">If you are receiving this email, it is because these occupations were the only choices appearing in your file. You therefore have the following two options:</p>\n';
+
+      h += '<ol class="list-decimal pl-5 mt-3 mb-4 space-y-3">\n';
+      h +=
+        '  <li><strong>Maintain your current occupation choice(s)</strong><br>In this case, we will proceed with closing your file for the current recruiting campaign, as your application cannot be processed this year. You may, however, submit a new application during the next campaign.</li>\n';
+      h +=
+        '  <li><strong>Select other occupations</strong><br>You may let us know of other occupations that might interest you. We will then update your file, allowing your application to continue being processed.</li>\n';
+      h += '</ol>\n';
+
+      h +=
+        '<p class="mt-4">Please note that if you choose the second option, you may receive another reorientation email once the CMC evaluation is completed, should your field of study not match the requirements of the chosen occupation or in the event that you are not admissible to the CMC.</p>\n';
+
+      // English occupations list
+      h += '<div class="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
+      h += '  <p class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">Officers (RMC ROTP):</p>\n';
+      if (allEligibleJobs.length === 0) {
+        h += '  <p class="mt-2 text-slate-700 italic">No matching open ROTP occupations at RMC are currently available.</p>\n';
+      } else {
+        h += '  <ul class="list-disc pl-5 space-y-1">\n';
+        for (const j of allEligibleJobs) {
+          const link = this.getJobLinkMarkup(j.id, false, true);
+          h += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+        }
+        h += '  </ul>\n';
+      }
+      h += '</div>\n';
+
+      if (hasCivilAttentes) {
+        h += `<p class="mt-4">${civilAttentesTextEn}</p>\n`;
+      }
+
+      h +=
+        '<p class="mt-4">Please also be aware that the occupations you have selected are extremely popular, and admission may remain highly competitive even next year.</p>\n';
+
+      h +=
+        '<p class="mt-4">If you have any questions or wish to share your decision with us, you can reply directly to this email.</p>\n';
+
+      h +=
+        '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.<br>Have a great day,</p>\n';
+
+      h += '<p>' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
+
+      return h;
+    } else {
+      // PLAIN TEXT VERSION
+      let t = "";
+      t += "English message will follow.\n\n";
+
+      // FRENCH PLAIN
+      t += "Bonjour,\n\n";
+
+      if (mergeTasks && rawTxt) {
+        let taskPartTxt = "";
+        if (rawTxt.includes("--- DÉBUT DES TÂCHES ---")) {
+          const parts = rawTxt.split("--- DÉBUT DES TÂCHES ---");
+          if (parts.length > 1) {
+            const body = parts[1].split("--- FIN DES TÂCHES ---");
+            if (body.length > 0) {
+              taskPartTxt = body[0].trim();
+            }
+          }
+        }
+        if (taskPartTxt) {
+          t += "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
+          t += "----------------------------------------------------------------------\n";
+          t += taskPartTxt + "\n\n";
+        }
+      }
+
+      t +=
+        "Ceci est un courriel de suivi concernant les choix de métiers que vous avez sélectionnés. Votre dossier n’a toujours pas été évalué par les Collèges militaires canadiens (CMC). Toutefois, un ou plusieurs des métiers que vous avez choisis sont déjà considérés comme complets pour la présente année en raison du grand nombre de candidatures reçues jusqu’à maintenant.\n";
+      t +=
+        "Si vous recevez ce courriel, c’est parce que ces métiers constituaient les seuls choix figurant à votre dossier. Vous avez donc les deux options suivantes :\n\n";
+
+      t += "1. Conserver votre ou vos choix actuels de métiers\n";
+      t +=
+        "Dans ce cas, nous procéderons à la fermeture de votre dossier pour la présente campagne de recrutement, puisque votre candidature ne pourra pas être traitée cette année. Vous pourrez toutefois présenter une nouvelle demande lors de la prochaine campagne.\n\n";
+
+      t += "2. Sélectionner d'autres métiers\n";
+      t +=
+        "Vous pouvez nous communiquer d’autres métiers qui pourraient vous intéresser. Nous procéderons alors à la mise à jour de votre dossier, ce qui permettra à votre candidature de poursuivre son traitement.\n\n";
+
+      t +=
+        "Veuillez noter que si vous choisissez la deuxième option, il est possible que vous receviez un autre courriel de réorientation une fois l’évaluation des CMC complétée, si votre domaine d’études ne correspond pas aux exigences du métier choisi ou dans l’éventualité où vous ne seriez pas admissible aux CMC.\n\n";
+
+      t += "Officiers (PFOR au CMR) :\n";
+      if (allEligibleJobs.length === 0) {
+        t += "  Aucun métier PFOR au CMR ouvert correspondant n'est disponible actuellement.\n";
+      } else {
+        for (const j of allEligibleJobs) {
+          const link = this.getJobLinkMarkup(j.id, true, false);
+          t += `  - ${j.id} - ${link}\n`;
+        }
+      }
+      t += "\n";
+
+      if (hasCivilAttentes) {
+        t += civilAttentesTextFr + "\n\n";
+      }
+
+      t +=
+        "Sachez également que les métiers que vous avez sélectionnés sont extrêmement populaires et qu’il se pourrait que, même l’an prochain, l’admission demeure très compétitive.\n\n";
+
+      t +=
+        "Si vous avez des questions ou souhaitez nous faire part de votre décision, vous pouvez répondre directement à ce courriel.\n\n";
+
+      t += "Merci de votre intérêt envers les Forces armées canadiennes.\n";
+      t += "Bonne journée,\n\n";
+
+      t += this.sharedState.getSignatureFr() + "\n\n";
+
+      t += "------------------------------------------------------------\n\n";
+
+      // ENGLISH PLAIN
+      t += "Hello,\n\n";
+
+      if (mergeTasks && rawTxt) {
+        let taskPartTxtEn = "";
+        const rawTxtEn = this.sharedState.taskEmailEn();
+        if (rawTxtEn.includes("<!-- START_TASK_BODY_EN -->")) {
+          const enParts = rawTxtEn.split("<!-- START_TASK_BODY_EN -->");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
+            if (enBodyPart.length > 0) taskPartTxtEn = enBodyPart[0].trim();
+          }
+        } else {
+          const enParts = rawTxtEn.split("Hello,");
+          if (enParts.length > 1) {
+            const enBodyPart = enParts[1].split("Due to a high volume");
+            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
+              taskPartTxtEn = enBodyPart[0].trim();
+            }
+          }
+        }
+
+        if (taskPartTxtEn) {
+          t += "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:\n";
+          t += "----------------------------------------------------------------------\n";
+          t += taskPartTxtEn + "\n\n";
+        }
+      }
+
+      t +=
+        "This is a follow-up email regarding the occupational choices you have selected. Your file has not yet been evaluated by the Canadian Military Colleges (CMC). However, one or more of the occupations you have chosen are already considered full for the current year due to the high volume of applications received so far.\n";
+      t +=
+        "If you are receiving this email, it is because these occupations were the only choices appearing in your file. You therefore have the following two options:\n\n";
+
+      t += "1. Maintain your current occupation choice(s)\n";
+      t +=
+        "In this case, we will proceed with closing your file for the current recruiting campaign, as your application cannot be processed this year. You may, however, submit a new application during the next campaign.\n\n";
+
+      t += "2. Select other occupations\n";
+      t +=
+        "You may let us know of other occupations that might interest you. We will then update your file, allowing your application to continue being processed.\n\n";
+
+      t +=
+        "Please note that if you choose the second option, you may receive another reorientation email once the CMC evaluation is completed, should your field of study not match the requirements of the chosen occupation or in the event that you are not admissible to the CMC.\n\n";
+
+      t += "Officers (RMC ROTP):\n";
+      if (allEligibleJobs.length === 0) {
+        t += "  No matching open ROTP occupations at RMC are currently available.\n";
+      } else {
+        for (const j of allEligibleJobs) {
+          const link = this.getJobLinkMarkup(j.id, false, false);
+          t += `  - ${j.id} - ${link}\n`;
+        }
+      }
+      t += "\n";
+
+      if (hasCivilAttentes) {
+        t += civilAttentesTextEn + "\n\n";
+      }
+
+      t +=
+        "Please also be aware that the occupations you have selected are extremely popular, and admission may remain highly competitive even next year.\n\n";
+
+      t +=
+        "If you have any questions or wish to share your decision with us, you can reply directly to this email.\n\n";
+
+      t += "Thank you for your interest in the Canadian Armed Forces.\n";
+      t += "Have a great day,\n\n";
+
+      t += this.sharedState.getSignatureEn() + "\n";
+
+      return t;
     }
   }
 
@@ -2962,6 +3452,10 @@ export class PforComponent {
         p += this.sharedState.getSignatureEn();
         return p;
       }
+    }
+
+    if (this.postulantNonEvalueCmc()) {
+      return this.buildPostulantNonEvalueCmcEmail(isHtml);
     }
 
     if (this.isAttentesMode()) {

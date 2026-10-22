@@ -379,4 +379,8 @@ export const JOB_URLS: { [key: string]: { fr: string; en: string } } = {
     fr: "https://forces.ca/fr/carriere/personnel-medical-au-combat/",
     en: "https://forces.ca/en/career/combat-medic/",
   },
+  "00410": {
+    fr: "https://forces.ca/fr/carriere/officier-soins-infirmiers/",
+    en: "https://forces.ca/en/career/nursing-officer/",
+  },
 };

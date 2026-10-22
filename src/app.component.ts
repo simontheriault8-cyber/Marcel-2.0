@@ -9559,27 +9559,27 @@ Thank you for your cooperation.`;
     if (dossierJobs.length === 0) return '';
     let html = '';
     if (lang === 'fr') {
-      html += `<p>Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :</p>`;
+      const intro = dossierJobs.length === 1
+        ? "Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figure le suivant :"
+        : "Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :";
+      html += `<p style="margin-top: 15px; margin-bottom: 5px;">${intro}</p>`;
       html += `<ul style="margin-top: 5px; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
       for (const j of dossierJobs) {
         html += `  <li style="margin-bottom: 5px;"><strong>${j.title} (${j.id})</strong></li>`;
       }
       html += `</ul>`;
-      html += `<p>Nous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, il est possible que votre dossier ne soit pas traité pour ces choix en raison de la forte concurrence et des dossiers déjà actuellement en traitement.</p>`;
-      html += `<p>En tenant compte de cette situation, vous pouvez soit maintenir ce ou ces choix, soit consulter les autres possibilités offertes par les Collèges militaires du Canada en utilisant le lien suivant :<br>`;
-      html += `<a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-fra.asp#occu" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">Liste des programmes admissibles par métier</a></p>`;
-      html += `<p style="margin-bottom: 20px;">Nous vous invitons à nous faire part de votre décision dans les meilleurs délais afin de poursuivre le traitement de votre dossier.</p>`;
+      html += `<p style="margin-bottom: 15px;">Nous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, si c'est le seul métier que vous avez sélectionné, votre dossier ne sera pas traité pour la présente campagne. un second courriel vous sera envoyé avec les différentes options et nous pourrons poursuivre le traitement de votre dossier une fois que vous aurez pris une décision. Si vous aviez déjà plusieurs métiers de sélectionnés, ce métier sera simplement retirer de votre dossier et votre processus poursuivra son traitement.</p>`;
     } else {
-      html += `<p>Please be aware that among the occupations you have selected in your enrolment application are the following:</p>`;
+      const intro = dossierJobs.length === 1
+        ? "Please be aware that among the occupations you have selected in your enrolment application is the following:"
+        : "Please be aware that among the occupations you have selected in your enrolment application are the following:";
+      html += `<p style="margin-top: 15px; margin-bottom: 5px;">${intro}</p>`;
       html += `<ul style="margin-top: 5px; margin-bottom: 15px; list-style-type: disc; padding-left: 20px;">`;
       for (const j of dossierJobs) {
         html += `  <li style="margin-bottom: 5px;"><strong>${j.titleEn || j.title} (${j.id})</strong></li>`;
       }
       html += `</ul>`;
-      html += `<p>We would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, it is possible that your file may not be processed for these choices due to strong competition and the files currently in processing.</p>`;
-      html += `<p>Considering this situation, you may either maintain this choice / these choices or explore the other opportunities offered by the Canadian Military Colleges using the following link:<br>`;
-      html += `<a href="https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-eng.asp#occu" target="_blank" style="color: #4f46e5; text-decoration: underline; font-weight: 500;">List of Eligible Programs by Occupation</a></p>`;
-      html += `<p style="margin-bottom: 20px;">We invite you to let us know your decision as soon as possible in order to continue processing your application.</p>`;
+      html += `<p style="margin-bottom: 15px;">We would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, if this is the only occupation you have selected, your file will not be processed for the current campaign. A second email will be sent to you explaining the different options, and we will be able to resume processing your file once you have made a decision. If you already had multiple occupations selected, this occupation will simply be removed from your file and your application will continue being processed.</p>`;
     }
     return html;
   }
@@ -9591,23 +9591,23 @@ Thank you for your cooperation.`;
     if (dossierJobs.length === 0) return '';
     let plain = '';
     if (lang === 'fr') {
-      plain += `Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :\n`;
+      const intro = dossierJobs.length === 1
+        ? "Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figure le suivant :"
+        : "Sachez que parmi les métiers que vous avez sélectionnés, dans votre demande d'enrôlement, figurent les suivants :";
+      plain += `${intro}\n\n`;
       for (const j of dossierJobs) {
         plain += `• ${j.title} (${j.id})\n`;
       }
-      plain += `\nNous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, il est possible que votre dossier ne soit pas traité pour ces choix en raison de la forte concurrence et des dossiers déjà actuellement en traitement.\n\n`;
-      plain += `En tenant compte de cette situation, vous pouvez soit maintenir ce ou ces choix, soit consulter les autres possibilités offertes par les Collèges militaires du Canada en utilisant le lien suivant :\n`;
-      plain += `Liste des programmes admissibles par métier (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-fra.asp#occu)\n\n`;
-      plain += `Nous vous invitons à nous faire part de votre décision dans les meilleurs délais afin de poursuivre le traitement de votre dossier.\n\n`;
+      plain += `\nNous souhaitons vous informer que ce ou ces métiers suscitent actuellement un très grand nombre de candidatures. Par conséquent, si c'est le seul métier que vous avez sélectionné, votre dossier ne sera pas traité pour la présente campagne. un second courriel vous sera envoyé avec les différentes options et nous pourrons poursuivre le traitement de votre dossier une fois que vous aurez pris une décision. Si vous aviez déjà plusieurs métiers de sélectionnés, ce métier sera simplement retirer de votre dossier et votre processus poursuivra son traitement.\n\n`;
     } else {
-      plain += `Please be aware that among the occupations you have selected in your enrolment application are the following:\n`;
+      const intro = dossierJobs.length === 1
+        ? "Please be aware that among the occupations you have selected in your enrolment application is the following:"
+        : "Please be aware that among the occupations you have selected in your enrolment application are the following:";
+      plain += `${intro}\n\n`;
       for (const j of dossierJobs) {
         plain += `• ${j.titleEn || j.title} (${j.id})\n`;
       }
-      plain += `\nWe would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, it is possible that your file may not be processed for these choices due to strong competition and the files currently in processing.\n\n`;
-      plain += `Considering this situation, you may either maintain this choice / these choices or explore the other opportunities offered by the Canadian Military Colleges using the following link:\n`;
-      plain += `List of Eligible Programs by Occupation (https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-eng.asp#occu)\n\n`;
-      plain += `We invite you to let us know your decision as soon as possible in order to continue processing your application.\n\n`;
+      plain += `\nWe would like to inform you that this occupation / these occupations are currently receiving a very large number of applications. Consequently, if this is the only occupation you have selected, your file will not be processed for the current campaign. A second email will be sent to you explaining the different options, and we will be able to resume processing your file once you have made a decision. If you already had multiple occupations selected, this occupation will simply be removed from your file and your application will continue being processed.\n\n`;
     }
     return plain;
   }
