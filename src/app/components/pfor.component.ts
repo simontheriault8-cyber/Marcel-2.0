@@ -3012,7 +3012,7 @@ export class PforComponent {
         h +=
           "  <li>Vous pouvez retentez votre chance lors de la prochaine campagne PFOR en septembre de l’année prochaine si vous voulez étudier dans l’un des CMC, sinon;</li>\n";
         h +=
-          "  <li>Le PFOR est aussi possible dans une université civil canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.</li>\n";
+          "  <li>Le PFOR est aussi possible dans une université civile canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.</li>\n";
         h +=
           "  <li>Vous pouvez aussi choisir un métier de militaire du rang. Il existe un programme d’étude subventionné pour certains métiers de militaire du rang. Si ce programme vous intéresse, veuillez communiquer avec votre centre de recrutement pour valider les possibilités, sinon voici une liste de métiers militaire du rang pour lesquels vous rencontré les critères académiques.</li>\n";
         h += "</ol>\n";
@@ -3212,7 +3212,7 @@ export class PforComponent {
         t +=
           "1. Vous pouvez retentez votre chance lors de la prochaine campagne PFOR en septembre de l’année prochaine si vous voulez étudier dans l’un des CMC, sinon;\n";
         t +=
-          "2. Le PFOR est aussi possible dans une université civil canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.\n";
+          "2. Le PFOR est aussi possible dans une université civile canadienne. Pour y être admissible, vous devrez fournir une lettre d’admission à temps pleins et sans conditions dans un domaine d’études qui correspond au métier d’officier de votre choix. L’admissibilité n’est toutefois pas garantie, une évaluation de votre potentiel académique sera prise en compte. Veuillez communiquer avec votre centre de recrutement afin de valider que votre choix de métiers et votre choix de domaine d’études sont compatible.\n";
         t +=
           "3. Vous pouvez aussi choisir un métier de militaire du rang. Il existe un programme d’étude subventionné pour certains métiers de militaire du rang. Si ce programme vous intéresse, veuillez communiquer avec votre centre de recrutement pour valider les possibilités, sinon voici une liste de métiers militaire du rang pour lesquels vous rencontré les critères académiques.\n\n";
       }
