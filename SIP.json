@@ -1,5 +1,5 @@
 {
-  "date": "19/10/2026",
+  "date": "27/10/2026",
   "programs": {
     "00003": {
       "aucun": {
@@ -287,8 +287,8 @@
     },
     "00166": {
       "Semi-qual": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       }
     },
     "00167": {
@@ -557,7 +557,7 @@
     },
     "00208": {
       "EDO": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFOR": {
@@ -628,6 +628,10 @@
         "admission": "o",
         "traitement": "o"
       },
+      "Semi-qual": {
+        "admission": "o",
+        "traitement": "o"
+      },
       "Non Qual": {
         "admission": "o",
         "traitement": "o"
@@ -663,7 +667,7 @@
     },
     "00303": {
       "Non Qual": {
-        "admission": "f",
+        "admission": "o",
         "traitement": "o"
       },
       "PFS-MR": {
