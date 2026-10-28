@@ -180,6 +180,9 @@ interface RoleSnapshot {
   noteBeneficiaire?: string;
   noteDateCourrielConfirmation?: string;
   testEsomRecruitmentCenterCity?: string;
+  inaptitudeGenre?: 'M' | 'F' | '';
+  inaptitudeNom?: string;
+  inaptitudeAlpha?: string;
   offreFormulairePpp?: boolean;
   offreFormulairePcu?: boolean;
   offreFormulaireCroixSouvenir?: boolean;
@@ -1077,6 +1080,21 @@ function getTodayDateString(): string {
                       >
                         <span class="whitespace-nowrap">TEST ESOM / Confirmation</span>
                         @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('inapte_medical')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'inapte_medical'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'inapte_medical'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'inapte_medical'"
+                      >
+                        <span class="whitespace-nowrap">Inapte médicalement (Décision RMO)</span>
+                        @if (selectedEmailBankTemplate() === 'inapte_medical') {
                           <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -4199,7 +4217,72 @@ function getTodayDateString(): string {
                 Courriel & Note (Gestionnaire de dossier)
               </h2>
 
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3 flex-wrap">
+                @if (selectedEmailBankTemplate() === 'inapte_medical') {
+                  <div class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1 rounded-xl shadow-2xs">
+                    <!-- Genre du postulant -->
+                    <div class="flex items-center gap-1.5">
+                      <label class="text-[11px] font-bold text-slate-700 whitespace-nowrap">Genre :</label>
+                      <select
+                        [ngModel]="inaptitudeGenre()"
+                        (ngModelChange)="onInaptitudeFieldChange('genre', $event)"
+                        class="text-xs border rounded-lg px-2 py-1 bg-white font-semibold text-slate-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer transition-colors"
+                        [class.border-rose-500]="inaptitudeValidationTriggered() && !inaptitudeGenre()"
+                        [class.ring-2]="inaptitudeValidationTriggered() && !inaptitudeGenre()"
+                        [class.ring-rose-400]="inaptitudeValidationTriggered() && !inaptitudeGenre()"
+                        [class.bg-rose-50]="inaptitudeValidationTriggered() && !inaptitudeGenre()"
+                        [class.border-slate-300]="!inaptitudeValidationTriggered() || inaptitudeGenre()"
+                      >
+                        <option value="">Sélectionner genre...</option>
+                        <option value="F">Féminin (Mme)</option>
+                        <option value="M">Masculin (M.)</option>
+                      </select>
+                    </div>
+
+                    <!-- Nom du postulant -->
+                    <div class="flex items-center gap-1.5">
+                      <label class="text-[11px] font-bold text-slate-700 whitespace-nowrap">Nom :</label>
+                      <input
+                        type="text"
+                        [ngModel]="inaptitudeNom()"
+                        (ngModelChange)="onInaptitudeFieldChange('nom', $event)"
+                        placeholder="Ex: Nathalia TheGood"
+                        class="text-xs border rounded-lg px-2.5 py-1 bg-white font-semibold text-slate-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-none w-36 transition-colors"
+                        [class.border-rose-500]="inaptitudeValidationTriggered() && !inaptitudeNom().trim()"
+                        [class.ring-2]="inaptitudeValidationTriggered() && !inaptitudeNom().trim()"
+                        [class.ring-rose-400]="inaptitudeValidationTriggered() && !inaptitudeNom().trim()"
+                        [class.bg-rose-50]="inaptitudeValidationTriggered() && !inaptitudeNom().trim()"
+                        [class.border-slate-300]="!inaptitudeValidationTriggered() || inaptitudeNom().trim()"
+                      />
+                    </div>
+
+                    <!-- Alpha du postulant -->
+                    <div class="flex items-center gap-1.5">
+                      <label class="text-[11px] font-bold text-slate-700 whitespace-nowrap">Alpha :</label>
+                      <input
+                        type="text"
+                        [ngModel]="inaptitudeAlpha()"
+                        (ngModelChange)="onInaptitudeFieldChange('alpha', $event)"
+                        placeholder="Ex: A00000"
+                        class="text-xs border rounded-lg px-2.5 py-1 bg-white font-semibold text-slate-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-none w-24 uppercase transition-colors"
+                        [class.border-rose-500]="inaptitudeValidationTriggered() && !inaptitudeAlpha().trim()"
+                        [class.ring-2]="inaptitudeValidationTriggered() && !inaptitudeAlpha().trim()"
+                        [class.ring-rose-400]="inaptitudeValidationTriggered() && !inaptitudeAlpha().trim()"
+                        [class.bg-rose-50]="inaptitudeValidationTriggered() && !inaptitudeAlpha().trim()"
+                        [class.border-slate-300]="!inaptitudeValidationTriggered() || inaptitudeAlpha().trim()"
+                      />
+                    </div>
+                  </div>
+
+                  @if (inaptitudeValidationTriggered() && (!inaptitudeGenre() || !inaptitudeNom().trim() || !inaptitudeAlpha().trim())) {
+                    <span class="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-2.5 py-1 flex items-center gap-1 shadow-2xs animate-pulse">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-rose-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                      </svg>
+                      Champs requis non remplis
+                    </span>
+                  }
+                }
                 @if (selectedEmailBankTemplate() === 'test_esom_confirmation') {
                   <div class="flex items-center gap-2 bg-indigo-50/70 border border-indigo-200 px-3 py-1 rounded-xl shadow-2xs">
                     <label class="text-xs font-bold text-indigo-900 flex items-center gap-1.5 whitespace-nowrap">
@@ -4346,12 +4429,20 @@ function getTodayDateString(): string {
                           Courriel - Destinataire : CRFCQcAdmin&#64;forces.gc.ca
                         } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
                           Courriel - Demande d’autorisation pour un CSPN
+                        } @else if (selectedEmailBankTemplate() === 'inapte_medical') {
+                          Courriel - Inapte médicalement (Décision RMO)
                         } @else {
                           Courriel au Postulant (Bilingue)
                         }
                       </h3>
                     </div>
                   </div>
+                  @if (selectedEmailBankTemplate() === 'inapte_medical') {
+                    <div class="px-6 py-2.5 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-700 flex items-center gap-2">
+                      <span class="text-slate-400 font-normal">Objet :</span>
+                      <span class="text-indigo-900 font-bold font-mono">{{ getEmailSubject() }}</span>
+                    </div>
+                  }
                   <div
                     class="p-6 bg-white text-xs text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
                     [innerHTML]="generatedEmailHtml()"
@@ -5271,6 +5362,9 @@ Thank you for your cooperation.`;
       noteBeneficiaire: this.noteBeneficiaire(),
       noteDateCourrielConfirmation: this.noteDateCourrielConfirmation(),
       testEsomRecruitmentCenterCity: this.testEsomRecruitmentCenterCity(),
+      inaptitudeGenre: this.inaptitudeGenre(),
+      inaptitudeNom: this.inaptitudeNom(),
+      inaptitudeAlpha: this.inaptitudeAlpha(),
       offreFormulairePpp: this.offreFormulairePpp(),
       offreFormulairePcu: this.offreFormulairePcu(),
       offreFormulaireCroixSouvenir: this.offreFormulaireCroixSouvenir(),
@@ -5372,6 +5466,9 @@ Thank you for your cooperation.`;
     this.noteBeneficiaire.set(snapshot.noteBeneficiaire || '');
     this.noteDateCourrielConfirmation.set(snapshot.noteDateCourrielConfirmation || '');
     this.testEsomRecruitmentCenterCity.set(snapshot.testEsomRecruitmentCenterCity || 'Québec');
+    this.inaptitudeGenre.set(snapshot.inaptitudeGenre || '');
+    this.inaptitudeNom.set(snapshot.inaptitudeNom || '');
+    this.inaptitudeAlpha.set(snapshot.inaptitudeAlpha || '');
     this.offreFormulairePpp.set(snapshot.offreFormulairePpp || false);
     this.offreFormulairePcu.set(snapshot.offreFormulairePcu || false);
     this.offreFormulaireCroixSouvenir.set(snapshot.offreFormulaireCroixSouvenir || false);
@@ -5481,6 +5578,9 @@ Thank you for your cooperation.`;
       noteBeneficiaire: '',
       noteDateCourrielConfirmation: '',
       testEsomRecruitmentCenterCity: 'Québec',
+      inaptitudeGenre: '',
+      inaptitudeNom: '',
+      inaptitudeAlpha: '',
       offreFormulairePpp: false,
       offreFormulairePcu: false,
       offreFormulaireCroixSouvenir: false,
@@ -6197,6 +6297,10 @@ Thank you for your cooperation.`;
     this.noteBeneficiaire.set('');
     this.noteDateCourrielConfirmation.set(getTodayDateString());
     this.testEsomRecruitmentCenterCity.set('Québec');
+    this.inaptitudeGenre.set('');
+    this.inaptitudeNom.set('');
+    this.inaptitudeAlpha.set('');
+    this.inaptitudeValidationTriggered.set(false);
 
     // Reset Dossier jobs & Réo shared state
     this.clearDossierJob(1);
@@ -7440,6 +7544,28 @@ Thank you for your cooperation.`;
   offreDureeEtudesSubventionnees = signal<string>('');
   readonly enrolmentHoursList: string[] = ENROLMENT_HOURS;
   testEsomRecruitmentCenterCity = signal<string>('Québec');
+
+  inaptitudeGenre = signal<'M' | 'F' | ''>('');
+  inaptitudeNom = signal<string>('');
+  inaptitudeAlpha = signal<string>('');
+  inaptitudeValidationTriggered = signal<boolean>(false);
+
+  onInaptitudeFieldChange(field: 'genre' | 'nom' | 'alpha', val: string) {
+    if (field === 'genre') this.inaptitudeGenre.set(val as 'M' | 'F' | '');
+    if (field === 'nom') this.inaptitudeNom.set(val);
+    if (field === 'alpha') this.inaptitudeAlpha.set(val);
+
+    if (this.inaptitudeGenre() && this.inaptitudeNom().trim() && this.inaptitudeAlpha().trim()) {
+      this.inaptitudeValidationTriggered.set(false);
+    }
+  }
+
+  getInaptitudeLastName(): string {
+    const raw = this.inaptitudeNom().trim();
+    if (!raw) return 'TheGood';
+    const parts = raw.split(/\s+/);
+    return parts.length > 1 ? parts.slice(1).join(' ') : raw;
+  }
 
   getTestEsomCenter(): RecruitmentCenter {
     return this.recruitmentCentersList.find(c => c.city === this.testEsomRecruitmentCenterCity()) || this.recruitmentCentersList[0];
@@ -8899,6 +9025,15 @@ Thank you for your cooperation.`;
       return esomNote;
     }
 
+    // 3.14 Inapte médicalement Note (Volet GD)
+    if (this.selectedEmailBankTemplate() === 'inapte_medical') {
+      let inapteNote = "Courriel envoyé informant le postulant qu'il à été jugé inapte médicalement et expliquant que tout les détail de la décision prise sera expliquer dans la lettre de RMO.";
+      if (this.triageMedicalRequis()) {
+        inapteNote += "\n\nMÉDICAL - TRIAGE PAR MED CHU REQUIS";
+      }
+      return inapteNote;
+    }
+
     // 4. All tasks compliant Note
     if (this.allTasksCompliant()) {
       notes.push(this.sharedState.isPostulantPfor() ? this.getPforCompliantNoteClean() : this.getBigAceCompliantNoteClean());
@@ -9700,14 +9835,14 @@ Thank you for your cooperation.`;
     html += `<p><span style="background-color: #FFFF00; font-weight: bold;">English message will follow.</span></p>`;
     html += `<p>Bonjour,</p>`;
     html += `<p>Nous vous remercions de votre intérêt envers les Forces armées canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).</p>`;
-    html += `<p>Afin de poursuivre le traitement de votre demande, le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous vos documents scolaires.</p>`;
-    html += `<p><strong>Voici comment procéder pour leur transmettre :</strong></p>`;
+    html += `<p>Malgré que vous ayez déjà déposer tous vos documents scolaires sur votre portail du postulant, vous devez <span style="background-color: #FFFF00;">obligatoirement</span> les déposer aussi sur le portail du Collège militaire royal du Canada (CMR) afin de poursuivre le traitement de votre demande. Le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous ces documents. Veuillez lire les instructions en entier avant de procéder sur le site web du CMR.</p>`;
+    html += `<p>Voici comment procéder pour leur transmettre :</p>`;
 
     html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    html += `  <li style="margin-bottom: 10px;">Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
+    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :</span><br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="background-color: #FFFF00; color: #4f46e5; text-decoration: underline;">Admissions - Collège militaire royal du Canada (CMR) (rmc.ca)</a><br><br><strong>Remarque :</strong> Vous pourriez avoir à copier-coller le lien dans votre navigateur ou à changer de navigateur pour accéder au lien (ex. Firefox ou Chrome).</li>`;
     html += `  <li style="margin-bottom: 10px;">Vous devrez remplir le formulaire à l’aide de votre numéro de matricule que vous trouverez dans le volet latéral gauche de votre portail du postulant.</li>`;
     html += `  <li style="margin-bottom: 10px;">Vous devrez numériser vos relevés de notes officiels, y compris le verso (études secondaires et postsecondaires), puis les téléverser sur le site. (Même si vous l’avez déjà fait sur votre portail Forces.ca au début de votre processus de recrutement)</li>`;
-    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">Il est très important que vous fassiez une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez cette capture d’écran sur votre portail du Postulant en ligne sous la tâche Autres exigences en matière de sécurité.</span> (Voici un exemple de la page <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Confirmation d'application</a>)</li>`;
+    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">Il est très important que vous fassiez une capture d’écran de la page de confirmation que vos documents ont été déposés avec succès puis téléversez cette capture d’écran sur votre portail du Postulant en ligne sous la tâche Autres exigences en matière de sécurité. (Voici un exemple de la page <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Confirmation d'application</a>)</span></li>`;
     html += `</ol>`;
 
     html += `<p><strong>***Une personne ayant suivi ses études à l’extérieur du Canada, du Royaume-Uni, des États-Unis d’Amérique, de la France et/ou en possession d’un baccalauréat international doit obtenir une évaluation comparative des études par une tierce partie agréée. Les évaluations générales ne seront pas acceptées. Vous devrez ensuite télécharger les résultats de cette évaluation sur le portail du PFOR via le lien fourni ci-dessus. ***</strong></p>`;
@@ -9727,14 +9862,14 @@ Thank you for your cooperation.`;
     // --- ENGLISH BLOCK ---
     html += `<p>Hello,</p>`;
     html += `<p>Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).</p>`;
-    html += `<p>To continue processing your application, the Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of your educational documents.</p>`;
-    html += `<p><strong>Here's how to proceed to submit them:</strong></p>`;
+    html += `<p>Although you have already submitted all your academic documents on your applicant portal, you are <span style="background-color: #FFFF00;">required</span> to also submit them on the Royal Military College of Canada (RMC) portal in order to continue processing your application. The Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of these documents. Please read the instructions in full before proceeding on the RMC website.</p>`;
+    html += `<p>Here's how to proceed to submit them:</p>`;
 
     html += `<ol style="list-style-type: decimal; padding-left: 20px; margin-top: 10px; margin-bottom: 10px;">`;
-    html += `  <li style="margin-bottom: 10px;">Visit the Royal Military College of Canada (RMC) website at the following address:<br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="color: #4f46e5; text-decoration: underline;">Admissions - Royal Military College of Canada (RMC) (rmc.ca)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
+    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">Visit the Royal Military College of Canada (RMC) website at the following address:</span><br><a href="https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0" target="_blank" style="background-color: #FFFF00; color: #4f46e5; text-decoration: underline;">Admissions - Royal Military College of Canada (RMC) (rmc.ca)</a><br><br><strong>Note:</strong> You may need to copy and paste the link into your browser or change browsers to access the link (e.g., Firefox or Chrome).</li>`;
     html += `  <li style="margin-bottom: 10px;">You will need to fill in the form using your service number which you can find in the left sidebar of your applicant portal.</li>`;
     html += `  <li style="margin-bottom: 10px;">You will need to scan your official transcripts, including the back (secondary and post-secondary), and upload them to the site. (Even if you have already done so on your Forces.ca portal at the beginning of your recruitment process)</li>`;
-    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">It is very important that you take a screenshot of the confirmation page showing that your documents have been successfully submitted, and then upload this screenshot to your online Applicant portal under the Other Security Requirements task.</span> (Here is an example of the <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Application Confirmation</a> page)</li>`;
+    html += `  <li style="margin-bottom: 10px;"><span style="background-color: #FFFF00;">It is very important that you take a screenshot of the confirmation page showing that your documents have been successfully submitted, and then upload this screenshot to your online Applicant portal under the Other Security Requirements task. (Here is an example of the <a href="https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png" target="_blank" style="color: #4f46e5; text-decoration: underline;">Application Confirmation</a> page)</span></li>`;
     html += `</ol>`;
 
     html += `<p><strong>***Applicants who studied outside Canada, the United Kingdom, the United States of America, France and/or who hold an International Baccalaureate must obtain a comparative educational assessment from an accredited third party. General evaluations will not be accepted. You must then upload the results of this evaluation to the ROTP portal via the link provided above. ***</strong></p>`;
@@ -9760,7 +9895,7 @@ Thank you for your cooperation.`;
     plain += `English message will follow.\n\n`;
     plain += `Bonjour,\n\n`;
     plain += `Nous vous remercions de votre intérêt envers les Forces armées canadiennes (FAC). Dans votre demande, vous avez sélectionné le Programme de Formation des Officiers de la Régulière (PFOR).\n\n`;
-    plain += `Afin de poursuivre le traitement de votre demande, le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous vos documents scolaires.\n\n`;
+    plain += `Malgré que vous ayez déjà déposer tous vos documents scolaires sur votre portail du postulant, vous devez obligatoirement les déposer aussi sur le portail du Collège militaire royal du Canada (CMR) afin de poursuivre le traitement de votre demande. Le Collège militaire royal du Canada (CMR) doit évaluer votre potentiel académique en regardant tous ces documents. Veuillez lire les instructions en entier avant de procéder sur le site web du CMR.\n\n`;
     plain += `Voici comment procéder pour leur transmettre :\n\n`;
     plain += `1. Visitez le site web du Collège militaire royal du Canada (CMR) à l’adresse suivante :\n`;
     plain += `Admissions - Collège militaire royal du Canada (CMR) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
@@ -9780,7 +9915,7 @@ Thank you for your cooperation.`;
     // --- ENGLISH ---
     plain += `Hello,\n\n`;
     plain += `Thank you for your interest in the Canadian Armed Forces (CAF). In your application, you have selected the Regular Officer Training Plan (ROTP).\n\n`;
-    plain += `To continue processing your application, the Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of your educational documents.\n\n`;
+    plain += `Although you have already submitted all your academic documents on your applicant portal, you are required to also submit them on the Royal Military College of Canada (RMC) portal in order to continue processing your application. The Royal Military College of Canada (RMC) must evaluate your academic potential by reviewing all of these documents. Please read the instructions in full before proceeding on the RMC website.\n\n`;
     plain += `Here's how to proceed to submit them:\n\n`;
     plain += `1. Visit the Royal Military College of Canada (RMC) website at the following address:\n`;
     plain += `Admissions - Royal Military College of Canada (RMC) (rmc.ca) (https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0)\n\n`;
@@ -11757,9 +11892,77 @@ Thank you for your cooperation.`;
       `</div>`;
   }
 
+  // Inapte médicalement - Décision RMO (Volet GD)
+  getInaptitudeSectionPlainFr(): string {
+    const lastName = this.getInaptitudeLastName();
+    const title = this.inaptitudeGenre() === 'F' ? 'Mme' : (this.inaptitudeGenre() === 'M' ? 'M.' : 'Mme/M.');
+    const patientWord = this.inaptitudeGenre() === 'M' ? 'patient' : (this.inaptitudeGenre() === 'F' ? 'patiente' : 'patient(e)');
+
+    return `Bonjour ${title} ${lastName},\n\n` +
+      `Suite à l’évaluation de votre condition médicale pour un enrôlement au sein des Forces armées canadiennes, il a été déterminé par notre personnel médical certifié que vous ne rencontrez malheureusement pas les exigences en cette matière. Puisque cette détermination relève du domaine médical, le personnel du centre de recrutement n’a pas les qualifications requises pour en discuter avec vous, et ces informations confidentielles ne sont pas disponibles. Par conséquent, vous allez recevoir dans les prochaines semaines une lettre explicative du bureau de l’Officier médical du recrutement (OMR) confirmant cette évaluation et vous expliquant en détail les motifs qui ont poussé le médecin militaire à prendre cette décision. Dans cette lettre, on vous expliquera également quoi faire advenant que vous souhaitiez discuter, ou contester cette décision. Ce processus est rigoureux, mais nécessaire étant donné la nature sensible des données liées à la condition médicale, nous vous prions d’être ${patientWord} dans l’attente de la réception de cette lettre.\n\n` +
+      `Nous vous remercions de votre intérêt à servir dans les Forces armées canadiennes et nous vous souhaitons bonne chance dans vos projets futurs.`;
+  }
+
+  getInaptitudeSectionPlainEn(): string {
+    const lastName = this.getInaptitudeLastName();
+    const title = this.inaptitudeGenre() === 'F' ? 'Ms.' : (this.inaptitudeGenre() === 'M' ? 'Mr.' : 'Ms./Mr.');
+
+    return `Hello ${title} ${lastName},\n\n` +
+      `Following the evaluation of your medical condition for enrolment in the Canadian Armed Forces, it was determined by our certified medical personnel that you unfortunately do not meet the requirements in this regard. Since this determination falls within the medical domain, recruiting centre personnel do not have the required qualifications to discuss it with you, and this confidential information is not available. Consequently, you will receive in the coming weeks an explanatory letter from the Office of the Medical Officer of Recruiting (OMR) confirming this evaluation and explaining in detail the reasons that led the military medical officer to make this decision. In this letter, they will also explain what to do should you wish to discuss or appeal this decision. This process is rigorous, but necessary given the sensitive nature of data related to medical condition; we ask you to be patient while waiting to receive this letter.\n\n` +
+      `We thank you for your interest in serving in the Canadian Armed Forces and wish you good luck in your future endeavours.`;
+  }
+
+  getInaptitudeEmailPlain(): string {
+    const fr = this.getInaptitudeSectionPlainFr();
+    const en = this.getInaptitudeSectionPlainEn();
+    const sigFr = this.getSignatureFr();
+    const sigEn = this.getSignatureEn();
+    return `English message will follow.\n\n${fr}\n\n${sigFr}\n\n______________________________________________________________________________\n\n${en}\n\n${sigEn}`;
+  }
+
+  getInaptitudeSectionHtmlFr(): string {
+    const lastName = this.getInaptitudeLastName();
+    const title = this.inaptitudeGenre() === 'F' ? 'Mme' : (this.inaptitudeGenre() === 'M' ? 'M.' : 'Mme/M.');
+    const patientWord = this.inaptitudeGenre() === 'M' ? 'patient' : (this.inaptitudeGenre() === 'F' ? 'patiente' : 'patient(e)');
+
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour ${title} ${lastName},</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Suite à l’évaluation de votre condition médicale pour un enrôlement au sein des Forces armées canadiennes, il a été déterminé par notre personnel médical certifié que vous ne rencontrez malheureusement pas les exigences en cette matière. Puisque cette détermination relève du domaine médical, le personnel du centre de recrutement n’a pas les qualifications requises pour en discuter avec vous, et ces informations confidentielles ne sont pas disponibles. Par conséquent, vous allez recevoir dans les prochaines semaines une lettre explicative du bureau de l’Officier médical du recrutement (OMR) confirmant cette évaluation et vous expliquant en détail les motifs qui ont poussé le médecin militaire à prendre cette décision. Dans cette lettre, on vous expliquera également quoi faire advenant que vous souhaitiez discuter, ou contester cette décision. Ce processus est rigoureux, mais nécessaire étant donné la nature sensible des données liées à la condition médicale, nous vous prions d’être ${patientWord} dans l’attente de la réception de cette lettre.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Nous vous remercions de votre intérêt à servir dans les Forces armées canadiennes et nous vous souhaitons bonne chance dans vos projets futurs.</p>`;
+  }
+
+  getInaptitudeSectionHtmlEn(): string {
+    const lastName = this.getInaptitudeLastName();
+    const title = this.inaptitudeGenre() === 'F' ? 'Ms.' : (this.inaptitudeGenre() === 'M' ? 'Mr.' : 'Ms./Mr.');
+
+    return `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello ${title} ${lastName},</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Following the evaluation of your medical condition for enrolment in the Canadian Armed Forces, it was determined by our certified medical personnel that you unfortunately do not meet the requirements in this regard. Since this determination falls within the medical domain, recruiting centre personnel do not have the required qualifications to discuss it with you, and this confidential information is not available. Consequently, you will receive in the coming weeks an explanatory letter from the Office of the Medical Officer of Recruiting (OMR) confirming this evaluation and explaining in detail the reasons that led the military medical officer to make this decision. In this letter, they will also explain what to do should you wish to discuss or appeal this decision. This process is rigorous, but necessary given the sensitive nature of data related to medical condition; we ask you to be patient while waiting to receive this letter.</p>` +
+      `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">We thank you for your interest in serving in the Canadian Armed Forces and wish you good luck in your future endeavours.</p>`;
+  }
+
+  getInaptitudeEmailHtml(): string {
+    const fr = this.getInaptitudeSectionHtmlFr();
+    const en = this.getInaptitudeSectionHtmlEn();
+    const sigFr = this.getHtmlSignatureFr();
+    const sigEn = this.getHtmlSignatureEn();
+    let html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">`;
+    html += `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;"><strong>English message will follow.</strong></p>`;
+    html += fr;
+    html += `<p>${sigFr}</p>`;
+    html += `<br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>`;
+    html += en;
+    html += `<p>${sigEn}</p>`;
+    html += `</div>`;
+    return html;
+  }
+
   getEmailSubject(): string {
     if (this.sharedState.includeLinkedEmail() && this.sharedState.reoMergedEmailHtml()) {
       return "Forces armées canadiennes/Canadian Armed Forces";
+    }
+    if (this.selectedEmailBankTemplate() === "inapte_medical") {
+      const nom = this.inaptitudeNom().trim() || 'Nathalia TheGood';
+      const alpha = this.inaptitudeAlpha().trim() || 'A00000';
+      return `Information sur votre dossier - ${nom} ${alpha}`;
     }
     if (this.selectedEmailBankTemplate() === "demande_nav_tan") {
       return "Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1";
@@ -11850,6 +12053,9 @@ Thank you for your cooperation.`;
     }
     if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
       return this.getBrisBailEntreposageEmailPlain();
+    }
+    if (this.selectedEmailBankTemplate() === "inapte_medical") {
+      return this.getInaptitudeEmailPlain();
     }
 
     const scenario = this.activeEmailScenario();
@@ -12000,6 +12206,9 @@ Thank you for your cooperation.`;
     }
     if (this.selectedEmailBankTemplate() === "bris_bail_entreposage") {
       return this.getBrisBailEntreposageEmailHtml();
+    }
+    if (this.selectedEmailBankTemplate() === "inapte_medical") {
+      return this.getInaptitudeEmailHtml();
     }
 
     const scenario = this.activeEmailScenario();
@@ -12583,6 +12792,13 @@ Thank you for your cooperation.`;
 
   // Combined Action: Copy HTML to clipboard AND Open Empty Outlook Window
   async exportToOutlook() {
+    if (this.selectedEmailBankTemplate() === 'inapte_medical') {
+      if (!this.inaptitudeGenre() || !this.inaptitudeNom().trim() || !this.inaptitudeAlpha().trim()) {
+        this.inaptitudeValidationTriggered.set(true);
+        return;
+      }
+    }
+
     // 1. Copy to Clipboard
     try {
       // Logic for Scenario vs Default
@@ -12705,6 +12921,12 @@ Thank you for your cooperation.`;
   }
 
   async copyNote() {
+    if (this.selectedEmailBankTemplate() === 'inapte_medical') {
+      if (!this.inaptitudeGenre() || !this.inaptitudeNom().trim() || !this.inaptitudeAlpha().trim()) {
+        this.inaptitudeValidationTriggered.set(true);
+        return;
+      }
+    }
     try {
       await navigator.clipboard.writeText(this.displayedNote());
       this.copiedNote.set(true);

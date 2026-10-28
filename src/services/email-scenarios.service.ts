@@ -932,6 +932,44 @@ Help Centre | Canadian Armed Forces`;
       bodyHtml: inadmissibiliteScolariteHtml,
       bodyText: inadmissibiliteScolariteText,
     });
+
+    // SCENARIO: Inapte Médicalement (Décision RMO)
+    const inapteMedicalHtml = `
+      <div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">
+        <p><strong>English message will follow.</strong></p>
+        <p>Bonjour Mme/M. TheGood,</p>
+        <p>Suite à l’évaluation de votre condition médicale pour un enrôlement au sein des Forces armées canadiennes, il a été déterminé par notre personnel médical certifié que vous ne rencontrez malheureusement pas les exigences en cette matière. Puisque cette détermination relève du domaine médical, le personnel du centre de recrutement n’a pas les qualifications requises pour en discuter avec vous, et ces informations confidentielles ne sont pas disponibles. Par conséquent, vous allez recevoir dans les prochaines semaines une lettre explicative du bureau de l’Officier médical du recrutement (OMR) confirmant cette évaluation et vous expliquant en détail les motifs qui ont poussé le médecin militaire à prendre cette décision. Dans cette lettre, on vous expliquera également quoi faire advenant que vous souhaitiez discuter, ou contester cette décision. Ce processus est rigoureux, mais nécessaire étant donné la nature sensible des données liées à la condition médicale, nous vous prions d’être patient(e) dans l’attente de la réception de cette lettre.</p>
+        <p>Nous vous remercions de votre intérêt à servir dans les Forces armées canadiennes et nous vous souhaitons bonne chance dans vos projets futurs.</p>
+        <br><hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0;"><br>
+        <p>Hello Ms./Mr. TheGood,</p>
+        <p>Following the evaluation of your medical condition for enrolment in the Canadian Armed Forces, it was determined by our certified medical personnel that you unfortunately do not meet the requirements in this regard. Since this determination falls within the medical domain, recruiting centre personnel do not have the required qualifications to discuss it with you, and this confidential information is not available. Consequently, you will receive in the coming weeks an explanatory letter from the Office of the Medical Officer of Recruiting (OMR) confirming this evaluation and explaining in detail the reasons that led the military medical officer to make this decision. In this letter, they will also explain what to do should you wish to discuss or appeal this decision. This process is rigorous, but necessary given the sensitive nature of data related to medical condition; we ask you to be patient while waiting to receive this letter.</p>
+        <p>We thank you for your interest in serving in the Canadian Armed Forces and wish you good luck in your future endeavours.</p>
+      </div>
+    `;
+
+    const inapteMedicalText = `English message will follow.
+
+Bonjour Mme/M. TheGood,
+
+Suite à l’évaluation de votre condition médicale pour un enrôlement au sein des Forces armées canadiennes, il a été déterminé par notre personnel médical certifié que vous ne rencontrez malheureusement pas les exigences en cette matière. Puisque cette détermination relève du domaine médical, le personnel du centre de recrutement n’a pas les qualifications requises pour en discuter avec vous, et ces informations confidentielles ne sont pas disponibles. Par conséquent, vous allez recevoir dans les prochaines semaines une lettre explicative du bureau de l’Officier médical du recrutement (OMR) confirmant cette évaluation et vous expliquant en détail les motifs qui ont poussé le médecin militaire à prendre cette décision. Dans cette lettre, on vous expliquera également quoi faire advenant que vous souhaitiez discuter, ou contester cette décision. Ce processus est rigoureux, mais nécessaire étant donné la nature sensible des données liées à la condition médicale, nous vous prions d’être patient(e) dans l’attente de la réception de cette lettre.
+
+Nous vous remercions de votre intérêt à servir dans les Forces armées canadiennes et nous vous souhaitons bonne chance dans vos projets futurs.
+
+______________________________________________________________________________
+
+Hello Ms./Mr. TheGood,
+
+Following the evaluation of your medical condition for enrolment in the Canadian Armed Forces, it was determined by our certified medical personnel that you unfortunately do not meet the requirements in this regard. Since this determination falls within the medical domain, recruiting centre personnel do not have the required qualifications to discuss it with you, and this confidential information is not available. Consequently, you will receive in the coming weeks an explanatory letter from the Office of the Medical Officer of Recruiting (OMR) confirming this evaluation and explaining in detail the reasons that led the military medical officer to make this decision. In this letter, they will also explain what to do should you wish to discuss or appeal this decision. This process is rigorous, but necessary given the sensitive nature of data related to medical condition; we ask you to be patient while waiting to receive this letter.
+
+We thank you for your interest in serving in the Canadian Armed Forces and wish you good luck in your future endeavours.`;
+
+    this.scenarios.set("inapte_medical", {
+      id: "inapte_medical",
+      subjectFr: "Information sur votre dossier - Nathalia TheGood A00000",
+      subjectEn: "Information on your file - Nathalia TheGood A00000",
+      bodyHtml: inapteMedicalHtml,
+      bodyText: inapteMedicalText,
+    });
   }
 
   getScenario(id: string): EmailScenario | undefined {
