@@ -1,0 +1,649 @@
+{
+  "_description": "Fichier centralisé de tous les liens hypertextes de l'application. Facile à consulter et à modifier par les recruteurs.",
+  "portails": {
+    "portailCandidat": {
+      "titreFr": "Portail d'enrôlement des Forces armées canadiennes",
+      "titreEn": "Canadian Armed Forces Enrolment Portal",
+      "url": "https://www.cafoap-pclfac.forces.gc.ca/"
+    },
+    "portailAdmissionCmc": {
+      "titreFr": "Portail d'admission du Collège militaire royal du Canada (CMR)",
+      "titreEn": "Royal Military College of Canada (RMC) Admissions Portal",
+      "url": "https://services.rmc.ca/apex/f?p=APPLICATIONS:LOGIN:0::::P1010_PASSWORD:363a11f2b0ebff75ce81e7555bdeaa8649377535ad84ec84f0660bf4af1a8477&cs=1j-Ipn31px0rKVtc1ZH6kM4wpMY0"
+    },
+    "demandeRelevesDiplomesSecQuebec": {
+      "titreFr": "Demande de relevés et de diplômes du secondaire - Québec",
+      "titreEn": "Request for transcripts and high school diplomas - Quebec",
+      "fr": "https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/fr",
+      "en": "https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/en/a/FORM"
+    },
+    "challengeU": {
+      "titreFr": "ChallengeU - Plateforme en ligne - Formation à distance",
+      "titreEn": "ChallengeU - Online Platform - Distance Learning",
+      "url": "https://www.challengeu.ca/"
+    }
+  },
+  "forcesArmeesEtCmrsj": {
+    "carrieres": {
+      "titreFr": "Carrières | Forces armées canadiennes",
+      "titreEn": "Careers | Canadian Armed Forces",
+      "fr": "https://forces.ca/fr/carrieres/",
+      "en": "https://forces.ca/en/careers/"
+    },
+    "centreAssistance": {
+      "titreFr": "Centre d'assistance | Forces armées canadiennes",
+      "titreEn": "Help Centre | Canadian Armed Forces",
+      "fr": "https://forces.ca/fr/centre-dassistance/#/",
+      "en": "https://forces.ca/en/help-centre/#/"
+    },
+    "videoForces101": {
+      "titreFr": "Vidéo Présentation Forces 101",
+      "titreEn": "Forces 101 Presentation Video",
+      "fr": "https://youtu.be/hYzMRYYBnag",
+      "en": "https://youtu.be/oKuX_ROtASw"
+    },
+    "programmesAdmissiblesCmr": {
+      "titreFr": "Liste des programmes admissibles par métier (CMR)",
+      "titreEn": "List of Eligible Programs by Occupation (RMC)",
+      "fr": "https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-fra.asp#occu",
+      "en": "https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/brochure/brochure-eng.asp#occu"
+    },
+    "programmesAdmissiblesForces": {
+      "titreFr": "Liste des programmes admissibles par métier (Forces.ca)",
+      "titreEn": "List of Eligible Programs by Occupation (Forces.ca)",
+      "fr": "https://forces.ca/fr/programmes-admissibles/",
+      "en": "https://forces.ca/en/eligible-programmes/"
+    },
+    "programmesEtudesSubventionneesPmr": {
+      "titreFr": "Programmes d'études subventionnées (PESMR / NCMSTEP)",
+      "titreEn": "Subsidized Education Programs (NCMSTEP)",
+      "fr": "https://forces.ca/fr/programmes-etudes-subventionnees/",
+      "en": "https://forces.ca/en/paid-education-programs/"
+    },
+    "cmrsjFaq": {
+      "titreFr": "Foire aux questions - Collège militaire royal de Saint-Jean",
+      "titreEn": "Frequently Asked Questions - Royal Military College Saint-Jean",
+      "fr": "https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-fra.asp",
+      "en": "https://www.cmrsj-rmcsj.forces.gc.ca/fe-fs/faq-faq/faq-faq-eng.asp"
+    },
+    "cmrsjYoutube": {
+      "titreFr": "Chaîne YouTube du Collège militaire royal de Saint-Jean",
+      "titreEn": "YouTube Channel of Royal Military College Saint-Jean",
+      "url": "https://www.youtube.com/@cmrsjrmcsj"
+    },
+    "sportsCmrsjRemparts": {
+      "titreFr": "Équipes sportives Les Remparts (CMR Saint-Jean)",
+      "titreEn": "RMC Saint-Jean Sports Teams The Remparts",
+      "url": "https://gorempartsgo.ca"
+    },
+    "sportsCmrPaladins": {
+      "titreFr": "Équipes sportives Les Paladins (CMR Kingston)",
+      "titreEn": "RMC Kingston Sports Teams The Paladins",
+      "url": "https://gopaladinsgo.ca/"
+    },
+    "ethiqueDefense": {
+      "titreFr": "Énoncé d'éthique de la Défense",
+      "titreEn": "Defence Ethics Statement",
+      "fr": "https://www.canada.ca/fr/ministere-defense-nationale/services/avantages-militaires/ethique-defense/publications-politiques/enonce.html",
+      "en": "https://www.canada.ca/en/department-national-defence/services/benefits-military/defence-ethics/policies-publications/statement.html"
+    },
+    "instructionDeBase": {
+      "titreFr": "Instruction de base (QMB / BMQ)",
+      "titreEn": "Basic Training (BMQ)",
+      "fr": "https://forces.ca/fr/vous-enroler/#bt",
+      "en": "https://forces.ca/en/how-to-join/#bt"
+    },
+    "programmeExperienceMarine": {
+      "titreFr": "Programme d'expérience de la Marine",
+      "titreEn": "Naval Experience Program",
+      "fr": "https://forces.ca/fr/programme-experience-de-la-marine/",
+      "en": "https://forces.ca/en/naval-experience-program/"
+    }
+  },
+  "documentsEtFormulaires": {
+    "instructionsRalliementQmb": {
+      "titreFr": "Instructions de ralliement (QMB / QMBO)",
+      "titreEn": "Joining Instructions (BMQ / BMOQ)",
+      "fr": "https://simontheriault8-cyber.github.io/Documents/Instruction%20de%20raliement-QMB-FR.pdf",
+      "en": "https://simontheriault8-cyber.github.io/Documents/Joining%20instructions-BMQ-EN.pdf"
+    },
+    "instructionUnionDeFait": {
+      "titreFr": "Instruction union de fait",
+      "titreEn": "Common-Law partnership instruction",
+      "fr": "https://simontheriault8-cyber.github.io/Documents/instruction%20UF.pdf",
+      "en": "https://simontheriault8-cyber.github.io/Documents/instruction%20UF%20en.pdf"
+    },
+    "formulaireSecuriteTbs330_61": {
+      "titreFr": "Demande de cote de sécurité (TBS 330-61)",
+      "titreEn": "Security Screening Application (TBS 330-61)",
+      "fr": "https://simontheriault8-cyber.github.io/Documents/TBS%20330-61-Formulaire%20de%20consentement%20et%20de%20demande%20de%20filtrage%20de%20s%C3%A9curit%C3%A9.pdf",
+      "en": "https://simontheriault8-cyber.github.io/Documents/330-61-Security%20Screening%20Application%20and%20Consent%20Form.pdf"
+    },
+    "exempleTenueDeVille": {
+      "titreFr": "Exemples - Tenue de ville pour assermentation",
+      "titreEn": "Examples - Business casual dress code for enrolment ceremony",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Exemples%20-%20Tenue%20de%20ville.pdf"
+    },
+    "exempleEgoportrait": {
+      "titreFr": "Exemple d'égoportrait (selfie) acceptable",
+      "titreEn": "Acceptable selfie example",
+      "url": "https://simontheriault8-cyber.github.io/Documents/%C3%89goportrait.png"
+    },
+    "exempleCertificatCitoyennetePage1": {
+      "titreFr": "Exemple de certificat de citoyenneté - Page 1",
+      "titreEn": "Citizenship certificate example - Page 1",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Certificat%20de%20citoyennet%C3%A9%20page%201.png"
+    },
+    "exempleCertificatCitoyennetePage2": {
+      "titreFr": "Exemple de certificat de citoyenneté - Page 2",
+      "titreEn": "Citizenship certificate example - Page 2",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Certificat%20de%20citoyennet%C3%A9%20page%202.png"
+    },
+    "exempleFormulaireDnd2170": {
+      "titreFr": "Exemple formulaire DND 2170 - Parties I et J obligatoires",
+      "titreEn": "DND 2170 Form Example - Mandatory Parts I and J",
+      "url": "https://simontheriault8-cyber.github.io/Documents/DND%202170%20Partie%20I%20et%20J.png"
+    },
+    "exempleConfirmationDepotCmc": {
+      "titreFr": "Exemple capture de confirmation de dépôt CMC",
+      "titreEn": "RMC document submission confirmation screenshot example",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Confirmation%20d%C3%A9pot%20de%20documents%20Portail%20d'admission%20CMC.png"
+    },
+    "exempleReleveNotesAensEcole": {
+      "titreFr": "Exemple de relevé de notes pour l'AENS (école)",
+      "titreEn": "Example of TENS transcript from a school",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Relev%C3%A9%20de%20note%20AENS%20d'une%20%C3%A9cole.png"
+    },
+    "designationCroixDuSouvenir": {
+      "titreFr": "Désignation des récipiendaires de la Croix du souvenir",
+      "titreEn": "Memorial Cross Recipient Designation",
+      "url": "https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20des%20r%C3%A9cipiendaires%20de%20la%20Croix%20du%20souvenir.pdf"
+    },
+    "designationBeneficiaire": {
+      "titreFr": "Désignation ou changement de bénéficiaire",
+      "titreEn": "Naming or Substitution of a Beneficiary",
+      "fr": "https://simontheriault8-cyber.github.io/Documents/D%C3%A9signation%20ou%20changement%20de%20b%C3%A9n%C3%A9ficiaire.pdf",
+      "en": "https://simontheriault8-cyber.github.io/Documents/Naming%20or%20Substitution%20of%20a%20Beneficiary.pdf"
+    },
+    "identificationPlusProchesParents": {
+      "titreFr": "Identification des plus proches parents",
+      "titreEn": "Identification of Next of Kin",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Identification%20des%20plus%20proches%20parents.pdf"
+    },
+    "personneAContacterUrgence": {
+      "titreFr": "Personnes à contacter en cas d'urgence",
+      "titreEn": "Emergency Contact Notification",
+      "url": "https://simontheriault8-cyber.github.io/Documents/Personne%20%C3%A0%20contacter%20en%20cas%20d'urgence.pdf"
+    }
+  },
+  "reunionsTeams": {
+    "ceremonieAssermentationTeams1": {
+      "titreFr": "Cérémonie d'assermentation (Lien Microsoft Teams)",
+      "titreEn": "Enrolment Ceremony (Microsoft Teams Link)",
+      "url": "https://teams.microsoft.com/meet/269424678350987?p=U8W17Q49zAsTGFVtrn"
+    },
+    "ceremonieAssermentationTeams2": {
+      "titreFr": "Cérémonie d'assermentation (Lien Teams Live)",
+      "titreEn": "Enrolment Ceremony (Teams Live Link)",
+      "url": "https://teams.live.com/meet/9379576941499?p=ddWGzRuSQH5MxDMO3U"
+    }
+  },
+  "ordresEtEquivalences": {
+    "cicdi": {
+      "titreFr": "Centre d'information canadien sur les diplômes internationaux (CICDI)",
+      "titreEn": "Canadian Information Centre for International Credentials (CICIC)",
+      "url": "https://www.cicdi.ca"
+    },
+    "allianceServicesEvaluation": {
+      "titreFr": "Alliance canadienne des services d'évaluation de diplômes",
+      "titreEn": "Alliance of Credential Evaluation Services of Canada",
+      "url": "https://canalliance.org/"
+    },
+    "wes": {
+      "titreFr": "World Education Services (WES) Canada",
+      "titreEn": "World Education Services (WES) Canada",
+      "url": "https://www.wes.org/fr/"
+    },
+    "nnas": {
+      "titreFr": "Service national d'évaluation infirmière (SNEI / NNAS)",
+      "titreEn": "National Nursing Assessment Service (NNAS)",
+      "url": "https://www.nnas.ca/fr/"
+    },
+    "alliancePhysiotherapie": {
+      "titreFr": "Alliance canadienne des organismes de réglementation de la physiothérapie",
+      "titreEn": "Canadian Alliance of Physiotherapy Regulators",
+      "url": "https://www.alliancept.org/fr/accueil/"
+    },
+    "camrtRadiologie": {
+      "titreFr": "Association canadienne des technologues en radiation médicale (ACTRM)",
+      "titreEn": "Canadian Association of Medical Radiation Technologists (CAMRT)",
+      "url": "https://www.camrt.ca/fr/a-propos-de-actrm/partenariats/organismes-provinciaux/"
+    },
+    "napraPharmacie": {
+      "titreFr": "Association nationale des organismes de réglementation de la pharmacie (ANORP / NAPRA)",
+      "titreEn": "National Association of Pharmacy Regulatory Authorities (NAPRA)",
+      "url": "https://napra.ca/fr/organismes-de-reglementation-de-la-pharmacie"
+    },
+    "ndaebDentaire": {
+      "titreFr": "Bureau national d'examen d'assistance dentaire (BNEAD / NDAEB)",
+      "titreEn": "National Dental Assisting Examining Board (NDAEB)",
+      "url": "https://www.ndaeb.ca/index_F.php"
+    },
+    "cdaaAssistanceDentaire": {
+      "titreFr": "Association canadienne des assistant(e)s dentaires (ACAD / CDAA)",
+      "titreEn": "Canadian Dental Assistants Association (CDAA)",
+      "url": "http://www.cdaa.ca/da-promotion/dental-assisting-regulatory-authorities/?lang=fr"
+    },
+    "cdacAgrementDentaire": {
+      "titreFr": "Commission d'agrément dentaire du Canada (CADC / CDAC)",
+      "titreEn": "Commission on Dental Accreditation of Canada (CDAC)",
+      "url": "https://www.cdac-cadc.ca/find-a-program/"
+    },
+    "cdaDentistesAutorites": {
+      "titreFr": "Association dentaire canadienne (ADC / CDA)",
+      "titreEn": "Canadian Dental Association (CDA)",
+      "url": "https://www.cda-adc.ca/fr/becoming/dat/information/schools/"
+    },
+    "sceauRougeCuisinier": {
+      "titreFr": "Programme des normes interprovinciales Sceau rouge (Cuisinier)",
+      "titreEn": "Red Seal Interprovincial Standards Program (Cook)",
+      "url": "http://www.red-seal.ca/w.2lc.4m.2-fra.html"
+    },
+    "musiqueAuditionReg": {
+      "titreFr": "Processus d'audition pour les musiciens (Force régulière)",
+      "titreEn": "Audition process for musicians (Regular Force)",
+      "url": "https://www.canada.ca/fr/services/defense/fac/envedette/musique/demande-emploi-musicien-forces-canadiennes.html"
+    },
+    "musiqueAuditionRes": {
+      "titreFr": "Processus d'audition pour les musiciens (Réserve)",
+      "titreEn": "Audition process for musicians (Reserve Force)",
+      "url": "https://www.canada.ca/fr/services/defense/fac/envedette/musique/demande-emploi-musicien-forces-canadiennes/audition-musiques-reserve.html"
+    }
+  },
+  "metiers": {
+    "00005": {
+      "fr": "https://forces.ca/fr/carriere/arme-blindee/",
+      "en": "https://forces.ca/en/career/armour-soldier/"
+    },
+    "00010": {
+      "fr": "https://forces.ca/fr/carriere/fantassin/",
+      "en": "https://forces.ca/en/career/infanteer/"
+    },
+    "00019": {
+      "fr": "https://forces.ca/fr/carriere/operateur-detecteurs-electroniques-aeroportes/",
+      "en": "https://forces.ca/en/career/airborne-electronic-sensor-operator/"
+    },
+    "00099": {
+      "fr": "https://forces.ca/fr/carriere/specialiste-renseignement/",
+      "en": "https://forces.ca/en/career/intelligence-operator/"
+    },
+    "00100": {
+      "fr": "https://forces.ca/fr/carriere/technicien-meteorologie/",
+      "en": "https://forces.ca/en/career/meteorological-technician/"
+    },
+    "00105": {
+      "fr": "https://forces.ca/fr/carriere/manoeuvrier/",
+      "en": "https://forces.ca/en/career/boatswain/"
+    },
+    "00109": {
+      "fr": "https://forces.ca/fr/carriere/technicien-systemes-aerospatiales/",
+      "en": "https://forces.ca/en/career/aerospace-telecommunications-and-information-systems-technician/"
+    },
+    "00114": {
+      "fr": "https://forces.ca/fr/carriere/operateur-equipement-information-combat/",
+      "en": "https://forces.ca/en/career/naval-combat-information-operator/"
+    },
+    "00115": {
+      "fr": "https://forces.ca/fr/carriere/operateur-detecteurs-etectroniques/",
+      "en": "https://forces.ca/en/career/naval-electronic-sensor-operator/"
+    },
+    "00120": {
+      "fr": "https://forces.ca/fr/carriere/specialistes-du-renseignement-origine-electromagnetique/",
+      "en": "https://forces.ca/en/career/signals-intelligence-specialist/"
+    },
+    "00129": {
+      "fr": "https://forces.ca/fr/carriere/technicien-de-vehicule/",
+      "en": "https://forces.ca/en/career/vehicle-technician/"
+    },
+    "00130": {
+      "fr": "https://forces.ca/fr/carriere/technicien-armement/",
+      "en": "https://forces.ca/en/career/weapons-technician/"
+    },
+    "00134": {
+      "fr": "https://forces.ca/fr/carriere/technicien-materiaux/",
+      "en": "https://forces.ca/en/career/materials-technician/"
+    },
+    "00135": {
+      "fr": "https://forces.ca/fr/carriere/technicien-systemes-aeronautiques/",
+      "en": "https://forces.ca/en/career/aviation-systems-technician/"
+    },
+    "00136": {
+      "fr": "https://forces.ca/fr/carriere/technicien-systeme-avionique/",
+      "en": "https://forces.ca/en/career/avionics-systems-technician/"
+    },
+    "00137": {
+      "fr": "https://forces.ca/fr/carriere/technicien-imagerie/",
+      "en": "https://forces.ca/en/career/imagery-technician/"
+    },
+    "00138": {
+      "fr": "https://forces.ca/fr/carriere/technicien-structure-aeronefs/",
+      "en": "https://forces.ca/en/career/aircraft-structures-technician/"
+    },
+    "00149": {
+      "fr": "https://forces.ca/fr/carriere/pompier/",
+      "en": "https://forces.ca/en/career/firefighter/"
+    },
+    "00152": {
+      "fr": "https://forces.ca/fr/carriere/technologue-laboratoire-medical/",
+      "en": "https://forces.ca/en/career/medical-laboratory-technologist/"
+    },
+    "00153": {
+      "fr": "https://forces.ca/fr/carriere/technologue-radiologie-medicale/",
+      "en": "https://forces.ca/en/career/medical-radiation-technologist/"
+    },
+    "00155": {
+      "fr": "https://forces.ca/fr/carriere/technologue-electronique-biomedicale/",
+      "en": "https://forces.ca/en/career/biomedical-electronics-technologist/"
+    },
+    "00161": {
+      "fr": "https://forces.ca/fr/carriere/police-militaire/",
+      "en": "https://forces.ca/en/career/military-police/"
+    },
+    "00164": {
+      "fr": "https://forces.ca/fr/carriere/cuisinier/",
+      "en": "https://forces.ca/en/career/cook/"
+    },
+    "00166": {
+      "fr": "https://forces.ca/fr/carriere/musicien/",
+      "en": "https://forces.ca/en/career/musician/"
+    },
+    "00167": {
+      "fr": "https://forces.ca/fr/carriere/commis-postes/",
+      "en": "https://forces.ca/en/career/postal-clerk/"
+    },
+    "00168": {
+      "fr": "https://forces.ca/fr/carriere/technicien-gestion-materiel/",
+      "en": "https://forces.ca/en/career/materiel-management-technician/"
+    },
+    "00169": {
+      "fr": "https://forces.ca/fr/carriere/technicien-de-munitions/",
+      "en": "https://forces.ca/en/career/ammunition-technician/"
+    },
+    "00170": {
+      "fr": "https://forces.ca/fr/carriere/technicien-mouvements/",
+      "en": "https://forces.ca/en/career/traffic-technician/"
+    },
+    "00171": {
+      "fr": "https://forces.ca/fr/carriere/conducteur-materiel-mobile-soutien/",
+      "en": "https://forces.ca/en/career/mobile-support-equipment-operator/"
+    },
+    "00178": {
+      "fr": "https://forces.ca/fr/carriere/officier-blindes/",
+      "en": "https://forces.ca/en/career/armour-officer/"
+    },
+    "00179": {
+      "fr": "https://forces.ca/fr/carriere/officier-artillerie/",
+      "en": "https://forces.ca/en/career/artillery-officer/"
+    },
+    "00180": {
+      "fr": "https://forces.ca/fr/carriere/officier-infanterie/",
+      "en": "https://forces.ca/en/career/infantry-officer/"
+    },
+    "00181": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie/",
+      "en": "https://forces.ca/en/career/engineer-officer/"
+    },
+    "00182": {
+      "fr": "https://forces.ca/fr/carriere/officier-systemes-combat/",
+      "en": "https://forces.ca/en/career/air-combat-systems-officer/"
+    },
+    "00183": {
+      "fr": "https://forces.ca/fr/carriere/pilote/",
+      "en": "https://forces.ca/en/career/pilot/"
+    },
+    "00184": {
+      "fr": "https://forces.ca/fr/carriere/officier-controle-aerospatial/",
+      "en": "https://forces.ca/en/career/aerospace-control-officer/"
+    },
+    "00185": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-aerospatial/",
+      "en": "https://forces.ca/en/career/aerospace-engineering-officer/"
+    },
+    "00187": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-electrique-mecanique/",
+      "en": "https://forces.ca/en/career/electrical-and-mechanical-engineering-officer/"
+    },
+    "00189": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-construction/",
+      "en": "https://forces.ca/en/career/construction-engineering-officer/"
+    },
+    "00190": {
+      "fr": "https://forces.ca/fr/carriere/officier-physiotherapie/",
+      "en": "https://forces.ca/en/career/physiotherapy-officer/"
+    },
+    "00191": {
+      "fr": "https://forces.ca/fr/carriere/dentiste-militaire/",
+      "en": "https://forces.ca/en/career/dental-officer/"
+    },
+    "00194": {
+      "fr": "https://forces.ca/fr/carriere/pharmacien/",
+      "en": "https://forces.ca/en/career/pharmacy-officer/"
+    },
+    "00195": {
+      "fr": "https://forces.ca/fr/carriere/soins-infirmiers/",
+      "en": "https://forces.ca/en/career/nursing-officer/"
+    },
+    "00197": {
+      "fr": "https://forces.ca/fr/carriere/officier-sciences-biologiques/",
+      "en": "https://forces.ca/en/career/bioscience-officer/"
+    },
+    "00198": {
+      "fr": "https://forces.ca/fr/carriere/travail-social/",
+      "en": "https://forces.ca/en/career/social-work-officer/"
+    },
+    "00203": {
+      "fr": "https://forces.ca/fr/carriere/officier-affaires-publiques/",
+      "en": "https://forces.ca/en/career/public-affairs-officer/"
+    },
+    "00204": {
+      "fr": "https://forces.ca/fr/carriere/avocat/",
+      "en": "https://forces.ca/en/career/legal-officer/"
+    },
+    "00207": {
+      "fr": "https://forces.ca/fr/carriere/officier-guerre-navale/",
+      "en": "https://forces.ca/en/career/naval-warfare-officer/"
+    },
+    "00208": {
+      "fr": "https://forces.ca/fr/carriere/officier-selection-personnel/",
+      "en": "https://forces.ca/en/career/personnel-selection-officer/"
+    },
+    "00211": {
+      "fr": "https://forces.ca/fr/carriere/officier-developpement-instruction/",
+      "en": "https://forces.ca/en/career/training-development-officer/"
+    },
+    "00213": {
+      "fr": "https://forces.ca/fr/carriere/officier-renseignement/",
+      "en": "https://forces.ca/en/career/intelligence-officer/"
+    },
+    "00214": {
+      "fr": "https://forces.ca/fr/carriere/officier-police-militaire/",
+      "en": "https://forces.ca/en/career/military-police-officer/"
+    },
+    "00238": {
+      "fr": "https://forces.ca/fr/carriere/technicien-geomatique/",
+      "en": "https://forces.ca/en/career/geomatics-technician/"
+    },
+    "00261": {
+      "fr": "https://forces.ca/fr/carriere/technicien-systemes-armement/",
+      "en": "https://forces.ca/en/career/air-weapons-systems-technician/"
+    },
+    "00299": {
+      "fr": "https://forces.ca/fr/carriere/specialiste-communication-navales/",
+      "en": "https://forces.ca/en/career/naval-communicator/"
+    },
+    "00301": {
+      "fr": "https://forces.ca/fr/carriere/technicien-en-refrigeration-et-mecanique/",
+      "en": "https://forces.ca/en/career/refrigeration-and-mechanical-technician/"
+    },
+    "00302": {
+      "fr": "https://forces.ca/fr/carriere/technicien-distribution-electrique/",
+      "en": "https://forces.ca/en/career/electrical-distribution-technician/"
+    },
+    "00303": {
+      "fr": "https://forces.ca/fr/carriere/technicien-des-groupes-electrogenes/",
+      "en": "https://forces.ca/en/career/electrical-generation-systems-technician/"
+    },
+    "00304": {
+      "fr": "https://forces.ca/fr/carriere/technicien-plomberie-chauffage/",
+      "en": "https://forces.ca/en/career/plumbing-heat-technician/"
+    },
+    "00305": {
+      "fr": "https://forces.ca/fr/carriere/technicien-eau-produits-petroliers-environnement/",
+      "en": "https://forces.ca/en/career/water-fuels-and-environment-technician/"
+    },
+    "00306": {
+      "fr": "https://forces.ca/fr/carriere/technicien-construction/",
+      "en": "https://forces.ca/en/career/construction-technician/"
+    },
+    "00324": {
+      "fr": "https://forces.ca/fr/carriere/operateur-sonar/",
+      "en": "https://forces.ca/en/career/sonar-operator/"
+    },
+    "00327": {
+      "fr": "https://forces.ca/fr/carriere/technicien-elec-opto/",
+      "en": "https://forces.ca/en/career/electronic-optronic-technician/"
+    },
+    "00328": {
+      "fr": "https://forces.ca/fr/carriere/officier-logistique/",
+      "en": "https://forces.ca/en/career/logistics-officer/"
+    },
+    "00335": {
+      "fr": "https://forces.ca/fr/carriere/technicien-dentaire/",
+      "en": "https://forces.ca/en/career/dental-technician/"
+    },
+    "00337": {
+      "fr": "https://forces.ca/fr/carriere/operateur-controle-aerospatial/",
+      "en": "https://forces.ca/en/career/aerospace-control-operator/"
+    },
+    "00339": {
+      "fr": "https://forces.ca/fr/carriere/sapeur-combat/",
+      "en": "https://forces.ca/en/career/combat-engineer/"
+    },
+    "00340": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-electronique-communications/",
+      "en": "https://forces.ca/en/career/communication-and-electronics-engineering-officer/"
+    },
+    "00341": {
+      "fr": "https://forces.ca/fr/carriere/officier-transmissions/",
+      "en": "https://forces.ca/en/career/signals-officer/"
+    },
+    "00344": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-systemes-combat-maritime/",
+      "en": "https://forces.ca/en/career/naval-combat-systems-engineering-officer/"
+    },
+    "00345": {
+      "fr": "https://forces.ca/fr/carriere/officier-genie-systemes-marine/",
+      "en": "https://forces.ca/en/career/marine-systems-engineering-officer/"
+    },
+    "00349": {
+      "fr": "https://forces.ca/fr/carriere/aumonier/",
+      "en": "https://forces.ca/en/career/chaplain/"
+    },
+    "00366": {
+      "fr": "https://forces.ca/fr/carriere/technicien-genie-armes/",
+      "en": "https://forces.ca/en/career/weapons-engineering-technician/"
+    },
+    "00368": {
+      "fr": "https://forces.ca/fr/carriere/artilleur/",
+      "en": "https://forces.ca/en/career/gunner/"
+    },
+    "00370": {
+      "fr": "https://forces.ca/fr/carriere/technicien-dessin-arpentage/",
+      "en": "https://forces.ca/en/career/drafting-and-survey-technician/"
+    },
+    "00372": {
+      "fr": "https://forces.ca/fr/carriere/technicien-bloc-operatoire/",
+      "en": "https://forces.ca/en/career/operating-room-technician/"
+    },
+    "00374": {
+      "fr": "https://forces.ca/fr/carriere/adjoint-au-medecin/",
+      "en": "https://forces.ca/en/career/physician-assistant/"
+    },
+    "00375": {
+      "fr": "https://forces.ca/fr/carriere/administrateur-ressources-humaines/",
+      "en": "https://forces.ca/en/career/human-resources-administrator/"
+    },
+    "00376": {
+      "fr": "https://forces.ca/fr/carriere/administrateur-services-financiers/",
+      "en": "https://forces.ca/en/career/financial-services-administrator/"
+    },
+    "00378": {
+      "fr": "https://forces.ca/fr/carriere/cyber-operateur/",
+      "en": "https://forces.ca/en/career/cyber-operator/"
+    },
+    "00383": {
+      "fr": "https://forces.ca/fr/carriere/operateur-des-transmissions/",
+      "en": "https://forces.ca/en/career/signal-operator/"
+    },
+    "00384": {
+      "fr": "https://forces.ca/fr/carriere/technicien-des-lignes/",
+      "en": "https://forces.ca/en/career/line-technician/"
+    },
+    "00385": {
+      "fr": "https://forces.ca/fr/carriere/technicien-des-transmissions/",
+      "en": "https://forces.ca/en/career/signal-technician/"
+    },
+    "00386": {
+      "fr": "https://forces.ca/fr/carriere/techniciens-de-soutien-des-operations-aeriennes/",
+      "en": "https://forces.ca/en/career/air-operations-support-technician/"
+    },
+    "00387": {
+      "fr": "https://forces.ca/fr/carriere/Technicien-des-Systemes-de-Largage/",
+      "en": "https://forces.ca/en/career/air-drop-systems-technician/"
+    },
+    "00389": {
+      "fr": "https://forces.ca/fr/carriere/Officier-des-operations-aeriennes/",
+      "en": "https://forces.ca/en/career/Air-Operations-Officer/"
+    },
+    "00390": {
+      "fr": "https://forces.ca/fr/carriere/specialiste-en-medecine-interne/",
+      "en": "https://forces.ca/en/career/internal-medicine-specialist/"
+    },
+    "00393": {
+      "fr": "https://forces.ca/fr/carriere/medecin/",
+      "en": "https://forces.ca/en/career/medical-officer/"
+    },
+    "00394": {
+      "fr": "https://forces.ca/fr/carriere/technicien-en-systemes-information/",
+      "en": "https://forces.ca/en/career/information-systems-technician/"
+    },
+    "00398": {
+      "fr": "https://forces.ca/fr/carriere/officier-gestion-services-sante/",
+      "en": "https://forces.ca/en/career/health-services-management-officer/"
+    },
+    "00402": {
+      "fr": "https://forces.ca/fr/programme-experience-de-la-marine/",
+      "en": "https://forces.ca/en/naval-experience-program/?slug=nep"
+    },
+    "00404": {
+      "fr": "https://forces.ca/fr/carriere/technicien-electricite-systemes/",
+      "en": "https://forces.ca/en/career/marine-systems-electrical-technician/"
+    },
+    "00405": {
+      "fr": "https://forces.ca/fr/carriere/technicien-mecanique-systemes/",
+      "en": "https://forces.ca/en/career/marine-systems-mechanical-technician/"
+    },
+    "00406": {
+      "fr": "https://forces.ca/fr/carriere/paramedicaux/",
+      "en": "https://forces.ca/en/career/paramedic/"
+    },
+    "00407": {
+      "fr": "https://forces.ca/fr/carriere/personnel-medical-au-combat/",
+      "en": "https://forces.ca/en/career/combat-medic/"
+    },
+    "00410": {
+      "fr": "https://forces.ca/fr/carriere/officier-de-la-sante-publique/",
+      "en": "https://forces.ca/en/career/public-health-officer/"
+    }
+  }
+}

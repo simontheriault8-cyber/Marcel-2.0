@@ -1,0 +1,341 @@
+import { Injectable, signal, computed, inject, effect } from "@angular/core";
+import { TranslationService } from "../app/i18n";
+import { JOBS_DICTIONARY } from "../app/i18n/dictionaries/jobs.dict";
+import { getForcesHelpCentreUrl } from "../app/data/app-links.data";
+
+export const DEFAULT_SIG_FR = `Cordialement,
+
+L’équipe de recrutement des Forces armées canadiennes
+Centre de recrutement des Forces canadiennes Québec
+Commandement du Personnel militaire / Forces armées canadiennes
+Centre d’assistance | Forces armées canadiennes`;
+
+export const DEFAULT_SIG_EN = `Sincerely,
+
+The Canadian Armed Forces Recruiting Team
+Canadian Forces Recruiting Centre Quebec
+Military Personnel Command / Canadian Armed Forces
+Help Centre | Canadian Armed Forces`;
+
+export const DEFAULT_SIG_OTA_FR = `Centre de recrutement des Forces canadiennes Québec, Détachement Montréal
+Forces armées canadiennes
+Tél. : 514-390-4999
+www.forces.ca`;
+
+export const DEFAULT_SIG_OTA_EN = `Canadian Forces Recruiting Centre Quebec, Detachment Montreal
+Canadian Armed Forces
+Tel. : 514-390-4999
+www.forces.ca`;
+
+@Injectable({
+  providedIn: "root",
+})
+export class SharedStateService {
+  hasReoEmailGenerated = signal<boolean>(false);
+  hasReassignedTasks = signal<boolean>(false);
+
+  // Automatically merges when both reattributed tasks email and reorientation email are generated
+  includeLinkedEmail = computed(() => {
+    return this.hasReassignedTasks() && this.hasReoEmailGenerated();
+  });
+
+  recruiterResetTrigger = signal<number>(0);
+
+  triggerRecruiterReset() {
+    this.recruiterResetTrigger.update((n) => n + 1);
+  }
+
+  // Stored output from Task panel
+  taskNote = signal<string>("");
+  taskEmailFr = signal<string>("");
+  taskEmailEn = signal<string>("");
+  taskEmailHtmlFr = signal<string>("");
+  taskEmailHtmlEn = signal<string>("");
+  taskEmailHtmlGeneral = signal<string>("");
+
+  // Task bodies for Reorientation intelligent merge
+  taskBodyHtmlFr = signal<string>("");
+  taskBodyHtmlEn = signal<string>("");
+  taskBodyPlainFr = signal<string>("");
+  taskBodyPlainEn = signal<string>("");
+
+  // Stored output from Reorientation panel for merging in App component
+  reoMergedEmailHtml = signal<string>("");
+  reoMergedEmailPlain = signal<string>("");
+  reoMergedNote = signal<string>("");
+
+  isPostulantPfor = signal<boolean>(false);
+
+  // Selected Jobs in Candidate Dossier (Shared between App main header panel and Reorientation tab)
+  selectedDossierJobId1 = signal<string>("");
+  selectedDossierJobId2 = signal<string>("");
+  selectedDossierJobId3 = signal<string>("");
+  searchDossierQuery1 = signal<string>("");
+  searchDossierQuery2 = signal<string>("");
+  searchDossierQuery3 = signal<string>("");
+  dossierJobFailedCe1 = signal<boolean>(false);
+  dossierJobFailedCe2 = signal<boolean>(false);
+  dossierJobFailedCe3 = signal<boolean>(false);
+
+  // Extra selection tests signals (ECE, ESOM, CEOPM, CSPN)
+  testEcePassed = signal<boolean>(false);
+  testEceNotCompleted = signal<boolean>(false);
+  testEsomPassed = signal<boolean>(false);
+  testEsomNotCompleted = signal<boolean>(false);
+  testCeopmPassed = signal<boolean>(false);
+  testCeopmNotCompleted = signal<boolean>(false);
+  testCspnPassed = signal<boolean>(false);
+  testCspnNotCompleted = signal<boolean>(false);
+  testCspn00182Passed = signal<boolean>(false);
+  testCspn00183Passed = signal<boolean>(false);
+  testCspn00184Passed = signal<boolean>(false);
+
+  private readonly i18n = inject(TranslationService);
+
+  constructor() {
+    effect(() => {
+      const currentLang = this.i18n.lang();
+      this.refreshDossierQueries(currentLang);
+    });
+  }
+
+  refreshDossierQueries(lang: 'fr' | 'en') {
+    const id1 = this.selectedDossierJobId1();
+    if (id1) {
+      const e1 = JOBS_DICTIONARY[id1];
+      if (e1) {
+        const title1 = lang === 'en' ? (e1.titleEn || e1.titleFr) : e1.titleFr;
+        this.searchDossierQuery1.set(`${id1} - ${title1}`);
+      }
+    }
+    const id2 = this.selectedDossierJobId2();
+    if (id2) {
+      const e2 = JOBS_DICTIONARY[id2];
+      if (e2) {
+        const title2 = lang === 'en' ? (e2.titleEn || e2.titleFr) : e2.titleFr;
+        this.searchDossierQuery2.set(`${id2} - ${title2}`);
+      }
+    }
+    const id3 = this.selectedDossierJobId3();
+    if (id3) {
+      const e3 = JOBS_DICTIONARY[id3];
+      if (e3) {
+        const title3 = lang === 'en' ? (e3.titleEn || e3.titleFr) : e3.titleFr;
+        this.searchDossierQuery3.set(`${id3} - ${title3}`);
+      }
+    }
+  }
+
+  resetSharedRecruiterState() {
+    this.taskNote.set("");
+    this.taskEmailFr.set("");
+    this.taskEmailEn.set("");
+    this.taskEmailHtmlFr.set("");
+    this.taskEmailHtmlEn.set("");
+    this.taskEmailHtmlGeneral.set("");
+    this.taskBodyHtmlFr.set("");
+    this.taskBodyHtmlEn.set("");
+    this.taskBodyPlainFr.set("");
+    this.taskBodyPlainEn.set("");
+    this.reoMergedEmailHtml.set("");
+    this.reoMergedEmailPlain.set("");
+    this.reoMergedNote.set("");
+    this.hasReassignedTasks.set(false);
+    this.hasReoEmailGenerated.set(false);
+    this.isPostulantPfor.set(false);
+    this.selectedDossierJobId1.set("");
+    this.selectedDossierJobId2.set("");
+    this.selectedDossierJobId3.set("");
+    this.searchDossierQuery1.set("");
+    this.searchDossierQuery2.set("");
+    this.searchDossierQuery3.set("");
+    this.dossierJobFailedCe1.set(false);
+    this.dossierJobFailedCe2.set(false);
+    this.dossierJobFailedCe3.set(false);
+    this.testEcePassed.set(false);
+    this.testEceNotCompleted.set(false);
+    this.testEsomPassed.set(false);
+    this.testEsomNotCompleted.set(false);
+    this.testCeopmPassed.set(false);
+    this.testCeopmNotCompleted.set(false);
+    this.testCspnPassed.set(false);
+    this.testCspnNotCompleted.set(false);
+    this.testCspn00182Passed.set(false);
+    this.testCspn00183Passed.set(false);
+    this.testCspn00184Passed.set(false);
+  }
+
+  // Custom Signatures Signals (Normal)
+  isOtaDossier = signal<boolean>(false);
+
+  customSignatureFr = signal<string>(
+    localStorage.getItem("custom_signature_fr") !== null
+      ? (localStorage.getItem("custom_signature_fr") ?? "")
+      : DEFAULT_SIG_FR
+  );
+  customSignatureEn = signal<string>(
+    localStorage.getItem("custom_signature_en") !== null
+      ? (localStorage.getItem("custom_signature_en") ?? "")
+      : DEFAULT_SIG_EN
+  );
+
+  // Custom Signatures Signals (OTA)
+  customSignatureOtaFr = signal<string>(
+    localStorage.getItem("custom_signature_ota_fr") !== null
+      ? (localStorage.getItem("custom_signature_ota_fr") ?? "")
+      : DEFAULT_SIG_OTA_FR
+  );
+  customSignatureOtaEn = signal<string>(
+    localStorage.getItem("custom_signature_ota_en") !== null
+      ? (localStorage.getItem("custom_signature_ota_en") ?? "")
+      : DEFAULT_SIG_OTA_EN
+  );
+
+  getSignatureFr(isOta = this.isOtaDossier()): string {
+    return isOta ? this.customSignatureOtaFr() : this.customSignatureFr();
+  }
+
+  getSignatureEn(isOta = this.isOtaDossier()): string {
+    return isOta ? this.customSignatureOtaEn() : this.customSignatureEn();
+  }
+
+  getHtmlSignatureFr(isOta = this.isOtaDossier()): string {
+    const sig = this.getSignatureFr(isOta);
+    if (!sig || !sig.trim()) {
+      return "";
+    }
+    let html = this.getHtmlSignature(sig);
+    html = html.replace(
+      "Centre d’assistance | Forces armées canadiennes",
+      `<a href="${getForcesHelpCentreUrl(false)}" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Centre d’assistance</a> | <a href="https://forces.ca/fr/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Forces armées canadiennes</a>`
+    );
+    return html;
+  }
+
+  getHtmlSignatureEn(isOta = this.isOtaDossier()): string {
+    const sig = this.getSignatureEn(isOta);
+    if (!sig || !sig.trim()) {
+      return "";
+    }
+    let html = this.getHtmlSignature(sig);
+    html = html.replace(
+      "Help Centre | Canadian Armed Forces",
+      `<a href="${getForcesHelpCentreUrl(true)}" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Help Centre</a> | <a href="https://forces.ca/en/" target="_blank" class="text-blue-600 hover:underline" style="color: #2563eb; text-decoration: underline;">Canadian Armed Forces</a>`
+    );
+    return html;
+  }
+
+  getHtmlSignature(sig: string): string {
+    if (!sig || !sig.trim()) {
+      return "";
+    }
+    // 1. Convert newlines to <br>
+    let html = sig.replace(/\n/g, "<br>");
+
+    // 2. Auto-link URLs
+    html = html.replace(
+      /(?<!href=")(https?:\/\/[^\s\)<>]+)/g,
+      '<a href="$1" target="_blank" class="text-indigo-600 hover:underline">$1</a>'
+    );
+    return html;
+  }
+
+  saveSignatures(fr: string, en: string, otaFr?: string, otaEn?: string) {
+    this.customSignatureFr.set(fr);
+    this.customSignatureEn.set(en);
+    localStorage.setItem("custom_signature_fr", fr);
+    localStorage.setItem("custom_signature_en", en);
+
+    if (otaFr !== undefined) {
+      this.customSignatureOtaFr.set(otaFr);
+      localStorage.setItem("custom_signature_ota_fr", otaFr);
+    }
+    if (otaEn !== undefined) {
+      this.customSignatureOtaEn.set(otaEn);
+      localStorage.setItem("custom_signature_ota_en", otaEn);
+    }
+  }
+
+  resetSignatures(type: 'all' | 'normal' | 'ota' = 'all') {
+    if (type === 'all' || type === 'normal') {
+      this.customSignatureFr.set(DEFAULT_SIG_FR);
+      this.customSignatureEn.set(DEFAULT_SIG_EN);
+      localStorage.setItem("custom_signature_fr", DEFAULT_SIG_FR);
+      localStorage.setItem("custom_signature_en", DEFAULT_SIG_EN);
+    }
+    if (type === 'all' || type === 'ota') {
+      this.customSignatureOtaFr.set(DEFAULT_SIG_OTA_FR);
+      this.customSignatureOtaEn.set(DEFAULT_SIG_OTA_EN);
+      localStorage.setItem("custom_signature_ota_fr", DEFAULT_SIG_OTA_FR);
+      localStorage.setItem("custom_signature_ota_en", DEFAULT_SIG_OTA_EN);
+    }
+  }
+
+  getCustomizedScenarioText(bodyText: string, isOta = this.isOtaDossier()): string {
+    let text = bodyText;
+    const sigFr = this.getSignatureFr(isOta);
+    const sigEn = this.getSignatureEn(isOta);
+    
+    let regexFr = new RegExp("Cordialement,[\\s\\S]*?Centre d’assistance \\| Forces armées canadiennes", "g");
+    text = text.replace(regexFr, sigFr ? sigFr : "");
+    
+    let regexEn = new RegExp("Sincerely,[\\s\\S]*?Help Centre \\| Canadian Armed Forces", "g");
+    text = text.replace(regexEn, sigEn ? sigEn : "");
+
+    const isEnMode = this.i18n?.isEn ? this.i18n.isEn() : false;
+    if (isEnMode && text.includes("______________________________________________________________________________")) {
+      const parts = text.split("______________________________________________________________________________");
+      if (parts.length >= 2) {
+        let frPart = parts[0].trim();
+        let enPart = parts[1].trim();
+        frPart = frPart.replace(/^English message will follow\.\s*/i, "");
+        enPart = enPart.replace(/^Un message en français suivra\.\s*/i, "");
+        text = `Un message en français suivra.\n\n${enPart}\n\n______________________________________________________________________________\n\n${frPart}`;
+      }
+    }
+    
+    return text;
+  }
+
+  getCustomizedScenarioHtml(bodyHtml: string, isOta = this.isOtaDossier()): string {
+    let html = bodyHtml;
+    const htmlSigFr = this.getHtmlSignatureFr(isOta);
+    const htmlSigEn = this.getHtmlSignatureEn(isOta);
+    
+    let regexFr = new RegExp("<p>Cordialement,<\\/p>\\s*<p>L’équipe de recrutement[\\s\\S]*?Forces armées canadiennes(?:<\\/a>)?<\\/p>", "g");
+    html = html.replace(regexFr, htmlSigFr ? "<p>" + htmlSigFr + "</p>" : "");
+
+    let fallbackRegexFr = new RegExp("<p>Cordialement,<\\/p>[\\s\\S]*?Forces armées canadiennes(?:<\\/a>)?<\\/p>", "g");
+    html = html.replace(fallbackRegexFr, htmlSigFr ? "<p>" + htmlSigFr + "</p>" : "");
+    
+    let regexEn = new RegExp("<p>Sincerely,<\\/p>[\\s\\S]*?Canadian Armed Forces(?:<\\/a>)?<\\/p>", "g");
+    html = html.replace(regexEn, htmlSigEn ? "<p>" + htmlSigEn + "</p>" : "");
+
+    const isEnMode = this.i18n?.isEn ? this.i18n.isEn() : false;
+    if (isEnMode && (html.includes("______________________________________________________________________________") || html.includes("<hr"))) {
+      let divider = "<br><p>______________________________________________________________________________</p><br>";
+      let parts: string[] = [];
+      if (html.includes(divider)) {
+        parts = html.split(divider);
+      } else if (html.includes("<p>______________________________________________________________________________</p>")) {
+        divider = "<p>______________________________________________________________________________</p>";
+        parts = html.split(divider);
+      }
+      if (parts.length >= 2) {
+        let frPart = parts[0];
+        let enPart = parts[1];
+        frPart = frPart.replace(/<div[^>]*>/, '').replace(/<p><span[^>]*>English message will follow\.<\/span><\/p>/gi, '').replace(/<p><strong>English message will follow\.<\/strong><\/p>/gi, '').trim();
+        enPart = enPart.replace(/<\/div>\s*$/, '').trim();
+        html = `<div style="font-family: Calibri, sans-serif; font-size: 11pt; color: #000;">` +
+          `<p><span style="background-color: yellow;">Un message en français suivra.</span></p>` +
+          enPart +
+          divider +
+          frPart +
+          `</div>`;
+      }
+    }
+    
+    return html;
+  }
+}
+
