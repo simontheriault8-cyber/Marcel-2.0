@@ -780,16 +780,18 @@ export class PforComponent {
 
     const durationYears = this.getJobContractDuration(jobId);
 
-    if (ageVal !== null && ageVal > 0) {
-      if (ageVal >= 57) {
-        isAgeAdmissible = false;
-        ageReason = "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
-        ageReasonEn = "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
-      } else if (ageVal + durationYears >= 60) {
-        isAgeAdmissible = false;
-        ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
-        ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
-      }
+    if (ageVal === null || ageVal === undefined || ageVal <= 0) {
+      isAgeAdmissible = false;
+      ageReason = "L'âge du postulant n'est pas encore renseigné.";
+      ageReasonEn = "Applicant's age has not been entered yet.";
+    } else if (ageVal >= 57) {
+      isAgeAdmissible = false;
+      ageReason = "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
+      ageReasonEn = "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
+    } else if (ageVal + durationYears >= 60) {
+      isAgeAdmissible = false;
+      ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
+      ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
     }
 
     let isCitizenshipAdmissible = true;

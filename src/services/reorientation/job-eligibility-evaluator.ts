@@ -148,8 +148,51 @@ export function evaluateEducationEligibility(
   coursSpecialisesIds: string[],
   isOfficerJob: (id: string) => boolean
 ): { eligible: boolean; missingFr?: string; missingEn?: string } {
+    const hasEducationFilled = Array.from(rawSelected).some(
+      (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+    );
+
+    if (!hasEducationFilled) {
+      return {
+        eligible: false,
+        missingFr: "Le panneau de scolarité n'a pas encore été rempli.",
+        missingEn: "The education panel has not been filled yet.",
+      };
+    }
+
     const rules = JOB_RULES.filter((r) => r.jobs.includes(jobId));
     if (rules.length === 0) {
+      if (isOfficerJob(jobId)) {
+        const hasUniv =
+          rawSelected.has("univ_1er_cycle_global") ||
+          Array.from(rawSelected).some((id) => id.startsWith("bacc_")) ||
+          rawSelected.has("univ_cycle_sup_global") ||
+          rawSelected.has("univ_cycle_sup_maitrise") ||
+          Array.from(rawSelected).some((id) => id.startsWith("maitrise_")) ||
+          rawSelected.has("univ_cycle_sup_doctorat") ||
+          Array.from(rawSelected).some((id) => id.startsWith("doctorat_"));
+        if (!hasUniv) {
+          return {
+            eligible: false,
+            missingFr: "Baccalauréat universitaire requis",
+            missingEn: "University bachelor's degree required",
+          };
+        }
+        return { eligible: true };
+      }
+      const hasSec =
+        rawSelected.has("des_12e_annee") ||
+        rawSelected.has("sec4_24_credits") ||
+        rawSelected.has("aens") ||
+        rawSelected.has("univ_1er_cycle_global") ||
+        Array.from(rawSelected).some((id) => id.startsWith("bacc_"));
+      if (!hasSec) {
+        return {
+          eligible: false,
+          missingFr: "Scolarité minimale requise (ex: DES ou Sec 4)",
+          missingEn: "Minimum education required (e.g. High school diploma or Grade 10)",
+        };
+      }
       return { eligible: true };
     }
 

@@ -594,7 +594,7 @@ export const REORIENTATION_TEMPLATE_PART1 = `
                             <div>
                               <span class="font-semibold">{{ i18n.t('reo.ageLabel') }}</span>
                               @if (age() === null || age()! <= 0) {
-                                <span class="italic text-slate-500"
+                                <span class="italic text-rose-600 font-medium"
                                   >{{ i18n.t('reo.ageNotFilled', { duration: s1.durationYears, maxAge: 59 - s1.durationYears }) }}</span
                                 >
                               } @else {

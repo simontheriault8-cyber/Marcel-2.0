@@ -322,12 +322,55 @@ export function computeReoJobsExcludedByAge(this: any): string[] {
 }
 
 export function checkReoJobEducationEligibility(this: any, jobId: string): { eligible: boolean; missingFr?: string; missingEn?: string } {
+    const rawSelected = this.selectedCriteriaIds();
+    const hasEducationFilled = Array.from(rawSelected as Set<string>).some(
+      (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+    );
+
+    if (!hasEducationFilled) {
+      return {
+        eligible: false,
+        missingFr: "Le panneau de scolarité n'a pas encore été rempli.",
+        missingEn: "The education panel has not been filled yet.",
+      };
+    }
+
     const rules = this.jobRules.filter((r) => r.jobs.includes(jobId));
     if (rules.length === 0) {
+      if (this.isOfficerJob(jobId)) {
+        const hasUniv =
+          rawSelected.has("univ_1er_cycle_global") ||
+          Array.from(rawSelected as Set<string>).some((id: string) => id.startsWith("bacc_")) ||
+          rawSelected.has("univ_cycle_sup_global") ||
+          rawSelected.has("univ_cycle_sup_maitrise") ||
+          Array.from(rawSelected as Set<string>).some((id: string) => id.startsWith("maitrise_")) ||
+          rawSelected.has("univ_cycle_sup_doctorat") ||
+          Array.from(rawSelected as Set<string>).some((id: string) => id.startsWith("doctorat_"));
+        if (!hasUniv) {
+          return {
+            eligible: false,
+            missingFr: "Baccalauréat universitaire requis",
+            missingEn: "University bachelor's degree required",
+          };
+        }
+        return { eligible: true };
+      }
+      const hasSec =
+        rawSelected.has("des_12e_annee") ||
+        rawSelected.has("sec4_24_credits") ||
+        rawSelected.has("aens") ||
+        rawSelected.has("univ_1er_cycle_global") ||
+        Array.from(rawSelected as Set<string>).some((id: string) => id.startsWith("bacc_"));
+      if (!hasSec) {
+        return {
+          eligible: false,
+          missingFr: "Scolarité minimale requise (ex: DES ou Sec 4)",
+          missingEn: "Minimum education required (e.g. High school diploma or Grade 10)",
+        };
+      }
       return { eligible: true };
     }
 
-    const rawSelected = this.selectedCriteriaIds();
     const selected = new Set(rawSelected);
 
     const allMathOptions = (Object.values(this.MATH_COURSES) as any[]).reduce(
@@ -662,18 +705,20 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
         : 3
       : 3;
 
-    if (ageVal !== null && ageVal > 0) {
-      if (ageVal >= 57) {
-        isAgeAdmissible = false;
-        ageReason =
-          "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
-        ageReasonEn =
-          "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
-      } else if (ageVal + durationYears >= 60) {
-        isAgeAdmissible = false;
-        ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
-        ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
-      }
+    if (ageVal === null || ageVal === undefined || ageVal <= 0) {
+      isAgeAdmissible = false;
+      ageReason = "L'âge du postulant n'est pas encore renseigné.";
+      ageReasonEn = "Applicant's age has not been entered yet.";
+    } else if (ageVal >= 57) {
+      isAgeAdmissible = false;
+      ageReason =
+        "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
+      ageReasonEn =
+        "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
+    } else if (ageVal + durationYears >= 60) {
+      isAgeAdmissible = false;
+      ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
+      ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
     }
 
     let isCitizenshipAdmissible = true;
@@ -713,16 +758,22 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
 
       if (this.pforType() === "cmr") {
         const cmrInfo = CMR_JOB_DOMAINS[jobId];
-        if (!cmrInfo) {
+        const arts = this.cmrArts();
+        const science = this.cmrScience();
+        const genie = this.cmrGenie();
+        const hasAnyDomain = arts || science || genie;
+
+        if (!hasAnyDomain) {
+          isEducationAdmissible = false;
+          educationReason = "Les critères d'admission au CMR (Arts, Sciences ou Génie) ne sont pas encore renseignés.";
+          educationReasonEn = "RMC admission criteria (Arts, Science, or Engineering) have not been entered yet.";
+        } else if (!cmrInfo) {
           isEducationAdmissible = false;
           educationReason =
             "Ce métier n'est pas offert au Collège militaire royal (CMR) dans le cadre du PFOR.";
           educationReasonEn =
             "This occupation is not offered at the Royal Military College (RMC) under ROTP.";
         } else {
-          const arts = this.cmrArts();
-          const science = this.cmrScience();
-          const genie = this.cmrGenie();
           const match =
             (arts && cmrInfo.arts) ||
             (science && cmrInfo.science) ||
@@ -740,7 +791,15 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
           }
         }
       } else {
-        if (!hasPfor) {
+        const rawSelected = this.selectedCriteriaIds();
+        const hasEducationFilled = Array.from(rawSelected as Set<string>).some(
+          (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+        );
+        if (!hasEducationFilled) {
+          isEducationAdmissible = false;
+          educationReason = "Le panneau de scolarité n'a pas encore été rempli.";
+          educationReasonEn = "The education panel has not been filled yet.";
+        } else if (!hasPfor) {
           isEducationAdmissible = false;
           educationReason =
             "Ce métier ne comporte aucune position disponible pour le PFOR Civil.";
@@ -806,24 +865,35 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
       };
     }
 
-    const eduCheckSubmit = this.checkJobEducationEligibility(jobId);
-    if (!eduCheckSubmit.eligible) {
+    const rawSelected = this.selectedCriteriaIds();
+    const hasEducationFilled = Array.from(rawSelected as Set<string>).some(
+      (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+    );
+
+    if (!hasEducationFilled) {
       isEducationAdmissible = false;
-      const specializedOfficers = ["00190", "00191", "00194", "00195", "00197", "00198", "00203", "00204", "00208", "00211", "00214", "00349", "00374", "00390", "00393", "00398"];
-      if (this.isOfficerJob(jobId)) {
-        if (specializedOfficers.includes(jobId) && eduCheckSubmit.missingFr) {
-          educationReason = "Vous n'avez pas les études universitaires requises pour satisfaire aux exigences académiques (" + eduCheckSubmit.missingFr + ").";
-          educationReasonEn = "You do not have the required university education to meet the academic requirements (" + eduCheckSubmit.missingEn + ").";
+      educationReason = "Le panneau de scolarité n'a pas encore été rempli.";
+      educationReasonEn = "The education panel has not been filled yet.";
+    } else {
+      const eduCheckSubmit = this.checkJobEducationEligibility(jobId);
+      if (!eduCheckSubmit.eligible) {
+        isEducationAdmissible = false;
+        const specializedOfficers = ["00190", "00191", "00194", "00195", "00197", "00198", "00203", "00204", "00208", "00211", "00214", "00349", "00374", "00390", "00393", "00398"];
+        if (this.isOfficerJob(jobId)) {
+          if (specializedOfficers.includes(jobId) && eduCheckSubmit.missingFr) {
+            educationReason = "Vous n'avez pas les études universitaires requises pour satisfaire aux exigences académiques (" + eduCheckSubmit.missingFr + ").";
+            educationReasonEn = "You do not have the required university education to meet the academic requirements (" + eduCheckSubmit.missingEn + ").";
+          } else {
+            educationReason = "Vous n'avez pas les études universitaires requises pour satisfaire aux exigences académiques.";
+            educationReasonEn = "You do not have the required university education to meet the academic requirements.";
+          }
+        } else if (eduCheckSubmit.missingFr) {
+          educationReason = "Votre scolarité ou votre expérience ne satisfait pas aux exigences minimales (" + eduCheckSubmit.missingFr + ").";
+          educationReasonEn = "Your academic level or experience does not meet the minimum requirements (" + eduCheckSubmit.missingEn + ").";
         } else {
-          educationReason = "Vous n'avez pas les études universitaires requises pour satisfaire aux exigences académiques.";
-          educationReasonEn = "You do not have the required university education to meet the academic requirements.";
+          educationReason = "Votre scolarité ou votre expérience ne satisfait pas aux exigences minimales.";
+          educationReasonEn = "Your academic level or experience does not meet the minimum requirements.";
         }
-      } else if (eduCheckSubmit.missingFr) {
-        educationReason = "Votre scolarité ou votre expérience ne satisfait pas aux exigences minimales (" + eduCheckSubmit.missingFr + ").";
-        educationReasonEn = "Your academic level or experience does not meet the minimum requirements (" + eduCheckSubmit.missingEn + ").";
-      } else {
-        educationReason = "Votre scolarité ou votre expérience ne satisfait pas aux exigences minimales.";
-        educationReasonEn = "Your academic level or experience does not meet the minimum requirements.";
       }
     }
 

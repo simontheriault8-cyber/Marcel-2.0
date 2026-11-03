@@ -243,6 +243,22 @@ export class ReorientationComponent {
     ),
   );
 
+  hasEducationFilled = computed(() => {
+    if (this.isPforApplicant()) {
+      if (this.pforType() === "cmr") {
+        return this.cmrArts() || this.cmrScience() || this.cmrGenie();
+      }
+      const selected = this.selectedCriteriaIds();
+      return Array.from(selected).some(
+        (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+      );
+    }
+    const selected = this.selectedCriteriaIds();
+    return Array.from(selected).some(
+      (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
+    );
+  });
+
   expandedDomaines = signal<Set<string>>(new Set<string>());
 
   isPforApplicant = signal<boolean>(false);
