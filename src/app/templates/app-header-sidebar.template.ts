@@ -40,6 +40,8 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
     } @else if (selectedRole() === 'none') {
       @if (showTutoMarcel()) {
         <app-tuto-marcel (close)="closeTutoMarcel()" />
+      } @else if (showAdminPortal()) {
+        <app-admin-portal (closePortal)="closeAdminPortal()" />
       } @else {
         <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
           <!-- Top Left: Tuto Marcel Button -->
@@ -155,6 +157,33 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               </div>
             </div>
 
+          </div>
+
+          <!-- Bottom Left: Admin Portal Button -->
+          <div class="absolute bottom-6 left-6 z-10">
+            <button
+              type="button"
+              (click)="openAdminPortal()"
+              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-400 text-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
+              [title]="i18n.t('admin.buttonTitle')"
+            >
+              <div class="w-7 h-7 rounded-xl bg-slate-100 group-hover:bg-slate-800 group-hover:text-white text-slate-700 flex items-center justify-center transition-colors shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <span>{{ i18n.t('admin.buttonLabel') }}</span>
+              @if (!adminAuth.isAdminUnlocked()) {
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
+                </svg>
+              }
+            </button>
           </div>
         </div>
       }

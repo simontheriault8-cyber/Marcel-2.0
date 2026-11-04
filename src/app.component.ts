@@ -25,6 +25,8 @@ import { CalendarPickerComponent } from "./app/components/calendar-picker.compon
 import { CourseSeriesPickerComponent } from "./app/components/course-series-picker.component";
 import { UnitPickerComponent } from "./app/components/unit-picker.component";
 import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
+import { AdminPortalComponent } from "./app/components/admin/admin-portal.component";
+import { AdminAuthService } from "./services/admin-auth.service";
 import { UnitSession, UNITS_LIST } from "./app/data/units.data";
 import { CourseSession } from "./app/data/course-sessions.data";
 import { JOB_URLS } from "./app/data/job-urls.data";
@@ -54,7 +56,7 @@ import { TranslationService } from "./app/i18n";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, FormsModule],
+  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, FormsModule],
   template: APP_COMPONENT_TEMPLATE,
   host: { '(document:click)': 'onDocumentClick($event)' },
   styles: [],
@@ -68,6 +70,7 @@ export class AppComponent implements OnInit {
   public melService = inject(MelService);
   public reorientationCriteria = inject(ReorientationCriteriaService);
   public i18n = inject(TranslationService);
+  public adminAuth = inject(AdminAuthService);
 
   // Dossier Jobs Panel Dropdown States
   dossierDropdownOpen1 = signal<boolean>(false);
@@ -379,6 +382,17 @@ export class AppComponent implements OnInit {
   closeTutoMarcel() {
     this.showTutoMarcel.set(false);
     this.selectedRole.set('none');
+  }
+
+  // Admin Portal State
+  showAdminPortal = signal<boolean>(false);
+
+  openAdminPortal() {
+    this.showAdminPortal.set(true);
+  }
+
+  closeAdminPortal() {
+    this.showAdminPortal.set(false);
   }
 
   // Signature Settings State

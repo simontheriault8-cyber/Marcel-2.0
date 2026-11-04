@@ -379,4 +379,30 @@ export class MelService {
       return newMatrix;
     });
   }
+
+  isJobAcceptableForMel(melId: string, jobId: string): boolean {
+    const matrix = this.acceptabilityMatrix();
+    const row = matrix[melId];
+    if (!row) return true;
+
+    // Direct match (e.g. '00178', or specific sub-id like '00328-02')
+    if (row[jobId] !== undefined) {
+      return row[jobId];
+    }
+
+    // Find all matching occupations in MEL_OCCUPATIONS for base jobId
+    const matchingOccs = MEL_OCCUPATIONS.filter(
+      (occ) =>
+        occ.id === jobId ||
+        occ.displayId === jobId ||
+        occ.id.startsWith(jobId + '-')
+    );
+
+    if (matchingOccs.length === 0) {
+      return true;
+    }
+
+    // A job is acceptable if AT LEAST ONE of its sub-occupations is acceptable
+    return matchingOccs.some((occ) => row[occ.id] !== false);
+  }
 }

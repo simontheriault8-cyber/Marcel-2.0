@@ -518,7 +518,7 @@ export function checkReoJobMedicalEligibility(this: any, jobId: string): {
 
     for (const [melId, hasLim] of Object.entries(applicantLimitations)) {
       if (hasLim) {
-        const isAcceptable = melMatrix[melId]?.[jobId] ?? true;
+        const isAcceptable = this.melService.isJobAcceptableForMel(melId, jobId);
         if (!isAcceptable) {
           const limitation = MEL_LIMITATIONS.find(l => l.id === melId);
           const limFr = limitation?.textFr || limitation?.text || melId;

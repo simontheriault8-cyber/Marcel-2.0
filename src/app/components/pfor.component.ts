@@ -853,17 +853,30 @@ export class PforComponent {
     const medicalReason = "Votre profil médical actuel ne rencontre pas le standard minimal pour ce métier.";
     const medicalReasonEn = "Your current medical profile does not meet the minimum requirement for this occupation.";
 
-    if (this.hasMedicalLimitation() && job && job.medicalStandard) {
-      const reqV = job.medicalStandard.v;
-      const reqCV = job.medicalStandard.cv;
-      const reqH = job.medicalStandard.h;
-      const userV = parseInt(this.medicalV(), 10);
-      const userCV = parseInt(this.medicalCV(), 10);
-      const userH = parseInt(this.medicalH(), 10);
+    if (this.hasMedicalLimitation()) {
+      if (job && job.medicalStandard) {
+        const reqV = job.medicalStandard.v;
+        const reqCV = job.medicalStandard.cv;
+        const reqH = job.medicalStandard.h;
+        const userV = parseInt(this.medicalV(), 10);
+        const userCV = parseInt(this.medicalCV(), 10);
+        const userH = parseInt(this.medicalH(), 10);
 
-      if (!isNaN(reqV) && !isNaN(userV) && userV > reqV) isMedicalAdmissible = false;
-      if (!isNaN(reqCV) && !isNaN(userCV) && userCV > reqCV) isMedicalAdmissible = false;
-      if (!isNaN(reqH) && !isNaN(userH) && userH > reqH) isMedicalAdmissible = false;
+        if (!isNaN(reqV) && !isNaN(userV) && userV > reqV) isMedicalAdmissible = false;
+        if (!isNaN(reqCV) && !isNaN(userCV) && userCV > reqCV) isMedicalAdmissible = false;
+        if (!isNaN(reqH) && !isNaN(userH) && userH > reqH) isMedicalAdmissible = false;
+      }
+
+      const applicantLimitations = this.melService.applicantLimitations();
+      for (const [melId, hasLim] of Object.entries(applicantLimitations)) {
+        if (hasLim) {
+          const isAcceptable = this.melService.isJobAcceptableForMel(melId, jobId);
+          if (!isAcceptable) {
+            isMedicalAdmissible = false;
+            break;
+          }
+        }
+      }
     }
 
     return {

@@ -298,10 +298,9 @@ export class ReorientationCriteriaService {
     }
 
     const applicantLimitations = this.melService.applicantLimitations();
-    const melMatrix = this.melService.acceptabilityMatrix();
     for (const [melId, hasLim] of Object.entries(applicantLimitations)) {
       if (hasLim) {
-        const isAcceptable = melMatrix[melId]?.[jobId] ?? true;
+        const isAcceptable = this.melService.isJobAcceptableForMel(melId, jobId);
         if (!isAcceptable) return false;
       }
     }

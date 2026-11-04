@@ -15,16 +15,15 @@ import { SharedStateService } from "../../services/shared-state.service";
 import { JobEntry } from "../../services/jobs-data";
 import { ReorientationComponent } from "./reorientation.component";
 import { PforComponent } from "./pfor.component";
-import { MelComponent } from "./mel.component";
 import { TranslationService } from "../i18n/translation.service";
 import { JOB_SEARCH_MODAL_TEMPLATE } from "./job-search-modal.template";
 
-type ModalTab = "catalogue" | "reorientation" | "pfor" | "mel";
+type ModalTab = "catalogue" | "reorientation" | "pfor";
 
 @Component({
   selector: "app-job-search-modal",
   standalone: true,
-  imports: [CommonModule, ReorientationComponent, PforComponent, MelComponent],
+  imports: [CommonModule, ReorientationComponent, PforComponent],
   template: JOB_SEARCH_MODAL_TEMPLATE,
   styles: [],
 })

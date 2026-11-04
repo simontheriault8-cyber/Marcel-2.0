@@ -12,7 +12,7 @@ import { TranslationService } from '../i18n';
       <!-- Header -->
       <div class="border-b border-slate-200 pb-4 shrink-0">
         <h2 class="text-2xl font-bold text-slate-800 font-sans tracking-tight">{{ i18n.t('mel.configTitle') }}</h2>
-        <p class="text-slate-500 mt-1">{{ i18n.t('mel.configSubtitle') }}</p>
+        <p class="text-slate-500 mt-1 text-sm">{{ i18n.t('mel.configSubtitle') }}</p>
       </div>
       
       <!-- TABLE 1: Army -->
