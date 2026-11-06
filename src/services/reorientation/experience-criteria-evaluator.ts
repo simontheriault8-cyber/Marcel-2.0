@@ -4,7 +4,7 @@ import REGLES_DATA from "../../../regles-reorientation.json";
 export function evaluateDynamicExperienceCriteria(
   selected: Set<string>,
   isAdmissibleOtherThanEducation: (jobId: string) => boolean,
-  dossierJobIds?: Set<string>
+  dossierJobIds?: Set<string> | string[] | any
 ): ManualCriterion[] {
   const criteriaMap = new Map<string, ManualCriterion>();
   const tradeRules = (REGLES_DATA as any)?.reglesMetiers || [];
@@ -16,9 +16,17 @@ export function evaluateDynamicExperienceCriteria(
     exp_musique: ["exp_mus_pro", "exp_mus_ensembles", "exp_mus_etudiant"]
   };
 
+  const isDossierMember = (code: string): boolean => {
+    if (!dossierJobIds) return false;
+    if (typeof dossierJobIds.has === "function") return dossierJobIds.has(code);
+    if (Array.isArray(dossierJobIds)) return dossierJobIds.includes(code);
+    if (typeof dossierJobIds.includes === "function") return dossierJobIds.includes(code);
+    return false;
+  };
+
   for (const trade of tradeRules) {
     const code = trade.code;
-    const isDossier = dossierJobIds ? dossierJobIds.has(code) : false;
+    const isDossier = isDossierMember(code);
     const isStatutAdmissible = isAdmissibleOtherThanEducation(code);
 
     if (isDossier || isStatutAdmissible) {
