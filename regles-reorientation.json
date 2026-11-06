@@ -459,6 +459,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/arme-blindee/",
         "en": "https://forces.ca/en/career/armour-soldier/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -514,6 +518,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/fantassin/",
         "en": "https://forces.ca/en/career/infanteer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -577,6 +585,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-detecteurs-electroniques-aeroportes/",
         "en": "https://forces.ca/en/career/airborne-electronic-sensor-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 7,
+        "PFOR": 7
       }
     },
     {
@@ -640,6 +652,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/specialiste-renseignement/",
         "en": "https://forces.ca/en/career/intelligence-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -711,6 +727,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-meteorologie/",
         "en": "https://forces.ca/en/career/meteorological-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -765,6 +785,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/manoeuvrier/",
         "en": "https://forces.ca/en/career/boatswain/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -827,6 +851,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-systemes-aerospatiales/",
         "en": "https://forces.ca/en/career/aerospace-telecommunications-and-information-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -881,6 +910,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-equipement-information-combat/",
         "en": "https://forces.ca/en/career/naval-combat-information-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -935,6 +968,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-detecteurs-etectroniques/",
         "en": "https://forces.ca/en/career/naval-electronic-sensor-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -989,6 +1026,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/specialistes-du-renseignement-origine-electromagnetique/",
         "en": "https://forces.ca/en/career/signals-intelligence-specialist/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -1059,6 +1100,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-de-vehicule/",
         "en": "https://forces.ca/en/career/vehicle-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -1129,6 +1175,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-armement/",
         "en": "https://forces.ca/en/career/weapons-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -1199,6 +1249,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-materiaux/",
         "en": "https://forces.ca/en/career/materials-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -1264,6 +1318,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-systemes-aeronautiques/",
         "en": "https://forces.ca/en/career/aviation-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -1329,6 +1388,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-systeme-avionique/",
         "en": "https://forces.ca/en/career/avionics-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -1394,6 +1458,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-imagerie/",
         "en": "https://forces.ca/en/career/imagery-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -1458,6 +1526,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-structure-aeronefs/",
         "en": "https://forces.ca/en/career/aircraft-structures-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -1517,6 +1590,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/pompier/",
         "en": "https://forces.ca/en/career/firefighter/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 9
       }
     },
     {
@@ -1592,6 +1669,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technologue-laboratoire-medical/",
         "en": "https://forces.ca/en/career/medical-laboratory-technologist/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 9
       }
     },
     {
@@ -1662,6 +1744,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technologue-radiologie-medicale/",
         "en": "https://forces.ca/en/career/medical-radiation-technologist/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 9
       }
     },
     {
@@ -1727,6 +1814,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technologue-electronique-biomedicale/",
         "en": "https://forces.ca/en/career/biomedical-electronics-technologist/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 8
       }
     },
     {
@@ -1796,6 +1888,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/police-militaire/",
         "en": "https://forces.ca/en/career/military-police/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -1855,6 +1951,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/cuisinier/",
         "en": "https://forces.ca/en/career/cook/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3,
+        "PFS-MR": 5
       }
     },
     {
@@ -1913,6 +2014,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/musicien/",
         "en": "https://forces.ca/en/career/musician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -1967,6 +2072,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/commis-postes/",
         "en": "https://forces.ca/en/career/postal-clerk/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -2021,6 +2130,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-gestion-materiel/",
         "en": "https://forces.ca/en/career/materiel-management-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -2075,6 +2188,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-de-munitions/",
         "en": "https://forces.ca/en/career/ammunition-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -2129,6 +2246,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-mouvements/",
         "en": "https://forces.ca/en/career/traffic-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -2183,6 +2304,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/conducteur-materiel-mobile-soutien/",
         "en": "https://forces.ca/en/career/mobile-support-equipment-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -2245,6 +2370,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-blindes/",
         "en": "https://forces.ca/en/career/armour-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2307,6 +2436,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-artillerie/",
         "en": "https://forces.ca/en/career/artillery-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2369,6 +2502,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-infanterie/",
         "en": "https://forces.ca/en/career/infantry-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2445,6 +2582,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie/",
         "en": "https://forces.ca/en/career/engineer-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2508,6 +2649,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-systemes-combat/",
         "en": "https://forces.ca/en/career/air-combat-systems-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 12
       }
     },
     {
@@ -2571,6 +2716,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/pilote/",
         "en": "https://forces.ca/en/career/pilot/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 13,
+        "PFOR": 17
       }
     },
     {
@@ -2634,6 +2783,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-controle-aerospatial/",
         "en": "https://forces.ca/en/career/aerospace-control-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 10
       }
     },
     {
@@ -2707,6 +2860,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-aerospatial/",
         "en": "https://forces.ca/en/career/aerospace-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 10
       }
     },
     {
@@ -2768,6 +2925,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-electrique-mecanique/",
         "en": "https://forces.ca/en/career/electrical-and-mechanical-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2838,6 +2999,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-construction/",
         "en": "https://forces.ca/en/career/construction-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 13
       }
     },
     {
@@ -2906,6 +3071,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-physiotherapie/",
         "en": "https://forces.ca/en/career/physiotherapy-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6,
+        "SEELM/PFOS": 9
       }
     },
     {
@@ -2981,6 +3151,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/dentiste-militaire/",
         "en": "https://forces.ca/en/career/dental-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3049,6 +3223,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/pharmacien/",
         "en": "https://forces.ca/en/career/pharmacy-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -3112,6 +3290,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/soins-infirmiers/",
         "en": "https://forces.ca/en/career/nursing-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3181,6 +3363,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-sciences-biologiques/",
         "en": "https://forces.ca/en/career/bioscience-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 9
       }
     },
     {
@@ -3251,6 +3437,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/travail-social/",
         "en": "https://forces.ca/en/career/social-work-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3336,6 +3526,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-affaires-publiques/",
         "en": "https://forces.ca/en/career/public-affairs-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3344,7 +3538,7 @@
       "titreEn": "Legal Officer",
       "categorie": "Officier",
       "element": "CMP",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "7 ans",
       "dureeContratAnnees": 7,
       "ageMaximalAdmissibleEnrolement": 52,
@@ -3406,6 +3600,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/avocat/",
         "en": "https://forces.ca/en/career/legal-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 7,
+        "PFOR": 7
       }
     },
     {
@@ -3414,7 +3612,7 @@
       "titreEn": "Naval Warfare Officer",
       "categorie": "Officier",
       "element": "Marine",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "8 ans",
       "dureeContratAnnees": 8,
       "ageMaximalAdmissibleEnrolement": 51,
@@ -3462,6 +3660,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-guerre-navale/",
         "en": "https://forces.ca/en/career/naval-warfare-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 8,
+        "PFOR": 8
       }
     },
     {
@@ -3529,6 +3731,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-selection-personnel/",
         "en": "https://forces.ca/en/career/personnel-selection-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3591,6 +3797,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-developpement-instruction/",
         "en": "https://forces.ca/en/career/training-development-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3599,7 +3809,7 @@
       "titreEn": "Intelligence Officer",
       "categorie": "Officier",
       "element": "CMP",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "6 ans",
       "dureeContratAnnees": 6,
       "ageMaximalAdmissibleEnrolement": 53,
@@ -3646,6 +3856,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-renseignement/",
         "en": "https://forces.ca/en/career/intelligence-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3654,7 +3868,7 @@
       "titreEn": "Military Police Officer",
       "categorie": "Officier",
       "element": "CMP",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "6 ans",
       "dureeContratAnnees": 6,
       "ageMaximalAdmissibleEnrolement": 53,
@@ -3711,6 +3925,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-police-militaire/",
         "en": "https://forces.ca/en/career/military-police-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -3773,6 +3991,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-geomatique/",
         "en": "https://forces.ca/en/career/geomatics-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6,
+        "PFS-MR": 7
       }
     },
     {
@@ -3835,6 +4058,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-systemes-armement/",
         "en": "https://forces.ca/en/career/air-weapons-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -3889,6 +4116,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/specialiste-communication-navales/",
         "en": "https://forces.ca/en/career/naval-communicator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -3942,6 +4173,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-en-refrigeration-et-mecanique/",
         "en": "https://forces.ca/en/career/refrigeration-and-mechanical-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 6
       }
     },
     {
@@ -4003,6 +4239,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-distribution-electrique/",
         "en": "https://forces.ca/en/career/electrical-distribution-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 6
       }
     },
     {
@@ -4056,6 +4297,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-des-groupes-electrogenes/",
         "en": "https://forces.ca/en/career/electrical-generation-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -4109,6 +4354,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-plomberie-chauffage/",
         "en": "https://forces.ca/en/career/plumbing-heat-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 6
       }
     },
     {
@@ -4162,6 +4412,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-eau-produits-petroliers-environnement/",
         "en": "https://forces.ca/en/career/water-fuels-and-environment-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -4215,6 +4469,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-construction/",
         "en": "https://forces.ca/en/career/construction-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 6
       }
     },
     {
@@ -4269,6 +4528,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-sonar/",
         "en": "https://forces.ca/en/career/sonar-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -4339,6 +4602,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-elec-opto/",
         "en": "https://forces.ca/en/career/electronic-optronic-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 7
       }
     },
     {
@@ -4401,6 +4669,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-logistique/",
         "en": "https://forces.ca/en/career/logistics-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -4471,6 +4743,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-dentaire/",
         "en": "https://forces.ca/en/career/dental-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5,
+        "PFS-MR": 8
       }
     },
     {
@@ -4533,6 +4810,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-controle-aerospatial/",
         "en": "https://forces.ca/en/career/aerospace-control-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -4587,6 +4868,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/sapeur-combat/",
         "en": "https://forces.ca/en/career/combat-engineer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -4595,7 +4880,7 @@
       "titreEn": "ELECTRONICS AND COMMUNICATIONS ENGINEERING",
       "categorie": "Officier",
       "element": "Air",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "9 ans",
       "dureeContratAnnees": 9,
       "ageMaximalAdmissibleEnrolement": 50,
@@ -4652,6 +4937,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-electronique-communications/",
         "en": "https://forces.ca/en/career/communication-and-electronics-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 9
       }
     },
     {
@@ -4660,7 +4949,7 @@
       "titreEn": "SIGNALS",
       "categorie": "Officier",
       "element": "Armée",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "9 ans",
       "dureeContratAnnees": 9,
       "ageMaximalAdmissibleEnrolement": 50,
@@ -4719,6 +5008,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-transmissions/",
         "en": "https://forces.ca/en/career/signals-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 9,
+        "PFOR": 9
       }
     },
     {
@@ -4727,7 +5020,7 @@
       "titreEn": "NAVAL COMBAT SYSTEMS ENGINEERING",
       "categorie": "Officier",
       "element": "Marine",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "8 ans",
       "dureeContratAnnees": 8,
       "ageMaximalAdmissibleEnrolement": 51,
@@ -4821,6 +5114,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-systemes-combat-maritime/",
         "en": "https://forces.ca/en/career/naval-combat-systems-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 8,
+        "PFOR": 8
       }
     },
     {
@@ -4924,6 +5221,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-genie-systemes-marine/",
         "en": "https://forces.ca/en/career/marine-systems-engineering-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 8,
+        "PFOR": 8
       }
     },
     {
@@ -4997,6 +5298,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/aumonier/",
         "en": "https://forces.ca/en/career/chaplain/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -5005,7 +5310,7 @@
       "titreEn": "WEAPONS ENGINEERING TECHNICIAN",
       "categorie": "Militaire du rang",
       "element": "Marine",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "4 ans",
       "dureeContratAnnees": 4,
       "ageMaximalAdmissibleEnrolement": 55,
@@ -5059,6 +5364,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-genie-armes/",
         "en": "https://forces.ca/en/career/weapons-engineering-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 6
       }
     },
     {
@@ -5113,6 +5423,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/artilleur/",
         "en": "https://forces.ca/en/career/gunner/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -5166,6 +5480,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-dessin-arpentage/",
         "en": "https://forces.ca/en/career/drafting-and-survey-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -5241,6 +5559,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-bloc-operatoire/",
         "en": "https://forces.ca/en/career/operating-room-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6,
+        "PFS-MR": 9
       }
     },
     {
@@ -5315,6 +5638,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/adjoint-au-medecin/",
         "en": "https://forces.ca/en/career/physician-assistant/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -5385,6 +5712,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/administrateur-ressources-humaines/",
         "en": "https://forces.ca/en/career/human-resources-administrator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -5455,6 +5786,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/administrateur-services-financiers/",
         "en": "https://forces.ca/en/career/financial-services-administrator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     },
     {
@@ -5463,7 +5798,7 @@
       "titreEn": "CYBER OPERATOR",
       "categorie": "Militaire du rang",
       "element": "CMP",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "6 ans",
       "dureeContratAnnees": 6,
       "ageMaximalAdmissibleEnrolement": 53,
@@ -5521,6 +5856,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/cyber-operateur/",
         "en": "https://forces.ca/en/career/cyber-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6,
+        "PFS-MR": 8
       }
     },
     {
@@ -5529,7 +5869,7 @@
       "titreEn": "SIGNAL OPERATOR",
       "categorie": "Militaire du rang",
       "element": "Armée",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "4 ans",
       "dureeContratAnnees": 4,
       "ageMaximalAdmissibleEnrolement": 55,
@@ -5583,6 +5923,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/operateur-des-transmissions/",
         "en": "https://forces.ca/en/career/signal-operator/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -5591,7 +5935,7 @@
       "titreEn": "LINE TECHNICIAN",
       "categorie": "Militaire du rang",
       "element": "Armée",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "4 ans",
       "dureeContratAnnees": 4,
       "ageMaximalAdmissibleEnrolement": 55,
@@ -5645,6 +5989,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-des-lignes/",
         "en": "https://forces.ca/en/career/line-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -5653,7 +6001,7 @@
       "titreEn": "SIGNALS TECHNICIAN",
       "categorie": "Militaire du rang",
       "element": "Armée",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "4 ans",
       "dureeContratAnnees": 4,
       "ageMaximalAdmissibleEnrolement": 55,
@@ -5715,6 +6063,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-des-transmissions/",
         "en": "https://forces.ca/en/career/signal-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -5769,6 +6121,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/techniciens-de-soutien-des-operations-aeriennes/",
         "en": "https://forces.ca/en/career/air-operations-support-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -5823,6 +6179,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/Technicien-des-Systemes-de-Largage/",
         "en": "https://forces.ca/en/career/air-drop-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -5885,6 +6245,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/Officier-des-operations-aeriennes/",
         "en": "https://forces.ca/en/career/Air-Operations-Officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6
       }
     },
     {
@@ -5970,6 +6334,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/specialiste-en-medecine-interne/",
         "en": "https://forces.ca/en/career/internal-medicine-specialist/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -6040,6 +6408,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/medecin/",
         "en": "https://forces.ca/en/career/medical-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 5,
+        "PFOR": 5
       }
     },
     {
@@ -6048,7 +6420,7 @@
       "titreEn": "INFORMATION SYSTEMS TECHNICIAN",
       "categorie": "Militaire du rang",
       "element": "Air",
-      "admissibleResidentPermanent": true,
+      "admissibleResidentPermanent": false,
       "dureeContratInitial": "4 ans",
       "dureeContratAnnees": 4,
       "ageMaximalAdmissibleEnrolement": 55,
@@ -6110,6 +6482,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-en-systemes-information/",
         "en": "https://forces.ca/en/career/information-systems-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4
       }
     },
     {
@@ -6189,6 +6565,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/officier-gestion-services-sante/",
         "en": "https://forces.ca/en/career/health-services-management-officer/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 10,
+        "PFOR": 10
       }
     },
     {
@@ -6235,6 +6615,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/programme-experience-de-la-marine/",
         "en": "https://forces.ca/en/naval-experience-program/?slug=nep"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 1,
+        "PFOR": 1
       }
     },
     {
@@ -6297,6 +6681,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-electricite-systemes/",
         "en": "https://forces.ca/en/career/marine-systems-electrical-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 8
       }
     },
     {
@@ -6359,6 +6748,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/technicien-mecanique-systemes/",
         "en": "https://forces.ca/en/career/marine-systems-mechanical-technician/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 4,
+        "PFOR": 4,
+        "PFS-MR": 8
       }
     },
     {
@@ -6424,6 +6818,11 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/paramedicaux/",
         "en": "https://forces.ca/en/career/paramedic/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 6,
+        "PFOR": 6,
+        "PFS-MR": 9
       }
     },
     {
@@ -6494,6 +6893,10 @@
       "urlOfficielleForces": {
         "fr": "https://forces.ca/fr/carriere/personnel-medical-au-combat/",
         "en": "https://forces.ca/en/career/combat-medic/"
+      },
+      "dureeContratParProgramme": {
+        "EDO": 3,
+        "PFOR": 3
       }
     }
   ]

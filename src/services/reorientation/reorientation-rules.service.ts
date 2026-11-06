@@ -23,6 +23,7 @@ export interface TradeRule {
   admissibleResidentPermanent: boolean;
   dureeContratInitial: string;
   dureeContratAnnees: number;
+  dureeContratParProgramme?: Record<string, number>;
   ageMaximalAdmissibleEnrolement: number;
   standardMedicalMinimum: TradeMedicalStandard;
   exigencesScolarite: {
@@ -55,6 +56,7 @@ export interface JobEvaluationContext {
   sipPhase: "admission" | "traitement" | "both";
   isDossierJob?: boolean;
   extraTestCtx?: any;
+  entryProgram?: string;
 }
 
 export interface EvaluatedAdmissibility {
@@ -121,14 +123,18 @@ export class ReorientationRulesService {
     return rule ? rule.admissibleResidentPermanent : true;
   }
 
-  getJobDurationYears(jobId: string): number {
+  getJobDurationYears(jobId: string, program?: string): number {
     const rule = this.getTradeRule(jobId);
-    return rule ? rule.dureeContratAnnees : 3;
+    if (!rule) return 3;
+    if (program && rule.dureeContratParProgramme && rule.dureeContratParProgramme[program]) {
+      return rule.dureeContratParProgramme[program];
+    }
+    return rule.dureeContratAnnees;
   }
 
-  getJobMaxAge(jobId: string): number {
-    const rule = this.getTradeRule(jobId);
-    return rule ? rule.ageMaximalAdmissibleEnrolement : 56;
+  getJobMaxAge(jobId: string, program?: string): number {
+    const duration = this.getJobDurationYears(jobId, program);
+    return Math.min(56, 59 - duration);
   }
 
   getJobMedicalStandard(jobId: string): TradeMedicalStandard | null {
@@ -432,8 +438,8 @@ export class ReorientationRulesService {
       };
     }
 
-    const durationYears = this.getJobDurationYears(jobId);
-    const maxAge = this.getJobMaxAge(jobId);
+    const durationYears = this.getJobDurationYears(jobId, ctx.entryProgram);
+    const maxAge = this.getJobMaxAge(jobId, ctx.entryProgram);
 
     // Step 3: Age evaluation
     let isAgeAdmissible = true;

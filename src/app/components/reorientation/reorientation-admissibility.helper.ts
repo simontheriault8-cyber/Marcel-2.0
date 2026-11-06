@@ -99,7 +99,7 @@ export function computeReoEligibleJobs(this: any): string[] {
         continue;
       }
 
-      // Under PR > 3 years, only RP-eligible jobs are permitted (87 trades eligible, 8 trades CC-only)
+      // Under PR > 3 years, only RP-eligible jobs are permitted (75 trades eligible, 20 trades CC-only)
       if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) {
         continue;
       }
