@@ -36,9 +36,9 @@ export const TASKS_SCOLARITE: Task[] = [
               labelFr: "Inexistant au dossier",
               labelEn: "Missing from file",
               instructionFr:
-                "Le document n’est pas à votre dossier. Veuillez prendre une photo et la téléverser. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles. Vous pouvez en faire la demande ici si vous ne l’avez pas : https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaires/",
+                "Le document n’est pas à votre dossier. Veuillez prendre une photo et la téléverser. Assurez vous que l’image est nette, sans reflet et que toutes les informations sont clairement visibles. Vous pouvez en faire la demande ici si vous ne l’avez pas : <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/fr\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Demande de relevés et de diplômes du secondaire - Québec</a>",
               instructionEn:
-                "The document is not in your file. Please take a photo and upload it. Ensure the image is sharp, without glare, and all information is clearly visible.",
+                "The document is not in your file. Please take a photo and upload it. Ensure the image is sharp, without glare, and all information is clearly visible. You can request it here if you do not have it: <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/en/a/FORM\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Request for transcripts and high school diplomas - Quebec</a>",
               logNoteFr: "Aucun relevé d’apprentissage au dossier",
             },
             {
@@ -381,9 +381,9 @@ export const TASKS_SCOLARITE: Task[] = [
               labelFr: "Relevé de note de l’école (Bulletin)",
               labelEn: "School Report Card",
               instructionFr:
-                "Un simple bulletin scolaire émis par votre école n'est pas accepté comme preuve de scolarité. Vous devez nous fournir le relevé d'apprentissage officiel émis par le Ministère de l'Éducation (avec le sceau ou le format officiel du Ministère). Vous pouvez en faire la demande ici si vous ne l’avez pas : <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/fr\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Demande de relevés et de diplômes du secondaire</a>",
+                "Un simple bulletin scolaire émis par votre école n'est pas accepté comme preuve de scolarité. Vous devez nous fournir le relevé d'apprentissage officiel émis par le Ministère de l'Éducation (avec le sceau ou le format officiel du Ministère). Vous pouvez en faire la demande ici si vous ne l’avez pas : <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/fr\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Demande de relevés et de diplômes du secondaire - Québec</a>",
               instructionEn:
-                "A simple report card issued by your school is not accepted as proof of education. You must provide the official transcript (relevé d'apprentissage) issued by the Ministry of Education (bearing the official Ministry seal or format). You can request it here if you do not have it: <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/en/a/FORM\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Request for transcripts and high school diplomas</a>",
+                "A simple report card issued by your school is not accepted as proof of education. You must provide the official transcript (relevé d'apprentissage) issued by the Ministry of Education (bearing the official Ministry seal or format). You can request it here if you do not have it: <a href=\"https://formulaires-consultations.education.gouv.qc.ca/dev_ti/412_demande_releves_diplomes_secondaire/en/a/FORM\" target=\"_blank\" class=\"text-indigo-600 underline font-medium hover:text-indigo-800\">Request for transcripts and high school diplomas - Quebec</a>",
               logNoteFr:
                 "Relevé de note de l’école non acceptés, doit téléverser le relevé d’apprentissage du ministère",
             },

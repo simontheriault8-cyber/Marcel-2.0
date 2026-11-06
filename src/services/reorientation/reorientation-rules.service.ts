@@ -229,6 +229,7 @@ export class ReorientationRulesService {
   }
 
   private matchCriterion(selected: Set<string>, critId: string): boolean {
+    if (selected.has(critId)) return true;
     if (critId.endsWith("*")) {
       const prefix = critId.slice(0, -1);
       for (const id of selected) {
@@ -236,7 +237,17 @@ export class ReorientationRulesService {
       }
       return false;
     }
-    return selected.has(critId);
+    // Sub-criteria equivalences for composite document requirements
+    if (critId === "exp_scslm_acorplm") {
+      return selected.has("exp_scslm") || selected.has("exp_acorplm") || selected.has("exp_scslm_acorplm");
+    }
+    if (critId === "exp_permis_rad_actrm") {
+      return selected.has("exp_permis_rad") || selected.has("exp_association_actrm") || selected.has("exp_permis_rad_actrm");
+    }
+    if (critId === "exp_musique") {
+      return selected.has("exp_mus_pro") || selected.has("exp_mus_ensembles") || selected.has("exp_mus_etudiant") || selected.has("exp_musique");
+    }
+    return false;
   }
 
   /**
