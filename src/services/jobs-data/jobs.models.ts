@@ -185,6 +185,42 @@ export const JOB_ELEMENTS_MAP: Record<string, MilitaryElement> = {
   "00398": "CMP",
 };
 
+/**
+ * Liste officielle et définitive des métiers d'officiers des Forces armées canadiennes.
+ * Basée sur le document de référence "Éléments par métier" (34 métiers d'officiers).
+ */
+export const OFFICIAL_OFFICER_JOB_IDS = new Set<string>([
+  "00178", "00179", "00180", "00181", "00182", "00183", "00184", "00185",
+  "00187", "00189", "00190", "00191", "00194", "00195", "00197", "00198",
+  "00203", "00204", "00207", "00208", "00211", "00213", "00214", "00328",
+  "00340", "00341", "00344", "00345", "00349", "00374", "00389", "00390",
+  "00393", "00398",
+]);
+
+/**
+ * Liste officielle et définitive des métiers militaires du rang (MR) des FAC (61 métiers MR).
+ */
+export const OFFICIAL_NCM_JOB_IDS = new Set<string>([
+  "00005", "00010", "00019", "00099", "00100", "00105", "00109", "00114",
+  "00115", "00120", "00129", "00130", "00134", "00135", "00136", "00137",
+  "00138", "00149", "00152", "00153", "00155", "00161", "00164", "00166",
+  "00167", "00168", "00169", "00170", "00171", "00238", "00261", "00299",
+  "00301", "00302", "00303", "00304", "00305", "00306", "00324", "00327",
+  "00335", "00337", "00339", "00366", "00368", "00370", "00372", "00375",
+  "00376", "00378", "00383", "00384", "00385", "00386", "00387", "00394",
+  "00402", "00404", "00405", "00406", "00407",
+]);
+
+export function isOfficerJobId(jobId: string): boolean {
+  if (!jobId) return false;
+  return OFFICIAL_OFFICER_JOB_IDS.has(jobId.trim().padStart(5, "0"));
+}
+
+export function isNcmJobId(jobId: string): boolean {
+  if (!jobId) return false;
+  return OFFICIAL_NCM_JOB_IDS.has(jobId.trim().padStart(5, "0"));
+}
+
 export interface RecruitmentCenter {
   city: string;
   name: string;

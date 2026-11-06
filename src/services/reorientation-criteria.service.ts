@@ -13,7 +13,8 @@ import {
 } from "../app/data/reorientation-criteria.data";
 import { evaluateDynamicExperienceCriteria } from "./reorientation/experience-criteria-evaluator";
 import { applyCriterionToggleAndCleanup } from "./reorientation/criteria-toggle-handler";
-import { evaluateExtraTestEligibility, evaluateEducationEligibility } from "./reorientation/job-eligibility-evaluator";
+import { evaluateExtraTestEligibility } from "./reorientation/job-eligibility-evaluator";
+import { ReorientationRulesService } from "./reorientation/reorientation-rules.service";
 
 export interface NcmEvaluationResult {
   eligibleJobs: JobEntry[];
@@ -32,6 +33,7 @@ export class ReorientationCriteriaService {
   private jobService = inject(JobDatabaseService);
   private melService = inject(MelService);
   private sharedState = inject(SharedStateService);
+  private rulesService = inject(ReorientationRulesService);
 
   readonly PROVINCES = PROVINCES;
   readonly MATH_COURSES = MATH_COURSES;
@@ -241,16 +243,11 @@ export class ReorientationCriteriaService {
     const ageVal = options?.age ?? this.age();
     const citizenshipVal = options?.citizenship ?? this.citizenship();
 
-    const firstContract =
-      job.contracts && job.contracts.length > 0 ? job.contracts[0] : null;
-    const durationYears = firstContract
-      ? firstContract.duration.match(/(\d+)\s*an/)
-        ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
-        : 3
-      : 3;
+    const durationYears = this.rulesService.getJobDurationYears(jobId);
+    const maxAge = this.rulesService.getJobMaxAge(jobId);
 
     if (ageVal !== null && ageVal > 0) {
-      if (ageVal >= 57 || ageVal + durationYears >= 60) {
+      if (ageVal >= 57 || ageVal + durationYears >= 60 || ageVal > maxAge) {
         return false;
       }
     }
@@ -312,13 +309,7 @@ export class ReorientationCriteriaService {
     options?: { selectedCriteriaIds?: Set<string> },
   ): { eligible: boolean; missingFr?: string; missingEn?: string } {
     const rawSelected = options?.selectedCriteriaIds ?? this.selectedCriteriaIds();
-    const coursSpecialisesIds = this.criteriaCoursSpecialise().map((c) => c.id);
-    return evaluateEducationEligibility(
-      jobId,
-      rawSelected,
-      coursSpecialisesIds,
-      (id) => this.jobService.isOfficerJob(id)
-    );
+    return this.rulesService.checkJobEducationEligibility(jobId, rawSelected);
   }
 
   evaluateEligibleNcmJobs(options?: {
@@ -361,19 +352,19 @@ export class ReorientationCriteriaService {
     }
 
     const jobsSet = new Set<string>();
+    const allJobs = this.jobService.getAllJobs().filter((j) => j.id !== "00003");
 
-    for (const rule of this.JOB_RULES) {
-      for (const jId of rule.jobs) {
-        if (!this.isAdmissibleOtherThanEducation(jId, options)) {
-          continue;
-        }
+    for (const job of allJobs) {
+      const jId = job.id;
+      if (!this.isAdmissibleOtherThanEducation(jId, options)) {
+        continue;
+      }
 
-        const eduCheck = this.checkJobEducationEligibility(jId, {
-          selectedCriteriaIds: rawSelected,
-        });
-        if (eduCheck.eligible) {
-          jobsSet.add(jId);
-        }
+      const eduCheck = this.checkJobEducationEligibility(jId, {
+        selectedCriteriaIds: rawSelected,
+      });
+      if (eduCheck.eligible) {
+        jobsSet.add(jId);
       }
     }
 

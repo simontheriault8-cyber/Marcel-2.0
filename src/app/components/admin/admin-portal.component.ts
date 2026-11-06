@@ -3,21 +3,23 @@ import { CommonModule } from '@angular/common';
 import { AdminAuthService } from '../../../services/admin-auth.service';
 import { TranslationService } from '../../i18n';
 import { MelComponent } from '../mel.component';
+import { CriteriaMatrixComponent } from './criteria-matrix.component';
+import { AdminJobCatalogComponent } from './admin-job-catalog.component';
 
-export type AdminTab = 'mel' | 'extensions';
+export type AdminTab = 'matrix' | 'catalog' | 'mel' | 'extensions';
 
 export interface AdminTabItem {
   id: AdminTab;
   labelKey: string;
   descKey: string;
-  iconName: 'mel' | 'extensions';
+  iconName: 'matrix' | 'catalog' | 'mel' | 'extensions';
   badge?: string;
 }
 
 @Component({
   selector: 'app-admin-portal',
   standalone: true,
-  imports: [CommonModule, MelComponent],
+  imports: [CommonModule, MelComponent, CriteriaMatrixComponent, AdminJobCatalogComponent],
   template: `
     <div class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex flex-col items-center justify-center p-4 sm:p-6 select-none animate-fadeIn">
       
@@ -191,7 +193,15 @@ export interface AdminTabItem {
                 [class.hover:text-slate-900]="activeTab() !== tab.id"
                 [class.hover:bg-slate-200/60]="activeTab() !== tab.id"
               >
-                @if (tab.iconName === 'mel') {
+                @if (tab.iconName === 'matrix') {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                } @else if (tab.iconName === 'catalog') {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                } @else if (tab.iconName === 'mel') {
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -212,7 +222,13 @@ export interface AdminTabItem {
 
           <!-- Main Content Area -->
           <div class="flex-1 min-h-0 flex flex-col overflow-hidden bg-white">
-            @if (activeTab() === 'mel') {
+            @if (activeTab() === 'matrix') {
+              <!-- CRITERIA LOGIC MATRIX -->
+              <app-criteria-matrix class="flex-1 flex flex-col min-h-0 w-full h-full" />
+            } @else if (activeTab() === 'catalog') {
+              <!-- JOB CATALOG (96 TRADES) -->
+              <app-admin-job-catalog class="flex-1 flex flex-col min-h-0 w-full h-full" />
+            } @else if (activeTab() === 'mel') {
               <!-- MEL COMPONENT (MEDICAL EMPLOYMENT LIMITATIONS) -->
               <app-mel class="flex-1 flex flex-col min-h-0 w-full h-full" />
             } @else if (activeTab() === 'extensions') {
@@ -252,7 +268,7 @@ export class AdminPortalComponent implements AfterViewInit {
   @Output() closePortal = new EventEmitter<void>();
   @ViewChild('adminPasswordInput') passwordInputRef?: ElementRef<HTMLInputElement>;
 
-  activeTab = signal<AdminTab>('mel');
+  activeTab = signal<AdminTab>('matrix');
   passwordInput = signal<string>('');
   errorMessage = signal<string>('');
   isLoading = signal<boolean>(false);
@@ -260,6 +276,20 @@ export class AdminPortalComponent implements AfterViewInit {
 
   // Extensible tabs architecture
   tabs: AdminTabItem[] = [
+    {
+      id: 'matrix',
+      labelKey: 'admin.tabMatrix',
+      descKey: 'admin.tabMatrixDesc',
+      iconName: 'matrix',
+      badge: 'Audit & Logique'
+    },
+    {
+      id: 'catalog',
+      labelKey: 'admin.tabCatalog',
+      descKey: 'admin.tabCatalogDesc',
+      iconName: 'catalog',
+      badge: '96 Métiers'
+    },
     {
       id: 'mel',
       labelKey: 'admin.tabMel',

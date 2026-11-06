@@ -26,6 +26,7 @@ import {
 } from "./reorientation/reorientation-admissibility.helper";
 import { getReoMissingProofs, generateReoNoteText, generateReoNoteRegistry } from "./reorientation/reorientation-proofs-notes.generator";
 import { buildReoBilingualEmail } from "./reorientation/reorientation-email.generator";
+import { ReorientationRulesService } from "../../services/reorientation/reorientation-rules.service";
 import { TranslationService } from "../i18n";
 import { REORIENTATION_TEMPLATE } from "./reorientation/reorientation.template";
 
@@ -41,6 +42,7 @@ export class ReorientationComponent {
   sharedState = inject(SharedStateService);
   melService = inject(MelService);
   reorientationCriteria = inject(ReorientationCriteriaService);
+  rulesService = inject(ReorientationRulesService);
   i18n = inject(TranslationService);
 
   showOptionsDropdown = signal<boolean>(false);

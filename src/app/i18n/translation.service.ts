@@ -8,6 +8,7 @@ import { EMAILS_SUBJECTS_HEADERS_FR, EMAILS_SUBJECTS_HEADERS_EN } from './dictio
 import { DATA_LABELS_FR, DATA_LABELS_EN } from './dictionaries/data-labels.dict';
 import { JOBS_TITLES_FR, JOBS_TITLES_EN, JOBS_DICTIONARY } from './dictionaries/jobs.dict';
 import { UNIVERSITY_DEGREES_FR, UNIVERSITY_DEGREES_EN } from './dictionaries/university-degrees.dict';
+import { CRITERIA_MATRIX_DICT_FR, CRITERIA_MATRIX_DICT_EN } from './dictionaries/criteria-matrix.dict';
 
 const STORAGE_KEY = 'marcel_app_lang';
 
@@ -43,6 +44,7 @@ export class TranslationService {
       ...DATA_LABELS_FR,
       ...JOBS_TITLES_FR,
       ...UNIVERSITY_DEGREES_FR,
+      ...CRITERIA_MATRIX_DICT_FR,
     },
     en: {
       ...UI_COMMON_EN,
@@ -53,6 +55,7 @@ export class TranslationService {
       ...DATA_LABELS_EN,
       ...JOBS_TITLES_EN,
       ...UNIVERSITY_DEGREES_EN,
+      ...CRITERIA_MATRIX_DICT_EN,
     },
   };
 

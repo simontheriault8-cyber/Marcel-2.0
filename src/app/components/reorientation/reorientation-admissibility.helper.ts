@@ -73,30 +73,10 @@ export function computeReoEligibleJobs(this: any): string[] {
     const rawSelected = this.selectedCriteriaIds();
     if (rawSelected.size === 0) return [];
 
-    // Process implications
-    const selected = new Set(rawSelected);
-
-    // Evaluate if user meets base math conditions based on selected province math courses.
-    const allMathOptions = (Object.values(this.MATH_COURSES) as any[]).reduce(
-      (acc: any[], courses: any) => acc.concat(courses),
-      [],
+    const hasEducationFilled = Array.from(rawSelected as Set<string>).some(
+      (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
     );
-    const selectedMaths = allMathOptions.filter((m) => selected.has(m.id));
-
-    // To meet a grade + difficulty, you need ANY course with AT LEAST that grade, AND AT LEAST that diff.
-    const hasMath = (grade: number, diff: number) => {
-      return selectedMaths.some((m) => m.grade >= grade && m.diff >= diff);
-    };
-
-    if (hasMath(10, 1)) selected.add("base_math_10_gen");
-    if (hasMath(10, 2)) selected.add("base_math_10_app");
-    if (hasMath(10, 3)) selected.add("base_math_10_adv");
-    if (hasMath(11, 1)) selected.add("base_math_11_gen");
-    if (hasMath(11, 2)) selected.add("base_math_11_app");
-    if (hasMath(11, 3)) selected.add("base_math_11_adv");
-    if (hasMath(12, 1)) selected.add("base_math_12_gen");
-    if (hasMath(12, 2)) selected.add("base_math_12_app");
-    if (hasMath(12, 3)) selected.add("base_math_12_adv");
+    if (!hasEducationFilled) return [];
 
     // If PR < 3 years, they are not admissible to the Canadian Armed Forces at all.
     if (citizenship === "PR < 3 years") {
@@ -104,72 +84,56 @@ export function computeReoEligibleJobs(this: any): string[] {
     }
 
     const jobs = new Set<string>();
-    const coursSpecialisesIds = this.criteriaCoursSpecialise().map((c) => c.id);
+    const allJobs = this.jobService.getAllJobs().filter((j: any) => j.id !== "00003");
 
-    for (const rule of this.jobRules) {
-      let meetsRule = false;
-      if (rule.customCheck) {
-        const checkResult = rule.customCheck(selected, coursSpecialisesIds);
-        meetsRule = typeof checkResult === "boolean" ? checkResult : checkResult.passed;
-      } else if (
-        rule.requiredCriteriaIds &&
-        rule.requiredCriteriaIds.length > 0
-      ) {
-        meetsRule = rule.requiredCriteriaIds.every((id) => this.hasCriterion(selected, id));
+    for (const job of allJobs) {
+      const jId = job.id;
+
+      // Check medical limitation
+      if (!this.isJobMedicalAdmissible(jId)) {
+        continue;
       }
 
-      if (meetsRule) {
-        for (const jId of rule.jobs) {
-          // Check medical limitation
-          if (!this.isJobMedicalAdmissible(jId)) {
-            continue;
-          }
+      // Check extra test eligibility
+      if (!this.isJobExtraTestAdmissible(jId)) {
+        continue;
+      }
 
-          // Check extra test eligibility
-          if (!this.isJobExtraTestAdmissible(jId)) {
-            continue;
-          }
+      // Under PR > 3 years, only RP-eligible jobs are permitted (87 trades eligible, 8 trades CC-only)
+      if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) {
+        continue;
+      }
 
-          // Under PR > 3 years, only RP-eligible jobs are permitted.
-          if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) {
-            continue;
-          }
+      // Exclude closed (SIP) jobs
+      if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
+        continue;
+      }
 
-          // Exclude closed (SIP) jobs
-          if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
-            continue;
-          }
-
-          // Age qualification logic:
-          // Maximum enrollment age is 56 (57+ automatically ineligible).
-          // Contract duration formula: Admissible = 59 - duration or less (Inadmissible = 60 - duration or more).
-          if (ageVal !== null && ageVal > 0) {
-            if (ageVal >= 57) {
-              continue;
-            }
-            const job = this.jobService.getAllJobs().find((j) => j.id === jId);
-            if (job) {
-              const firstContract =
-                job.contracts && job.contracts.length > 0
-                  ? job.contracts[0]
-                  : null;
-              const durationYears = firstContract
-                ? firstContract.duration.match(/(\d+)\s*an/)
-                  ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
-                  : 3
-                : 3;
-              if (ageVal + durationYears >= 60) {
-                continue;
-              }
-            } else {
-              if (ageVal + 3 >= 60) {
-                continue;
-              }
-            }
-          }
-
-          jobs.add(jId);
+      // Age qualification logic:
+      // Maximum enrollment age is 56 (57+ automatically ineligible).
+      // Contract duration formula: Admissible = 59 - duration or less (Inadmissible = 60 - duration or more).
+      if (ageVal !== null && ageVal > 0) {
+        if (ageVal >= 57) {
+          continue;
         }
+        const firstContract =
+          job.contracts && job.contracts.length > 0
+            ? job.contracts[0]
+            : null;
+        const durationYears = firstContract
+          ? firstContract.duration.match(/(\d+)\s*an/)
+            ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
+            : 3
+          : 3;
+        if (ageVal + durationYears >= 60) {
+          continue;
+        }
+      }
+
+      // Academic check using regles-reorientation.json
+      const eduCheck = this.checkJobEducationEligibility(jId);
+      if (eduCheck.eligible) {
+        jobs.add(jId);
       }
     }
 
@@ -243,85 +207,57 @@ export function computeReoJobsExcludedByAge(this: any): string[] {
     const rawSelected = this.selectedCriteriaIds();
     if (rawSelected.size === 0) return [];
 
-    const selected = new Set(rawSelected);
-    const allMathOptions = (Object.values(this.MATH_COURSES) as any[]).reduce(
-      (acc: any[], courses: any) => acc.concat(courses),
-      [],
-    );
-    const selectedMaths = allMathOptions.filter((m) => selected.has(m.id));
-
-    const hasMath = (grade: number, diff: number) => {
-      return selectedMaths.some((m) => m.grade >= grade && m.diff >= diff);
-    };
-
-    if (hasMath(10, 1)) selected.add("base_math_10_gen");
-    if (hasMath(10, 2)) selected.add("base_math_10_app");
-    if (hasMath(10, 3)) selected.add("base_math_10_adv");
-    if (hasMath(11, 1)) selected.add("base_math_11_gen");
-    if (hasMath(11, 2)) selected.add("base_math_11_app");
-    if (hasMath(11, 3)) selected.add("base_math_11_adv");
-    if (hasMath(12, 1)) selected.add("base_math_12_gen");
-    if (hasMath(12, 2)) selected.add("base_math_12_app");
-    if (hasMath(12, 3)) selected.add("base_math_12_adv");
-
     if (citizenship === "PR < 3 years") {
       return [];
     }
 
     const excluded = [];
-    const coursSpecialisesIds = this.criteriaCoursSpecialise().map((c) => c.id);
+    const allJobs = this.jobService.getAllJobs().filter((j: any) => j.id !== "00003");
 
-    for (const rule of this.jobRules) {
-      let meetsRule = false;
-      if (rule.customCheck) {
-        const checkResult = rule.customCheck(selected, coursSpecialisesIds);
-        meetsRule = typeof checkResult === "boolean" ? checkResult : checkResult.passed;
-      } else if (
-        rule.requiredCriteriaIds &&
-        rule.requiredCriteriaIds.length > 0
-      ) {
-        meetsRule = rule.requiredCriteriaIds.every((id) => this.hasCriterion(selected, id));
+    for (const job of allJobs) {
+      const jId = job.id;
+      if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) {
+        continue;
       }
 
-      if (meetsRule) {
-        for (const jId of rule.jobs) {
-          if (citizenship === "PR > 3 years" && !this.jobService.isJobRp(jId)) {
-            continue;
-          }
+      // Exclude closed (SIP) jobs
+      if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
+        continue;
+      }
 
-          // Exclude closed (SIP) jobs
-          if (!this.ignoreSip() && this.jobService.isJobClosed(jId, this.currentSipPhase())) {
-            continue;
-          }
+      // Must meet education requirements
+      const eduCheck = this.checkJobEducationEligibility(jId);
+      if (!eduCheck.eligible) {
+        continue;
+      }
 
-          const job = this.jobService.getAllJobs().find((j) => j.id === jId);
-          if (job) {
-            const firstContract =
-              job.contracts && job.contracts.length > 0
-                ? job.contracts[0]
-                : null;
-            const durationYears = firstContract
-              ? firstContract.duration.match(/(\d+)\s*an/)
-                ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
-                : 3
-              : 3;
+      const firstContract =
+        job.contracts && job.contracts.length > 0
+          ? job.contracts[0]
+          : null;
+      const durationYears = firstContract
+        ? firstContract.duration.match(/(\d+)\s*an/)
+          ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
+          : 3
+        : 3;
 
-            if (ageVal > 56 || ageVal + durationYears >= 60) {
-              excluded.push({
-                id: job.id,
-                title: job.title,
-                duration: durationYears,
-                requiredAge: Math.min(56, 59 - durationYears),
-              });
-            }
-          }
-        }
+      if (ageVal > 56 || ageVal + durationYears >= 60) {
+        excluded.push({
+          id: job.id,
+          title: job.title,
+          duration: durationYears,
+          requiredAge: Math.min(56, 59 - durationYears),
+        });
       }
     }
     return excluded.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 export function checkReoJobEducationEligibility(this: any, jobId: string): { eligible: boolean; missingFr?: string; missingEn?: string } {
+    if (this.rulesService) {
+      return this.rulesService.checkJobEducationEligibility(jobId, this.selectedCriteriaIds());
+    }
+
     const rawSelected = this.selectedCriteriaIds();
     const hasEducationFilled = Array.from(rawSelected as Set<string>).some(
       (id) => !id.startsWith("exp_") && id !== "etude_anglais" && id !== "etude_hors_canada"
@@ -335,7 +271,7 @@ export function checkReoJobEducationEligibility(this: any, jobId: string): { eli
       };
     }
 
-    const rules = this.jobRules.filter((r) => r.jobs.includes(jobId));
+    const rules = this.jobRules.filter((r: any) => r.jobs.includes(jobId));
     if (rules.length === 0) {
       if (this.isOfficerJob(jobId)) {
         const hasUniv =
@@ -371,104 +307,7 @@ export function checkReoJobEducationEligibility(this: any, jobId: string): { eli
       return { eligible: true };
     }
 
-    const selected = new Set(rawSelected);
-
-    const allMathOptions = (Object.values(this.MATH_COURSES) as any[]).reduce(
-      (acc: any[], courses: any) => acc.concat(courses),
-      [] as any[],
-    );
-    const selectedMaths = allMathOptions.filter((m) => selected.has(m.id));
-
-    const hasMath = (grade: number, diff: number) => {
-      return selectedMaths.some((m) => m.grade >= grade && m.diff >= diff);
-    };
-
-    if (hasMath(10, 1)) selected.add("base_math_10_gen");
-    if (hasMath(10, 2)) selected.add("base_math_10_app");
-    if (hasMath(10, 3)) selected.add("base_math_10_adv");
-    if (hasMath(11, 1)) selected.add("base_math_11_gen");
-    if (hasMath(11, 2)) selected.add("base_math_11_app");
-    if (hasMath(11, 3)) selected.add("base_math_11_adv");
-    if (hasMath(12, 1)) selected.add("base_math_12_gen");
-    if (hasMath(12, 2)) selected.add("base_math_12_app");
-    if (hasMath(12, 3)) selected.add("base_math_12_adv");
-
-    const coursSpecialisesIds = this.criteriaCoursSpecialise().map((c) => c.id);
-
-    const missingFrList: string[] = [];
-    const missingEnList: string[] = [];
-
-    const getLabel = (id: string, isFr: boolean) => {
-        const crit = this.manualCriteria.find(c => c.id === id);
-        if (crit) {
-            if (id === "des_12e_annee") return isFr ? "DES ou 12e année" : "High School Diploma or Grade 12";
-            if (id === "aens") return isFr ? "AENS (Attestation d'équivalence de niveau de scolarité)" : "School Equivalency Attestation (AENS)";
-            if (id === "sec4_24_credits") return isFr ? "Sec 4 (24 crédits) ou 10e année" : "Grade 10 (24 credits)";
-            if (id === "francais_sec4_10e") return isFr ? "Français/Anglais de sec 4 ou 10e année" : "Grade 10 English/French";
-            if (id === "francais_sec5_11e") return isFr ? "Français/Anglais de sec 5 ou 11e année" : "Grade 11 English/French";
-            if (id === "anglais_sec5_12e") return isFr ? "Anglais de sec 5 / 12e année" : "Grade 12 / Sec 5 English";
-            if (id === "sci_tech4_sci10") return isFr ? "Science et technologie de sec 4 ou 10e année" : "Grade 10 Science";
-            if (id === "chimie_sec5_11e") return isFr ? "Chimie de sec 5 ou 11e année" : "Grade 11 Chemistry";
-            if (id === "physique_sec5_11e") return isFr ? "Physique de sec 5 ou 11e année" : "Grade 11 Physics";
-            return isFr ? crit.label : (crit.labelEn || crit.label);
-        }
-        if (id === "base_math_10_gen") return isFr ? "Mathématiques de sec 4/10e (générales)" : "Grade 10 Math (General)";
-        if (id === "base_math_10_app") return isFr ? "Mathématiques de sec 4/10e (appliquées)" : "Grade 10 Math (Applied)";
-        if (id === "base_math_10_adv") return isFr ? "Mathématiques de sec 4/10e (avancées)" : "Grade 10 Math (Advanced)";
-        if (id === "base_math_11_gen") return isFr ? "Mathématiques de sec 5/11e (générales)" : "Grade 11 Math (General)";
-        if (id === "base_math_11_app") return isFr ? "Mathématiques de sec 5/11e (appliquées)" : "Grade 11 Math (Applied)";
-        if (id === "base_math_11_adv") return isFr ? "Mathématiques de sec 5/11e (avancées)" : "Grade 11 Math (Advanced)";
-        if (id === "base_math_12_gen") return isFr ? "Mathématiques de 12e (générales)" : "Grade 12 Math (General)";
-        if (id === "base_math_12_app") return isFr ? "Mathématiques de 12e (appliquées)" : "Grade 12 Math (Applied)";
-        if (id === "base_math_12_adv") return isFr ? "Mathématiques de 12e (avancées)" : "Grade 12 Math (Advanced)";
-        return id;
-    };
-
-    for (const rule of rules) {
-      let meetsRule = false;
-      if (rule.customCheck) {
-        const checkResult = rule.customCheck(selected, coursSpecialisesIds);
-        if (typeof checkResult === "boolean") {
-            meetsRule = checkResult;
-            if (!meetsRule) {
-                if (this.isOfficerJob(jobId)) {
-                    missingFrList.push("Des études universitaires spécifiques sont manquantes");
-                    missingEnList.push("Specific university studies are missing");
-                } else {
-                    missingFrList.push("Des exigences spécifiques (ex: DEP, Mathématiques ou Sciences) sont manquantes");
-                    missingEnList.push("Specific requirements (e.g. DEP, Math or Science) are missing");
-                }
-            }
-        } else {
-            meetsRule = checkResult.passed;
-            if (!meetsRule) {
-                if (checkResult.missingFr) missingFrList.push(checkResult.missingFr);
-                if (checkResult.missingEn) missingEnList.push(checkResult.missingEn);
-            }
-        }
-      } else if (
-        rule.requiredCriteriaIds &&
-        rule.requiredCriteriaIds.length > 0
-      ) {
-        const missingIds = rule.requiredCriteriaIds.filter((id) => !this.hasCriterion(selected, id));
-        if (missingIds.length === 0) {
-            meetsRule = true;
-        } else {
-            missingFrList.push(missingIds.map(id => getLabel(id, true)).join(" et "));
-            missingEnList.push(missingIds.map(id => getLabel(id, false)).join(" and "));
-        }
-      }
-
-      if (meetsRule) {
-        return { eligible: true };
-      }
-    }
-    
-    return { 
-        eligible: false, 
-        missingFr: Array.from(new Set(missingFrList)).join(" OU "),
-        missingEn: Array.from(new Set(missingEnList)).join(" OR ")
-    };
+    return { eligible: true };
   }
 
 export function checkReoJobMedicalEligibility(this: any, jobId: string): {
@@ -699,11 +538,14 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
     let ageReasonEn = "";
     const firstContract =
       job.contracts && job.contracts.length > 0 ? job.contracts[0] : null;
-    const durationYears = firstContract
-      ? firstContract.duration.match(/(\d+)\s*an/)
+    const durationYears = this.rulesService
+      ? this.rulesService.getJobDurationYears(jobId)
+      : (firstContract?.duration.match(/(\d+)\s*an/)
         ? parseInt(firstContract.duration.match(/(\d+)\s*an/)![1], 10)
-        : 3
-      : 3;
+        : 3);
+    const maxAge = this.rulesService
+      ? this.rulesService.getJobMaxAge(jobId)
+      : Math.min(56, 59 - durationYears);
 
     if (ageVal === null || ageVal === undefined || ageVal <= 0) {
       isAgeAdmissible = false;
@@ -715,10 +557,10 @@ export function evaluateReoJobAdmissibility(this: any, jobId: string) {
         "L'âge maximal d'admissibilité est de 56 ans (57 ans et plus est automatiquement inadmissible).";
       ageReasonEn =
         "Maximum eligibility age is 56 (57 and older is automatically ineligible).";
-    } else if (ageVal + durationYears >= 60) {
+    } else if (ageVal + durationYears >= 60 || ageVal > maxAge) {
       isAgeAdmissible = false;
-      ageReason = "Vous dépassez l'âge maximal d'admissibilité pour ce métier.";
-      ageReasonEn = "You exceed the maximum eligibility age for this occupation.";
+      ageReason = `Vous dépassez l'âge maximal d'admissibilité pour ce métier (${maxAge} ans avec un contrat de ${durationYears} ans).`;
+      ageReasonEn = `You exceed the maximum eligibility age for this occupation (${maxAge} years with a ${durationYears}-year contract).`;
     }
 
     let isCitizenshipAdmissible = true;

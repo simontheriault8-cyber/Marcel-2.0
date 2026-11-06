@@ -12,10 +12,40 @@ import {
   EntryProgramsDatabase,
   RecruitmentCenter,
   RECRUITMENT_CENTERS,
+  OFFICIAL_OFFICER_JOB_IDS,
+  isOfficerJobId,
 } from "./jobs-data";
 import { JOBS_DICTIONARY } from "../app/i18n/dictionaries/jobs.dict";
 import { PFOR_CIVIL_JOB_IDS, isPforCivilJobId } from "../app/data/reorientation-criteria/criteria.models";
 import SIP_DATA from "../../SIP.json";
+
+// Set of Canadian Citizen (CC) only jobs as defined in regles-reorientation.json (exactly 8 trades)
+export const CC_JOB_IDS = new Set([
+  "00099",
+  "00109",
+  "00114",
+  "00115",
+  "00120",
+  "00238",
+  "00299",
+  "00324",
+]);
+
+// Set of Permanent Resident (RP) eligible jobs as defined in regles-reorientation.json (87 trades)
+export const RP_JOB_IDS = new Set([
+  // Militaires du rang (MR)
+  "00005", "00010", "00019", "00100", "00105", "00129", "00130", "00134", "00135", "00136",
+  "00137", "00138", "00149", "00152", "00153", "00155", "00161", "00164", "00166", "00167",
+  "00168", "00169", "00170", "00171", "00261", "00301", "00302", "00303", "00304", "00305",
+  "00306", "00327", "00335", "00337", "00339", "00366", "00368", "00370", "00372", "00375",
+  "00376", "00378", "00383", "00384", "00385", "00386", "00387", "00394", "00402", "00404",
+  "00405", "00406", "00407",
+  // Officiers
+  "00178", "00179", "00180", "00181", "00182", "00183", "00184", "00185", "00187", "00189",
+  "00190", "00191", "00194", "00195", "00197", "00198", "00203", "00204", "00207", "00208",
+  "00211", "00213", "00214", "00328", "00340", "00341", "00344", "00345", "00349", "00374",
+  "00389", "00390", "00393", "00398",
+]);
 
 @Injectable({
   providedIn: "root",
@@ -23,16 +53,10 @@ import SIP_DATA from "../../SIP.json";
 export class JobDatabaseService {
   // Recruitment centers in Quebec
   readonly RECRUITMENT_CENTERS: RecruitmentCenter[] = RECRUITMENT_CENTERS;
-  // Set of Officer Jobs
-  readonly OFFICER_JOBS = new Set([
-    "00178", "00179", "00180", "00181", "00182", "00183", "00184", "00185",
-    "00187", "00189", "00190", "00191", "00194", "00195", "00196", "00201",
-    "00204", "00207", "00213", "00225", "00227", "00228", "00234", "00282",
-    "00328", "00340", "00341", "00344", "00345", "00346", "00348", "00349",
-    "00350", "00353", "00355", "00357", "00358", "00360", "00373", "00377",
-    "00379", "00388", "00197", "00198", "00203", "00208", "00211", "00374", 
-    "00389", "00390", "00393", "00398", "00214", "00410"
-  ]);
+  // Official set of Officer Jobs (35 jobs according to official reference)
+  readonly OFFICER_JOBS = OFFICIAL_OFFICER_JOB_IDS;
+  readonly CC_JOBS = CC_JOB_IDS;
+  readonly RP_JOBS = RP_JOB_IDS;
 
   // Database of regular force entry programs
   readonly entryProgramsDatabase: EntryProgramsDatabase = ENTRY_PROGRAMS_DATABASE;
@@ -49,6 +73,7 @@ export class JobDatabaseService {
       const category: JobCategory = isOff ? 'officier' : 'mr';
       const element = JOB_ELEMENTS_MAP[job.id] || undefined;
       const isCMP = element === 'CMP';
+      const allowPR = this.isJobRp(job.id);
       const dictEntry = JOBS_DICTIONARY[job.id];
       const titleEn = dictEntry?.titleEn || job.titleEn || undefined;
       return {
@@ -57,6 +82,7 @@ export class JobDatabaseService {
         category,
         element,
         isCMP,
+        allowPR,
         entryPrograms: isOff ? REGULAR_FORCE_OFFICER_PROGRAMS : REGULAR_FORCE_NCM_PROGRAMS,
       };
     })
@@ -227,112 +253,6 @@ export class JobDatabaseService {
     const jobType = this.detectJobType(jobQueryOrId);
     return this.getProgramsForJobType(jobType);
   }
-
-  readonly RP_JOBS = new Set([
-    // Métiers du rang (Rank)
-    "00005",
-    "00010",
-    "00019",
-    "00100",
-    "00105",
-    "00129",
-    "00130",
-    "00134",
-    "00135",
-    "00136",
-    "00137",
-    "00138",
-    "00149",
-    "00152",
-    "00153",
-    "00155",
-    "00161",
-    "00164",
-    "00166",
-    "00167",
-    "00168",
-    "00169",
-    "00170",
-    "00171",
-    "00261",
-    "00301",
-    "00302",
-    "00303",
-    "00304",
-    "00305",
-    "00306",
-    "00327",
-    "00335",
-    "00337",
-    "00339",
-    "00368",
-    "00370",
-    "00372",
-    "00375",
-    "00376",
-    "00386",
-    "00387",
-    "00402",
-    "00404",
-    "00405",
-    "00406",
-    "00407",
-    // Officiers (Officers)
-    "00178",
-    "00179",
-    "00180",
-    "00181",
-    "00182",
-    "00183",
-    "00184",
-    "00185",
-    "00187",
-    "00189",
-    "00190",
-    "00191",
-    "00194",
-    "00195",
-    "00197",
-    "00198",
-    "00203",
-    "00208",
-    "00211",
-    "00328",
-    "00345",
-    "00349",
-    "00374",
-    "00389",
-    "00390",
-    "00393",
-    "00398",
-    "00410",
-  ]);
-
-  // Set of Canadian Citizen (CC) only jobs as per the PDF logic
-  readonly CC_JOBS = new Set([
-    // Métiers du rang (Rank)
-    "00099",
-    "00109",
-    "00114",
-    "00115",
-    "00120",
-    "00238",
-    "00299",
-    "00324",
-    "00366",
-    "00378",
-    "00383",
-    "00384",
-    "00385",
-    // Officiers (Officers)
-    "00204",
-    "00207",
-    "00213",
-    "00214",
-    "00340",
-    "00341",
-    "00344",
-  ]);
 
   constructor() {}
 

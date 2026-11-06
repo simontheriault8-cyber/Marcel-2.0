@@ -107,7 +107,6 @@ export const JOBS_DICTIONARY: Record<string, JobTitleEntry> = {
   "00405": { id: "00405", titleFr: "TECHNICIEN EN MÉCANIQUE DES SYSTÈMES DE MARINE", titleEn: "Marine Systems Mechanical Technician", abbreviation: "TMSM" },
   "00406": { id: "00406", titleFr: "PROFESSIONNEL PARAMÉDICAL", titleEn: "Paramedic", abbreviation: "PPMD" },
   "00407": { id: "00407", titleFr: "PERSONNEL MÉDICAL AU COMBAT", titleEn: "Combat Medic", abbreviation: "PMDC" },
-  "00410": { id: "00410", titleFr: "OFFICIER DE LA SANTÉ PUBLIQUE", titleEn: "Public Health Officer", abbreviation: "OSP" },
 };
 
 export const JOBS_TITLES_FR: Record<string, string> = {
@@ -207,7 +206,6 @@ export const JOBS_TITLES_FR: Record<string, string> = {
   "jobs.00405.title": "TECHNICIEN EN MÉCANIQUE DES SYSTÈMES DE MARINE",
   "jobs.00406.title": "PROFESSIONNEL PARAMÉDICAL",
   "jobs.00407.title": "PERSONNEL MÉDICAL AU COMBAT",
-  "jobs.00410.title": "OFFICIER DE LA SANTÉ PUBLIQUE",
 };
 
 export const JOBS_TITLES_EN: Record<string, string> = {
@@ -307,5 +305,4 @@ export const JOBS_TITLES_EN: Record<string, string> = {
   "jobs.00405.title": "Marine Systems Mechanical Technician",
   "jobs.00406.title": "Paramedic",
   "jobs.00407.title": "Combat Medic",
-  "jobs.00410.title": "Public Health Officer",
 };

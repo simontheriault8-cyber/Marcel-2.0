@@ -781,6 +781,26 @@ export const REJECTION_REASONS_LOG_NOTES: Record<string, RejectionReasonLogNote>
     fr: "Mise à jour de l'évaluation comparative",
     en: 'Comparative evaluation update requested'
   },
+  'relev_etrang_trad_flou': {
+    fr: "Relevé de notes d'études à l'étranger traduit flou",
+    en: 'Translated foreign study transcript blurred'
+  },
+  'relev_etrang_trad_incomp': {
+    fr: "Relevé de notes d'études à l'étranger traduit incomplet",
+    en: 'Translated foreign study transcript incomplete'
+  },
+  'relev_etrang_trad_inexist': {
+    fr: "Aucun relevé de notes d'études à l'étranger traduit au dossier",
+    en: 'No translated foreign study transcript on file'
+  },
+  'relev_etrang_trad_non_trad': {
+    fr: "Relevé de notes d'études à l'étranger non traduit",
+    en: 'Foreign study transcript not translated'
+  },
+  'relev_etrang_trad_eval_comp': {
+    fr: "Évaluation comparative requise pour le relevé étranger",
+    en: 'Comparative evaluation required for foreign transcript'
+  },
   'educ_aens_sans_releve': {
     fr: "Diplôme d'AENS sans le relevé de note",
     en: 'AENS diploma without transcript'

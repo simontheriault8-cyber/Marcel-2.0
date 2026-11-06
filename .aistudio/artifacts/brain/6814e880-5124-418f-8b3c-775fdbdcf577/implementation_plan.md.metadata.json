@@ -1,6 +1,6 @@
 {
-  "summary":  "Plan d'implémentation pour l'internationalisation bilingue intégrale des diplômes universitaires (baccalauréats, maîtrises, doctorats) avec création d'un dictionnaire de traduction dédié et refactorisation modulaire de criteria-universitaire.data.ts.",
-  "updatedAt":  "2026-10-29T15:36:29.463573064Z",
-  "requestFeedback":  true,
-  "userFacing":  true
+  "summary": "Plan d'implémentation révisé : Tableau interactif de la logique des cases à cocher du panneau scolarité/expérience par métier, audit des règles d'admissibilité manquantes (28 métiers d'officiers non répertoriés dans JOB_RULES) et correction de la génération des courriels.",
+  "updatedAt": "2026-11-05T13:36:59.982532434Z",
+  "requestFeedback": true,
+  "userFacing": true
 }

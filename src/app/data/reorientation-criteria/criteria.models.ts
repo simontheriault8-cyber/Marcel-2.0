@@ -319,7 +319,7 @@ export const PFOR_CIVIL_JOB_IDS = new Set<string>([
   "00211", "00213", "00214",
   "00328", "00340", "00341", "00344", "00345",
   "00349", "00374",
-  "00389", "00390", "00393", "00398", "00410"
+  "00389", "00390", "00393", "00398"
 ]);
 
 export function isPforCivilJobId(jobId: string): boolean {
