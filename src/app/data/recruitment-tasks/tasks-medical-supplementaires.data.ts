@@ -3,7 +3,7 @@ import { Task } from "./recruitment-tasks.models";
 export const TASKS_MEDICAL_SUPPLEMENTAIRES: Task[] = [
     {
       nameFr: "Questionnaire sur les médicaments en vente libre",
-      nameEn: "Over-the-Counter Medication Questionnaire",
+      nameEn: "Non-Prescription Drug Questionnaire",
       documents: [
         {
           nameFr: "Questionnaire sur les médicaments",

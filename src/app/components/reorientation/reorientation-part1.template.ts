@@ -44,6 +44,21 @@ export const REORIENTATION_TEMPLATE_PART1 = `
                   </svg>
                   {{ i18n.t('reo.sipDate', { date: jobService.sipDate() }) }}
                 </span>
+                <button
+                  type="button"
+                  (click)="changelogService.openModal()"
+                  class="px-2.5 py-0.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold border border-amber-200 flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                  [title]="i18n.t('reo.sipChangesBtnTooltip')"
+                >
+                  <svg class="w-3.5 h-3.5 text-amber-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>{{ i18n.t('reo.sipChangesBtn') }}</span>
+                  <span class="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-amber-200 text-amber-900 leading-none">
+                    {{ changelogService.thisWeekCount() }}
+                  </span>
+                </button>
               }
             </div>
             <p class="text-sm text-slate-500 mt-1">
