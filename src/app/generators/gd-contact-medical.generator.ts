@@ -87,6 +87,7 @@ export function getPremierContactSelectedTasks(this: any):  {
 
 export function getPremierContactSectionPlainFr(this: any): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
     const selected = this.getPremierContactSelectedTasks();
 
     const p1 = `Bonjour,
@@ -101,7 +102,7 @@ Nous vous demandons de porter une attention particulière à vos courriels et à
 
     let p3 = '';
     if (isOta && this.premierContactMedical()) {
-      p3 = `\n\nVotre rendez-vous pour votre évaluation médicale a été fixé au centre de recrutement de Montréal.
+      p3 = `\n\nVotre rendez-vous pour votre évaluation médicale a été fixé au centre de recrutement de ${otaCity}.
 Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.
 IMPORTANT : Veuillez nous avertir le plus rapidement possible si la date ne vous convient pas.`;
     }
@@ -121,6 +122,8 @@ Merci de votre collaboration.`;
 
 export function getPremierContactSectionPlainEn(this: any): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+    const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
     const selected = this.getPremierContactSelectedTasks();
 
     const p1 = `Hello,
@@ -135,7 +138,7 @@ We ask you to pay close attention to your emails and your portal as tasks will b
 
     let p3 = '';
     if (isOta && this.premierContactMedical()) {
-      p3 = `\n\nYour appointment for your Medical Evaluation has been scheduled at the Montreal recruitment centre.
+      p3 = `\n\nYour appointment for your Medical Evaluation has been scheduled at the ${otaCityEn} recruitment centre.
 Please log in to your applicant portal to find all the details regarding your appointment.
 IMPORTANT: Please notify us as soon as possible if this date does not work for you.`;
     }
@@ -167,6 +170,7 @@ export function getPremierContactEmailPlain(this: any): string {
 
 export function getPremierContactSectionHtmlFr(this: any): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
     const selected = this.getPremierContactSelectedTasks();
 
     const p1Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Bonjour,<br>Votre dossier de candidature pour les Forces armées canadiennes m’a été attribué. Sachez que votre dossier est actuellement en traitement et que nous continuons de le faire progresser.<br>Nous vous demandons de porter une attention particulière à vos courriels et à votre portail car des tâches vont vous être attribuées. Chaque nouvelle tâche attribuée doit être complétée dans un <span style="background-color: yellow; mso-highlight: yellow;">délai de 14 jours</span> à partir de la date d’attribution sinon votre dossier sera fermé.</p>`;
@@ -184,7 +188,7 @@ export function getPremierContactSectionHtmlFr(this: any): string {
 
     let p3Html = '';
     if (isOta && this.premierContactMedical()) {
-      p3Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Votre rendez-vous pour votre évaluation médicale a été fixé au centre de recrutement de Montréal.<br>Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.<br><strong style="background-color: #fee2e2; color: #991b1b; padding: 2px 4px;">IMPORTANT : Veuillez nous avertir le plus rapidement possible si la date ne vous convient pas.</strong></p>`;
+      p3Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Votre rendez-vous pour votre évaluation médicale a été fixé au centre de recrutement de ${otaCity}.<br>Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.<br><strong style="background-color: #fee2e2; color: #991b1b; padding: 2px 4px;">IMPORTANT : Veuillez nous avertir le plus rapidement possible si la date ne vous convient pas.</strong></p>`;
     }
 
     const p4Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Pourriez-vous me dire si vous avez du service militaire antérieur? (Cadet, Force de réserve/régulière, Armée étrangère)</p><p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Je reste à votre disposition afin de répondre à toutes questions que vous pourriez avoir concernant votre dossier.<br>Enfin, <span style="background-color: yellow; mso-highlight: yellow;">veuillez m’informer de tous changements à apporter à votre dossier</span>, par exemple : changement d’adresse, études, nouvelles qualifications, nouvelle pièce d’identité, changement quant à votre dossier médical ou judiciaire, etc.<br><br>Au besoin, voici le lien de connexion à votre portail : <a href="${PORTAL_CANDIDATE_URL}" target="_blank" style="color: #0563c1; text-decoration: underline;">${PORTAL_CANDIDATE_URL}</a><br><br>Je vous remercie de votre intérêt pour les forces armées canadiennes.<br>Merci de votre collaboration.</p>`;
@@ -194,6 +198,8 @@ export function getPremierContactSectionHtmlFr(this: any): string {
 
 export function getPremierContactSectionHtmlEn(this: any): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+    const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
     const selected = this.getPremierContactSelectedTasks();
 
     const p1Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Hello,<br>Your application file for the Canadian Armed Forces has been assigned to me. Please know that your file is currently being processed and we continue to move it forward.<br>We ask you to pay close attention to your emails and your portal as tasks will be assigned to you. Each new assigned task must be completed <span style="background-color: yellow; mso-highlight: yellow;">within 14 days</span> of the assignment date, otherwise your file will be closed.</p>`;
@@ -211,7 +217,7 @@ export function getPremierContactSectionHtmlEn(this: any): string {
 
     let p3Html = '';
     if (isOta && this.premierContactMedical()) {
-      p3Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Your appointment for your Medical Evaluation has been scheduled at the Montreal recruitment centre.<br>Please log in to your applicant portal to find all the details regarding your appointment.<br><strong style="background-color: #fee2e2; color: #991b1b; padding: 2px 4px;">IMPORTANT: Please notify us as soon as possible if this date does not work for you.</strong></p>`;
+      p3Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Your appointment for your Medical Evaluation has been scheduled at the ${otaCityEn} recruitment centre.<br>Please log in to your applicant portal to find all the details regarding your appointment.<br><strong style="background-color: #fee2e2; color: #991b1b; padding: 2px 4px;">IMPORTANT: Please notify us as soon as possible if this date does not work for you.</strong></p>`;
     }
 
     const p4Html = `<p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">Could you tell me if you have any prior military service? (Cadets, Reserve/Regular Force, Foreign Military)</p><p style="margin-top: 0cm; margin-bottom: 12.0pt; line-height: normal; font-family: Calibri, sans-serif; font-size: 11.0pt; color: #000000;">I remain at your disposal to answer any questions you may have regarding your file.<br>Finally, <span style="background-color: yellow; mso-highlight: yellow;">please inform me of any changes to be made to your file</span>, for example: change of address, studies, new qualifications, new identification document, change regarding your medical or criminal record, etc.<br><br>If necessary, here is the link to log into your portal: <a href="${PORTAL_CANDIDATE_URL}" target="_blank" style="color: #0563c1; text-decoration: underline;">${PORTAL_CANDIDATE_URL}</a><br><br>Thank you for your interest in the Canadian Armed Forces.<br>Thank you for your cooperation.</p>`;
@@ -498,11 +504,13 @@ export function getMedicalPartEn(this: any, part: string): string {
 export function getMedicalEmailBody(this: any, part: string): string {
     const partEn = this.getMedicalPartEn(part);
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+    const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
 
     if (isOta) {
       let fr = `Bonjour,
 
-Votre rendez-vous pour votre évaluation médicale - ${part} a été fixé au centre de recrutement de Montréal.
+Votre rendez-vous pour votre évaluation médicale - ${part} a été fixé au centre de recrutement de ${otaCity}.
 
 Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.
 
@@ -514,7 +522,7 @@ Merci de votre collaboration.`;
 
       let en = `Hello,
 
-Your appointment for your Medical Evaluation - ${partEn} has been scheduled at the Montreal recruitment centre.
+Your appointment for your Medical Evaluation - ${partEn} has been scheduled at the ${otaCityEn} recruitment centre.
 
 Please log in to your applicant portal to find all the details regarding your appointment.
 
@@ -551,7 +559,7 @@ Applicant portal login link: ${PORTAL_CANDIDATE_URL}
 
 Thank you for your cooperation.`;
 
-    return `${fr}\n\n______________________________________________________________________________\n\n${en}`;
+      return `${fr}\n\n______________________________________________________________________________\n\n${en}`;
   }
 
 export function getMedicalPartsInfo(this: any): { labelFr: string; labelEn: string } | null {
@@ -572,9 +580,10 @@ export function getMedicalPartsInfo(this: any): { labelFr: string; labelEn: stri
 
 export function getMedicalSectionHtmlFr(this: any, part: string): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
     let html = '';
     if (isOta) {
-      html += `<p>Votre rendez-vous pour votre évaluation médicale - <strong>${part}</strong> a été fixé au centre de recrutement de Montréal.</p>`;
+      html += `<p>Votre rendez-vous pour votre évaluation médicale - <strong>${part}</strong> a été fixé au centre de recrutement de ${otaCity}.</p>`;
       html += `<p>Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.</p>`;
       html += `<p>Lien de connexion à votre portail : <a href="${PORTAL_CANDIDATE_URL}" target="_blank" style="color: #4f46e5; text-decoration: underline;">${PORTAL_CANDIDATE_URL}</a></p>`;
       html += `<p style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 10px 14px; margin: 14px 0; color: #991b1b;"><strong style="font-size: 11.5pt;">IMPORTANT : Veuillez nous avertir le plus rapidement possible si la date ne vous convient pas.</strong></p>`;
@@ -590,9 +599,11 @@ export function getMedicalSectionHtmlFr(this: any, part: string): string {
 
 export function getMedicalSectionHtmlEn(this: any, partEn: string): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+    const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
     let html = '';
     if (isOta) {
-      html += `<p>Your appointment for your Medical Evaluation - <strong>${partEn}</strong> has been scheduled at the Montreal recruitment centre.</p>`;
+      html += `<p>Your appointment for your Medical Evaluation - <strong>${partEn}</strong> has been scheduled at the ${otaCityEn} recruitment centre.</p>`;
       html += `<p>Please log in to your applicant portal to find all the details regarding your appointment.</p>`;
       html += `<p>Applicant portal login link: <a href="${PORTAL_CANDIDATE_URL}" target="_blank" style="color: #4f46e5; text-decoration: underline;">${PORTAL_CANDIDATE_URL}</a></p>`;
       html += `<p style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 10px 14px; margin: 14px 0; color: #991b1b;"><strong style="font-size: 11.5pt;">IMPORTANT: Please notify us as soon as possible if this date does not work for you.</strong></p>`;
@@ -608,9 +619,10 @@ export function getMedicalSectionHtmlEn(this: any, partEn: string): string {
 
 export function getMedicalSectionPlainFr(this: any, part: string): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
     let fr = '';
     if (isOta) {
-      fr += `Votre rendez-vous pour votre évaluation médicale - ${part} a été fixé au centre de recrutement de Montréal.\n\n`;
+      fr += `Votre rendez-vous pour votre évaluation médicale - ${part} a été fixé au centre de recrutement de ${otaCity}.\n\n`;
       fr += `Veuillez vous connecter à votre portail du postulant afin d'y retrouver tous les détails concernant votre rendez-vous.\n\n`;
       fr += `Lien de connexion à votre portail : ${PORTAL_CANDIDATE_URL}\n\n`;
       fr += `IMPORTANT : Veuillez nous avertir le plus rapidement possible si la date ne vous convient pas.\n\n`;
@@ -626,9 +638,11 @@ export function getMedicalSectionPlainFr(this: any, part: string): string {
 
 export function getMedicalSectionPlainEn(this: any, partEn: string): string {
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
+    const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+    const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
     let en = '';
     if (isOta) {
-      en += `Your appointment for your Medical Evaluation - ${partEn} has been scheduled at the Montreal recruitment centre.\n\n`;
+      en += `Your appointment for your Medical Evaluation - ${partEn} has been scheduled at the ${otaCityEn} recruitment centre.\n\n`;
       en += `Please log in to your applicant portal to find all the details regarding your appointment.\n\n`;
       en += `Applicant portal login link: ${PORTAL_CANDIDATE_URL}\n\n`;
       en += `IMPORTANT: Please notify us as soon as possible if this date does not work for you.\n\n`;
@@ -647,10 +661,12 @@ export function getMedicalRegisterNoteCombined(this: any): string {
     const medInfo = this.getMedicalPartsInfo();
     if (!medInfo) return '';
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
+      const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+      const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
       if (isEn) {
-        return `Appointment for medical evaluation - ${medInfo.labelEn} directly scheduled at Montreal recruiting centre (OTA Dossier). Information email sent to applicant to view details in their portal.`;
+        return `Appointment for medical evaluation - ${medInfo.labelEn} directly scheduled at ${otaCityEn} recruiting centre (OTA Dossier). Information email sent to applicant to view details in their portal.`;
       }
-      return `Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
+      return `Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de ${otaCity} (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
     }
     if (isEn) {
       return `Task "Medical Evaluation - ${medInfo.labelEn}" assigned to applicant in their portal. Explanatory email sent to select a time slot at assigned recruiting centre.`;
@@ -708,10 +724,12 @@ export function getMedicalRegisterNote(this: any, part: string): string {
     const isEn = this.i18n?.isEn ? this.i18n.isEn() : (this.i18n?.lang?.() === 'en');
     const partEn = this.getMedicalPartEn(part);
     if (this.evaluationMedicaleType() === 'Dossier OTA') {
+      const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+      const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
       if (isEn) {
-        return `Appointment for medical evaluation - ${partEn} directly scheduled at Montreal recruiting centre (OTA Dossier). Information email sent to applicant to view details in their portal.`;
+        return `Appointment for medical evaluation - ${partEn} directly scheduled at ${otaCityEn} recruiting centre (OTA Dossier). Information email sent to applicant to view details in their portal.`;
       }
-      return `Rendez-vous pour l'évaluation médicale - ${part} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
+      return `Rendez-vous pour l'évaluation médicale - ${part} directement fixé au centre de recrutement de ${otaCity} (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`;
     }
     if (isEn) {
       return `Task "Medical Evaluation - ${partEn}" assigned to applicant in their portal. Explanatory email sent to select a time slot at assigned recruiting centre.`;

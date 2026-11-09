@@ -233,6 +233,7 @@ export class AppComponent implements OnInit {
 
   // Évaluation Médicale State
   evaluationMedicaleType = signal<'Dossier régulier' | 'Dossier OTA'>('Dossier régulier');
+  otaSubCity = signal<'Montréal' | 'Toronto'>('Montréal');
   evaluationMedicalePartie1 = signal<boolean>(false);
   evaluationMedicalePartie2 = signal<boolean>(false);
   evaluationMedicalePartie1Et2 = signal<boolean>(false);
@@ -708,20 +709,33 @@ export class AppComponent implements OnInit {
   selectGdDossierType(type: 'Local' | 'OTA') {
     this.evaluationMedicaleType.set(type === 'OTA' ? 'Dossier OTA' : 'Dossier régulier');
     if (type === 'OTA') {
-      const mtl = this.recruitmentCentersList.find(c => c.city === 'Montréal') || this.recruitmentCentersList[0];
-      this.offreLieuVille.set('Montréal');
-      this.offreLieuEnrolement.set(mtl.fullFr);
-      this.offreHeureArriveePostulant.set('07h30');
-      this.offreHeureArriveeInvites.set('09h40');
-    } else {
-      const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
-      const centerObj = this.recruitmentCentersList.find(c => c.city === savedVille) || this.recruitmentCentersList[0];
-      this.offreLieuVille.set(savedVille);
-      this.offreLieuEnrolement.set((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || centerObj.fullFr);
+      this.stage.set("gd-ota-city");
+      return;
     }
+    const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
+    const centerObj = this.recruitmentCentersList.find(c => c.city === savedVille) || this.recruitmentCentersList[0];
+    this.offreLieuVille.set(savedVille);
+    this.offreLieuEnrolement.set((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || centerObj.fullFr);
     this.stage.set("main");
     const tasks = this.visibleTasks();
     if (tasks.length > 0) this.selectTask(tasks[0]);
+  }
+
+  // Action: GD user chooses OTA city (Montréal or Toronto)
+  selectGdOtaCity(city: 'Montréal' | 'Toronto') {
+    this.otaSubCity.set(city);
+    const centerObj = this.recruitmentCentersList.find(c => c.city === city) || this.recruitmentCentersList[0];
+    this.offreLieuVille.set(city);
+    this.offreLieuEnrolement.set(centerObj.fullFr);
+    this.offreHeureArriveePostulant.set('07h30');
+    this.offreHeureArriveeInvites.set('09h40');
+    this.stage.set("main");
+    const tasks = this.visibleTasks();
+    if (tasks.length > 0) this.selectTask(tasks[0]);
+  }
+
+  backToGdDossierType() {
+    this.stage.set("intro");
   }
 
   // Check if the 4 specific minor documents are compliant

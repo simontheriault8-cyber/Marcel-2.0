@@ -420,11 +420,12 @@ export function restartApp(this: any, triggerShared: boolean = true) {
     this.copiedMedicalKey.set(null);
 
     // Reset Offer forms
+    this.otaSubCity.set('Montréal');
     const isOta = this.evaluationMedicaleType() === 'Dossier OTA';
     const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
     const savedPostulant = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_postulant')) || '8h00';
     const savedInvites = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_heure_invites')) || '10h00';
-    const villeToSet = isOta ? 'Montréal' : savedVille;
+    const villeToSet = isOta ? this.otaSubCity() : savedVille;
     const centerObj = this.recruitmentCentersList.find(c => c.city === villeToSet) || this.recruitmentCentersList[0];
     const savedLieuEnrolement = isOta ? centerObj.fullFr : ((typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_enrolement')) || centerObj.fullFr);
 

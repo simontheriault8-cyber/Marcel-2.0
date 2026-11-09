@@ -578,6 +578,96 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           </div>
         </div>
       </div>
+    } @else if (stage() === "gd-ota-city" && selectedRole() === "gestionnaire") {
+      <div
+        class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
+      >
+        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <!-- Back Button -->
+          <button
+            (click)="backToGdDossierType()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.backTitle')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>{{ i18n.t('header.back') }}</span>
+          </button>
+
+          <!-- Switch Role Button -->
+          <button
+            (click)="switchRole()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchRoleTitle')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-indigo-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            <span>{{ i18n.t('header.switchRole') }}</span>
+          </button>
+        </div>
+
+        <div
+          class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/50 relative z-0"
+        >
+          <div class="mb-8">
+            <div
+              class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-amber-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">
+              {{ i18n.t('intro.gdOtaCityTitle') }}
+            </h1>
+            <p class="text-lg text-slate-600">{{ i18n.t('intro.gdOtaCityQuestion') }}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              (click)="selectGdOtaCity('Montréal')"
+              class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
+            >
+              <span>{{ i18n.t('intro.montreal') }}</span>
+            </button>
+            <button
+              (click)="selectGdOtaCity('Toronto')"
+              class="py-4 px-6 bg-amber-600 text-white rounded-xl font-bold text-lg hover:bg-amber-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
+            >
+              <span>{{ i18n.t('intro.toronto') }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
     } @else {
       <!-- Main Container: Vertical layout now -->
       <div
@@ -594,7 +684,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               [class.text-indigo-800]="selectedRole() === 'recruiter'"
               [class.text-amber-800]="selectedRole() === 'gestionnaire'"
             >
-              {{ selectedRole() === 'recruiter' ? i18n.t('header.roleRecruiter') : i18n.t('header.roleFileManager', { type: (evaluationMedicaleType() === 'Dossier OTA' ? i18n.t('intro.ota') : i18n.t('intro.local')) }) }}
+              {{ selectedRole() === 'recruiter' ? i18n.t('header.roleRecruiter') : i18n.t('header.roleFileManager', { type: (evaluationMedicaleType() === 'Dossier OTA' ? (i18n.t('intro.ota') + ' (' + (otaSubCity() === 'Montréal' ? i18n.t('intro.montreal') : i18n.t('intro.toronto')) + ')') : i18n.t('intro.local')) }) }}
             </h1>
 
             <div class="grid grid-cols-2 gap-2 w-full flex-1">

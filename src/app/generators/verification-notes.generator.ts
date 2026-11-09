@@ -454,13 +454,16 @@ export function computeGeneratedNote(this: any): string {
     if (medInfo) {
       if (isEn) {
         if (this.evaluationMedicaleType() === 'Dossier OTA') {
-          notes.push(`Appointment for medical evaluation - ${medInfo.labelEn} directly booked at Montreal Recruiting Centre (OTA Dossier). Informational email sent to applicant to view details in their portal.`);
+          const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+          const otaCityEn = otaCity === 'Montréal' ? 'Montreal' : otaCity;
+          notes.push(`Appointment for medical evaluation - ${medInfo.labelEn} directly booked at ${otaCityEn} Recruiting Centre (OTA Dossier). Informational email sent to applicant to view details in their portal.`);
         } else {
           notes.push(`Task "Medical evaluation - ${medInfo.labelEn}" assigned to applicant in their portal. Explanatory email sent to select a time slot at assigned recruiting centre.`);
         }
       } else {
         if (this.evaluationMedicaleType() === 'Dossier OTA') {
-          notes.push(`Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de Montréal (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`);
+          const otaCity = (typeof this.otaSubCity === 'function' ? this.otaSubCity() : this.otaSubCity) || 'Montréal';
+          notes.push(`Rendez-vous pour l'évaluation médicale - ${medInfo.labelFr} directement fixé au centre de recrutement de ${otaCity} (Dossier OTA). Courriel d'information envoyé au postulant pour consultation des détails dans son portail.`);
         } else {
           notes.push(`Tâche « Évaluation médicale - ${medInfo.labelFr} » attribuée au postulant dans son portail. Courriel explicatif envoyé pour la sélection d'une plage horaire au centre de recrutement attitré.`);
         }

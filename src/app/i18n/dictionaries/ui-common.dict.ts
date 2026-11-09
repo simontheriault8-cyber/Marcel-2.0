@@ -114,6 +114,10 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'intro.pfor': 'PFOR',
   'intro.local': 'Local',
   'intro.ota': 'OTA',
+  'intro.gdOtaCityTitle': 'Dossier OTA — Sélection du bureau',
+  'intro.gdOtaCityQuestion': 'Quel est le bureau OTA pour ce dossier ?',
+  'intro.montreal': 'Montréal',
+  'intro.toronto': 'Toronto',
 
   // Minor Banner in Recruiter Mode
   'minorBanner.badge': 'Mode Mineur',
@@ -349,6 +353,10 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'intro.pfor': 'ROTP',
   'intro.local': 'Local',
   'intro.ota': 'OTA',
+  'intro.gdOtaCityTitle': 'OTA File — Office Selection',
+  'intro.gdOtaCityQuestion': 'Which is the OTA office for this file?',
+  'intro.montreal': 'Montreal',
+  'intro.toronto': 'Toronto',
 
   // Minor Banner in Recruiter Mode
   'minorBanner.badge': 'Minor Mode',

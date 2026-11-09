@@ -404,7 +404,7 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                                 <div>
                                   <span class="font-semibold text-slate-800">{{ i18n.t('premierContact.lblMedical') }}</span>
                                   <p class="text-[11px] text-slate-500 mt-0.5 font-sans italic text-slate-600">
-                                     {{ evaluationMedicaleType() === 'Dossier OTA' ? (i18n.lang() === 'en' ? 'Appointment scheduled at Montreal recruitment center' : 'Rendez-vous fixé au centre de recrutement de Montréal') : (i18n.lang() === 'en' ? 'Schedule your medical evaluation' : 'Planifiez votre évaluation médicale') }}
+                                     {{ evaluationMedicaleType() === 'Dossier OTA' ? (i18n.lang() === 'en' ? ('Appointment scheduled at ' + (otaSubCity() === 'Montréal' ? 'Montreal' : 'Toronto') + ' recruitment centre') : ('Rendez-vous fixé au centre de recrutement de ' + otaSubCity())) : (i18n.lang() === 'en' ? 'Schedule your medical evaluation' : 'Planifiez votre évaluation médicale') }}
                                   </p>
                                 </div>
                               </label>

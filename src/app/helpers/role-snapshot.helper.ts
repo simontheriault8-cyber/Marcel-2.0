@@ -65,6 +65,7 @@ export function createSnapshot(this: any): RoleSnapshot {
       annexeQAlphaPostulant: this.annexeQAlphaPostulant(),
       pforMatricule: this.pforMatricule(),
       evaluationMedicaleType: this.evaluationMedicaleType(),
+      otaSubCity: this.otaSubCity(),
       evaluationMedicalePartie1: this.evaluationMedicalePartie1(),
       evaluationMedicalePartie2: this.evaluationMedicalePartie2(),
       evaluationMedicalePartie1Et2: this.evaluationMedicalePartie1Et2(),
@@ -166,10 +167,13 @@ export function applySnapshot(this: any, snapshot: RoleSnapshot) {
     this.evaluationMedicalePartie1.set(snapshot.evaluationMedicalePartie1 || false);
     this.evaluationMedicalePartie2.set(snapshot.evaluationMedicalePartie2 || false);
     this.evaluationMedicalePartie1Et2.set(snapshot.evaluationMedicalePartie1Et2 || false);
+    if (snapshot.otaSubCity) {
+      this.otaSubCity.set(snapshot.otaSubCity);
+    }
 
     const isOta = (snapshot.evaluationMedicaleType || this.evaluationMedicaleType()) === 'Dossier OTA';
     const savedVille = (typeof localStorage !== 'undefined' && localStorage.getItem('offre_lieu_ville')) || 'Québec';
-    const villeToSet = isOta ? 'Montréal' : (snapshot.offreLieuVille || savedVille);
+    const villeToSet = isOta ? (snapshot.otaSubCity || this.otaSubCity() || 'Montréal') : (snapshot.offreLieuVille || savedVille);
     const centerObj = this.recruitmentCentersList.find(c => c.city === villeToSet) || this.recruitmentCentersList[0];
 
     this.offreNormaleChecked.set(snapshot.offreNormaleChecked || false);
@@ -260,6 +264,7 @@ export function createFreshSnapshot(this: any, role: 'recruiter' | 'gestionnaire
       inapteMedicalName: '',
       inapteMedicalAlpha: '',
       evaluationMedicaleType: 'Dossier régulier',
+      otaSubCity: 'Montréal',
       premierContactCourriel: false,
       premierContactMedical: false,
       premierContactEntrevue: false,

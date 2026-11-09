@@ -41,7 +41,7 @@ export const UNITES_AFFECTATION: UniteAffectation[] = [
 ];
 
 
-export type AppStage = "intro" | "minor-check" | "recruiter-dossier-type" | "main";
+export type AppStage = "intro" | "minor-check" | "recruiter-dossier-type" | "gd-ota-city" | "main";
 
 export interface RoleSnapshot {
   stage: AppStage;
@@ -108,6 +108,7 @@ export interface RoleSnapshot {
   pforMatricule?: string;
   sgtCheckedInstructions?: string[];
   evaluationMedicaleType?: 'Dossier régulier' | 'Dossier OTA';
+  otaSubCity?: 'Montréal' | 'Toronto';
   evaluationMedicalePartie1?: boolean;
   evaluationMedicalePartie2?: boolean;
   evaluationMedicalePartie1Et2?: boolean;

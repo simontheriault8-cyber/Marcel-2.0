@@ -271,6 +271,14 @@ export const RECRUITMENT_CENTERS: RecruitmentCenter[] = [
     fullFr: "Centre de recrutement des Forces armées canadiennes - détachement Chicoutimi\n345 des Saguenéens, Chicoutimi, QC, G7H 6K9",
     fullEn: "Canadian Forces Recruiting Centre - Detachment Chicoutimi\n345 des Saguenéens, Chicoutimi, QC, G7H 6K9",
   },
+  {
+    city: "Toronto",
+    name: "Centre de recrutement des Forces canadiennes Toronto",
+    nameEn: "Canadian Forces Recruiting Centre Toronto",
+    address: "4900 Yonge St, Suite 100, North York, ON, M2N 6A4",
+    fullFr: "Centre de recrutement des Forces canadiennes Toronto\n4900 Yonge St, Suite 100, North York, ON, M2N 6A4",
+    fullEn: "Canadian Forces Recruiting Centre Toronto\n4900 Yonge St, Suite 100, North York, ON, M2N 6A4",
+  },
 ];
 
 export const ENROLMENT_HOURS: string[] = [
