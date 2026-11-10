@@ -1,5 +1,5 @@
 {
-  "date": "27/10/2026",
+  "date": "10/11/2026",
   "programs": {
     "00003": {
       "aucun": {
@@ -45,7 +45,7 @@
     },
     "00100": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Qual": {
@@ -117,7 +117,7 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Semi-qual": {
@@ -159,7 +159,7 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Semi-qual": {
@@ -661,7 +661,7 @@
         "traitement": "o"
       },
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -717,7 +717,7 @@
         "traitement": "f"
       },
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Semi-qual": {
@@ -727,7 +727,7 @@
     },
     "00324": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Qual": {
