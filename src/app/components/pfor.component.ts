@@ -17,13 +17,11 @@ import { getPforCmrMinMissingCriteriaFr, formatPforCmrMinCriteriaParagraphFr, ge
 import { buildPforBilingualEmail } from "./pfor/pfor-reo-email.generator";
 import { TranslationService } from "../i18n";
 import { PFOR_TEMPLATE } from "./pfor/pfor.template";
-import { SipChangelogModalComponent } from "./sip-changelog-modal.component";
-import { SipChangelogService } from "../../services/sip-changelog.service";
 
 @Component({
   selector: "app-pfor",
   standalone: true,
-  imports: [CommonModule, FormsModule, ScolariteExperienceComponent, SipChangelogModalComponent],
+  imports: [CommonModule, FormsModule, ScolariteExperienceComponent],
   host: { "(document:click)": "onDocumentClick($event)" },
   template: PFOR_TEMPLATE,
   styles: [],
@@ -35,7 +33,6 @@ export class PforComponent {
   sanitizer = inject(DomSanitizer);
   reorientationCriteria = inject(ReorientationCriteriaService);
   i18n = inject(TranslationService);
-  changelogService = inject(SipChangelogService);
 
   constructor() {
     effect(() => {

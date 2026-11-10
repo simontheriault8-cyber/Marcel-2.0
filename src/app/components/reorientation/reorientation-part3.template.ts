@@ -977,7 +977,4 @@ export const REORIENTATION_TEMPLATE_PART3 = `
         </div>
       </div>
     </div>
-
-    <!-- Modal des changements apportés au SIP -->
-    <app-sip-changelog-modal></app-sip-changelog-modal>
 `;

@@ -973,6 +973,10 @@ export const REJECTION_REASONS_LOG_NOTES: Record<string, RejectionReasonLogNote>
     fr: 'Certificat de naissance incomplet',
     en: 'Birth certificate incomplete'
   },
+  'naiss_verso': {
+    fr: 'Verso manquant du certificat de naissance',
+    en: 'Missing back side of the birth certificate'
+  },
   'naiss_photocopie': {
     fr: 'Certificat de naissance est une photocopie',
     en: 'Birth certificate is a photocopy'

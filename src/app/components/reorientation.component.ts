@@ -29,13 +29,11 @@ import { buildReoBilingualEmail } from "./reorientation/reorientation-email.gene
 import { ReorientationRulesService } from "../../services/reorientation/reorientation-rules.service";
 import { TranslationService } from "../i18n";
 import { REORIENTATION_TEMPLATE } from "./reorientation/reorientation.template";
-import { SipChangelogModalComponent } from "./sip-changelog-modal.component";
-import { SipChangelogService } from "../../services/sip-changelog.service";
 
 @Component({
   selector: "app-reorientation",
   standalone: true,
-  imports: [CommonModule, FormsModule, SipChangelogModalComponent],
+  imports: [CommonModule, FormsModule],
   host: { "(document:click)": "onDocumentClick($event)" },
   template: REORIENTATION_TEMPLATE,
 })
@@ -46,7 +44,6 @@ export class ReorientationComponent {
   reorientationCriteria = inject(ReorientationCriteriaService);
   rulesService = inject(ReorientationRulesService);
   i18n = inject(TranslationService);
-  changelogService = inject(SipChangelogService);
 
   showOptionsDropdown = signal<boolean>(false);
 

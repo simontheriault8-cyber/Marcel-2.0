@@ -180,6 +180,11 @@ export const JOB_RULES_PART2: JobRule[] = [
       allowPR: true,
     },
     {
+      requiredCriteriaIds: ["cs_dec_informatique"],
+      jobs: ["00394"],
+      allowPR: true,
+    },
+    {
       requiredCriteriaIds: ["sec4_24_credits"],
       jobs: ["00402"],
       allowPR: true,

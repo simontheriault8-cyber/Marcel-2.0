@@ -82,6 +82,34 @@ export const CRITERIA_SECONDAIRE_SPECIALISES: ManualCriterion[] = [
     { id: "cs_autre_dep", label: "Autre DEP", labelEn: "Other Vocational Diploma (DEP / DVS)", category: "Cours spécialisés" },
     { id: "cs_autre_dec", label: "Autre DEC", labelEn: "Other College Diploma (DEC / DCS)", category: "Cours spécialisés" },
     {
+      id: "cs_aec_eaux",
+      label: "AEC en traitement des eaux",
+      labelEn: "Attestation / Certificate of College Studies in Water Treatment",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_cert_assist_dentaire",
+      label:
+        "Certificat du Bureau national d'examen d'assistance dentaire (pas possible au Québec)",
+      labelEn:
+        "National Dental Assisting Examining Board Certificate (NDAEB)",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_cert_soins_param",
+      label:
+        "Certificat ou diplôme dans un programme de formation en soins paramédicaux agréé ou équivalent",
+      labelEn:
+        "Accredited Paramedic Training Certificate or Diploma",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dec_informatique",
+      label: "DEC en informatique",
+      labelEn: "College Diploma (DEC) in Computer Science",
+      category: "Cours spécialisés",
+    },
+    {
       id: "cs_photo_multimedia",
       label:
         "DEC en photographie, en photojournalisme, multimédia ou conception graphique",
@@ -90,9 +118,67 @@ export const CRITERIA_SECONDAIRE_SPECIALISES: ManualCriterion[] = [
       category: "Cours spécialisés",
     },
     {
+      id: "cs_dep_arpentage_topo",
+      label: "DEP en arpentage et topographie",
+      labelEn: "Vocational Diploma in Surveying and Topography",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_charpenterie",
+      label: "DEP en charpenterie-menuiserie",
+      labelEn: "Vocational Diploma in Carpentry and Woodworking",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_cuisine",
+      label: "DEP en cuisine",
+      labelEn: "Vocational Diploma in Professional Cooking",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_electricite",
+      label: "DEP en électricité",
+      labelEn: "Vocational Diploma in Electricity",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_plomberie_chauffage",
+      label: "DEP en plomberie et chauffage",
+      labelEn: "Vocational Diploma in Plumbing and Heating",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_refrigeration",
+      label: "DEP en réfrigération",
+      labelEn: "Vocational Diploma in Refrigeration and Air Conditioning",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dep_sante_infirmiers",
+      label: "DEP en Santé, assistance et soins infirmiers",
+      labelEn: "Vocational Diploma in Health, Assistance and Nursing (LPN)",
+      category: "Cours spécialisés",
+    },
+    {
       id: "cs_sec_incendie",
       label: "DEP/DEC en Technique de sécurité incendie",
       labelEn: "Vocational or College Diploma in Fire Safety Technology",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dip_cyber",
+      label:
+        "Diplôme d'études postsecondaire dans un domaine associé à la cybersécurité",
+      labelEn:
+        "Post-secondary Diploma in a Cybersecurity-related Field",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_dip_genie_sci_app",
+      label:
+        "Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées",
+      labelEn:
+        "Post-secondary Diploma in Engineering, Engineering Technology or Applied Sciences",
       category: "Cours spécialisés",
     },
     {
@@ -120,103 +206,15 @@ export const CRITERIA_SECONDAIRE_SPECIALISES: ManualCriterion[] = [
       category: "Cours spécialisés",
     },
     {
-      id: "cs_tech_policieres",
-      label: "Techniques policières",
-      labelEn: "College Diploma in Police Technology",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_cuisine",
-      label: "DEP en cuisine",
-      labelEn: "Vocational Diploma in Professional Cooking",
-      category: "Cours spécialisés",
-    },
-    {
       id: "cs_etude_musique",
       label: "Études postsecondaire en musique",
       labelEn: "Post-secondary Studies in Music",
       category: "Cours spécialisés",
     },
     {
-      id: "cs_dep_refrigeration",
-      label: "DEP en réfrigération",
-      labelEn: "Vocational Diploma in Refrigeration and Air Conditioning",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_electricite",
-      label: "DEP en électricité",
-      labelEn: "Vocational Diploma in Electricity",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_plomberie_chauffage",
-      label: "DEP en plomberie et chauffage",
-      labelEn: "Vocational Diploma in Plumbing and Heating",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_aec_eaux",
-      label: "AEC en traitement des eaux",
-      labelEn: "Attestation / Certificate of College Studies in Water Treatment",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_charpenterie",
-      label: "DEP en charpenterie-menuiserie",
-      labelEn: "Vocational Diploma in Carpentry and Woodworking",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_cert_assist_dentaire",
-      label:
-        "Certificat du Bureau national d'examen d'assistance dentaire (pas possible au Québec)",
-      labelEn:
-        "National Dental Assisting Examining Board Certificate (NDAEB)",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_arpentage_topo",
-      label: "DEP en arpentage et topographie",
-      labelEn: "Vocational Diploma in Surveying and Topography",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dep_sante_infirmiers",
-      label: "DEP en Santé, assistance et soins infirmiers",
-      labelEn: "Vocational Diploma in Health, Assistance and Nursing (LPN)",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dip_cyber",
-      label:
-        "Diplôme d'études postsecondaire dans un domaine associé à la cybersécurité",
-      labelEn:
-        "Post-secondary Diploma in a Cybersecurity-related Field",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_dip_genie_sci_app",
-      label:
-        "Diplôme d’études postsecondaires en génie, en technologie du génie ou en sciences appliquées",
-      labelEn:
-        "Post-secondary Diploma in Engineering, Engineering Technology or Applied Sciences",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_cert_soins_param",
-      label:
-        "Certificat ou diplôme dans un programme de formation en soins paramédicaux agréé ou équivalent",
-      labelEn:
-        "Accredited Paramedic Training Certificate or Diploma",
-      category: "Cours spécialisés",
-    },
-    {
-      id: "cs_tea_m",
-      label:
-        "Un diplôme d’un programme TEA‑M (technicien d’entretien d’aéronefs - maintenance) accrédité par Transports Canada",
-      labelEn:
-        "Transport Canada Accredited AME-M (Aircraft Maintenance Engineer - Maintenance) Diploma",
+      id: "cs_tech_policieres",
+      label: "Techniques policières",
+      labelEn: "College Diploma in Police Technology",
       category: "Cours spécialisés",
     },
     {
@@ -225,6 +223,14 @@ export const CRITERIA_SECONDAIRE_SPECIALISES: ManualCriterion[] = [
         "Un diplôme d’un programme TEA‑E (technicien d’entretien d’aéronefs - avionique) accrédité par Transports Canada",
       labelEn:
         "Transport Canada Accredited AME-E (Aircraft Maintenance Engineer - Avionics) Diploma",
+      category: "Cours spécialisés",
+    },
+    {
+      id: "cs_tea_m",
+      label:
+        "Un diplôme d’un programme TEA‑M (technicien d’entretien d’aéronefs - maintenance) accrédité par Transports Canada",
+      labelEn:
+        "Transport Canada Accredited AME-M (Aircraft Maintenance Engineer - Maintenance) Diploma",
       category: "Cours spécialisés",
     },
     {

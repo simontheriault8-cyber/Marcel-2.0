@@ -42,6 +42,16 @@ export const TASKS_CITOYENNETE: Task[] = [
               logNoteFr: "Certificat de naissance incomplet",
             },
             {
+              id: "naiss_verso",
+              labelFr: "Verso manquant",
+              labelEn: "Missing back side",
+              instructionFr:
+                "Le verso de votre certificat de naissance est manquant. Veuillez téléverser une photo du verso du document sur votre portail en ligne. Assurez-vous que l'image est nette et clairement lisible.",
+              instructionEn:
+                "The back side of your birth certificate is missing. Please upload a photo of the back of the document to your online portal. Ensure the image is clear and legible.",
+              logNoteFr: "Verso manquant du certificat de naissance",
+            },
+            {
               id: "naiss_photocopie",
               labelFr: "Photocopie",
               labelEn: "Photocopy",

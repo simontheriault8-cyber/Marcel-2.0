@@ -6435,8 +6435,8 @@
       },
       "exigencesScolarite": {
         "typeLogique": "CRITERES_DIRECTS",
-        "descriptionFr": "Sec 4 (24 crédits) ET Mathématiques de sec 4/10e avancées ET Science et technologie de sec 4 / 10e année.",
-        "descriptionEn": "Grade 10 (24 credits) AND Grade 10 Math Advanced AND Grade 10 Science.",
+        "descriptionFr": "Sec 4 (24 crédits) ET Mathématiques de sec 4/10e avancées ET Science et technologie de sec 4 / 10e année (ou DEC en informatique).",
+        "descriptionEn": "Grade 10 (24 credits) AND Grade 10 Math Advanced AND Grade 10 Science (or DEC in Computer Science).",
         "criteresCochesRequis": [
           {
             "id": "sec4_24_credits",
@@ -6468,10 +6468,16 @@
               "base_math_10_adv",
               "sci_tech4_sci10"
             ]
+          },
+          {
+            "nomVoie": "DEC en informatique",
+            "criteres": [
+              "cs_dec_informatique"
+            ]
           }
         ],
-        "messageManquantFr": "Sec 4 (24 crédits) ou 10e année et Mathématiques de sec 4/10e (avancées) et Science et technologie de sec 4 ou 10e année",
-        "messageManquantEn": "Grade 10 (24 credits) and Grade 10 Math (Advanced) and Grade 10 Science"
+        "messageManquantFr": "Sec 4 (24 crédits) avec Math avancées de sec 4/10e et Science (ou DEC en informatique)",
+        "messageManquantEn": "Grade 10 (24 credits) with Advanced Math Grade 10 and Science (or DEC in Computer Science)"
       },
       "conditionsSpeciales": null,
       "testsSelectionSupplementaires": {
