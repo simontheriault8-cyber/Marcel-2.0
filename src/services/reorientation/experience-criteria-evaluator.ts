@@ -2,8 +2,8 @@ import { ManualCriterion, MANUAL_CRITERIA } from "../../app/data/reorientation-c
 import REGLES_DATA from "../../../regles-reorientation.json";
 
 export function evaluateDynamicExperienceCriteria(
-  selected: Set<string>,
-  isAdmissibleOtherThanEducation: (jobId: string) => boolean,
+  arg1?: Iterable<string> | Set<string> | string[] | ((jobId: string) => boolean) | null,
+  arg2?: Set<string> | Iterable<string> | string[] | any,
   dossierJobIds?: Set<string> | string[] | any
 ): ManualCriterion[] {
   const criteriaMap = new Map<string, ManualCriterion>();
@@ -16,20 +16,42 @@ export function evaluateDynamicExperienceCriteria(
     exp_musique: ["exp_mus_pro", "exp_mus_ensembles", "exp_mus_etudiant"]
   };
 
-  const isDossierMember = (code: string): boolean => {
-    if (!dossierJobIds) return false;
-    if (typeof dossierJobIds.has === "function") return dossierJobIds.has(code);
-    if (Array.isArray(dossierJobIds)) return dossierJobIds.includes(code);
-    if (typeof dossierJobIds.includes === "function") return dossierJobIds.includes(code);
-    return false;
-  };
+  const jobIdsSet = new Set<string>();
+
+  if (typeof arg1 === "function") {
+    // If a function was passed, check arg2 for eligible job IDs
+    if (arg2 && typeof (arg2 as any).has === "function") {
+      for (const id of arg2 as Set<string>) jobIdsSet.add(id);
+    } else if (Array.isArray(arg2)) {
+      for (const id of arg2) jobIdsSet.add(id);
+    }
+  } else if (arg1) {
+    if (typeof (arg1 as any).has === "function") {
+      for (const id of arg1 as Set<string>) jobIdsSet.add(id);
+    } else if (Array.isArray(arg1)) {
+      for (const id of arg1) jobIdsSet.add(id);
+    } else {
+      for (const id of Array.from(arg1 as any)) jobIdsSet.add(id as string);
+    }
+  }
+
+  // Include dossier job IDs if passed
+  const dossier = dossierJobIds || (typeof arg2 !== "function" ? arg2 : undefined);
+  if (dossier) {
+    if (typeof dossier.has === "function") {
+      for (const id of dossier as Set<string>) if (id && id !== "00003") jobIdsSet.add(id);
+    } else if (Array.isArray(dossier)) {
+      for (const id of dossier) if (id && id !== "00003") jobIdsSet.add(id);
+    }
+  }
+
+  if (jobIdsSet.size === 0) {
+    return [];
+  }
 
   for (const trade of tradeRules) {
     const code = trade.code;
-    const isDossier = isDossierMember(code);
-    const isStatutAdmissible = isAdmissibleOtherThanEducation(code);
-
-    if (isDossier || isStatutAdmissible) {
+    if (jobIdsSet.has(code)) {
       const docProofs = trade.preuvesDocumentsRequisDansCourriel || [];
       for (const doc of docProofs) {
         const docId = typeof doc === "string" ? doc : doc.critereId;
@@ -61,3 +83,4 @@ export function evaluateDynamicExperienceCriteria(
 
   return Array.from(criteriaMap.values());
 }
+

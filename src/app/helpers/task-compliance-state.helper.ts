@@ -110,31 +110,85 @@ export function computeGroupedVisibleTasks(this: any) {
     const isGd = this.selectedRole() === "gestionnaire";
 
     if (isGd) {
-      const gdGroupOrder = [
-        "Réception d'un postulant",
-        "Suivi de dossier",
-        "Retour PSPS",
-        "Courriel d'offre",
-        "Courriel enrôlement",
-        "Autre",
+      const gdGroupDefs: { id: string; key: string; titleFr: string; titleEn: string }[] = [
+        {
+          id: "Réception d'un postulant",
+          key: "tasks.gdGroup.reception",
+          titleFr: "Réception d'un postulant",
+          titleEn: "Applicant Intake",
+        },
+        {
+          id: "Suivi de dossier",
+          key: "tasks.gdGroup.suivi",
+          titleFr: "Suivi de dossier",
+          titleEn: "File Follow-up",
+        },
+        {
+          id: "Retour PSPS",
+          key: "tasks.gdGroup.retourPsps",
+          titleFr: "Retour PSPS",
+          titleEn: "PSPS Return",
+        },
+        {
+          id: "Courriel d'offre",
+          key: "tasks.gdGroup.courrielOffre",
+          titleFr: "Courriel d'offre",
+          titleEn: "Offer Email",
+        },
+        {
+          id: "Courriel enrôlement",
+          key: "tasks.gdGroup.courrielEnrolement",
+          titleFr: "Courriel enrôlement",
+          titleEn: "Enrolment Email",
+        },
+        {
+          id: "Autre",
+          key: "tasks.gdGroup.autre",
+          titleFr: "Autre",
+          titleEn: "Other",
+        },
       ];
-      const groupsMap = new Map<string, { id: string; title: string; tasks: Task[] }>();
-      for (const gName of gdGroupOrder) {
-        groupsMap.set(gName, { id: gName, title: gName, tasks: [] });
+
+      const isEn = this.i18n ? this.i18n.lang() === "en" : false;
+      const groupsMap = new Map<
+        string,
+        { id: string; title: string; titleFr: string; titleEn: string; tasks: Task[] }
+      >();
+
+      for (const def of gdGroupDefs) {
+        const title = this.i18n
+          ? this.i18n.t(def.key)
+          : isEn
+          ? def.titleEn
+          : def.titleFr;
+        groupsMap.set(def.id, {
+          id: def.id,
+          title,
+          titleFr: def.titleFr,
+          titleEn: def.titleEn,
+          tasks: [],
+        });
       }
 
       for (const task of tasks) {
         const g = this.getGroupForTask(task);
         const gId = g ? g.id : "Autre";
         if (!groupsMap.has(gId)) {
-          groupsMap.set(gId, { id: gId, title: gId, tasks: [] });
+          const fallbackTitle = gId === "Autre" ? (isEn ? "Other" : "Autre") : gId;
+          groupsMap.set(gId, {
+            id: gId,
+            title: fallbackTitle,
+            titleFr: gId,
+            titleEn: fallbackTitle,
+            tasks: [],
+          });
         }
         groupsMap.get(gId)!.tasks.push(task);
       }
 
-      const groups = gdGroupOrder
-        .map((name) => groupsMap.get(name)!)
-        .filter((g) => !!g);
+      const groups = gdGroupDefs
+        .map((def) => groupsMap.get(def.id)!)
+        .filter((g) => !!g && (g.tasks.length > 0 || g.id !== "Autre"));
 
       return {
         groups,

@@ -7,9 +7,34 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
               <div class="bg-slate-50 border-b border-slate-200 shrink-0">
                 <div class="p-4 pb-0">
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-                    <h3 class="text-lg font-bold text-slate-800">
-                      {{ i18n.t('scolExp.tabScolarite') }}
-                    </h3>
+                    <div class="flex items-center gap-2.5">
+                      <h3 class="text-lg font-bold text-slate-800">
+                        {{ i18n.t('scolExp.tabScolarite') }}
+                      </h3>
+                      @if (adminAuth.isAdminUnlocked()) {
+                        <button
+                          type="button"
+                          (click)="resetEducationCriteria()"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 hover:border-rose-300 transition-all cursor-pointer shadow-xs active:scale-95"
+                          [title]="i18n.t('scolExp.resetEducationTitle')"
+                        >
+                          <svg
+                            class="w-3.5 h-3.5 text-rose-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                            <path d="M3 3v5h5" />
+                          </svg>
+                          <span>{{ i18n.t('scolExp.resetEducationBtn') }}</span>
+                        </button>
+                      }
+                    </div>
                     <div class="flex flex-col items-start gap-1.5 text-sm font-medium text-slate-700">
                       <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
                         <input
@@ -177,7 +202,7 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       </h4>
                       <select
                         [ngModel]="selectedProvince()"
-                        (ngModelChange)="selectedProvince.set($event)"
+                        (ngModelChange)="setSelectedProvince($event)"
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">

@@ -19,6 +19,14 @@ export const UI_TASKS_GD_FR: TranslationDictionary = {
   'tasks.modeNote': 'Note',
   'tasks.triageMedicalRequis': 'Triage médical requis',
 
+  // GD Task Groups
+  'tasks.gdGroup.reception': "Réception d'un postulant",
+  'tasks.gdGroup.suivi': 'Suivi de dossier',
+  'tasks.gdGroup.retourPsps': 'Retour PSPS',
+  'tasks.gdGroup.courrielOffre': "Courriel d'offre",
+  'tasks.gdGroup.courrielEnrolement': 'Courriel enrôlement',
+  'tasks.gdGroup.autre': 'Autre',
+
   // Medical Evaluation Form (FM)
   'medEval.title': 'Évaluation médicale — {type}',
   'medEval.optionsTitle': "Options d'évaluation médicale",
@@ -272,6 +280,14 @@ export const UI_TASKS_GD_EN: TranslationDictionary = {
   'tasks.modeCourriel': 'Email',
   'tasks.modeNote': 'Note',
   'tasks.triageMedicalRequis': 'Medical triage required',
+
+  // GD Task Groups
+  'tasks.gdGroup.reception': 'Applicant Intake',
+  'tasks.gdGroup.suivi': 'File Follow-up',
+  'tasks.gdGroup.retourPsps': 'PSPS Return',
+  'tasks.gdGroup.courrielOffre': 'Offer Email',
+  'tasks.gdGroup.courrielEnrolement': 'Enrolment Email',
+  'tasks.gdGroup.autre': 'Other',
 
   // Medical Evaluation Form (FM)
   'medEval.title': 'Medical Evaluation — {type}',

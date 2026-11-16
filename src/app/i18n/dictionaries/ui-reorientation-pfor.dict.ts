@@ -29,6 +29,8 @@ export const UI_REORIENTATION_PFOR_FR: TranslationDictionary = {
   // Scolarité & Expérience
   'scolExp.title': 'Scolarité & Expérience',
   'scolExp.tabScolarite': 'Scolarité',
+  'scolExp.resetEducationBtn': 'Réinitialiser la scolarité',
+  'scolExp.resetEducationTitle': 'Réinitialiser uniquement le panneau de scolarité (accès administrateur)',
   'scolExp.etudeAnglais': 'Étude en anglais',
   'scolExp.etudeHorsCanada': 'Étude hors Canada',
   'scolExp.tabSecondaire': 'Secondaire',
@@ -324,6 +326,8 @@ export const UI_REORIENTATION_PFOR_EN: TranslationDictionary = {
   // Scolarité & Expérience
   'scolExp.title': 'Education & Experience',
   'scolExp.tabScolarite': 'Education',
+  'scolExp.resetEducationBtn': 'Reset Education',
+  'scolExp.resetEducationTitle': 'Reset only education panel criteria (Administrator access)',
   'scolExp.etudeAnglais': 'Studies in English',
   'scolExp.etudeHorsCanada': 'Studies outside Canada',
   'scolExp.tabSecondaire': 'Secondary',

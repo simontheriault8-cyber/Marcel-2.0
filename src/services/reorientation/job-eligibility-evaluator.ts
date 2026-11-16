@@ -1,4 +1,4 @@
-import { JOB_RULES, MATH_COURSES, MANUAL_CRITERIA } from "../../app/data/reorientation-criteria.data";
+import { JOB_RULES, MANUAL_CRITERIA, applyProvincialMathBaseCredits } from "../../app/data/reorientation-criteria.data";
 
 export interface ExtraTestContext {
   hasEceJob: boolean;
@@ -198,25 +198,7 @@ export function evaluateEducationEligibility(
 
     const selected = new Set(rawSelected);
 
-    const allMathOptions = Object.values(MATH_COURSES).reduce(
-      (acc, courses) => acc.concat(courses),
-      [] as { id: string; label: string; grade: number; diff: number }[],
-    );
-    const selectedMaths = allMathOptions.filter((m) => selected.has(m.id));
-
-    const hasMath = (grade: number, diff: number) => {
-      return selectedMaths.some((m) => m.grade >= grade && m.diff >= diff);
-    };
-
-    if (hasMath(10, 1)) selected.add("base_math_10_gen");
-    if (hasMath(10, 2)) selected.add("base_math_10_app");
-    if (hasMath(10, 3)) selected.add("base_math_10_adv");
-    if (hasMath(11, 1)) selected.add("base_math_11_gen");
-    if (hasMath(11, 2)) selected.add("base_math_11_app");
-    if (hasMath(11, 3)) selected.add("base_math_11_adv");
-    if (hasMath(12, 1)) selected.add("base_math_12_gen");
-    if (hasMath(12, 2)) selected.add("base_math_12_app");
-    if (hasMath(12, 3)) selected.add("base_math_12_adv");
+    applyProvincialMathBaseCredits(selected);
 
     const missingFrList: string[] = [];
     const missingEnList: string[] = [];

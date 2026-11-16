@@ -5,6 +5,7 @@ import { JobDatabaseService } from "../../services/job-database.service";
 import { SharedStateService } from "../../services/shared-state.service";
 import { MelService, MEL_LIMITATIONS } from "../../services/mel.service";
 import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
+import { AdminAuthService } from "../../services/admin-auth.service";
 import { JOB_URLS } from "../data/job-urls.data";
 
 import { ManualCriterion, JobRule, PROVINCES, MATH_COURSES, MANUAL_CRITERIA, JOB_RULES, CMR_JOB_DOMAINS } from "../data/reorientation-criteria.data";
@@ -43,6 +44,7 @@ export class ReorientationComponent {
   melService = inject(MelService);
   reorientationCriteria = inject(ReorientationCriteriaService);
   rulesService = inject(ReorientationRulesService);
+  adminAuth = inject(AdminAuthService);
   i18n = inject(TranslationService);
 
   showOptionsDropdown = signal<boolean>(false);
@@ -230,18 +232,18 @@ export class ReorientationComponent {
   );
   criteriaExperience = computed(() => computeReoExperienceCriteria.call(this));
   criteriaExperienceSecondaire = computed(() =>
-    this.manualCriteria.filter(
-      (c) => c.category === "Expérience" && c.subCategory === "secondaire",
+    this.criteriaExperience().filter(
+      (c) => c.subCategory === "secondaire",
     ),
   );
   criteriaExperienceSpecialises = computed(() =>
-    this.manualCriteria.filter(
-      (c) => c.category === "Expérience" && c.subCategory === "specialises",
+    this.criteriaExperience().filter(
+      (c) => c.subCategory === "specialises",
     ),
   );
   criteriaExperienceUniversitaire = computed(() =>
-    this.manualCriteria.filter(
-      (c) => c.category === "Expérience" && c.subCategory === "universitaire",
+    this.criteriaExperience().filter(
+      (c) => c.subCategory === "universitaire",
     ),
   );
 
@@ -336,6 +338,19 @@ export class ReorientationComponent {
   resetAll() {
     this.resetAllLocal();
     this.sharedState.triggerRecruiterReset();
+  }
+
+  resetEducationCriteria() {
+    const current = new Set(this.selectedCriteriaIds());
+    for (const id of Array.from(current)) {
+      if (!id.startsWith("exp_")) {
+        current.delete(id);
+      }
+    }
+    this.selectedCriteriaIds.set(current);
+    this.activeScolariteTab.set("secondaire");
+    this.expandedDomaines.set(new Set<string>());
+    this.reorientationCriteria.resetEducationCriteria();
   }
 
   toggleManualCriterion(id: string) {

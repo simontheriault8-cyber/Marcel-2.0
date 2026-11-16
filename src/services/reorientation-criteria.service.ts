@@ -56,10 +56,33 @@ export class ReorientationCriteriaService {
 
   // Selected state
   selectedCriteriaIds = signal<Set<string>>(new Set<string>());
-  selectedProvince = signal<string>("QC");
+  selectedProvince = signal<string>(this.getInitialProvince());
   activeScolariteTab = signal<"secondaire" | "specialises" | "universitaire">(
     "secondaire",
   );
+
+  private getInitialProvince(): string {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = window.localStorage.getItem('marcel_selected_province');
+        if (saved) return saved;
+      }
+    } catch {
+      // Ignore
+    }
+    return "QC";
+  }
+
+  setSelectedProvince(prov: string) {
+    this.selectedProvince.set(prov);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('marcel_selected_province', prov);
+      }
+    } catch {
+      // Ignore
+    }
+  }
 
   // Dossier job selection from shared state for extra test requirement checking
   dossierJobIds = computed(() =>
@@ -160,12 +183,11 @@ export class ReorientationCriteriaService {
     ),
   );
 
-  // Dynamic experience criteria derived from selected schooling and candidate admissibility
+  // Dynamic experience criteria derived from eligible trades
   criteriaExperience = computed(() => {
-    return evaluateDynamicExperienceCriteria(
-      this.selectedCriteriaIds(),
-      (jobId) => this.isAdmissibleOtherThanEducation(jobId)
-    );
+    const eligibleJobs = this.evaluateEligibleNcmJobs().eligibleJobs;
+    const eligibleJobIds = eligibleJobs.map((j) => j.id);
+    return evaluateDynamicExperienceCriteria(eligibleJobIds);
   });
 
   toggleManualCriterion(id: string) {
@@ -180,6 +202,17 @@ export class ReorientationCriteriaService {
   resetCriteria() {
     this.selectedCriteriaIds.set(new Set());
     this.selectedProvince.set("QC");
+    this.activeScolariteTab.set("secondaire");
+  }
+
+  resetEducationCriteria() {
+    const current = new Set(this.selectedCriteriaIds());
+    for (const id of Array.from(current)) {
+      if (!id.startsWith("exp_")) {
+        current.delete(id);
+      }
+    }
+    this.selectedCriteriaIds.set(current);
     this.activeScolariteTab.set("secondaire");
   }
 

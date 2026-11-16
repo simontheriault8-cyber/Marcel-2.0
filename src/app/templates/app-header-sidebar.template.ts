@@ -1528,7 +1528,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                   >
                     <span class="flex items-center gap-1.5 min-w-0">
                       @if (selectedRole() === 'gestionnaire') {
-                        <span class="bg-indigo-900 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ group.title }}</span>
+                        <span class="bg-indigo-900 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ i18n.lang() === 'en' ? (group.titleEn || group.title) : (group.titleFr || group.title) }}</span>
                       } @else {
                         <span class="bg-slate-800 text-white px-2 py-0.5 rounded text-[11px] font-extrabold tracking-wide shrink-0">{{ i18n.t('tasks.groupPrefix') }}{{ group.title }}</span>
                       }

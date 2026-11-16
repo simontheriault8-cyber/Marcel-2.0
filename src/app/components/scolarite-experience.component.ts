@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ReorientationCriteriaService } from "../../services/reorientation-criteria.service";
 import { SharedStateService } from "../../services/shared-state.service";
+import { AdminAuthService } from "../../services/admin-auth.service";
 import { TranslationService } from "../i18n";
 import { ManualCriterion } from "../data/reorientation-criteria.data";
 import { SCOLARITE_EXPERIENCE_TEMPLATE } from "./scolarite-experience.template";
@@ -15,6 +16,7 @@ import { SCOLARITE_EXPERIENCE_TEMPLATE } from "./scolarite-experience.template";
 export class ScolariteExperienceComponent {
   criteriaService = inject(ReorientationCriteriaService);
   sharedState = inject(SharedStateService);
+  adminAuth = inject(AdminAuthService);
   i18n = inject(TranslationService);
 
   selectedCriteriaIds = this.criteriaService.selectedCriteriaIds;
@@ -99,8 +101,17 @@ export class ScolariteExperienceComponent {
     () => this.totalFiltered1erCycleCount() + this.totalFilteredCycleSupCount()
   );
 
+  setSelectedProvince(prov: string) {
+    this.criteriaService.setSelectedProvince(prov);
+  }
+
   clearUnivDegreeSearch() {
     this.univDegreeSearchQuery.set("");
+  }
+
+  resetEducationCriteria() {
+    this.criteriaService.resetEducationCriteria();
+    this.clearUnivDegreeSearch();
   }
 
   expandedDomaines = signal<Set<string>>(new Set<string>());

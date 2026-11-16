@@ -1,7 +1,40 @@
 import {
   MANUAL_CRITERIA,
-  MATH_COURSES,
+  applyProvincialMathBaseCredits,
 } from "../../app/data/reorientation-criteria.data";
+
+export const ALBERTA_MATH_CASCADES: Record<string, string[]> = {
+  ab_12_adv: [
+    "ab_12_app",
+    "ab_12_gen",
+    "ab_11_adv",
+    "ab_11_app",
+    "ab_11_gen",
+    "ab_10_adv",
+    "ab_10_app",
+    "ab_10_gen",
+  ],
+  ab_12_app: [
+    "ab_12_gen",
+    "ab_11_app",
+    "ab_11_gen",
+    "ab_10_app",
+    "ab_10_gen",
+  ],
+  ab_12_gen: ["ab_11_gen", "ab_10_gen"],
+  ab_11_adv: [
+    "ab_11_app",
+    "ab_11_gen",
+    "ab_10_adv",
+    "ab_10_app",
+    "ab_10_gen",
+  ],
+  ab_11_app: ["ab_11_gen", "ab_10_app", "ab_10_gen"],
+  ab_11_gen: ["ab_10_gen"],
+  ab_10_adv: ["ab_10_app", "ab_10_gen"],
+  ab_10_app: ["ab_10_gen"],
+  ab_10_gen: [],
+};
 
 /**
  * Handles criterion toggling, automatic check cascading (e.g., DES checking secondary and history subjects),
@@ -14,6 +47,21 @@ export function applyCriterionToggleAndCleanup(
   const current = new Set(selectedCriteriaIds);
   if (current.has(id)) {
     current.delete(id);
+
+    // When unchecking an Alberta math course, clean up its cascaded prerequisites
+    // then re-apply cascades from any remaining checked Alberta math courses.
+    if (ALBERTA_MATH_CASCADES[id]) {
+      for (const creditedId of ALBERTA_MATH_CASCADES[id]) {
+        current.delete(creditedId);
+      }
+      for (const remainingId of Array.from(current)) {
+        if (ALBERTA_MATH_CASCADES[remainingId]) {
+          for (const creditedId of ALBERTA_MATH_CASCADES[remainingId]) {
+            current.add(creditedId);
+          }
+        }
+      }
+    }
   } else {
     current.add(id);
 
@@ -77,6 +125,13 @@ export function applyCriterionToggleAndCleanup(
       current.add("qc_11_gen");
       current.add("qc_11_app");
       current.add("qc_11_adv");
+    }
+
+    // Alberta / T.N.-O. / Nunavut math cascades according to PDF equivalence
+    if (ALBERTA_MATH_CASCADES[id]) {
+      for (const creditedId of ALBERTA_MATH_CASCADES[id]) {
+        current.add(creditedId);
+      }
     }
 
     if (id === "anglais_sec5_12e") {
@@ -165,18 +220,9 @@ export function applyCriterionToggleAndCleanup(
     current.delete("exp_photo_design");
   }
 
-  const allMathOptions = Object.values(MATH_COURSES).reduce(
-    (
-      acc: { id: string; label: string; grade: number; diff: number }[],
-      courses,
-    ) => acc.concat(courses),
-    [],
-  );
-  const selectedMaths = allMathOptions.filter((m) => current.has(m.id));
-  const hasMath = (grade: number, diff: number) => {
-    return selectedMaths.some((m) => m.grade >= grade && m.diff >= diff);
-  };
-  const hasMath10App = hasMath(10, 2);
+  const expandedMathSet = new Set(current);
+  applyProvincialMathBaseCredits(expandedMathSet);
+  const hasMath10App = expandedMathSet.has("base_math_10_app");
 
   const hasEduForConduire =
     ((current.has("des_12e_annee") || current.has("aens")) && hasMath10App) ||

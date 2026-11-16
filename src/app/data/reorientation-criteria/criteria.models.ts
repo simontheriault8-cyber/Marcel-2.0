@@ -42,6 +42,7 @@ export interface MathCourse {
   labelEn?: string;
   grade: number;
   diff: number;
+  baseMaths?: string[];
 }
 
 export const MATH_COURSES: Record<string, MathCourse[]> = {
@@ -186,47 +187,89 @@ export const MATH_COURSES: Record<string, MathCourse[]> = {
   AB: [
     {
       id: "ab_10_gen",
-      label: "Math 10-4 (10e Générale)",
-      labelEn: "Math 10-4 (Grade 10 General)",
+      label: "Mathématiques 10-3 / 14 (10e Générale)",
+      labelEn: "Mathematics 10-3 / 14 (Grade 10 General)",
       grade: 10,
       diff: 1,
+      baseMaths: ["base_math_10_gen"],
     },
     {
       id: "ab_10_app",
-      label: "Math 10-3 (10e Appliquée)",
-      labelEn: "Math 10-3 (Grade 10 Applied)",
+      label: "Mathématiques appliquées 10 (10e Appliquée)",
+      labelEn: "Applied Mathematics 10 (Grade 10 Applied)",
       grade: 10,
       diff: 2,
+      baseMaths: ["base_math_10_app", "base_math_10_gen"],
     },
-    { id: "ab_10_adv", label: "Math 10C (10e Avancée)", labelEn: "Math 10C (Grade 10 Academic)", grade: 10, diff: 3 },
+    {
+      id: "ab_10_adv",
+      label: "Mathématiques 10C / Pures 10 (10e Académique)",
+      labelEn: "Mathematics 10C / Pure Mathematics 10 (Grade 10 Academic)",
+      grade: 10,
+      diff: 3,
+      baseMaths: ["base_math_10_adv", "base_math_10_app", "base_math_10_gen"],
+    },
     {
       id: "ab_11_gen",
-      label: "Math 20-4 (11e Générale)",
-      labelEn: "Math 20-4 (Grade 11 General)",
+      label: "Mathématiques 20-3 / 24 (11e Générale)",
+      labelEn: "Mathematics 20-3 / 24 (Grade 11 General)",
       grade: 11,
       diff: 1,
+      baseMaths: ["base_math_11_gen", "base_math_10_gen"],
     },
     {
       id: "ab_11_app",
-      label: "Math 20-3 / 20-2 (11e Appliquée)",
-      labelEn: "Math 20-3 / 20-2 (Grade 11 Applied)",
+      label: "Mathématiques 20-2 / Appliquées 20 (11e Appliquée)",
+      labelEn: "Mathematics 20-2 / Applied Mathematics 20 (Grade 11 Applied)",
       grade: 11,
       diff: 2,
+      baseMaths: [
+        "base_math_11_app", "base_math_11_gen",
+        "base_math_10_app", "base_math_10_gen",
+      ],
     },
-    { id: "ab_11_adv", label: "Math 20-1 (11e Avancée)", labelEn: "Math 20-1 (Grade 11 Academic)", grade: 11, diff: 3 },
+    {
+      id: "ab_11_adv",
+      label: "Mathématiques 20-1 / Pures 20 (11e Académique)",
+      labelEn: "Mathematics 20-1 / Pure Mathematics 20 (Grade 11 Academic)",
+      grade: 11,
+      diff: 3,
+      baseMaths: [
+        "base_math_11_adv", "base_math_11_app", "base_math_11_gen",
+        "base_math_10_adv", "base_math_10_app", "base_math_10_gen",
+      ],
+    },
+    {
+      id: "ab_12_gen",
+      label: "Mathématiques 30-3 (12e Générale)",
+      labelEn: "Mathematics 30-3 (Grade 12 General)",
+      grade: 12,
+      diff: 1,
+      baseMaths: ["base_math_12_gen", "base_math_11_gen", "base_math_10_gen"],
+    },
     {
       id: "ab_12_app",
-      label: "Math 30-3 / 30-2 (12e Appliquée)",
-      labelEn: "Math 30-3 / 30-2 (Grade 12 Applied)",
+      label: "Mathématiques 30-2 / Appliquées 30 (12e Appliquée)",
+      labelEn: "Mathematics 30-2 / Applied Mathematics 30 (Grade 12 Applied)",
       grade: 12,
       diff: 2,
+      baseMaths: [
+        "base_math_12_app", "base_math_12_gen",
+        "base_math_11_app", "base_math_11_gen",
+        "base_math_10_app", "base_math_10_gen",
+      ],
     },
     {
       id: "ab_12_adv",
-      label: "Math 30-1 / Math 31 (12e Avancée)",
-      labelEn: "Math 30-1 / Math 31 (Grade 12 Academic)",
+      label: "Mathématiques 31 / 30-1 / Pures 30 (12e Académique)",
+      labelEn: "Mathematics 31 / 30-1 / Pure Mathematics 30 (Grade 12 Academic)",
       grade: 12,
       diff: 3,
+      baseMaths: [
+        "base_math_12_adv", "base_math_12_app", "base_math_12_gen",
+        "base_math_11_adv", "base_math_11_app", "base_math_11_gen",
+        "base_math_10_adv", "base_math_10_app", "base_math_10_gen",
+      ],
     },
   ],
   NB_FR: [
@@ -269,6 +312,33 @@ export const MATH_COURSES: Record<string, MathCourse[]> = {
     },
   ],
 };
+
+const ALL_MATH_COURSES_FLAT: MathCourse[] = Object.values(MATH_COURSES).reduce(
+  (acc, list) => acc.concat(list),
+  [] as MathCourse[],
+);
+
+export function applyProvincialMathBaseCredits(selected: Set<string>): void {
+  const selectedMaths = ALL_MATH_COURSES_FLAT.filter((m) => selected.has(m.id));
+  for (const m of selectedMaths) {
+    if (m.baseMaths) {
+      for (const bm of m.baseMaths) {
+        selected.add(bm);
+      }
+    } else {
+      // Other provinces (QC, ON, BC, NB_FR): preserve standard grade >= G && diff >= D equivalence
+      if (m.grade >= 10 && m.diff >= 1) selected.add("base_math_10_gen");
+      if (m.grade >= 10 && m.diff >= 2) selected.add("base_math_10_app");
+      if (m.grade >= 10 && m.diff >= 3) selected.add("base_math_10_adv");
+      if (m.grade >= 11 && m.diff >= 1) selected.add("base_math_11_gen");
+      if (m.grade >= 11 && m.diff >= 2) selected.add("base_math_11_app");
+      if (m.grade >= 11 && m.diff >= 3) selected.add("base_math_11_adv");
+      if (m.grade >= 12 && m.diff >= 1) selected.add("base_math_12_gen");
+      if (m.grade >= 12 && m.diff >= 2) selected.add("base_math_12_app");
+      if (m.grade >= 12 && m.diff >= 3) selected.add("base_math_12_adv");
+    }
+  }
+}
 
 
 export function hasDes(selected: Set<string>): boolean {

@@ -5,7 +5,7 @@ import { Injectable, signal } from '@angular/core';
  * The plaintext password is never stored or included in the application source code.
  */
 const ADMIN_SALT = 'fac_admin_sec_2026_z91k';
-const ADMIN_EXPECTED_HASH = '5739aa228c76e8e351b1c1eea520403b4091bccbf4e3ba81a8ff387f243cbc9e';
+const ADMIN_EXPECTED_HASH = '2c3dad936b3b6c227a84974146c344b6d7950299e62e1f307b528151022f7648';
 const STORAGE_KEY = 'marcel_admin_auth_unlocked';
 
 @Injectable({

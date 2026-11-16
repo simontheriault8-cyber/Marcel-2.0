@@ -311,52 +311,106 @@
       ],
       "AB": [
         {
-          "id": "ab_10_gen",
-          "label": "Math 10-4 (10e Générale)",
-          "grade": 10,
-          "diff": 1
-        },
-        {
-          "id": "ab_10_app",
-          "label": "Math 10-3 (10e Appliquée)",
-          "grade": 10,
-          "diff": 2
-        },
-        {
-          "id": "ab_10_adv",
-          "label": "Math 10C (10e Avancée)",
-          "grade": 10,
+          "id": "ab_mat3211",
+          "label": "MAT3211 Mathématiques 31 (12e Académique)",
+          "grade": 12,
           "diff": 3
         },
         {
-          "id": "ab_11_gen",
-          "label": "Math 20-4 (11e Générale)",
-          "grade": 11,
-          "diff": 1
-        },
-        {
-          "id": "ab_11_app",
-          "label": "Math 20-3 / 20-2 (11e Appliquée)",
-          "grade": 11,
-          "diff": 2
-        },
-        {
-          "id": "ab_11_adv",
-          "label": "Math 20-1 (11e Avancée)",
-          "grade": 11,
+          "id": "ab_mat3791",
+          "label": "MAT3791 Mathématiques 30-1 (12e Académique)",
+          "grade": 12,
           "diff": 3
         },
         {
-          "id": "ab_12_app",
-          "label": "Math 30-3 / 30-2 (12e Appliquée)",
+          "id": "ab_mat3792",
+          "label": "MAT3792 Mathématiques 30-2 (12e Appliquée)",
           "grade": 12,
           "diff": 2
         },
         {
-          "id": "ab_12_adv",
-          "label": "Math 30-1 / Math 31 (12e Avancée)",
+          "id": "ab_mat3793",
+          "label": "MAT3793 Mathématiques 30-3 (12e Générale)",
+          "grade": 12,
+          "diff": 1
+        },
+        {
+          "id": "ab_mat2791",
+          "label": "MAT2791 Mathématiques 20-1 (11e Académique)",
+          "grade": 11,
+          "diff": 3
+        },
+        {
+          "id": "ab_mat2792",
+          "label": "MAT2792 Mathématiques 20-2 (11e Appliquée)",
+          "grade": 11,
+          "diff": 2
+        },
+        {
+          "id": "ab_mat2793",
+          "label": "MAT2793 Mathématiques 20-3 (11e Générale)",
+          "grade": 11,
+          "diff": 1
+        },
+        {
+          "id": "ab_mat1791",
+          "label": "MAT1791 Mathématiques 10C (10e Académique)",
+          "grade": 10,
+          "diff": 3
+        },
+        {
+          "id": "ab_mat1793",
+          "label": "MAT1793 Mathématiques 10-3 (10e Générale)",
+          "grade": 10,
+          "diff": 1
+        },
+        {
+          "id": "ab_mat3037",
+          "label": "MAT3037 Mathématiques pures 30 (12e Académique - Précédent)",
           "grade": 12,
           "diff": 3
+        },
+        {
+          "id": "ab_mat3038",
+          "label": "MAT3038 Mathématiques appliquées 30 (12e Appliquée - Précédent)",
+          "grade": 12,
+          "diff": 2
+        },
+        {
+          "id": "ab_mat2037",
+          "label": "MAT2037 Mathématiques pures 20 (11e Académique - Précédent)",
+          "grade": 11,
+          "diff": 3
+        },
+        {
+          "id": "ab_mat2038",
+          "label": "MAT2038 Mathématiques appliquées 20 (11e Appliquée - Précédent)",
+          "grade": 11,
+          "diff": 2
+        },
+        {
+          "id": "ab_mat2225",
+          "label": "MAT2225 Mathématiques 24 (11e Générale - Précédent)",
+          "grade": 11,
+          "diff": 1
+        },
+        {
+          "id": "ab_mat1037",
+          "label": "MAT1037 Mathématiques pures 10 (10e Académique - Précédent)",
+          "grade": 10,
+          "diff": 3
+        },
+        {
+          "id": "ab_mat1038",
+          "label": "MAT1038 Mathématiques appliquées 10 (10e Appliquée - Précédent)",
+          "grade": 10,
+          "diff": 2
+        },
+        {
+          "id": "ab_mat1225",
+          "label": "MAT1225 Mathématiques 14 (10e Générale - Précédent)",
+          "grade": 10,
+          "diff": 1
         }
       ],
       "NB_FR": [
