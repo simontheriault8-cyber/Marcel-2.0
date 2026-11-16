@@ -2,43 +2,11 @@ import {
   MANUAL_CRITERIA,
   applyProvincialMathBaseCredits,
 } from "../../app/data/reorientation-criteria.data";
-
-export const ALBERTA_MATH_CASCADES: Record<string, string[]> = {
-  ab_12_adv: [
-    "ab_12_app",
-    "ab_12_gen",
-    "ab_11_adv",
-    "ab_11_app",
-    "ab_11_gen",
-    "ab_10_adv",
-    "ab_10_app",
-    "ab_10_gen",
-  ],
-  ab_12_app: [
-    "ab_12_gen",
-    "ab_11_app",
-    "ab_11_gen",
-    "ab_10_app",
-    "ab_10_gen",
-  ],
-  ab_12_gen: ["ab_11_gen", "ab_10_gen"],
-  ab_11_adv: [
-    "ab_11_app",
-    "ab_11_gen",
-    "ab_10_adv",
-    "ab_10_app",
-    "ab_10_gen",
-  ],
-  ab_11_app: ["ab_11_gen", "ab_10_app", "ab_10_gen"],
-  ab_11_gen: ["ab_10_gen"],
-  ab_10_adv: ["ab_10_app", "ab_10_gen"],
-  ab_10_app: ["ab_10_gen"],
-  ab_10_gen: [],
-};
+import { PROVINCIAL_MATH_CASCADES } from "./provincial-math-cascades";
 
 /**
- * Handles criterion toggling, automatic check cascading (e.g., DES checking secondary and history subjects),
- * mutual exclusions, and orphaned experience criteria cleanup.
+ * Handles criterion toggling, automatic check cascading (e.g., DES checking secondary and history subjects,
+ * provincial math forward and reverse cascades), mutual exclusions, and orphaned experience criteria cleanup.
  */
 export function applyCriterionToggleAndCleanup(
   selectedCriteriaIds: Set<string>,
@@ -48,18 +16,21 @@ export function applyCriterionToggleAndCleanup(
   if (current.has(id)) {
     current.delete(id);
 
-    // When unchecking an Alberta math course, clean up its cascaded prerequisites
-    // then re-apply cascades from any remaining checked Alberta math courses.
-    if (ALBERTA_MATH_CASCADES[id]) {
-      for (const creditedId of ALBERTA_MATH_CASCADES[id]) {
+    // When unchecking a provincial math course, clean up its cascaded prerequisites
+    // then re-apply cascades from any remaining checked math courses (or DES for QC CST IV).
+    if (PROVINCIAL_MATH_CASCADES[id]) {
+      for (const creditedId of PROVINCIAL_MATH_CASCADES[id]) {
         current.delete(creditedId);
       }
       for (const remainingId of Array.from(current)) {
-        if (ALBERTA_MATH_CASCADES[remainingId]) {
-          for (const creditedId of ALBERTA_MATH_CASCADES[remainingId]) {
+        if (PROVINCIAL_MATH_CASCADES[remainingId]) {
+          for (const creditedId of PROVINCIAL_MATH_CASCADES[remainingId]) {
             current.add(creditedId);
           }
         }
+      }
+      if (current.has("des_12e_annee") && id !== "qc_10_gen") {
+        current.add("qc_10_gen");
       }
     }
   } else {
@@ -105,31 +76,9 @@ export function applyCriterionToggleAndCleanup(
       current.add("histoire_sec4");
     }
 
-    if (id === "qc_10_app") {
-      current.add("qc_10_gen");
-    }
-
-    if (id === "qc_10_adv") {
-      current.add("qc_10_app");
-      current.add("qc_10_gen");
-    }
-
-    if (id === "qc_11_gen") {
-      current.add("qc_10_gen");
-    }
-
-    if (id === "qc_11_app" || id === "qc_11_adv" || id === "qc_12_cegep201") {
-      current.add("qc_10_gen");
-      current.add("qc_10_app");
-      current.add("qc_10_adv");
-      current.add("qc_11_gen");
-      current.add("qc_11_app");
-      current.add("qc_11_adv");
-    }
-
-    // Alberta / T.N.-O. / Nunavut math cascades according to PDF equivalence
-    if (ALBERTA_MATH_CASCADES[id]) {
-      for (const creditedId of ALBERTA_MATH_CASCADES[id]) {
+    // Provincial math forward cascades (QC, ON, BC, AB, NB_FR)
+    if (PROVINCIAL_MATH_CASCADES[id]) {
+      for (const creditedId of PROVINCIAL_MATH_CASCADES[id]) {
         current.add(creditedId);
       }
     }

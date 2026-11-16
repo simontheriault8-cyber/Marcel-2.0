@@ -673,7 +673,7 @@ export const REORIENTATION_TEMPLATE_PART2 = `
                       </h4>
                       <select
                         [ngModel]="selectedProvince()"
-                        (ngModelChange)="selectedProvince.set($event)"
+                        (ngModelChange)="setSelectedProvince($event)"
                         class="px-2 py-1 border border-slate-300 bg-white rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[150px] truncate cursor-pointer"
                       >
                         <option *ngFor="let p of PROVINCES" [value]="p.id">

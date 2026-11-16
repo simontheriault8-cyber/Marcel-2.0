@@ -65,7 +65,7 @@ export class ReorientationCriteriaService {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
         const saved = window.localStorage.getItem('marcel_selected_province');
-        if (saved) return saved;
+        if (saved && PROVINCES.some((p) => p.id === saved)) return saved;
       }
     } catch {
       // Ignore
@@ -201,7 +201,6 @@ export class ReorientationCriteriaService {
 
   resetCriteria() {
     this.selectedCriteriaIds.set(new Set());
-    this.selectedProvince.set("QC");
     this.activeScolariteTab.set("secondaire");
   }
 
@@ -460,7 +459,6 @@ export class ReorientationCriteriaService {
   resetAll() {
     this.selectedCriteriaIds.set(new Set<string>());
     this.activeScolariteTab.set("secondaire");
-    this.selectedProvince.set("QC");
     this.age.set(null);
     this.citizenship.set("Canadian Citizen");
     this.ignoreSip.set(false);

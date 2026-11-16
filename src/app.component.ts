@@ -26,7 +26,9 @@ import { CourseSeriesPickerComponent } from "./app/components/course-series-pick
 import { UnitPickerComponent } from "./app/components/unit-picker.component";
 import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
 import { AdminPortalComponent } from "./app/components/admin/admin-portal.component";
+import { AorSelectionComponent } from "./app/components/aor-selection.component";
 import { AdminAuthService } from "./services/admin-auth.service";
+import { AorService } from "./services/aor.service";
 import { UnitSession, UNITS_LIST } from "./app/data/units.data";
 import { CourseSession } from "./app/data/course-sessions.data";
 import { JOB_URLS } from "./app/data/job-urls.data";
@@ -56,7 +58,7 @@ import { TranslationService } from "./app/i18n";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, FormsModule],
+  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, AorSelectionComponent, FormsModule],
   template: APP_COMPONENT_TEMPLATE,
   host: { '(document:click)': 'onDocumentClick($event)' },
   styles: [],
@@ -71,6 +73,7 @@ export class AppComponent implements OnInit {
   public reorientationCriteria = inject(ReorientationCriteriaService);
   public i18n = inject(TranslationService);
   public adminAuth = inject(AdminAuthService);
+  public aorService = inject(AorService);
 
   // Dossier Jobs Panel Dropdown States
   dossierDropdownOpen1 = signal<boolean>(false);
@@ -334,6 +337,11 @@ export class AppComponent implements OnInit {
     }
   }
 
+  currentAorLabel = computed(() => {
+    const aor = this.aorService.currentAor();
+    return aor ? this.i18n.t(aor.labelKey) : '';
+  });
+
   switchRole() {
     const current = this.selectedRole();
     if (current === 'recruiter' || current === 'gestionnaire') {
@@ -341,6 +349,16 @@ export class AppComponent implements OnInit {
     }
     this.selectedRole.set('none');
     localStorage.removeItem('marcel_role');
+  }
+
+  switchAor() {
+    const current = this.selectedRole();
+    if (current === 'recruiter' || current === 'gestionnaire') {
+      this.roleSnapshots[current] = this.createSnapshot();
+    }
+    this.selectedRole.set('none');
+    localStorage.removeItem('marcel_role');
+    this.aorService.clearAor();
   }
 
   lockSession() {

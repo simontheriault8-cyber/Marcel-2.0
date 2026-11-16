@@ -147,10 +147,14 @@ export class ReorientationComponent {
 
   age = signal<number | null>(null);
   citizenship = signal<string>("Canadian Citizen");
-  selectedProvince = signal<string>("QC");
+  selectedProvince = this.reorientationCriteria.selectedProvince;
 
   readonly PROVINCES = PROVINCES;
   readonly MATH_COURSES = MATH_COURSES;
+
+  setSelectedProvince(prov: string) {
+    this.reorientationCriteria.setSelectedProvince(prov);
+  }
   manualCriteria: ManualCriterion[] = MANUAL_CRITERIA;
   jobRules: JobRule[] = JOB_RULES;
 
@@ -289,7 +293,6 @@ export class ReorientationComponent {
   resetAllLocal() {
     this.age.set(null);
     this.citizenship.set("Canadian Citizen");
-    this.selectedProvince.set("QC");
     this.hasMedicalLimitation.set(false);
     this.isPforApplicant.set(false);
     this.sharedState.isPostulantPfor.set(false);

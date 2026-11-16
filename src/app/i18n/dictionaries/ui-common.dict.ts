@@ -14,6 +14,16 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'lang.switchToFrench': 'Passer en français',
   'lang.switchToEnglish': 'Passer en anglais',
 
+  // AOR Selection
+  'aorSelect.title': "Sélection de l'AOR",
+  'aorSelect.subtitle': 'Veuillez choisir votre zone de responsabilité (AOR) pour continuer.',
+  'aor.pacific': 'Pacific',
+  'aor.pn': 'P&N',
+  'aor.neon': 'NEON',
+  'aor.son': 'SON',
+  'aor.quebec': 'Québec',
+  'aor.atlantic': 'Atlantic',
+
   // Role Selection
   'roleSelect.title': 'Sélection du Rôle',
   'roleSelect.tutoMarcel': 'Tuto Marcel',
@@ -82,6 +92,8 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'header.emailBankReset': 'Réinitialiser',
   'header.switchRole': 'Changer de rôle',
   'header.switchRoleTitle': 'Revenir à la page de sélection de rôle',
+  'header.switchAor': "Changer d'AOR",
+  'header.switchAorTitle': "Revenir à la page de sélection de l'AOR",
   'header.back': 'Retour',
   'header.backTitle': "Revenir à l'étape précédente",
 
@@ -253,6 +265,16 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'lang.switchToFrench': 'Switch to French',
   'lang.switchToEnglish': 'Switch to English',
 
+  // AOR Selection
+  'aorSelect.title': 'AOR Selection',
+  'aorSelect.subtitle': 'Please select your Area of Responsibility (AOR) to continue.',
+  'aor.pacific': 'Pacific',
+  'aor.pn': 'P&N',
+  'aor.neon': 'NEON',
+  'aor.son': 'SON',
+  'aor.quebec': 'Quebec',
+  'aor.atlantic': 'Atlantic',
+
   // Role Selection
   'roleSelect.title': 'Role Selection',
   'roleSelect.tutoMarcel': 'Marcel Tutorial',
@@ -321,6 +343,8 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'header.emailBankReset': 'Reset',
   'header.switchRole': 'Switch Role',
   'header.switchRoleTitle': 'Return to role selection page',
+  'header.switchAor': 'Change AOR',
+  'header.switchAorTitle': 'Return to AOR selection page',
   'header.back': 'Back',
   'header.backTitle': 'Return to previous step',
 

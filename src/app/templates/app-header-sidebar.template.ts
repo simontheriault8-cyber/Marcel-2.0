@@ -37,6 +37,8 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           </form>
         </div>
       </div>
+    } @else if (!aorService.selectedAor()) {
+      <app-aor-selection />
     } @else if (selectedRole() === 'none') {
       @if (showTutoMarcel()) {
         <app-tuto-marcel (close)="closeTutoMarcel()" />
@@ -60,36 +62,54 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             </button>
           </div>
 
-          <!-- Top Right: Language Switcher (FR | EN) -->
-          <div class="absolute top-6 right-6 z-10 flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
+          <!-- Top Right: Switch AOR + Language Switcher (FR | EN) -->
+          <div class="absolute top-6 right-6 z-10 flex items-center gap-3">
             <button
               type="button"
-              (click)="i18n.setLang('fr')"
-              [class.bg-indigo-600]="i18n.lang() === 'fr'"
-              [class.text-white]="i18n.lang() === 'fr'"
-              [class.shadow-xs]="i18n.lang() === 'fr'"
-              [class.font-black]="i18n.lang() === 'fr'"
-              [class.text-slate-600]="i18n.lang() !== 'fr'"
-              [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
-              class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-              [title]="i18n.t('lang.switchToFrench')"
+              (click)="switchAor()"
+              class="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-xs cursor-pointer active:scale-95"
+              [title]="i18n.t('header.switchAorTitle')"
             >
-              FR
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>{{ i18n.t('header.switchAor') }}</span>
+              @if (currentAorLabel()) {
+                <span class="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[11px]">{{ currentAorLabel() }}</span>
+              }
             </button>
-            <button
-              type="button"
-              (click)="i18n.setLang('en')"
-              [class.bg-indigo-600]="i18n.lang() === 'en'"
-              [class.text-white]="i18n.lang() === 'en'"
-              [class.shadow-xs]="i18n.lang() === 'en'"
-              [class.font-black]="i18n.lang() === 'en'"
-              [class.text-slate-600]="i18n.lang() !== 'en'"
-              [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
-              class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-              [title]="i18n.t('lang.switchToEnglish')"
-            >
-              EN
-            </button>
+
+            <div class="flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
+              <button
+                type="button"
+                (click)="i18n.setLang('fr')"
+                [class.bg-indigo-600]="i18n.lang() === 'fr'"
+                [class.text-white]="i18n.lang() === 'fr'"
+                [class.shadow-xs]="i18n.lang() === 'fr'"
+                [class.font-black]="i18n.lang() === 'fr'"
+                [class.text-slate-600]="i18n.lang() !== 'fr'"
+                [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+                [title]="i18n.t('lang.switchToFrench')"
+              >
+                FR
+              </button>
+              <button
+                type="button"
+                (click)="i18n.setLang('en')"
+                [class.bg-indigo-600]="i18n.lang() === 'en'"
+                [class.text-white]="i18n.lang() === 'en'"
+                [class.shadow-xs]="i18n.lang() === 'en'"
+                [class.font-black]="i18n.lang() === 'en'"
+                [class.text-slate-600]="i18n.lang() !== 'en'"
+                [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+                [title]="i18n.t('lang.switchToEnglish')"
+              >
+                EN
+              </button>
+            </div>
           </div>
 
           <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
@@ -355,6 +375,20 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             {{ i18n.t('header.reo') }}
           </button>
 
+          <!-- Switch AOR Button (Intro Recruiter) -->
+          <button
+            type="button"
+            (click)="switchAor()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchAorTitle')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{{ i18n.t('header.switchAor') }}</span>
+          </button>
+
           <!-- Switch Role Button (Intro Recruiter) -->
           <button
             (click)="switchRole()"
@@ -439,6 +473,20 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             <span>{{ i18n.t('header.back') }}</span>
           </button>
 
+          <!-- Switch AOR Button -->
+          <button
+            type="button"
+            (click)="switchAor()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchAorTitle')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{{ i18n.t('header.switchAor') }}</span>
+          </button>
+
           <!-- Switch Role Button -->
           <button
             (click)="switchRole()"
@@ -511,28 +559,43 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <!-- Switch Role Button (Intro GD) -->
-        <button
-          (click)="switchRole()"
-          class="absolute top-4 right-4 bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all z-50 font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-          [title]="i18n.t('header.switchRoleTitle')"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-indigo-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
+        <!-- Switch AOR & Switch Role Buttons (Intro GD) -->
+        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+          <button
+            type="button"
+            (click)="switchAor()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchAorTitle')"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-            />
-          </svg>
-          <span>{{ i18n.t('header.switchRole') }}</span>
-        </button>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{{ i18n.t('header.switchAor') }}</span>
+          </button>
+
+          <button
+            (click)="switchRole()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchRoleTitle')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-indigo-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            <span>{{ i18n.t('header.switchRole') }}</span>
+          </button>
+        </div>
 
         <div
           class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/50 relative z-0"
@@ -593,6 +656,20 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             <span>{{ i18n.t('header.back') }}</span>
+          </button>
+
+          <!-- Switch AOR Button -->
+          <button
+            type="button"
+            (click)="switchAor()"
+            class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
+            [title]="i18n.t('header.switchAorTitle')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{{ i18n.t('header.switchAor') }}</span>
           </button>
 
           <!-- Switch Role Button -->
@@ -1120,6 +1197,19 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                     <span>{{ i18n.t('dossierJobs.pforCandidateBadge') }}</span>
                   </label>
                 }
+
+                <button
+                  type="button"
+                  (click)="switchAor()"
+                  class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  [title]="i18n.t('header.switchAorTitle')"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>{{ i18n.t('header.switchAor') }}@if (currentAorLabel()) { ({{ currentAorLabel() }})}</span>
+                </button>
 
                 <button
                   (click)="switchRole()"
