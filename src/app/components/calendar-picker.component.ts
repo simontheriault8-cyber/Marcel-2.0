@@ -40,7 +40,6 @@ import { TranslationService } from "../i18n/translation.service";
               type="button"
               (click)="onClear($event)"
               class="p-0.5 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer"
-              [title]="i18n.t('calendar.clearDate')"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -57,7 +56,6 @@ import { TranslationService } from "../i18n/translation.service";
             type="button"
             (click)="toggleCalendar($event)"
             class="px-2.5 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-lg font-medium text-xs flex items-center gap-1.5 transition cursor-pointer shadow-sm active:scale-95"
-            [title]="buttonText || i18n.t('calendar.pickDate')"
           >
             <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -83,7 +81,6 @@ import { TranslationService } from "../i18n/translation.service";
                   type="button"
                   (click)="prevMonth($event)"
                   class="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition cursor-pointer"
-                  [title]="i18n.t('calendar.prevMonth')"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -97,7 +94,6 @@ import { TranslationService } from "../i18n/translation.service";
                   type="button"
                   (click)="nextMonth($event)"
                   class="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition cursor-pointer"
-                  [title]="i18n.t('calendar.nextMonth')"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

@@ -1166,7 +1166,11 @@ export class AppComponent implements OnInit {
   });
 
   availableOffreProgrammes = computed<string[]>(() => {
-    return this.jobService.getProgramsForJobType(this.offreJobType());
+    return this.jobService.getProgramsForJobType(this.offreJobType(), this.i18n.currentLang());
+  });
+
+  displayedOffreProgrammeEnrolement = computed<string>(() => {
+    return this.jobService.translateProgram(this.offreProgrammeEnrolement(), this.i18n.currentLang());
   });
 
   offreDetectedElement = computed<MilitaryElement | null>(() => {
@@ -1247,7 +1251,7 @@ export class AppComponent implements OnInit {
   });
 
   getOffreDateEnrolementFull(lang: 'fr' | 'en' = 'fr') { return OffreEnrolementGen.getOffreDateEnrolementFull.call(this, lang); }
-  getOffreDateArriveeUniteFull() { return OffreEnrolementGen.getOffreDateArriveeUniteFull.call(this); }
+  getOffreDateArriveeUniteFull(lang: 'fr' | 'en' = 'fr') { return OffreEnrolementGen.getOffreDateArriveeUniteFull.call(this, lang); }
   getOffreDatesCoursFull() { return OffreEnrolementGen.getOffreDatesCoursFull.call(this); }
   getJourSemaineFr(dateStr: string) { return OffreEnrolementGen.getJourSemaineFr.call(this, dateStr); }
   getJourSemaineEn(dateStr: string) { return OffreEnrolementGen.getJourSemaineEn.call(this, dateStr); }

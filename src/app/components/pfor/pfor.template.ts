@@ -8,7 +8,6 @@ export const PFOR_TEMPLATE = `
           <button
             (click)="resetAll()"
             class="bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all text-slate-600 shrink-0 border border-slate-200 mt-1 cursor-pointer"
-            [title]="i18n.t('pfor.resetTitle')"
           >
             <svg
               class="w-5 h-5"
@@ -27,7 +26,9 @@ export const PFOR_TEMPLATE = `
           <div>
             <div class="flex items-center gap-3">
               <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded tracking-wider leading-none">{{ i18n.t('pfor.badge') }}</span>
-              <h2 class="text-xl font-bold text-slate-800">
+              <h2
+                class="text-xl font-bold text-slate-800"
+              >
                 {{ i18n.t('pfor.title') }}
               </h2>
               @if (jobService.sipDate()) {
@@ -83,7 +84,9 @@ export const PFOR_TEMPLATE = `
               <div
                 class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-50 flex flex-col gap-2"
               >
-                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                <label
+                  class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700"
+                >
                   <input
                     type="checkbox"
                     [checked]="ignoreSip()"
@@ -96,7 +99,9 @@ export const PFOR_TEMPLATE = `
                   </div>
                 </label>
 
-                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                <label
+                  class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700"
+                >
                   <input
                     type="checkbox"
                     [checked]="includeTraitement()"
@@ -109,7 +114,9 @@ export const PFOR_TEMPLATE = `
                   </div>
                 </label>
 
-                <label class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700">
+                <label
+                  class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700"
+                >
                   <input
                     type="checkbox"
                     [checked]="hasMedicalLimitation()"
@@ -711,7 +718,9 @@ export const PFOR_TEMPLATE = `
                   >
                     {{ i18n.t('reo.registryBadge') }}
                   </span>
-                  <h3 class="text-sm font-bold text-slate-800">
+                  <h3
+                    class="text-sm font-bold text-slate-800"
+                  >
                     {{ i18n.t('reo.registryNoteTitle') }}
                   </h3>
                 </div>
@@ -787,7 +796,9 @@ export const PFOR_TEMPLATE = `
                 class="p-4 bg-slate-50 border-b border-slate-200 shrink-0 flex items-center justify-between flex-wrap gap-2"
               >
                 <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="text-sm font-bold text-slate-800">
+                  <h3
+                    class="text-sm font-bold text-slate-800"
+                  >
                     {{ (citizenship() === 'PR < 3 years') ? i18n.t('reo.emailPrClosed') : (age() !== null && age()! >= 57) ? i18n.t('reo.emailAgeClosed') : (cmrMinCriteriaNotMet() ? i18n.t('pfor.emailMinCriteriaNotMet') : (cmrRefused() ? i18n.t('pfor.emailCmrRefused') : (cmrNotYetEvaluated() ? i18n.t('pfor.emailNotYetEvaluated') : (isAttentesMode() ? i18n.t('pfor.emailExpectations') : i18n.t('reo.emailTitle'))))) }}
                   </h3>
                   @if (citizenship() === 'PR < 3 years') {
@@ -857,7 +868,6 @@ export const PFOR_TEMPLATE = `
                     [class.hover:bg-emerald-700]="copied()"
                     [class.bg-blue-600]="!copied()"
                     [class.hover:bg-blue-700]="!copied()"
-                    [title]="i18n.t('reo.exportOutlook')"
                   >
                     @if (copied()) {
                       <svg

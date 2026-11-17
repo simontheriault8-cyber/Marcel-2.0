@@ -914,7 +914,6 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                                     type="button"
                                     (click)="clearOffreMetier($event)"
                                     class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                                    [title]="i18n.t('offre.clearJob')"
                                   >
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -975,12 +974,12 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                               </div>
                               <select
                                 class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-slate-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800"
-                                [value]="offreProgrammeEnrolement()"
+                                [value]="displayedOffreProgrammeEnrolement()"
                                 (change)="setOffreProgrammeEnrolement($any($event.target).value)"
                               >
                                 <option value="">{{ i18n.t('offre.selectProgramme') }}</option>
                                 @for (prog of availableOffreProgrammes(); track prog) {
-                                  <option [value]="prog">{{ prog }}</option>
+                                  <option [value]="prog" [selected]="prog === displayedOffreProgrammeEnrolement()">{{ prog }}</option>
                                 }
                               </select>
                             </div>
@@ -1078,7 +1077,7 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                                 (cleared)="setOffreDateArriveeUnite('')"
                               ></app-calendar-picker>
                               <p class="mt-1 text-[11px] text-slate-500">
-                                {{ i18n.lang() === 'en' ? 'In email: Arrival Date: ' : 'Dans le courriel : Date d\'arrivée : ' }}<span class="font-semibold text-slate-700">{{ getOffreDateArriveeUniteFull() }}</span>
+                                {{ i18n.t('offre.dateArriveeCourrielPrefix') }}<span class="font-semibold text-slate-700">{{ getOffreDateArriveeUniteFull(i18n.currentLang()) }}</span>
                               </p>
                             </div>
 
@@ -1305,7 +1304,6 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                                     type="button"
                                     (click)="clearOffreMetier($event)"
                                     class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                                    [title]="i18n.t('offre.clearJob')"
                                   >
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

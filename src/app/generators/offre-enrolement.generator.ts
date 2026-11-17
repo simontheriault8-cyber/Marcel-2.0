@@ -230,8 +230,20 @@ export function getOffreDateEnrolementFull(this: any, lang: 'fr' | 'en' = 'fr'):
     return `${raw} à ${postulantTime} (Arrivée des invités à ${guestTime})`;
   }
 
-export function getOffreDateArriveeUniteFull(this: any): string {
+export function getOffreDateArriveeUniteFull(this: any, lang: 'fr' | 'en' = 'fr'): string {
     const raw = this.offreDateArriveeUnite().trim();
+    if (lang === 'en') {
+      if (!raw) {
+        return 'no later than 16:00';
+      }
+      if (raw.includes('no later than')) {
+        return raw;
+      }
+      if (raw.includes('au plus tard')) {
+        return raw.replace('au plus tard', 'no later than').replace('16h00', '16:00');
+      }
+      return `${raw} no later than 16:00`;
+    }
     if (!raw) {
       return 'au plus tard 16h00';
     }
@@ -875,14 +887,17 @@ export function getOffreNormaleEmailPlain(this: any): string {
       return this.getOffreOtaEmailPlain();
     }
     const metier = this.offreMetier();
-    const prog = this.offreProgrammeEnrolement();
+    const rawProg = this.offreProgrammeEnrolement();
+    const progFr = this.jobService ? this.jobService.translateProgram(rawProg, 'fr') : rawProg;
+    const progEn = this.jobService ? this.jobService.translateProgram(rawProg, 'en') : rawProg;
     const elem = this.offreElement();
     const dateEnrolFr = this.getOffreDateEnrolementFull('fr');
     const dateEnrolEn = this.getOffreDateEnrolementFull('en');
     const selectedCenter = this.getSelectedRecruitmentCenter();
     const lieuEnrolFr = selectedCenter ? selectedCenter.fullFr : this.offreLieuEnrolement();
     const lieuEnrolEn = selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement();
-    const dateArrivee = this.getOffreDateArriveeUniteFull();
+    const dateArriveeFr = this.getOffreDateArriveeUniteFull('fr');
+    const dateArriveeEn = this.getOffreDateArriveeUniteFull('en');
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
@@ -891,14 +906,14 @@ export function getOffreNormaleEmailPlain(this: any): string {
     fr += "Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.\n\n";
     fr += "Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :\n\n";
     fr += `Métier :    ${metier}\n`;
-    fr += `Programme d’enrôlement :        ${prog}\n`;
+    fr += `Programme d’enrôlement :        ${progFr}\n`;
     fr += `Élément :                             ${elem}\n\n`;
     fr += `Date d’enrôlement :   ${dateEnrolFr}\n`;
     fr += `Lieu de l’enrôlement : ${lieuEnrolFr}\n`;
     fr += "Stationnement : Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.   \n";
     fr += this.getTeamsLinkPlainFr();
     fr += `Unité d’affectation : ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
-    fr += `Date d’arrivée à votre unité:  ${dateArrivee}\n`;
+    fr += `Date d’arrivée à votre unité:  ${dateArriveeFr}\n`;
     if (hasCourseDates) {
       fr += `Vos dates de cours :      ${datesCours}\n`;
     }
@@ -917,14 +932,14 @@ export function getOffreNormaleEmailPlain(this: any): string {
     en += "First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.\n\n";
     en += "Below you will find the details of the job offer discussed today:\n\n";
     en += `Occupation:    ${metier}\n`;
-    en += `Enrolment program:        ${prog}\n`;
+    en += `Enrolment program:        ${progEn}\n`;
     en += `Element:                             ${elem}\n\n`;
     en += `Enrolment date:   ${dateEnrolEn}\n`;
     en += `Enrolment location: ${lieuEnrolEn}\n`;
     en += "Parking: Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.   \n";
     en += this.getTeamsLinkPlainEn();
     en += `Posting unit: ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
-    en += `Arrival date at your unit:  ${dateArrivee}\n`;
+    en += `Arrival date at your unit:  ${dateArriveeEn}\n`;
     if (hasCourseDates) {
       en += `Your course dates:      ${datesCours}\n`;
     }
@@ -1170,14 +1185,17 @@ export function getOffreNormaleEmailHtml(this: any): string {
       return this.getOffreOtaEmailHtml();
     }
     const metier = this.offreMetier();
-    const prog = this.offreProgrammeEnrolement();
+    const rawProg = this.offreProgrammeEnrolement();
+    const progFr = this.jobService ? this.jobService.translateProgram(rawProg, 'fr') : rawProg;
+    const progEn = this.jobService ? this.jobService.translateProgram(rawProg, 'en') : rawProg;
     const elem = this.offreElement();
     const dateEnrolFr = this.getOffreDateEnrolementFull('fr');
     const dateEnrolEn = this.getOffreDateEnrolementFull('en');
     const selectedCenter = this.getSelectedRecruitmentCenter();
     const lieuEnrolFr = (selectedCenter ? selectedCenter.fullFr : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
     const lieuEnrolEn = (selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
-    const dateArrivee = this.getOffreDateArriveeUniteFull();
+    const dateArriveeFr = this.getOffreDateArriveeUniteFull('fr');
+    const dateArriveeEn = this.getOffreDateArriveeUniteFull('en');
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
@@ -1185,13 +1203,13 @@ export function getOffreNormaleEmailHtml(this: any): string {
     let frHtml = `<p>Bonjour,</p>`;
     frHtml += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
     frHtml += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
-    frHtml += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}</p>`;
+    frHtml += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${progFr}<br><strong>Élément :</strong> ${elem}</p>`;
     frHtml += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
     frHtml += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
     frHtml += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
     frHtml += this.getTeamsLinkHtmlFr();
     frHtml += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    frHtml += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    frHtml += `<strong>Date d’arrivée à votre unité :</strong> ${dateArriveeFr}`;
     if (hasCourseDates) {
       frHtml += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
     }
@@ -1209,13 +1227,13 @@ export function getOffreNormaleEmailHtml(this: any): string {
     let enHtml = `<p>Hello,</p>`;
     enHtml += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
     enHtml += `<p>Below you will find the details of the job offer discussed today:</p>`;
-    enHtml += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}</p>`;
+    enHtml += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${progEn}<br><strong>Element:</strong> ${elem}</p>`;
     enHtml += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
     enHtml += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
     enHtml += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
     enHtml += this.getTeamsLinkHtmlEn();
     enHtml += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    enHtml += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    enHtml += `<strong>Arrival date at your unit:</strong> ${dateArriveeEn}`;
     if (hasCourseDates) {
       enHtml += `<br><strong>Your course dates:</strong> ${datesCours}`;
     }
@@ -1252,7 +1270,9 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
       return this.getOffreOtaEmailPlain();
     }
     const metier = this.offreMetier();
-    const prog = this.offreProgrammeEnrolement();
+    const rawProg = this.offreProgrammeEnrolement();
+    const progFr = this.jobService ? this.jobService.translateProgram(rawProg, 'fr') : rawProg;
+    const progEn = this.jobService ? this.jobService.translateProgram(rawProg, 'en') : rawProg;
     const elem = this.offreElement();
     const dureeContrat = this.offreDureeContrat();
     const etudesSub = this.offreEtudesSubventionnees();
@@ -1262,7 +1282,8 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
     const selectedCenter = this.getSelectedRecruitmentCenter();
     const lieuEnrolFr = selectedCenter ? selectedCenter.fullFr : this.offreLieuEnrolement();
     const lieuEnrolEn = selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement();
-    const dateArrivee = this.getOffreDateArriveeUniteFull();
+    const dateArriveeFr = this.getOffreDateArriveeUniteFull('fr');
+    const dateArriveeEn = this.getOffreDateArriveeUniteFull('en');
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
@@ -1271,7 +1292,7 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
     fr += "Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.\n\n";
     fr += "Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :\n\n";
     fr += `Métier : ${metier}\n`;
-    fr += `Programme d’enrôlement :     ${prog}\n`;
+    fr += `Programme d’enrôlement :     ${progFr}\n`;
     fr += `Élément :      ${elem}\n`;
     fr += `Durée du contrat :    ${dureeContrat}\n`;
     fr += `Études subventionnées :     ${etudesSub}\n`;
@@ -1281,7 +1302,7 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
     fr += "Stationnement : Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.\n";
     fr += this.getTeamsLinkPlainFr();
     fr += `Unité d’affectation : ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
-    fr += `Date d’arrivée à votre unité:  ${dateArrivee}\n`;
+    fr += `Date d’arrivée à votre unité:  ${dateArriveeFr}\n`;
     if (hasCourseDates) {
       fr += `Vos dates de cours :    ${datesCours}\n`;
     }
@@ -1299,7 +1320,7 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
     en += "First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.\n\n";
     en += "Below you will find the details of the job offer discussed today:\n\n";
     en += `Occupation: ${metier}\n`;
-    en += `Enrolment program:     ${prog}\n`;
+    en += `Enrolment program:     ${progEn}\n`;
     en += `Element:      ${elem}\n`;
     en += `Contract duration:    ${dureeContrat}\n`;
     en += `Subsidized education:     ${etudesSub}\n`;
@@ -1309,7 +1330,7 @@ export function getOffreEtudesSubventionneesEmailPlain(this: any): string {
     en += "Parking: Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.\n";
     en += this.getTeamsLinkPlainEn();
     en += `Posting unit: ${this.getUniteAffectationObj().nom}\n${this.getUniteAffectationObj().adressePlain}\n\n`;
-    en += `Arrival date at your unit:  ${dateArrivee}\n`;
+    en += `Arrival date at your unit:  ${dateArriveeEn}\n`;
     if (hasCourseDates) {
       en += `Your course dates:    ${datesCours}\n`;
     }
@@ -1335,7 +1356,9 @@ export function getOffreEtudesSubventionneesEmailHtml(this: any): string {
       return this.getOffreOtaEmailHtml();
     }
     const metier = this.offreMetier();
-    const prog = this.offreProgrammeEnrolement();
+    const rawProg = this.offreProgrammeEnrolement();
+    const progFr = this.jobService ? this.jobService.translateProgram(rawProg, 'fr') : rawProg;
+    const progEn = this.jobService ? this.jobService.translateProgram(rawProg, 'en') : rawProg;
     const elem = this.offreElement();
     const dureeContrat = this.offreDureeContrat();
     const etudesSub = this.offreEtudesSubventionnees();
@@ -1345,20 +1368,21 @@ export function getOffreEtudesSubventionneesEmailHtml(this: any): string {
     const selectedCenter = this.getSelectedRecruitmentCenter();
     const lieuEnrolFr = (selectedCenter ? selectedCenter.fullFr : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
     const lieuEnrolEn = (selectedCenter ? selectedCenter.fullEn : this.offreLieuEnrolement()).replace(/\n/g, '<br>');
-    const dateArrivee = this.getOffreDateArriveeUniteFull();
+    const dateArriveeFr = this.getOffreDateArriveeUniteFull('fr');
+    const dateArriveeEn = this.getOffreDateArriveeUniteFull('en');
     const datesCours = this.getOffreDatesCoursFull();
     const hasCourseDates = !!this.offreSerieCours().trim() && !!datesCours;
 
     let frHtml = `<p>Bonjour,</p>`;
     frHtml += `<p>Tout d’abord, je tiens à vous féliciter d’avoir complété le processus de sélection des Forces armées Canadiennes.</p>`;
     frHtml += `<p>Vous trouverez, plus bas, les détails de l’offre d’emploi discutée aujourd’hui :</p>`;
-    frHtml += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${prog}<br><strong>Élément :</strong> ${elem}<br><strong>Durée du contrat :</strong> ${dureeContrat}<br><strong>Études subventionnées :</strong> ${etudesSub}<br><strong>Durée des études subventionnées :</strong> ${dureeEtudesSub}</p>`;
+    frHtml += `<p><strong>Métier :</strong> ${metier}<br><strong>Programme d’enrôlement :</strong> ${progFr}<br><strong>Élément :</strong> ${elem}<br><strong>Durée du contrat :</strong> ${dureeContrat}<br><strong>Études subventionnées :</strong> ${etudesSub}<br><strong>Durée des études subventionnées :</strong> ${dureeEtudesSub}</p>`;
     frHtml += `<p><strong>Date d’enrôlement :</strong> ${dateEnrolFr}<br>`;
     frHtml += `<strong>Lieu de l’enrôlement :</strong> ${lieuEnrolFr}<br>`;
     frHtml += `<strong>Stationnement :</strong> Veuillez prévoir du temps supplémentaire pour trouver une place de stationnement, car les espaces disponibles autour du bâtiment sont limités. Faites attention où vous stationnerez afin d’éviter de faire remorquer votre véhicule ou d’avoir une contravention.<br>`;
     frHtml += this.getTeamsLinkHtmlFr();
     frHtml += `<p><strong>Unité d’affectation :</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    frHtml += `<strong>Date d’arrivée à votre unité :</strong> ${dateArrivee}`;
+    frHtml += `<strong>Date d’arrivée à votre unité :</strong> ${dateArriveeFr}`;
     if (hasCourseDates) {
       frHtml += `<br><strong>Vos dates de cours :</strong> ${datesCours}`;
     }
@@ -1375,13 +1399,13 @@ export function getOffreEtudesSubventionneesEmailHtml(this: any): string {
     let enHtml = `<p>Hello,</p>`;
     enHtml += `<p>First of all, I would like to congratulate you on completing the selection process for the Canadian Armed Forces.</p>`;
     enHtml += `<p>Below you will find the details of the job offer discussed today:</p>`;
-    enHtml += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${prog}<br><strong>Element:</strong> ${elem}<br><strong>Contract duration:</strong> ${dureeContrat}<br><strong>Subsidized education:</strong> ${etudesSub}<br><strong>Subsidized education duration:</strong> ${dureeEtudesSub}</p>`;
+    enHtml += `<p><strong>Occupation:</strong> ${metier}<br><strong>Enrolment program:</strong> ${progEn}<br><strong>Element:</strong> ${elem}<br><strong>Contract duration:</strong> ${dureeContrat}<br><strong>Subsidized education:</strong> ${etudesSub}<br><strong>Subsidized education duration:</strong> ${dureeEtudesSub}</p>`;
     enHtml += `<p><strong>Enrolment date:</strong> ${dateEnrolEn}<br>`;
     enHtml += `<strong>Enrolment location:</strong> ${lieuEnrolEn}<br>`;
     enHtml += `<strong>Parking:</strong> Please allow extra time to find a parking space, as available spaces around the building are limited. Please be careful where you park to avoid having your vehicle towed or receiving a parking ticket.<br>`;
     enHtml += this.getTeamsLinkHtmlEn();
     enHtml += `<p><strong>Posting unit:</strong> ${this.getUniteAffectationObj().nom}<br>${this.getUniteAffectationObj().adresseHtml}<br>`;
-    enHtml += `<strong>Arrival date at your unit:</strong> ${dateArrivee}`;
+    enHtml += `<strong>Arrival date at your unit:</strong> ${dateArriveeEn}`;
     if (hasCourseDates) {
       enHtml += `<br><strong>Your course dates:</strong> ${datesCours}`;
     }

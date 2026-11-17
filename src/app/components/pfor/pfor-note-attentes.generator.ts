@@ -229,7 +229,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       if (this.isCandidateTooOld()) {
         h += '<p class="mt-4">Suite à l\'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que vous devez faire l\'objet d\'une réorientation. En effet, vous dépassez l\'âge maximal d\'admissibilité pour ce programme.</p>\n';
       } else if (this.pforType() === "cmr" && cmrAdmittedFr) {
-        h += `<p class="mt-4">Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), <strong>vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} !</strong> Nous tenons à vous féliciter chaleureusement pour cette admission.</p>\n`;
+        h += this.i18n.tLang('pforEmail.cmrEligibleIntroHtml', 'fr', { domains: cmrAdmittedFr }) + '\n';
       } else {
         h += `<p class="mt-4">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR${this.pforType() === 'civil' ? ' - Universités civiles' : ''})</strong>, nous constatons que vous devez faire l'objet d'une réorientation.</p>\n`;
       }
@@ -327,7 +327,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       if (this.isCandidateTooOld()) {
         hEn += '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we note that you require a reorientation. Indeed, you exceed the maximum eligibility age for this program.</p>\n';
       } else if (this.pforType() === "cmr" && cmrAdmittedEn) {
-        hEn += `<p class="mt-4">We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), <strong>you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}!</strong> We would like to warmly congratulate you on your admission.</p>\n`;
+        hEn += this.i18n.tLang('pforEmail.cmrEligibleIntroHtml', 'en', { domains: cmrAdmittedEn }) + '\n';
       } else {
         hEn += `<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP${this.pforType() === 'civil' ? ' - Civilian Universities' : ''})</strong>, we note that you require a reorientation.</p>\n`;
       }
@@ -441,7 +441,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       if (this.isCandidateTooOld()) {
         t += "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que vous devez faire l'objet d'une réorientation. En effet, vous dépassez l'âge maximal d'admissibilité pour ce programme.\n\n";
       } else if (this.pforType() === "cmr" && cmrAdmittedFr) {
-        t += `Nous avons le plaisir de vous informer que, suite à l'évaluation de vos relevés de notes et de votre potentiel académique par le Collège militaire royal du Canada (CMR) pour le Programme de formation des officiers de la force régulière (PFOR), vous avez été admis(e) au CMR dans le(s) domaine(s) d'études suivant(s) : ${cmrAdmittedFr} ! Nous tenons à vous féliciter chaleureusement pour cette admission.\n\n`;
+        t += this.i18n.tLang('pforEmail.cmrEligibleIntroPlain', 'fr', { domains: cmrAdmittedFr }) + '\n\n';
       } else {
         t += `Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR${this.pforType() === 'civil' ? ' - Universités civiles' : ''}), nous constatons que vous devez faire l'objet d'une réorientation.\n\n`;
       }
@@ -519,7 +519,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       if (this.isCandidateTooOld()) {
         tEn += "Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we note that you require a reorientation. Indeed, you exceed the maximum eligibility age for this program.\n\n";
       } else if (this.pforType() === "cmr" && cmrAdmittedEn) {
-        tEn += `We are pleased to inform you that, following the assessment of your transcripts and academic potential by the Royal Military College of Canada (RMC) for the Regular Officer Training Plan (ROTP), you have been admitted to RMC in the following field(s) of study: ${cmrAdmittedEn}! We would like to warmly congratulate you on your admission.\n\n`;
+        tEn += this.i18n.tLang('pforEmail.cmrEligibleIntroPlain', 'en', { domains: cmrAdmittedEn }) + '\n\n';
       } else {
         tEn += `Following the analysis of your application file for the Regular Officer Training Plan (ROTP${this.pforType() === 'civil' ? ' - Civilian Universities' : ''}), we note that you require a reorientation.\n\n`;
       }

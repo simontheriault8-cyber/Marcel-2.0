@@ -726,7 +726,6 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                     [class.bg-slate-800]="!copiedEmailCaf101()"
                     [class.hover:bg-slate-700]="!copiedEmailCaf101()"
                     [class.bg-green-600]="copiedEmailCaf101()"
-                    title="Exporter vers Outlook - CAF 101"
                   >
                     @if (copiedEmailCaf101()) {
                       <svg
@@ -767,7 +766,6 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                     [class.bg-indigo-600]="!copiedEmailLienPa()"
                     [class.hover:bg-indigo-700]="!copiedEmailLienPa()"
                     [class.bg-green-600]="copiedEmailLienPa()"
-                    title="Exporter vers Outlook - Lien PA"
                   >
                     @if (copiedEmailLienPa()) {
                       <svg
@@ -895,7 +893,6 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                         type="button"
                         (click)="toggleAllSgtInstructions(currentInstructions)"
                         class="text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors cursor-pointer"
-                        [title]="i18n.t('sgt.checkAllTitle')"
                       >
                         {{ isAllDone ? i18n.t('sgt.uncheckAll') : i18n.t('sgt.checkAll') }}
                       </button>

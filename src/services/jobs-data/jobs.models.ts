@@ -31,6 +31,9 @@ export interface EntryProgramsDatabase {
   regularForceNCM: string[];
   regularForceOfficer: string[];
   all: string[];
+  regularForceNCMEn: string[];
+  regularForceOfficerEn: string[];
+  allEn: string[];
 }
 
 export const REGULAR_FORCE_NCM_PROGRAMS: string[] = [
@@ -42,6 +45,15 @@ export const REGULAR_FORCE_NCM_PROGRAMS: string[] = [
   "Semi-Qual",
 ];
 
+export const REGULAR_FORCE_NCM_PROGRAMS_EN: string[] = [
+  "CAFIP",
+  "NCM-STEP",
+  "RSBP",
+  "S-Skilled",
+  "Skilled",
+  "Unskilled",
+];
+
 export const REGULAR_FORCE_OFFICER_PROGRAMS: string[] = [
   "EDO",
   "EDO(ES-PMNE)",
@@ -51,6 +63,18 @@ export const REGULAR_FORCE_OFFICER_PROGRAMS: string[] = [
   "PFOEP",
   "PFOR",
   "PIMM",
+];
+
+export const REGULAR_FORCE_OFFICER_PROGRAMS_EN: string[] = [
+  "CAFIP",
+  "CEOTP",
+  "DEO",
+  "DEO (SEELM)",
+  "DOTP",
+  "MOTP",
+  "PATP",
+  "ROTP",
+  "SOTP",
 ];
 
 export const ALL_ENROLLMENT_PROGRAMS: string[] = [
@@ -76,10 +100,64 @@ export const ALL_ENROLLMENT_PROGRAMS: string[] = [
   "Semi-Qual",
 ];
 
+export const ALL_ENROLLMENT_PROGRAMS_EN: string[] = [
+  "CAFIP",
+  "CEOTP",
+  "DEO",
+  "DEO (SEELM)",
+  "DOTP",
+  "MOTP",
+  "NCM-STEP",
+  "PATP",
+  "ROTP",
+  "RSBP",
+  "S-Skilled",
+  "Skilled",
+  "SOTP",
+  "Unskilled",
+];
+
+export const PROGRAM_FR_TO_EN: Record<string, string> = {
+  "EER": "RSBP",
+  "Non Qual": "Unskilled",
+  "PFACA": "CAFIP",
+  "PFS-MR": "NCM-STEP",
+  "Qual": "Skilled",
+  "Semi-Qual": "S-Skilled",
+  "EDO": "DEO",
+  "EDO(ES-PMNE)": "DEO (SEELM)",
+  "PFAM": "PATP",
+  "PFDM": "DOTP",
+  "PFOEP": "CEOTP",
+  "PFOR": "ROTP",
+  "PIMM": "MOTP",
+  "PFOS": "SOTP",
+};
+
+export const PROGRAM_EN_TO_FR: Record<string, string> = {
+  "RSBP": "EER",
+  "Unskilled": "Non Qual",
+  "CAFIP": "PFACA",
+  "NCM-STEP": "PFS-MR",
+  "Skilled": "Qual",
+  "S-Skilled": "Semi-Qual",
+  "DEO": "EDO",
+  "DEO (SEELM)": "EDO(ES-PMNE)",
+  "PATP": "PFAM",
+  "DOTP": "PFDM",
+  "CEOTP": "PFOEP",
+  "ROTP": "PFOR",
+  "MOTP": "PIMM",
+  "SOTP": "PFOS",
+};
+
 export const ENTRY_PROGRAMS_DATABASE: EntryProgramsDatabase = {
   regularForceNCM: REGULAR_FORCE_NCM_PROGRAMS,
   regularForceOfficer: REGULAR_FORCE_OFFICER_PROGRAMS,
   all: ALL_ENROLLMENT_PROGRAMS,
+  regularForceNCMEn: REGULAR_FORCE_NCM_PROGRAMS_EN,
+  regularForceOfficerEn: REGULAR_FORCE_OFFICER_PROGRAMS_EN,
+  allEn: ALL_ENROLLMENT_PROGRAMS_EN,
 };
 
 export type MilitaryElement = 'Air' | 'Armée' | 'Marine' | 'CMP';

@@ -146,8 +146,8 @@ export function selectOffreMetier(this: any, job: JobEntry) {
     }
 
     // Validate whether currently selected programme is still valid for this job category
-    const validProgs = this.jobService.getProgramsForJobType(job.category || (this.jobService.isOfficerJob(job.id) ? 'officier' : 'mr'));
-    if (this.offreProgrammeEnrolement() && !validProgs.includes(this.offreProgrammeEnrolement())) {
+    const category = job.category || (this.jobService.isOfficerJob(job.id) ? 'officier' : 'mr');
+    if (this.offreProgrammeEnrolement() && !this.jobService.isProgramValidForCategory(this.offreProgrammeEnrolement(), category)) {
       this.offreProgrammeEnrolement.set('');
     }
     
@@ -174,8 +174,7 @@ export function onOffreMetierQueryChange(this: any, val: string) {
     }
 
     const detectedType = this.jobService.detectJobType(val);
-    const validProgs = this.jobService.getProgramsForJobType(detectedType);
-    if (this.offreProgrammeEnrolement() && !validProgs.includes(this.offreProgrammeEnrolement())) {
+    if (this.offreProgrammeEnrolement() && !this.jobService.isProgramValidForCategory(this.offreProgrammeEnrolement(), detectedType)) {
       this.offreProgrammeEnrolement.set('');
     }
     if (val && val.trim().length > 0) {

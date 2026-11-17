@@ -21,7 +21,6 @@ import { TranslationService } from '../i18n';
           [class.text-slate-600]="i18n.lang() !== 'fr'"
           [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
           class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-          [title]="i18n.t('lang.switchToFrench')"
         >
           FR
         </button>
@@ -35,7 +34,6 @@ import { TranslationService } from '../i18n';
           [class.text-slate-600]="i18n.lang() !== 'en'"
           [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
           class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-          [title]="i18n.t('lang.switchToEnglish')"
         >
           EN
         </button>
@@ -77,7 +75,9 @@ import { TranslationService } from '../i18n';
         </div>
 
         <div class="space-y-2">
-          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">
+          <h1
+            class="text-2xl font-extrabold text-slate-800 tracking-tight"
+          >
             {{ i18n.t('aorSelect.title') }}
           </h1>
           <p class="text-sm text-slate-500">

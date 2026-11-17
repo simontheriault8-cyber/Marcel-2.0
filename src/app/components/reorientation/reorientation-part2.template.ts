@@ -479,7 +479,9 @@ export const REORIENTATION_TEMPLATE_PART2 = `
                 <div class="p-4 pb-0">
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div class="flex items-center gap-2.5">
-                      <h3 class="text-lg font-bold text-slate-800">
+                      <h3
+                        class="text-lg font-bold text-slate-800"
+                      >
                         {{ i18n.t('scolExp.tabScolarite') }}
                       </h3>
                       @if (adminAuth.isAdminUnlocked()) {
@@ -487,7 +489,6 @@ export const REORIENTATION_TEMPLATE_PART2 = `
                           type="button"
                           (click)="resetEducationCriteria()"
                           class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 hover:border-rose-300 transition-all cursor-pointer shadow-xs active:scale-95"
-                          [title]="i18n.t('scolExp.resetEducationTitle')"
                         >
                           <svg
                             class="w-3.5 h-3.5 text-rose-600"
@@ -507,7 +508,9 @@ export const REORIENTATION_TEMPLATE_PART2 = `
                       }
                     </div>
                     <div class="flex flex-col items-start gap-1.5 text-sm font-medium text-slate-700">
-                      <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
+                      <label
+                        class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900"
+                      >
                         <input
                           type="checkbox"
                           [checked]="selectedCriteriaIds().has('etude_anglais')"
@@ -516,7 +519,9 @@ export const REORIENTATION_TEMPLATE_PART2 = `
                         />
                         <span>{{ i18n.t('scolExp.etudeAnglais') }}</span>
                       </label>
-                      <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
+                      <label
+                        class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900"
+                      >
                         <input
                           type="checkbox"
                           [checked]="selectedCriteriaIds().has('etude_hors_canada')"

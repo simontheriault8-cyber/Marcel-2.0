@@ -8,7 +8,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                 <div class="p-4 pb-0">
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <div class="flex items-center gap-2.5">
-                      <h3 class="text-lg font-bold text-slate-800">
+                      <h3
+                        class="text-lg font-bold text-slate-800"
+                      >
                         {{ i18n.t('scolExp.tabScolarite') }}
                       </h3>
                       @if (adminAuth.isAdminUnlocked()) {
@@ -16,7 +18,6 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                           type="button"
                           (click)="resetEducationCriteria()"
                           class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 hover:border-rose-300 transition-all cursor-pointer shadow-xs active:scale-95"
-                          [title]="i18n.t('scolExp.resetEducationTitle')"
                         >
                           <svg
                             class="w-3.5 h-3.5 text-rose-600"
@@ -36,7 +37,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       }
                     </div>
                     <div class="flex flex-col items-start gap-1.5 text-sm font-medium text-slate-700">
-                      <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
+                      <label
+                        class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900"
+                      >
                         <input
                           type="checkbox"
                           [checked]="selectedCriteriaIds().has('etude_anglais')"
@@ -45,7 +48,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                         />
                         <span>{{ i18n.t('scolExp.etudeAnglais') }}</span>
                       </label>
-                      <label class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900">
+                      <label
+                        class="inline-flex items-center gap-2 cursor-pointer select-none hover:text-slate-900"
+                      >
                         <input
                           type="checkbox"
                           [checked]="selectedCriteriaIds().has('etude_hors_canada')"
@@ -339,7 +344,6 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                         *ngIf="univDegreeSearchQuery()"
                         (click)="clearUnivDegreeSearch()"
                         type="button"
-                        [title]="i18n.t('scolExp.clearSearch')"
                         class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
                       >
                         <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -856,7 +860,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
             >
               <div class="bg-slate-50 border-b border-slate-200 shrink-0">
                 <div class="p-4 pb-0">
-                  <h3 class="text-lg font-bold text-slate-800 mb-3">
+                  <h3
+                    class="text-lg font-bold text-slate-800 mb-3"
+                  >
                     {{ i18n.t('scolExp.experience') }}
                   </h3>
                 </div>
@@ -884,7 +890,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       @if (hasEceJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEcePassed()"
@@ -912,7 +920,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEceNotCompleted()"
@@ -929,7 +939,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       @if (hasEsomJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEsomPassed()"
@@ -957,7 +969,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEsomNotCompleted()"
@@ -974,7 +988,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       @if (hasCeopmJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCeopmPassed()"
@@ -1002,7 +1018,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCeopmNotCompleted()"
@@ -1019,7 +1037,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                       @if (hasCspnJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs space-y-2">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCspnPassed()"
@@ -1047,7 +1067,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCspnNotCompleted()"
@@ -1064,7 +1086,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                                 {{ i18n.t('scolExp.metiersTestReussi') }}
                               </p>
                               <div class="grid grid-cols-1 gap-1.5">
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00182Passed()"
@@ -1076,7 +1100,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                                   </span>
                                 </label>
 
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00183Passed()"
@@ -1088,7 +1114,9 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                                   </span>
                                 </label>
 
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00184Passed()"

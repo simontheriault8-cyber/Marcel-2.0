@@ -8,3 +8,5 @@ export * from './dictionaries/emails-subjects-headers.dict';
 export * from './dictionaries/data-labels.dict';
 export * from './dictionaries/jobs.dict';
 export * from './dictionaries/university-degrees.dict';
+export * from './dictionaries/emails-pfor.dict';
+export * from './dictionaries/emails-reorientation.dict';

@@ -60,7 +60,6 @@ import { TranslationService } from '../i18n';
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="(i18n.lang() === 'fr' ? (mel.textFr || mel.text) : mel.text) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
                         {{ isAcceptable(mel.id, occ.id) ? i18n.t('mel.yes') : i18n.t('mel.no') }}
@@ -119,7 +118,6 @@ import { TranslationService } from '../i18n';
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="(i18n.lang() === 'fr' ? (mel.textFr || mel.text) : mel.text) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
                         {{ isAcceptable(mel.id, occ.id) ? i18n.t('mel.yes') : i18n.t('mel.no') }}
@@ -178,7 +176,6 @@ import { TranslationService } from '../i18n';
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="(i18n.lang() === 'fr' ? (mel.textFr || mel.text) : mel.text) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
                         {{ isAcceptable(mel.id, occ.id) ? i18n.t('mel.yes') : i18n.t('mel.no') }}
@@ -237,7 +234,6 @@ import { TranslationService } from '../i18n';
                         [class.bg-red-500]="!isAcceptable(mel.id, occ.id)"
                         [class.text-white]="true"
                         (click)="toggleAcceptability(mel.id, occ.id)"
-                        [title]="(i18n.lang() === 'fr' ? (mel.textFr || mel.text) : mel.text) + ' - ' + occ.abbreviation"
                     >
                       <div class="flex items-center justify-center w-full h-full min-h-[40px] font-bold">
                         {{ isAcceptable(mel.id, occ.id) ? i18n.t('mel.yes') : i18n.t('mel.no') }}

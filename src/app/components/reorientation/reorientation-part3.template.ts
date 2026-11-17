@@ -347,7 +347,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
             >
               <div class="bg-slate-50 border-b border-slate-200 shrink-0">
                 <div class="p-4 pb-0">
-                  <h3 class="text-lg font-bold text-slate-800 mb-3">
+                  <h3
+                    class="text-lg font-bold text-slate-800 mb-3"
+                  >
                     {{ i18n.t('scolExp.experience') }}
                   </h3>
                 </div>
@@ -375,7 +377,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                       @if (hasEceJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEcePassed()"
@@ -403,7 +407,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEceNotCompleted()"
@@ -420,7 +426,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                       @if (hasEsomJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEsomPassed()"
@@ -448,7 +456,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testEsomNotCompleted()"
@@ -465,7 +475,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                       @if (hasCeopmJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCeopmPassed()"
@@ -493,7 +505,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCeopmNotCompleted()"
@@ -510,7 +524,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                       @if (hasCspnJob()) {
                         <div class="p-2.5 bg-white border border-indigo-100 rounded-lg shadow-2xs space-y-2">
                           <div class="flex flex-wrap items-start justify-between gap-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <label
+                              class="flex items-start gap-2.5 cursor-pointer select-none"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCspnPassed()"
@@ -538,7 +554,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                               </div>
                             </label>
 
-                            <label class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors">
+                            <label
+                              class="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-50/90 border border-amber-200 rounded-md cursor-pointer hover:bg-amber-100/80 select-none transition-colors"
+                            >
                               <input
                                 type="checkbox"
                                 [checked]="testCspnNotCompleted()"
@@ -555,7 +573,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                                 {{ i18n.t('scolExp.metiersTestReussi') }}
                               </p>
                               <div class="grid grid-cols-1 gap-1.5">
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00182Passed()"
@@ -567,7 +587,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                                   </span>
                                 </label>
 
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00183Passed()"
@@ -579,7 +601,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                                   </span>
                                 </label>
 
-                                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none">
+                                <label
+                                  class="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-50 cursor-pointer border border-slate-100 select-none"
+                                >
                                   <input
                                     type="checkbox"
                                     [checked]="testCspn00184Passed()"
@@ -810,7 +834,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                 <span class="p-1 px-2 rounded bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold font-sans uppercase tracking-wider">
                   {{ i18n.t('reo.registryBadge') }}
                 </span>
-                <h3 class="text-sm font-bold text-slate-800">
+                <h3
+                  class="text-sm font-bold text-slate-800"
+                >
                   {{ i18n.t('reo.registryNoteTitle') }}
                 </h3>
               </div>
@@ -884,7 +910,9 @@ export const REORIENTATION_TEMPLATE_PART3 = `
               class="p-4 bg-slate-50 border-b border-slate-200 shrink-0 flex items-center justify-between flex-wrap gap-2"
             >
               <div class="flex items-center gap-2 flex-wrap">
-                <h3 class="text-sm font-bold text-slate-800">
+                <h3
+                  class="text-sm font-bold text-slate-800"
+                >
                   {{ (citizenship() === 'PR < 3 years') ? i18n.t('reo.emailPrClosed') : (age() !== null && age()! >= 57) ? i18n.t('reo.emailAgeClosed') : i18n.t('reo.emailTitle') }}
                 </h3>
                 @if (citizenship() === 'PR < 3 years') {
@@ -926,7 +954,6 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                   [class.hover:bg-emerald-700]="copied()"
                   [class.bg-blue-600]="!copied()"
                   [class.hover:bg-blue-700]="!copied()"
-                  [title]="i18n.t('reo.exportOutlook')"
                 >
                   @if (copied()) {
                     <svg

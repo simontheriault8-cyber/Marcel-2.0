@@ -51,7 +51,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             <button
               (click)="openTutoMarcel()"
               class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-              [title]="i18n.t('roleSelect.tutoMarcelTitle')"
             >
               <div class="w-7 h-7 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 flex items-center justify-center transition-colors shadow-xs">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,7 +67,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               type="button"
               (click)="switchAor()"
               class="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-xs cursor-pointer active:scale-95"
-              [title]="i18n.t('header.switchAorTitle')"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -91,7 +89,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                 [class.text-slate-600]="i18n.lang() !== 'fr'"
                 [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
                 class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-                [title]="i18n.t('lang.switchToFrench')"
               >
                 FR
               </button>
@@ -105,7 +102,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                 [class.text-slate-600]="i18n.lang() !== 'en'"
                 [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
                 class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-                [title]="i18n.t('lang.switchToEnglish')"
               >
                 EN
               </button>
@@ -185,7 +181,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               type="button"
               (click)="openAdminPortal()"
               class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-400 text-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-              [title]="i18n.t('admin.buttonTitle')"
             >
               <div class="w-7 h-7 rounded-xl bg-slate-100 group-hover:bg-slate-800 group-hover:text-white text-slate-700 flex items-center justify-center transition-colors shadow-xs">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -213,7 +208,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
         <!-- Header -->
         <div class="max-w-5xl w-full mx-auto flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 shrink-0">
           <div class="flex items-center gap-4">
-            <button (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer" [title]="i18n.t('header.back')">
+            <button (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -370,7 +365,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="toggleJobSearch()"
             class="bg-indigo-100 border border-indigo-200 text-indigo-800 hover:bg-indigo-200 h-10 w-10 rounded-full shadow-sm transition-all font-sans flex items-center justify-center text-sm font-black cursor-pointer active:scale-95"
-            [title]="i18n.t('header.reoTooltip')"
           >
             {{ i18n.t('header.reo') }}
           </button>
@@ -380,7 +374,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             type="button"
             (click)="switchAor()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchAorTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -393,7 +386,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchRoleTitle')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -465,7 +457,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="backToRecruiterMinorCheck()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.backTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -478,7 +469,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             type="button"
             (click)="switchAor()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchAorTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -491,7 +481,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchRoleTitle')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -565,7 +554,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             type="button"
             (click)="switchAor()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchAorTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -577,7 +565,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchRoleTitle')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -650,7 +637,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="backToGdDossierType()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.backTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -663,7 +649,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             type="button"
             (click)="switchAor()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchAorTitle')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -676,7 +661,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <button
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
-            [title]="i18n.t('header.switchRoleTitle')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -769,7 +753,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <button
                 (click)="restartApp()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                [title]="i18n.t('header.resetTitle')"
               >
                 <svg
                   class="h-3.5 w-3.5 shrink-0 text-slate-600"
@@ -791,7 +774,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <button
                 (click)="toggleJobSearch()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold border border-indigo-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                [title]="selectedRole() === 'gestionnaire' ? i18n.t('header.enrolmentTooltip') : i18n.t('header.reoTooltip')"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -814,7 +796,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <button
                 (click)="toggleSignatureSettings()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
-                [title]="i18n.t('header.signatureTooltip')"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -846,7 +827,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                   [class.text-slate-700]="selectedEmailBankTemplate() === ''"
                   [class.border-slate-200]="selectedEmailBankTemplate() === ''"
                   [class.hover:bg-slate-200]="selectedEmailBankTemplate() === ''"
-                  [title]="i18n.t('header.emailBank')"
                 >
                   <div class="flex items-center gap-1.5 min-w-0">
                     <svg
@@ -1169,7 +1149,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                   @if (recruiterDossierType() === 'pfor') {
                     <span
                       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-[11px] font-black uppercase tracking-wider select-none shadow-2xs"
-                      [title]="i18n.t('dossierJobs.pforCandidateTitle')"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
@@ -1186,7 +1165,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                     [class.bg-slate-50]="!sharedState.isPostulantPfor()"
                     [class.border-slate-200]="!sharedState.isPostulantPfor()"
                     [class.text-slate-600]="!sharedState.isPostulantPfor()"
-                    [title]="i18n.t('dossierJobs.pforCandidateTitle')"
                   >
                     <input
                       type="checkbox"
@@ -1202,7 +1180,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                   type="button"
                   (click)="switchAor()"
                   class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  [title]="i18n.t('header.switchAorTitle')"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -1214,7 +1191,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                 <button
                   (click)="switchRole()"
                   class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  [title]="i18n.t('header.switchRoleTitle')"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -1280,7 +1256,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                       <button
                         (click)="clearDossierJob(1, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        [title]="i18n.t('dossierJobs.clearChoice1')"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1379,7 +1354,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                       <button
                         (click)="clearDossierJob(2, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        [title]="i18n.t('dossierJobs.clearChoice2')"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1478,7 +1452,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                       <button
                         (click)="clearDossierJob(3, $event)"
                         class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        [title]="i18n.t('dossierJobs.clearChoice3')"
                       >
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1590,7 +1563,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                   [class.border-emerald-100]="!areAllDocsCompliant()"
                   [class.hover:bg-emerald-100]="!areAllDocsCompliant()"
                   [class.hover:border-emerald-200]="!areAllDocsCompliant()"
-                  [title]="areAllDocsCompliant() ? i18n.t('tasks.allCompliantDisableTitle') : i18n.t('tasks.allCompliantEnableTitle')"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1666,7 +1638,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                           [class.text-emerald-700]="!isGroupCompliant(group)"
                           [class.border-emerald-300]="!isGroupCompliant(group)"
                           [class.hover:bg-emerald-50]="!isGroupCompliant(group)"
-                          [title]="isGroupCompliant(group) ? i18n.t('tasks.groupCompliantDisableTitle') : i18n.t('tasks.groupCompliantEnableTitle')"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

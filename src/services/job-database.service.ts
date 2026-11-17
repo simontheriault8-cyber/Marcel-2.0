@@ -8,6 +8,11 @@ import {
   REGULAR_FORCE_NCM_PROGRAMS,
   REGULAR_FORCE_OFFICER_PROGRAMS,
   ALL_ENROLLMENT_PROGRAMS,
+  REGULAR_FORCE_NCM_PROGRAMS_EN,
+  REGULAR_FORCE_OFFICER_PROGRAMS_EN,
+  ALL_ENROLLMENT_PROGRAMS_EN,
+  PROGRAM_FR_TO_EN,
+  PROGRAM_EN_TO_FR,
   ENTRY_PROGRAMS_DATABASE,
   EntryProgramsDatabase,
   RecruitmentCenter,
@@ -58,6 +63,9 @@ export class JobDatabaseService {
   readonly REGULAR_FORCE_NCM_PROGRAMS = REGULAR_FORCE_NCM_PROGRAMS;
   readonly REGULAR_FORCE_OFFICER_PROGRAMS = REGULAR_FORCE_OFFICER_PROGRAMS;
   readonly ALL_ENROLLMENT_PROGRAMS = ALL_ENROLLMENT_PROGRAMS;
+  readonly REGULAR_FORCE_NCM_PROGRAMS_EN = REGULAR_FORCE_NCM_PROGRAMS_EN;
+  readonly REGULAR_FORCE_OFFICER_PROGRAMS_EN = REGULAR_FORCE_OFFICER_PROGRAMS_EN;
+  readonly ALL_ENROLLMENT_PROGRAMS_EN = ALL_ENROLLMENT_PROGRAMS_EN;
 
   // Elements map
   readonly JOB_ELEMENTS_MAP = JOB_ELEMENTS_MAP;
@@ -197,7 +205,16 @@ export class JobDatabaseService {
     return this.isOfficerJob(jobId) ? 'officier' : 'mr';
   }
 
-  getProgramsForJobType(jobCategory: JobCategory | null): string[] {
+  getProgramsForJobType(jobCategory: JobCategory | null, lang: 'fr' | 'en' = 'fr'): string[] {
+    if (lang === 'en') {
+      if (jobCategory === 'officier') {
+        return this.REGULAR_FORCE_OFFICER_PROGRAMS_EN;
+      }
+      if (jobCategory === 'mr') {
+        return this.REGULAR_FORCE_NCM_PROGRAMS_EN;
+      }
+      return this.ALL_ENROLLMENT_PROGRAMS_EN;
+    }
     if (jobCategory === 'officier') {
       return this.REGULAR_FORCE_OFFICER_PROGRAMS;
     }
@@ -205,6 +222,24 @@ export class JobDatabaseService {
       return this.REGULAR_FORCE_NCM_PROGRAMS;
     }
     return this.ALL_ENROLLMENT_PROGRAMS;
+  }
+
+  translateProgram(program: string, targetLang: 'fr' | 'en'): string {
+    if (!program) return '';
+    if (targetLang === 'en') {
+      return PROGRAM_FR_TO_EN[program] || program;
+    }
+    return PROGRAM_EN_TO_FR[program] || program;
+  }
+
+  isProgramValidForCategory(program: string, jobCategory: JobCategory | null): boolean {
+    if (!program) return false;
+    const fr = this.translateProgram(program, 'fr');
+    const en = this.translateProgram(program, 'en');
+    return (
+      this.getProgramsForJobType(jobCategory, 'fr').includes(fr) ||
+      this.getProgramsForJobType(jobCategory, 'en').includes(en)
+    );
   }
 
   detectJobType(jobQueryOrId: string): JobCategory | null {
@@ -225,16 +260,19 @@ export class JobDatabaseService {
     const lower = trimmed.toLowerCase();
     const foundJob = this.jobs.find((j) =>
       j.title.toLowerCase() === lower ||
+      (j.titleEn && j.titleEn.toLowerCase() === lower) ||
       j.abbreviation.toLowerCase() === lower ||
       `${j.id} - ${j.title}`.toLowerCase() === lower ||
-      lower.includes(j.title.toLowerCase())
+      (j.titleEn && `${j.id} - ${j.titleEn}`.toLowerCase() === lower) ||
+      lower.includes(j.title.toLowerCase()) ||
+      (j.titleEn && lower.includes(j.titleEn.toLowerCase()))
     );
     if (foundJob) {
       return this.isOfficerJob(foundJob.id) ? 'officier' : 'mr';
     }
 
     // 3. Heuristics based on keywords
-    if (lower.includes('officier') || lower.includes('offr')) {
+    if (lower.includes('officier') || lower.includes('officer') || lower.includes('offr')) {
       return 'officier';
     }
     if (lower.includes('militaire du rang') || lower.includes('mr') || lower.includes('ncm')) {
@@ -244,9 +282,9 @@ export class JobDatabaseService {
     return null;
   }
 
-  getProgramsForJob(jobQueryOrId: string): string[] {
+  getProgramsForJob(jobQueryOrId: string, lang: 'fr' | 'en' = 'fr'): string[] {
     const jobType = this.detectJobType(jobQueryOrId);
-    return this.getProgramsForJobType(jobType);
+    return this.getProgramsForJobType(jobType, lang);
   }
 
   constructor() {}

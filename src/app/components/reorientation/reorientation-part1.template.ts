@@ -7,7 +7,6 @@ export const REORIENTATION_TEMPLATE_PART1 = `
           <button
             (click)="resetAll()"
             class="bg-white p-2 rounded-full shadow-md hover:bg-slate-50 transition-all text-slate-600 shrink-0 border border-slate-200 mt-1 cursor-pointer"
-            title="{{ i18n.t('reo.resetTitle') }}"
           >
             <svg
               class="w-5 h-5"
@@ -25,7 +24,9 @@ export const REORIENTATION_TEMPLATE_PART1 = `
           </button>
           <div>
             <div class="flex items-center gap-3">
-              <h2 class="text-xl font-bold text-slate-800">
+              <h2
+                class="text-xl font-bold text-slate-800"
+              >
                 {{ i18n.t('reo.title') }}
               </h2>
               @if (jobService.sipDate()) {
@@ -65,7 +66,6 @@ export const REORIENTATION_TEMPLATE_PART1 = `
             [class.border-slate-200]="activeHeaderOptionsCount() === 0"
             [class.text-slate-700]="activeHeaderOptionsCount() === 0"
             [class.hover:bg-slate-50]="activeHeaderOptionsCount() === 0"
-            title="{{ i18n.t('reo.optionsButton') }}"
           >
             <svg
               class="w-4 h-4"
@@ -315,7 +315,9 @@ export const REORIENTATION_TEMPLATE_PART1 = `
                   </div>
                   <div class="flex-1 flex flex-col">
                     @for (mel of geographicLimitations; track mel.id) {
-                      <label class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0">
+                      <label
+                        class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0"
+                      >
                         <input type="checkbox" 
                                 [checked]="hasMel(mel.id)" 
                                 (change)="toggleMel(mel.id)"
@@ -333,7 +335,9 @@ export const REORIENTATION_TEMPLATE_PART1 = `
                   </div>
                   <div class="flex-1 flex flex-col">
                     @for (mel of occupationalLimitations; track mel.id) {
-                      <label class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0">
+                      <label
+                        class="flex items-start gap-3 p-2.5 hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition-colors last:border-b-0"
+                      >
                         <input type="checkbox" 
                                 [checked]="hasMel(mel.id)" 
                                 (change)="toggleMel(mel.id)"

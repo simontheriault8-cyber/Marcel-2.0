@@ -47,7 +47,6 @@ import { TranslationService } from '../i18n/translation.service';
               type="button"
               (mousedown)="onClear($event)"
               class="p-1 px-2 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-              [title]="i18n.t('calendar.clearCourseSeries')"
               id="clear-course-series-btn"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

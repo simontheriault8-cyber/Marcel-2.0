@@ -39,7 +39,6 @@ import { MANUAL_CRITERIA } from "../../data/reorientation-criteria.data";
             <button
               (click)="exportToCsv()"
               class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer shadow-xs"
-              [title]="i18n.t('criteriaMatrix.exportCsv')"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -286,7 +285,6 @@ import { MANUAL_CRITERIA } from "../../data/reorientation-criteria.data";
                       <button
                         (click)="matrixService.selectedJobForDetail.set(job)"
                         class="p-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800 transition-colors cursor-pointer"
-                        [title]="i18n.t('criteriaMatrix.colActions')"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
