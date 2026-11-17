@@ -6569,41 +6569,37 @@
       },
       "exigencesScolarite": {
         "typeLogique": "ETUDES_UNIVERSITAIRES_SPECIFIQUES",
-        "descriptionFr": "Baccalauréat ou Maîtrise en gestion des services de santé / administration des soins de santé OU Baccalauréat ou Maîtrise en administration (affaires ou publique) ou ressources humaines OU tout autre diplôme universitaire (Bacc/Maîtrise/Doctorat) en santé (avec 2 ans d'expérience de gestion en milieu de santé).",
-        "descriptionEn": "Bachelor's or Master's in Health Services Management, Healthcare Administration, Business, Public Administration, HR, OR any other Health university degree with 2 years healthcare management experience.",
+        "descriptionFr": "Baccalauréat ou Maîtrise dans l'un des domaines suivants : Gestion des services de santé, Administration des soins de santé, Administration de la santé, Gestion des soins de santé, Administration des affaires, Administration publique ou Gestion des ressources humaines.",
+        "descriptionEn": "Bachelor's or Master's degree in one of the following fields: Health Services Management, Health Care Administration, Health Administration, Health Care Management, Business Administration, Public Administration, or Human Resources Management.",
         "criteresCochesRequis": [],
         "optionsAlternatives": [
           {
-            "nomVoie": "Gestion services santé",
+            "nomVoie": "Baccalauréat (domaines acceptés)",
             "criteres": [
               "bacc_sante_gestion_services_sante",
               "bacc_sante_admin_soins_sante",
-              "maitrise_sante_gestion_services_sante",
-              "maitrise_sante_admin_soins_sante"
+              "bacc_sante_admin_sante",
+              "bacc_sante_gestion_soins_sante",
+              "bacc_arts_admin_affaires",
+              "bacc_arts_admin_publique",
+              "bacc_arts_ressources_humaines"
             ]
           },
           {
-            "nomVoie": "Administration / RH",
+            "nomVoie": "Maîtrise (domaines acceptés)",
             "criteres": [
-              "bacc_arts_admin_affaires",
-              "bacc_arts_admin_publique",
-              "bacc_arts_ressources_humaines",
+              "maitrise_sante_gestion_services_sante",
+              "maitrise_sante_admin_soins_sante",
+              "maitrise_sante_admin_sante",
+              "maitrise_sante_gestion_soins_sante",
               "maitrise_admin_affaires",
               "maitrise_admin_publique",
               "maitrise_gestion_ressources_humaines"
             ]
-          },
-          {
-            "nomVoie": "Autre diplôme en santé + 2 ans expérience gestion",
-            "criteres": [
-              "bacc_sante_*",
-              "maitrise_sante_*",
-              "doctorat_sante_*"
-            ]
           }
         ],
-        "messageManquantFr": "Baccalauréat ou Maîtrise en gestion des services de santé, administration (affaires/publique), RH ou diplôme universitaire en santé",
-        "messageManquantEn": "Bachelor's or Master's in health services management, administration, HR or health degree"
+        "messageManquantFr": "Baccalauréat (ou Maîtrise) en Gestion des services de santé, Administration des soins de santé, Administration de la santé, Gestion des soins de santé, Administration des affaires, Administration publique ou Gestion des ressources humaines",
+        "messageManquantEn": "Bachelor's (or Master's) degree in Health Services Management, Health Care Administration, Health Administration, Health Care Management, Business Administration, Public Administration, or Human Resources Management"
       },
       "conditionsSpeciales": null,
       "testsSelectionSupplementaires": {
@@ -6611,11 +6607,6 @@
         "nomTest": null
       },
       "preuvesDocumentsRequisDansCourriel": [
-        {
-          "critereId": "exp_00398_gestion",
-          "texteFr": "Si admis via un autre diplôme en santé : Un minimum de deux années d’expérience cumulative en gestion à temps plein au cours des cinq dernières années dans un milieu de soins de santé.",
-          "texteEn": "If applying with another health degree: At least 2 years cumulative full-time healthcare management experience in the last 5 years."
-        },
         {
           "critereId": "exp_cv_recent",
           "texteFr": "Curriculum vitae (CV) récent à jour.",

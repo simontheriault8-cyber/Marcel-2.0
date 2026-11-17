@@ -474,41 +474,33 @@ export const JOB_RULES_OFFICERS_SPECIALIZED: JobRule[] = [
     jobs: ["00398"],
     allowPR: true,
     customCheck: (selected) => {
-      const hasHealthBacc = [
-        "bacc_sante_adjoint_medecin",
-        "bacc_sante_biochimie",
-        "bacc_sante_biologie",
-        "bacc_sante_biologie_humaine",
-        "bacc_sante_diplome_sciences_vie",
-        "bacc_sante_genie_biomedical",
-        "bacc_sante_kinesiologie",
-        "bacc_sante_medecine_dentaire",
-        "bacc_sante_microbiologie",
-        "bacc_sante_pharmacie",
-        "bacc_sante_physiologie_humaine",
-        "bacc_sante_physiotherapie",
-        "bacc_sante_sciences_soins_infirmiers",
-        "bacc_sante_sciences_infirmieres",
-        "bacc_sante_admin_soins_sante",
+      const hasAcceptedBacc = [
         "bacc_sante_gestion_services_sante",
+        "bacc_sante_admin_soins_sante",
+        "bacc_sante_admin_sante",
+        "bacc_sante_gestion_soins_sante",
+        "bacc_arts_admin_affaires",
+        "bacc_arts_admin_publique",
+        "bacc_arts_ressources_humaines",
       ].some((id) => selected.has(id));
 
-      const hasHealthGrad = [
-        "doctorat_adjoint_medecin",
-        "maitrise_adjoint_medecin",
-        "doctorat_medecine",
-        "doctorat_sante_pharmacie",
+      const hasAcceptedMaitrise = [
+        "maitrise_sante_gestion_services_sante",
+        "maitrise_sante_admin_soins_sante",
         "maitrise_sante_admin_sante",
         "maitrise_sante_gestion_soins_sante",
-        "maitrise_sante_physiotherapie",
-        "maitrise_sante_publique",
+        "maitrise_admin_affaires",
+        "maitrise_admin_publique",
+        "maitrise_gestion_ressources_humaines",
       ].some((id) => selected.has(id));
 
-      if (hasHealthBacc || hasHealthGrad) return { passed: true };
+      if (hasAcceptedBacc || hasAcceptedMaitrise) return { passed: true };
       return {
         passed: false,
-        missingFr: "Baccalauréat ou Maîtrise dans le domaine des sciences de la santé ou de la gestion de la santé",
-        missingEn: "Bachelor's or Master's degree in health sciences or healthcare administration",
+        missingFr:
+          "Baccalauréat (ou Maîtrise) en Gestion des services de santé, Administration des soins de santé, Administration de la santé, Gestion des soins de santé, Administration des affaires, Administration publique ou Gestion des ressources humaines",
+        missingEn:
+          "Bachelor's (or Master's) degree in Health Services Management, Health Care Administration, Health Administration, Health Care Management, Business Administration, Public Administration, or Human Resources Management",
       };
     },
   },

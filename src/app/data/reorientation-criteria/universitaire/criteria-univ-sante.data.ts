@@ -10,6 +10,13 @@ export const CRITERIA_UNIV_SANTE: ManualCriterion[] = [
     subCategory: "Santé",
   },
   {
+    id: "bacc_sante_admin_sante",
+    label: UNIVERSITY_DEGREES_FR["bacc_sante_admin_sante"],
+    labelEn: UNIVERSITY_DEGREES_EN["bacc_sante_admin_sante"],
+    category: "Universitaire 1er cycle",
+    subCategory: "Santé",
+  },
+  {
     id: "bacc_sante_admin_soins_sante",
     label: UNIVERSITY_DEGREES_FR["bacc_sante_admin_soins_sante"],
     labelEn: UNIVERSITY_DEGREES_EN["bacc_sante_admin_soins_sante"],
@@ -55,6 +62,13 @@ export const CRITERIA_UNIV_SANTE: ManualCriterion[] = [
     id: "bacc_sante_gestion_services_sante",
     label: UNIVERSITY_DEGREES_FR["bacc_sante_gestion_services_sante"],
     labelEn: UNIVERSITY_DEGREES_EN["bacc_sante_gestion_services_sante"],
+    category: "Universitaire 1er cycle",
+    subCategory: "Santé",
+  },
+  {
+    id: "bacc_sante_gestion_soins_sante",
+    label: UNIVERSITY_DEGREES_FR["bacc_sante_gestion_soins_sante"],
+    labelEn: UNIVERSITY_DEGREES_EN["bacc_sante_gestion_soins_sante"],
     category: "Universitaire 1er cycle",
     subCategory: "Santé",
   },

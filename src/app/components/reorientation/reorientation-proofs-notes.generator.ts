@@ -488,7 +488,9 @@ export function getReoMissingProofs(this: any, jobId: string): { fr: string[]; e
     if (jobId === "00398") {
       const option1Selected =
         selected.has("bacc_sante_gestion_services_sante") ||
-        selected.has("bacc_sante_admin_soins_sante");
+        selected.has("bacc_sante_admin_soins_sante") ||
+        selected.has("bacc_sante_admin_sante") ||
+        selected.has("bacc_sante_gestion_soins_sante");
       const option2Selected =
         selected.has("bacc_arts_admin_affaires") ||
         selected.has("bacc_arts_admin_publique") ||
@@ -496,6 +498,8 @@ export function getReoMissingProofs(this: any, jobId: string): { fr: string[]; e
       const option3Selected =
         selected.has("maitrise_sante_gestion_services_sante") ||
         selected.has("maitrise_sante_admin_soins_sante") ||
+        selected.has("maitrise_sante_admin_sante") ||
+        selected.has("maitrise_sante_gestion_soins_sante") ||
         selected.has("maitrise_admin_affaires") ||
         selected.has("maitrise_admin_publique") ||
         selected.has("maitrise_gestion_ressources_humaines");

@@ -122,6 +122,7 @@ export const UNIVERSITY_DEGREES_FR: Record<string, string> = {
 
   // --- SANTÉ (1ER CYCLE) ---
   bacc_sante_adjoint_medecin: "Adjoint au médecin",
+  bacc_sante_admin_sante: "Administration de la santé",
   bacc_sante_admin_soins_sante: "Administration des soins de santé",
   bacc_sante_biochimie: "Biochimie",
   bacc_sante_biologie: "Biologie",
@@ -129,6 +130,7 @@ export const UNIVERSITY_DEGREES_FR: Record<string, string> = {
   bacc_sante_diplome_sciences_vie: "Diplôme dans une discipline des sciences de la vie",
   bacc_sante_genie_biomedical: "Génie biomédical",
   bacc_sante_gestion_services_sante: "Gestion des services de santé",
+  bacc_sante_gestion_soins_sante: "Gestion des soins de santé",
   bacc_sante_kinesiologie: "Kinésiologie",
   bacc_sante_medecine_dentaire: "Médecine dentaire",
   bacc_sante_microbiologie: "Microbiologie",
@@ -182,7 +184,7 @@ export const UNIVERSITY_DEGREES_FR: Record<string, string> = {
   maitrise_genie_physique: "Génie physique",
   maitrise_gestion_chaine_approvisionnement: "Gestion de chaîne d’approvisionnement",
   maitrise_gestion_entreprise_alimentaire: "Gestion d’entreprise alimentaire",
-  maitrise_gestion_ressources_humaines: "Gestion de ressources humaines",
+  maitrise_gestion_ressources_humaines: "Gestion des ressources humaines",
   maitrise_sante_gestion_services_sante: "Gestion des services de santé",
   maitrise_sante_gestion_soins_sante: "Gestion des soins de santé",
   maitrise_industriel: "Industriel",
@@ -345,6 +347,7 @@ export const UNIVERSITY_DEGREES_EN: Record<string, string> = {
 
   // --- SANTÉ (1ER CYCLE) ---
   bacc_sante_adjoint_medecin: "Physician Assistant",
+  bacc_sante_admin_sante: "Health Administration",
   bacc_sante_admin_soins_sante: "Health Care Administration",
   bacc_sante_biochimie: "Biochemistry",
   bacc_sante_biologie: "Biology",
@@ -352,6 +355,7 @@ export const UNIVERSITY_DEGREES_EN: Record<string, string> = {
   bacc_sante_diplome_sciences_vie: "Degree in Life Sciences Discipline",
   bacc_sante_genie_biomedical: "Biomedical Engineering",
   bacc_sante_gestion_services_sante: "Health Services Management",
+  bacc_sante_gestion_soins_sante: "Health Care Management",
   bacc_sante_kinesiologie: "Kinesiology",
   bacc_sante_medecine_dentaire: "Dentistry (DMD / DDS)",
   bacc_sante_microbiologie: "Microbiology",
