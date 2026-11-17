@@ -304,6 +304,33 @@ export function renderPilotNotice(
   return `${title} ${body}\n\n`;
 }
 
+export function renderHighlyCompetitiveBadge(
+  lang: AppLang,
+  isHtml: boolean,
+  i18n: TranslationService,
+): string {
+  const badge = i18n.tLang("reoEmail.list.highlyCompetitiveBadge", lang);
+  if (isHtml) {
+    return ` <span style="background-color: #fef3c7; color: #92400e; font-size: 11px; padding: 1px 5px; border-radius: 3px; font-weight: bold;">${badge}</span>`;
+  }
+  return ` (${badge})`;
+}
+
+export function renderHighlyCompetitiveNote(
+  lang: AppLang,
+  isHtml: boolean,
+  i18n: TranslationService,
+): string {
+  if (isHtml) {
+    return (
+      '<p class="mt-4 p-2.5 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900" style="margin-top: 16px; padding: 10px; background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 4px; font-size: 13px; color: #78350f;">' +
+      `${i18n.tLang("reoEmail.highlyCompetitiveNote.html", lang)}` +
+      "</p>\n"
+    );
+  }
+  return `\n${i18n.tLang("reoEmail.highlyCompetitiveNote.plain", lang)}\n`;
+}
+
 export function renderConclusionAndFooter(
   ctx: any,
   opts: {
@@ -313,6 +340,7 @@ export function renderConclusionAndFooter(
     isHtml: boolean;
     lang: AppLang;
     extraPlainNewlineAfterTasks?: boolean;
+    hasHighlyCompetitiveJobs?: boolean;
   },
 ): string {
   const { mergeTasks, isPRAdmissible, portalUrl, isHtml, lang } = opts;

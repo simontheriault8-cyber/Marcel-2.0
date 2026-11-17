@@ -1,5 +1,9 @@
 import { CMR_JOB_DOMAINS, PFOR_CIVIL_JOB_IDS } from "../../data/reorientation-criteria/criteria.models";
 import { JOB_URLS } from "../../data/job-urls.data";
+import {
+  renderHighlyCompetitiveBadge,
+  renderHighlyCompetitiveNote,
+} from "../shared/email-blocks.helper";
 
 /**
  * Returns trades from the applicant's current dossier choices that are offered under PFOR
@@ -112,22 +116,30 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
   // Check if any of the candidate's current dossier choices is PFOR civil ONLY
   const civilAttentesIdsInDossier = getCivilOnlyAttentesTradeIdsInDossier(dossierIds, this.jobService);
 
+  const hasHighlyCompetitive = cmrJobIds.some((id) =>
+    this.jobService.isJobHighlyCompetitive(id),
+  );
+
   // Helper for bullet list items
   const formatBulletItem = (id: string, isFrench: boolean): string => {
-    const title = this.jobService.getJobTitle(id, isFrench ? "fr" : "en");
+    const lang = isFrench ? "fr" : "en";
+    const title = this.jobService.getJobTitle(id, lang);
     const urlInfo = JOB_URLS[id];
     const url = urlInfo ? (isFrench ? urlInfo.fr : urlInfo.en) : "";
+    const hcBadge = this.jobService.isJobHighlyCompetitive(id)
+      ? renderHighlyCompetitiveBadge(lang, isHtml, this.i18n)
+      : "";
 
     if (isHtml) {
       if (url) {
-        return `<li><span style="font-weight: bold;">${id}</span> - <a href="${url}" target="_blank" style="color: #2563eb; text-decoration: underline; font-weight: bold;">${title}</a></li>`;
+        return `<li><span style="font-weight: bold;">${id}</span> - <a href="${url}" target="_blank" style="color: #2563eb; text-decoration: underline; font-weight: bold;">${title}</a>${hcBadge}</li>`;
       }
-      return `<li><span style="font-weight: bold;">${id}</span> - <span style="font-weight: bold;">${title}</span></li>`;
+      return `<li><span style="font-weight: bold;">${id}</span> - <span style="font-weight: bold;">${title}</span>${hcBadge}</li>`;
     } else {
       if (url) {
-        return `• ${id} - ${title} (${url})`;
+        return `• ${id} - ${title} (${url})${hcBadge}`;
       }
-      return `• ${id} - ${title}`;
+      return `• ${id} - ${title}${hcBadge}`;
     }
   };
 
@@ -173,6 +185,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
       '<p class="mt-4">Sachez également que les métiers que vous avez sélectionnés sont extrêmement populaires et qu’il se pourrait que, même l’an prochain, l’admission demeure très compétitive.</p>\n' +
       '<p class="mt-4">Si vous avez des questions ou souhaitez nous faire part de votre décision, vous pouvez répondre directement à ce courriel.</p>\n' +
       '<p class="mt-4">Merci de votre intérêt envers les Forces armées canadiennes.<br/>Bonne journée,</p>\n' +
+      (hasHighlyCompetitive ? renderHighlyCompetitiveNote("fr", true, this.i18n) : '') +
       '<p class="mt-4">' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
 
     const enHtml =
@@ -190,6 +203,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
       '<p class="mt-4">Please also be aware that the occupations you have selected are extremely popular, and admission may remain highly competitive even next year.</p>\n' +
       '<p class="mt-4">If you have any questions or wish to share your decision with us, you can reply directly to this email.</p>\n' +
       '<p class="mt-4">Thank you for your interest in the Canadian Armed Forces.<br/>Have a great day,</p>\n' +
+      (hasHighlyCompetitive ? renderHighlyCompetitiveNote("en", true, this.i18n) : '') +
       '<p class="mt-4">' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
 
     const divider = '<p class="my-6 border-t border-slate-300" style="margin-top: 24px; margin-bottom: 24px; border-top: 1px solid #cbd5e1;"></p>\n';
@@ -221,6 +235,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
       "Si vous avez des questions ou souhaitez nous faire part de votre décision, vous pouvez répondre directement à ce courriel.\n\n" +
       "Merci de votre intérêt envers les Forces armées canadiennes.\n" +
       "Bonne journée,\n\n" +
+      (hasHighlyCompetitive ? renderHighlyCompetitiveNote("fr", false, this.i18n) + "\n" : "") +
       this.sharedState.getSignatureFr();
 
     const enPlain =
@@ -239,6 +254,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
       "If you have any questions or wish to share your decision with us, you can reply directly to this email.\n\n" +
       "Thank you for your interest in the Canadian Armed Forces.\n" +
       "Have a great day,\n\n" +
+      (hasHighlyCompetitive ? renderHighlyCompetitiveNote("en", false, this.i18n) + "\n" : "") +
       this.sharedState.getSignatureEn();
 
     const divider = "\n\n______________________________________________________________________________\n\n";

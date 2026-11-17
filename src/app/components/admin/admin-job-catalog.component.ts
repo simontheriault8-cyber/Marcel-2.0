@@ -113,6 +113,25 @@ import {
                     {{ i18n.t('careerPortal.citizenOnly') }}
                   </span>
                 }
+
+                <!-- Highly Competitive Toggle -->
+                <button
+                  type="button"
+                  (click)="jobService.toggleJobHighlyCompetitive(job.id)"
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-colors cursor-pointer"
+                  [class.bg-amber-100]="jobService.isJobHighlyCompetitive(job.id)"
+                  [class.text-amber-900]="jobService.isJobHighlyCompetitive(job.id)"
+                  [class.border-amber-300]="jobService.isJobHighlyCompetitive(job.id)"
+                  [class.bg-slate-50]="!jobService.isJobHighlyCompetitive(job.id)"
+                  [class.text-slate-600]="!jobService.isJobHighlyCompetitive(job.id)"
+                  [class.border-slate-200]="!jobService.isJobHighlyCompetitive(job.id)"
+                  [class.hover:bg-amber-50]="!jobService.isJobHighlyCompetitive(job.id)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" [attr.fill]="jobService.isJobHighlyCompetitive(job.id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  <span>{{ jobService.isJobHighlyCompetitive(job.id) ? i18n.t('admin.catalogHighlyCompetitive') : i18n.t('admin.catalogToggleHighlyCompetitive') }}</span>
+                </button>
               </div>
 
               <!-- Medical & SIP Specifications Bar -->
@@ -445,6 +464,24 @@ import {
                 </button>
               </div>
             </div>
+
+            <!-- Highly Competitive Filter -->
+            <button
+              type="button"
+              (click)="onlyHighlyCompetitive.set(!onlyHighlyCompetitive())"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-semibold text-[11px] border transition-all cursor-pointer"
+              [class.bg-amber-100]="onlyHighlyCompetitive()"
+              [class.text-amber-900]="onlyHighlyCompetitive()"
+              [class.border-amber-300]="onlyHighlyCompetitive()"
+              [class.bg-slate-100]="!onlyHighlyCompetitive()"
+              [class.text-slate-600]="!onlyHighlyCompetitive()"
+              [class.border-slate-200]="!onlyHighlyCompetitive()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" [attr.fill]="onlyHighlyCompetitive() ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              <span>{{ i18n.t('admin.catalogHighlyCompetitiveOnly', { count: countHighlyCompetitive() }) }}</span>
+            </button>
           </div>
         </div>
 
@@ -525,6 +562,25 @@ import {
                         V{{ job.medicalStandard.v }} CV{{ job.medicalStandard.cv }} H{{ job.medicalStandard.h }} G{{ job.medicalStandard.g }} O{{ job.medicalStandard.o }} A{{ job.medicalStandard.a }}
                       </span>
                     }
+
+                    <!-- Highly Competitive Toggle -->
+                    <button
+                      type="button"
+                      (click)="$event.stopPropagation(); jobService.toggleJobHighlyCompetitive(job.id)"
+                      class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-bold transition-colors cursor-pointer"
+                      [class.bg-amber-100]="jobService.isJobHighlyCompetitive(job.id)"
+                      [class.text-amber-900]="jobService.isJobHighlyCompetitive(job.id)"
+                      [class.border-amber-300]="jobService.isJobHighlyCompetitive(job.id)"
+                      [class.bg-slate-50]="!jobService.isJobHighlyCompetitive(job.id)"
+                      [class.text-slate-500]="!jobService.isJobHighlyCompetitive(job.id)"
+                      [class.border-slate-200]="!jobService.isJobHighlyCompetitive(job.id)"
+                      [class.hover:bg-amber-50]="!jobService.isJobHighlyCompetitive(job.id)"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" [attr.fill]="jobService.isJobHighlyCompetitive(job.id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                      <span>{{ i18n.t('admin.catalogHighlyCompetitive') }}</span>
+                    </button>
                   </div>
 
                   <!-- Requirements Preview -->
@@ -566,6 +622,7 @@ export class AdminJobCatalogComponent {
   searchQuery = signal<string>('');
   selectedCategory = signal<'ALL' | 'MR' | 'OFFICER'>('ALL');
   selectedElement = signal<'ALL' | MilitaryElement>('ALL');
+  onlyHighlyCompetitive = signal<boolean>(false);
   selectedJob = signal<JobEntry | null>(null);
 
   allJobs = signal<JobEntry[]>(this.jobService.getAllJobs());
@@ -578,10 +635,15 @@ export class AdminJobCatalogComponent {
     () => this.allJobs().filter((j) => isOfficerJobId(j.id)).length
   );
 
+  countHighlyCompetitive = computed(
+    () => this.allJobs().filter((j) => this.jobService.isJobHighlyCompetitive(j.id)).length
+  );
+
   filteredJobs = computed(() => {
     const q = this.searchQuery().trim().toLowerCase();
     const cat = this.selectedCategory();
     const elem = this.selectedElement();
+    const onlyHc = this.onlyHighlyCompetitive();
     const isEn = this.i18n.isEn();
 
     return this.allJobs().filter((job) => {
@@ -592,6 +654,9 @@ export class AdminJobCatalogComponent {
 
       // Element filter
       if (elem !== 'ALL' && job.element !== elem) return false;
+
+      // Highly competitive filter
+      if (onlyHc && !this.jobService.isJobHighlyCompetitive(job.id)) return false;
 
       // Text query
       if (q) {

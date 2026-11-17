@@ -1,5 +1,9 @@
 import { JobEntry } from "../../../services/jobs-data";
 import { CMR_JOB_DOMAINS } from "../../data/reorientation-criteria.data";
+import {
+  renderHighlyCompetitiveBadge,
+  renderHighlyCompetitiveNote,
+} from "../shared/email-blocks.helper";
 import { generatePforNotYetEvaluatedNote } from "./pfor-not-yet-evaluated.generator";
 
 export function generatePforNoteRegistry(this: any): string {
@@ -221,6 +225,10 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       listOFF = allEligibleJobs;
     }
 
+    const hasHighlyCompetitive = [...listOFF, ...listClosedOFF].some((j) =>
+      this.jobService.isJobHighlyCompetitive(j.id),
+    );
+
     if (isHtml) {
       let h = "";
 
@@ -305,11 +313,17 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
         h += '  <ul class="list-disc pl-5 space-y-1">\n';
         for (const j of listOFF) {
           const link = this.getJobLinkMarkup(j.id, true, true);
-          h += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("fr", true, this.i18n)
+            : "";
+          h += `    <li><strong>${j.id} - ${link}</strong>${hcBadge}</li>\n`;
         }
         for (const j of listClosedOFF) {
           const link = this.getJobLinkMarkup(j.id, true, true);
-          h += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(FERMÉ)</span></li>\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("fr", true, this.i18n)
+            : "";
+          h += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(FERMÉ)</span>${hcBadge}</li>\n`;
         }
         h += '  </ul>\n';
       }
@@ -317,6 +331,10 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
 
       h +=
         '<p class="mt-4">Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.</p>\n';
+
+      if (hasHighlyCompetitive) {
+        h += renderHighlyCompetitiveNote("fr", true, this.i18n);
+      }
 
       h += '<p>' + this.sharedState.getHtmlSignatureFr() + '</p>\n';
       const frHtml = h;
@@ -402,11 +420,17 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
         hEn += '  <ul class="list-disc pl-5 space-y-1">\n';
         for (const j of listOFF) {
           const link = this.getJobLinkMarkup(j.id, false, true);
-          hEn += `    <li><strong>${j.id} - ${link}</strong></li>\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("en", true, this.i18n)
+            : "";
+          hEn += `    <li><strong>${j.id} - ${link}</strong>${hcBadge}</li>\n`;
         }
         for (const j of listClosedOFF) {
           const link = this.getJobLinkMarkup(j.id, false, true);
-          hEn += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(CLOSED)</span></li>\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("en", true, this.i18n)
+            : "";
+          hEn += `    <li class="text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(CLOSED)</span>${hcBadge}</li>\n`;
         }
         hEn += '  </ul>\n';
       }
@@ -417,6 +441,10 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
 
       hEn +=
         '<p class="mt-4">Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.</p>\n';
+
+      if (hasHighlyCompetitive) {
+        hEn += renderHighlyCompetitiveNote("en", true, this.i18n);
+      }
 
       hEn += '<p>' + this.sharedState.getHtmlSignatureEn() + '</p>\n';
 
@@ -498,17 +526,27 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       } else {
         for (const j of listOFF) {
           const link = this.getJobLinkMarkup(j.id, true, false);
-          t += `• ${j.id} - ${link}\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("fr", false, this.i18n)
+            : "";
+          t += `• ${j.id} - ${link}${hcBadge}\n`;
         }
         for (const j of listClosedOFF) {
           const link = this.getJobLinkMarkup(j.id, true, false);
-          t += `• ${j.id} - ${link} (FERMÉ)\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("fr", false, this.i18n)
+            : "";
+          t += `• ${j.id} - ${link} (FERMÉ)${hcBadge}\n`;
         }
         t += "\n";
       }
 
       t +=
         "Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.\n\n";
+
+      if (hasHighlyCompetitive) {
+        t += renderHighlyCompetitiveNote("fr", false, this.i18n) + "\n";
+      }
 
       t += this.sharedState.getSignatureFr() + "\n";
       const frPlain = t.trim();
@@ -576,11 +614,17 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       } else {
         for (const j of listOFF) {
           const link = this.getJobLinkMarkup(j.id, false, false);
-          tEn += `• ${j.id} - ${link}\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("en", false, this.i18n)
+            : "";
+          tEn += `• ${j.id} - ${link}${hcBadge}\n`;
         }
         for (const j of listClosedOFF) {
           const link = this.getJobLinkMarkup(j.id, false, false);
-          tEn += `• ${j.id} - ${link} (CLOSED)\n`;
+          const hcBadge = this.jobService.isJobHighlyCompetitive(j.id)
+            ? renderHighlyCompetitiveBadge("en", false, this.i18n)
+            : "";
+          tEn += `• ${j.id} - ${link} (CLOSED)${hcBadge}\n`;
         }
         tEn += "\n";
       }
@@ -590,6 +634,10 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
 
       tEn +=
         "Furthermore, please note that these occupations are available as of today; however, they may no longer be available in the coming days.\n\n";
+
+      if (hasHighlyCompetitive) {
+        tEn += renderHighlyCompetitiveNote("en", false, this.i18n) + "\n";
+      }
 
       tEn += this.sharedState.getSignatureEn() + "\n";
 

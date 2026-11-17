@@ -6,7 +6,10 @@ import {
   renderMergedTasksContainer,
   renderPilotNotice,
 } from "../shared/email-blocks.helper";
-import { renderReoEligibleJobsList } from "./reorientation-email-lists.helper";
+import {
+  hasDisplayedReoHighlyCompetitiveJobs,
+  renderReoEligibleJobsList,
+} from "./reorientation-email-lists.helper";
 
 export interface ReoEmailSectionContext {
   jobIds: string[];
@@ -358,6 +361,7 @@ export function buildReoEmailSection(
     isHtml,
     lang,
     extraPlainNewlineAfterTasks: true,
+    hasHighlyCompetitiveJobs: hasDisplayedReoHighlyCompetitiveJobs(ctx, sec.listNCM, sec.listOFF),
   });
 
   return isHtml ? out : out.trim();

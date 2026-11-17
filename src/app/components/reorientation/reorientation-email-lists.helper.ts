@@ -1,4 +1,27 @@
 import { AppLang, TranslationService } from "../../i18n";
+import {
+  renderHighlyCompetitiveBadge,
+  renderHighlyCompetitiveNote,
+} from "../shared/email-blocks.helper";
+
+export function hasDisplayedReoHighlyCompetitiveJobs(
+  ctx: any,
+  ncmJobs: string[],
+  offJobs: string[],
+): boolean {
+  const isPfor = ctx.isPforApplicant();
+  const ignoreSip = ctx.ignoreSip();
+  const isJobClosed = (j: string) =>
+    isPfor
+      ? ctx.jobService.isPforJobClosed(j, ctx.currentSipPhase())
+      : ctx.jobService.isJobClosed(j, ctx.currentSipPhase());
+
+  const displayedJobs = ignoreSip
+    ? [...ncmJobs, ...offJobs]
+    : [...ncmJobs.filter((j) => !isJobClosed(j)), ...offJobs.filter((j) => !isJobClosed(j))];
+
+  return displayedJobs.some((jId) => ctx.jobService.isJobHighlyCompetitive(jId));
+}
 
 export function renderReoEligibleJobsList(
   ctx: any,
@@ -21,6 +44,7 @@ export function renderReoEligibleJobsList(
   const openOff = offJobs.filter((j) => !isJobClosed(j));
   const closedOff = offJobs.filter((j) => isJobClosed(j));
   const hasClosedJobs = closedNcm.length > 0 || closedOff.length > 0;
+  const hasHc = hasDisplayedReoHighlyCompetitiveJobs(ctx, ncmJobs, offJobs);
 
   const openNcmTitle = i18n.tLang(
     ignoreSip ? "reoEmail.gen.list.ncmOpen" : "reoEmail.gen.list.ncm",
@@ -47,7 +71,10 @@ export function renderReoEligibleJobsList(
       for (const jId of jobList) {
         const itemStyle = isClosed ? ' style="color: #b91c1c;"' : "";
         const itemClass = isClosed ? ' class="mt-0.5 text-red-700"' : ' class="mt-0.5"';
-        sec += `  <li${itemClass}${itemStyle}><strong>${jId} - ${ctx.getJobLinkMarkup(jId, isFr, true)}</strong></li>\n`;
+        const hcBadge = ctx.jobService.isJobHighlyCompetitive(jId)
+          ? renderHighlyCompetitiveBadge(lang, true, i18n)
+          : "";
+        sec += `  <li${itemClass}${itemStyle}><strong>${jId} - ${ctx.getJobLinkMarkup(jId, isFr, true)}</strong>${hcBadge}</li>\n`;
       }
       sec += "</ul>\n";
 
@@ -83,6 +110,9 @@ export function renderReoEligibleJobsList(
       out += buildSection(closedNcm, closedNcmTitle, "red-800", "#991b1b", true);
       out += buildSection(closedOff, closedOffTitle, "red-800", "#991b1b", true);
     }
+    if (hasHc) {
+      out += renderHighlyCompetitiveNote(lang, true, i18n);
+    }
     return out;
   }
 
@@ -90,7 +120,10 @@ export function renderReoEligibleJobsList(
     if (jobList.length === 0) return "";
     let sec = `\n${title} :\n`;
     for (const jId of jobList) {
-      sec += `  - ${jId} - ${ctx.getJobLinkMarkup(jId, isFr, false)}\n`;
+      const hcBadge = ctx.jobService.isJobHighlyCompetitive(jId)
+        ? renderHighlyCompetitiveBadge(lang, false, i18n)
+        : "";
+      sec += `  - ${jId} - ${ctx.getJobLinkMarkup(jId, isFr, false)}${hcBadge}\n`;
     }
     if (!isPfor) {
       const proofsMap = new Map<string, string[]>();
@@ -117,6 +150,9 @@ export function renderReoEligibleJobsList(
     out += `\n${i18n.tLang("reoEmail.closedNote.title", lang)}\n${i18n.tLang("reoEmail.closedNote.plainBody", lang)}\n`;
     out += buildPlainSection(closedNcm, closedNcmTitle);
     out += buildPlainSection(closedOff, closedOffTitle);
+  }
+  if (hasHc) {
+    out += renderHighlyCompetitiveNote(lang, false, i18n);
   }
   return out;
 }

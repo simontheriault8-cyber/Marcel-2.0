@@ -119,6 +119,7 @@ export const EMAILS_REORIENTATION_FR: TranslationDictionary = {
     'Vous devrez fournir ces documents/preuves supplémentaires si vous choisissez les métiers suivants :',
   'reoEmail.gen.list.proofsPlain': 'Documents supplémentaires requis :',
   'reoEmail.gen.list.forWord': 'Pour',
+  'reoEmail.list.highlyCompetitiveBadge': 'Très Contingenté*',
   'reoEmail.gen.list.emptyPfor':
     "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.",
   'reoEmail.gen.list.emptyRegular': 'Aucun métier correspondant disponible.',
@@ -166,6 +167,10 @@ export const EMAILS_REORIENTATION_FR: TranslationDictionary = {
     ") afin d'y déposer les relevés de notes de votre pays d'origine. Ceux-ci doivent être rédigés en français ou en anglais, ou être accompagnés d'une traduction officielle au besoin.",
   'reoEmail.conclusion.thanks':
     'Nous vous remercions pour votre intérêt envers les Forces armées canadiennes. Veuillez nous faire part de votre décision en répondant directement à ce courriel afin de poursuivre ou de mettre à jour votre dossier.',
+  'reoEmail.highlyCompetitiveNote.html':
+    '<strong>* Très Contingenté :</strong> Ces métiers reçoivent une très grande quantité de candidatures à chaque année, et nous préférons que vous soyez préparés à un potentiel refus dû à la compétitivité de ces métiers.',
+  'reoEmail.highlyCompetitiveNote.plain':
+    '* Très Contingenté : Ces métiers reçoivent une très grande quantité de candidatures à chaque année, et nous préférons que vous soyez préparés à un potentiel refus dû à la compétitivité de ces métiers.',
 };
 
 export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
@@ -287,6 +292,7 @@ export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
     'You will need to provide these additional documents/proofs if you choose the following occupations:',
   'reoEmail.gen.list.proofsPlain': 'Additional documents required:',
   'reoEmail.gen.list.forWord': 'For',
+  'reoEmail.list.highlyCompetitiveBadge': 'Highly Competitive*',
   'reoEmail.gen.list.emptyPfor':
     'No matching open ROTP occupations are currently available for the selected options.',
   'reoEmail.gen.list.emptyRegular': 'No matching occupations available.',
@@ -334,4 +340,8 @@ export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
     ') to upload your transcripts from your country of origin. These must be in English or French, or accompanied by an official translation if necessary.',
   'reoEmail.conclusion.thanks':
     'Thank you for your interest in the Canadian Armed Forces. Please inform us of your decision by replying directly to this email in order to continue or update your file.',
+  'reoEmail.highlyCompetitiveNote.html':
+    '<strong>* Highly Competitive:</strong> These occupations receive a very large number of applications each year, and we prefer that you be prepared for a potential refusal due to the competitiveness of these occupations.',
+  'reoEmail.highlyCompetitiveNote.plain':
+    '* Highly Competitive: These occupations receive a very large number of applications each year, and we prefer that you be prepared for a potential refusal due to the competitiveness of these occupations.',
 };

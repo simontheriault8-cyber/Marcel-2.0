@@ -3,10 +3,12 @@ import { PORTAL_CANDIDATE_URL } from "../../data/app-links.data";
 import {
   extractMergedTasksBody,
   renderConclusionAndFooter,
+  renderHighlyCompetitiveNote,
   renderMergedTasksContainer,
   renderPilotNotice,
 } from "../shared/email-blocks.helper";
 import {
+  hasDisplayedPforHighlyCompetitiveJobs,
   PforJobListsData,
   renderPforNcmJobsList,
   renderPforOfficerJobsList,
@@ -192,6 +194,7 @@ function renderPforEligibleJobsBlock(
     ctx.ignoreSip() &&
     (lists.allClosedOfficerJobs.length > 0 ||
       (lists.shouldIncludeNcm && lists.closedNcmJobs.length > 0));
+  const hasHc = hasDisplayedPforHighlyCompetitiveJobs(ctx, lists);
 
   if (isHtml) {
     let h = '<div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm">\n';
@@ -220,6 +223,9 @@ function renderPforEligibleJobsBlock(
         }
       }
     }
+    if (hasHc) {
+      h += renderHighlyCompetitiveNote(lang, true, i18n);
+    }
     return h + "</div>\n";
   }
 
@@ -243,6 +249,9 @@ function renderPforEligibleJobsBlock(
         t += renderPforNcmJobsList(ctx, lists.closedNcmJobs, true, lang, false);
       }
     }
+  }
+  if (hasHc) {
+    t += renderHighlyCompetitiveNote(lang, false, i18n);
   }
   return t;
 }

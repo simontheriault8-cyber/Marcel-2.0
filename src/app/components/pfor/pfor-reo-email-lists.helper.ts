@@ -1,5 +1,6 @@
 import { JobEntry } from "../../../services/jobs-data";
 import { AppLang, TranslationService } from "../../i18n";
+import { renderHighlyCompetitiveBadge } from "../shared/email-blocks.helper";
 
 export interface PforJobListsData {
   allOpenOfficerJobs: JobEntry[];
@@ -70,6 +71,27 @@ export function buildPforJobListsData(ctx: any): PforJobListsData {
   };
 }
 
+export function hasDisplayedPforHighlyCompetitiveJobs(
+  ctx: any,
+  lists: PforJobListsData,
+): boolean {
+  const displayedIds: string[] = [
+    ...lists.allOpenOfficerJobs.map((j) => j.id),
+    ...(lists.shouldIncludeNcm
+      ? lists.openNcmJobs.map((item) => (typeof item === "string" ? item : item.id))
+      : []),
+    ...(ctx.ignoreSip()
+      ? [
+          ...lists.allClosedOfficerJobs.map((j) => j.id),
+          ...(lists.shouldIncludeNcm
+            ? lists.closedNcmJobs.map((item) => (typeof item === "string" ? item : item.id))
+            : []),
+        ]
+      : []),
+  ];
+  return displayedIds.some((jId) => ctx.jobService.isJobHighlyCompetitive(jId));
+}
+
 export function renderPforOfficerJobsList(
   ctx: any,
   jobsList: JobEntry[],
@@ -97,10 +119,13 @@ export function renderPforOfficerJobsList(
           ? ` (CMR : ${ctx.getCmrJobRequiredDomainsFr(j.id)})`
           : ` (RMC: ${ctx.getCmrJobRequiredDomainsEn(j.id)})`
         : "";
+      const hcBadge = ctx.jobService.isJobHighlyCompetitive(j.id)
+        ? renderHighlyCompetitiveBadge(lang, true, i18n)
+        : "";
       if (isClosedList) {
-        s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong>${reqDomain} <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${closedBadge})</span></li>\n`;
+        s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${j.id} - ${link}</strong>${reqDomain} <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${closedBadge})</span>${hcBadge}</li>\n`;
       } else {
-        s += `  <li class="mt-0.5"><strong>${j.id} - ${link}</strong>${reqDomain}</li>\n`;
+        s += `  <li class="mt-0.5"><strong>${j.id} - ${link}</strong>${reqDomain}${hcBadge}</li>\n`;
       }
     }
     s += "</ul>\n";
@@ -115,10 +140,13 @@ export function renderPforOfficerJobsList(
         ? ` (CMR : ${ctx.getCmrJobRequiredDomainsFr(j.id)})`
         : ` (RMC: ${ctx.getCmrJobRequiredDomainsEn(j.id)})`
       : "";
+    const hcBadge = ctx.jobService.isJobHighlyCompetitive(j.id)
+      ? renderHighlyCompetitiveBadge(lang, false, i18n)
+      : "";
     if (isClosedList) {
-      s += `  - ${j.id} - ${link}${reqDomain} (${closedBadge})\n`;
+      s += `  - ${j.id} - ${link}${reqDomain} (${closedBadge})${hcBadge}\n`;
     } else {
-      s += `  - ${j.id} - ${link}${reqDomain}\n`;
+      s += `  - ${j.id} - ${link}${reqDomain}${hcBadge}\n`;
     }
   }
   return s;
@@ -146,10 +174,13 @@ export function renderPforNcmJobsList(
     for (const item of jobsList) {
       const jId = typeof item === "string" ? item : item.id;
       const link = ctx.getJobLinkMarkup(jId, isFr, true);
+      const hcBadge = ctx.jobService.isJobHighlyCompetitive(jId)
+        ? renderHighlyCompetitiveBadge(lang, true, i18n)
+        : "";
       if (isClosedList) {
-        s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${closedBadge})</span></li>\n`;
+        s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${closedBadge})</span>${hcBadge}</li>\n`;
       } else {
-        s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong></li>\n`;
+        s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong>${hcBadge}</li>\n`;
       }
     }
     s += "</ul>\n";
@@ -160,10 +191,13 @@ export function renderPforNcmJobsList(
   for (const item of jobsList) {
     const jId = typeof item === "string" ? item : item.id;
     const link = ctx.getJobLinkMarkup(jId, isFr, false);
+    const hcBadge = ctx.jobService.isJobHighlyCompetitive(jId)
+      ? renderHighlyCompetitiveBadge(lang, false, i18n)
+      : "";
     if (isClosedList) {
-      s += `  - ${jId} - ${link} (${closedBadge})\n`;
+      s += `  - ${jId} - ${link} (${closedBadge})${hcBadge}\n`;
     } else {
-      s += `  - ${jId} - ${link}\n`;
+      s += `  - ${jId} - ${link}${hcBadge}\n`;
     }
   }
   return s;

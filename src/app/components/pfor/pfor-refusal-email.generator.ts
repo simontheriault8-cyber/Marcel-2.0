@@ -5,6 +5,10 @@ import {
   getPaidEducationProgramsUrl,
   getForcesHelpCentreUrl,
 } from "../../data/app-links.data";
+import {
+  renderHighlyCompetitiveBadge,
+  renderHighlyCompetitiveNote,
+} from "../shared/email-blocks.helper";
 
 export function getPforCmrMinMissingCriteriaFr(this: any): string[] {
     const selected = this.reorientationCriteria.selectedCriteriaIds();
@@ -99,12 +103,19 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       this.sharedState.hasReassignedTasks();
     const isEn = this.i18n?.isEn ? this.i18n.isEn() : (this.i18n?.lang?.() === 'en');
 
+    const displayedJobs = [...openJobs, ...(this.ignoreSip() ? closedJobs : [])];
+    const hasHighlyCompetitive = displayedJobs.some((item: JobEntry | string) => {
+      const jId = typeof item === "string" ? item : item.id;
+      return this.jobService.isJobHighlyCompetitive(jId);
+    });
+
     const renderHtmlNcmList = (
       jobs: (JobEntry | string)[],
       isClosed: boolean,
       isFr: boolean,
     ) => {
       if (jobs.length === 0) return "";
+      const lang = isFr ? "fr" : "en";
       let s = "";
       if (isClosed) {
         s += `<p class="mt-2 mb-1 font-bold text-red-600" style="color: #dc2626; font-weight: bold; margin-top: 8px; margin-bottom: 4px;">${isFr ? "Métiers fermés :" : "Closed occupations:"}</p>\n`;
@@ -113,10 +124,13 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       for (const item of jobs) {
         const jId = typeof item === "string" ? item : item.id;
         const link = this.getJobLinkMarkup(jId, isFr, true);
+        const hcBadge = this.jobService.isJobHighlyCompetitive(jId)
+          ? renderHighlyCompetitiveBadge(lang, true, this.i18n)
+          : "";
         if (isClosed) {
-          s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${isFr ? "FERMÉ" : "CLOSED"})</span></li>\n`;
+          s += `  <li class="mt-0.5 text-red-700" style="color: #b91c1c;"><strong>${jId} - ${link}</strong> <span style="background-color: #fecaca; color: #991b1b; font-size: 11px; padding: 1px 4px; border-radius: 3px; font-weight: bold;">(${isFr ? "FERMÉ" : "CLOSED"})</span>${hcBadge}</li>\n`;
         } else {
-          s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong></li>\n`;
+          s += `  <li class="mt-0.5"><strong>${jId} - ${link}</strong>${hcBadge}</li>\n`;
         }
       }
       s += "</ul>\n";
@@ -129,6 +143,7 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       isFr: boolean,
     ) => {
       if (jobs.length === 0) return "";
+      const lang = isFr ? "fr" : "en";
       let s = "";
       if (isClosed) {
         s += `\n${isFr ? "Métiers fermés :" : "Closed occupations:"}\n`;
@@ -136,10 +151,13 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       for (const item of jobs) {
         const jId = typeof item === "string" ? item : item.id;
         const link = this.getJobLinkMarkup(jId, isFr, false);
+        const hcBadge = this.jobService.isJobHighlyCompetitive(jId)
+          ? renderHighlyCompetitiveBadge(lang, false, this.i18n)
+          : "";
         if (isClosed) {
-          s += `  - ${jId} - ${link} (${isFr ? "FERMÉ" : "CLOSED"})\n`;
+          s += `  - ${jId} - ${link} (${isFr ? "FERMÉ" : "CLOSED"})${hcBadge}\n`;
         } else {
-          s += `  - ${jId} - ${link}\n`;
+          s += `  - ${jId} - ${link}${hcBadge}\n`;
         }
       }
       return s;
@@ -235,6 +253,10 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       } else {
         h +=
           "<p class=\"mt-4 mb-6\">Si vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.</p>\n";
+      }
+
+      if (hasHighlyCompetitive) {
+        h += renderHighlyCompetitiveNote("fr", true, this.i18n);
       }
 
       h += '<p class="mb-4">Cordialement,</p>\n';
@@ -336,6 +358,10 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       } else {
         hEn +=
           "<p class=\"mt-4 mb-6\">If you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.</p>\n";
+      }
+
+      if (hasHighlyCompetitive) {
+        hEn += renderHighlyCompetitiveNote("en", true, this.i18n);
       }
 
       hEn += '<p class="mb-4">Sincerely,</p>\n';
@@ -443,6 +469,10 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
           "\nSi vous désirez poursuivre votre démarche vers l’un de ces métiers ou procéder à la fermeture de votre dossier, veuillez nous faire part de votre décision en répondant directement à ce courriel.\n\n";
       }
 
+      if (hasHighlyCompetitive) {
+        t += renderHighlyCompetitiveNote("fr", false, this.i18n) + "\n";
+      }
+
       t += "Cordialement,\n\n";
       t += "L’équipe de recrutement des Forces armées canadiennes\n";
       t += "Centre de recrutement des Forces canadiennes Québec\n";
@@ -528,6 +558,10 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       } else {
         tEn +=
           "\nIf you wish to proceed with one of these occupations or request the closure of your file, please let us know by replying directly to this email.\n\n";
+      }
+
+      if (hasHighlyCompetitive) {
+        tEn += renderHighlyCompetitiveNote("en", false, this.i18n) + "\n";
       }
 
       tEn += "Sincerely,\n\n";

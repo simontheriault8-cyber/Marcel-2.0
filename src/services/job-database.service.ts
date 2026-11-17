@@ -142,6 +142,40 @@ export class JobDatabaseService {
     return this.gestionDesAttentes().includes(padded);
   }
 
+  // Signal for highly competitive ("Très Contingenté*") jobs from SIP.json
+  tresContingentes: WritableSignal<string[]> = signal(
+    (
+      (SIP_DATA as any).tresContingentes ||
+      (SIP_DATA as any).tres_contingentes ||
+      []
+    ).map((id: any) => String(id).trim().padStart(5, "0"))
+  );
+
+  isJobHighlyCompetitive(jobId: string): boolean {
+    if (!jobId) return false;
+    const padded = jobId.trim().padStart(5, "0");
+    return this.tresContingentes().includes(padded);
+  }
+
+  setJobHighlyCompetitive(jobId: string, isHighlyCompetitive: boolean): void {
+    if (!jobId) return;
+    const padded = jobId.trim().padStart(5, "0");
+    this.tresContingentes.update((list) => {
+      const exists = list.includes(padded);
+      if (isHighlyCompetitive && !exists) {
+        return [...list, padded].sort();
+      }
+      if (!isHighlyCompetitive && exists) {
+        return list.filter((id) => id !== padded);
+      }
+      return list;
+    });
+  }
+
+  toggleJobHighlyCompetitive(jobId: string): void {
+    this.setJobHighlyCompetitive(jobId, !this.isJobHighlyCompetitive(jobId));
+  }
+
   getJobPforStatus(jobId: string): { admission: "o" | "f"; traitement: "o" | "f" } | null {
     const padded = jobId.trim().padStart(5, "0");
     const raw = this.sipStatus()[padded] || {};
