@@ -994,6 +994,21 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                           </svg>
                         }
                       </button>
+
+                      <button
+                        (click)="selectEmailBankTemplate('inadmissibilite_pfor_trop_jeune')"
+                        class="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between gap-2 transition cursor-pointer"
+                        [class.bg-indigo-50/80]="selectedEmailBankTemplate() === 'inadmissibilite_pfor_trop_jeune'"
+                        [class.font-bold]="selectedEmailBankTemplate() === 'inadmissibilite_pfor_trop_jeune'"
+                        [class.text-indigo-900]="selectedEmailBankTemplate() === 'inadmissibilite_pfor_trop_jeune'"
+                      >
+                        <span class="truncate">{{ i18n.t('emailBank.inadmissibilitePforTropJeune') }}</span>
+                        @if (selectedEmailBankTemplate() === 'inadmissibilite_pfor_trop_jeune') {
+                          <svg class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        }
+                      </button>
                     } @else {
                       <button
                         (click)="selectEmailBankTemplate('tentative_offre_gd')"

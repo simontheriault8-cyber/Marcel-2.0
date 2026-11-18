@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { SCENARIO_VERIF_DEPOT_RELEVES_CMR } from "../app/data/email-scenarios/scenario-verif-depot-releves-cmr.data";
+import { SCENARIO_INADMISSIBILITE_PFOR_TROP_JEUNE } from "../app/data/email-scenarios/scenario-inadmissibilite-pfor-trop-jeune.data";
 import { SCENARIO_PFOR_TROP_JEUNE } from "../app/data/email-scenarios/scenario-pfor-trop-jeune.data";
 import {
   getForcesHelpCentreUrl,
@@ -929,6 +930,7 @@ Help Centre | Canadian Armed Forces`;
 
     this.scenarios.set(SCENARIO_VERIF_DEPOT_RELEVES_CMR.id, SCENARIO_VERIF_DEPOT_RELEVES_CMR);
     this.scenarios.set(SCENARIO_PFOR_TROP_JEUNE.id, SCENARIO_PFOR_TROP_JEUNE);
+    this.scenarios.set(SCENARIO_INADMISSIBILITE_PFOR_TROP_JEUNE.id, SCENARIO_INADMISSIBILITE_PFOR_TROP_JEUNE);
   }
 
   getScenario(id: string): EmailScenario | undefined {

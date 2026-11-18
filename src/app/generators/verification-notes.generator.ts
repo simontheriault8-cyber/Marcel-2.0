@@ -302,6 +302,11 @@ export function getRejectionAndReminderNoteText(this: any): string {
       ? "Step 1 (In progress) - ROTP applicant too young (< 17 years old by August 1, 2027): Email sent informing of the RMC admission age requirement update and ongoing processing pending an official decision."
       : "Étape 1 (en cours) - Postulant PFOR trop jeune (< 17 ans au 1er août 2027) : Courriel envoyé informant de la mise à jour de l'exigence d'âge du CMR et du traitement continu en attente d'une décision officielle.");
   }
+  if (this.selectedEmailBankTemplate() === "inadmissibilite_pfor_trop_jeune") {
+    return this.i18n ? this.i18n.t("regNotes.inadmissibilitePforTropJeune") : (isEn
+      ? "Step 1 (In progress) - ROTP Ineligibility (Applicant too young for ROTP): Email sent, file closure."
+      : "Étape 1 (En cours) - Inadmissibilité PFOR (Postulant trop jeune pour PFOR) : Courriel envoyé, fermeture du dossier.");
+  }
 
   const closureSuffix = " " + (this.i18n
     ? this.i18n.t("regNotes.closureWarning30Days")
@@ -517,6 +522,18 @@ export function computeGeneratedNote(this: any): string {
       : (isEn
         ? "Step 1 (In progress) - ROTP applicant too young (< 17 years old by August 1, 2027): Email sent informing of the RMC admission age requirement update and ongoing processing pending an official decision."
         : "Étape 1 (en cours) - Postulant PFOR trop jeune (< 17 ans au 1er août 2027) : Courriel envoyé informant de la mise à jour de l'exigence d'âge du CMR et du traitement continu en attente d'une décision officielle.");
+    if (this.triageMedicalRequis()) {
+      note += "\n\n" + (this.i18n ? this.i18n.t('regNotes.medTriageRequired') : (isEn ? "MEDICAL - TRIAGE BY MED CHU REQUIRED" : "MÉDICAL - TRIAGE PAR MED CHU REQUIS"));
+    }
+    return note;
+  }
+
+  if (this.selectedEmailBankTemplate() === 'inadmissibilite_pfor_trop_jeune') {
+    let note = this.i18n
+      ? this.i18n.t('regNotes.inadmissibilitePforTropJeune')
+      : (isEn
+        ? "Step 1 (In progress) - ROTP Ineligibility (Applicant too young for ROTP): Email sent, file closure."
+        : "Étape 1 (En cours) - Inadmissibilité PFOR (Postulant trop jeune pour PFOR) : Courriel envoyé, fermeture du dossier.");
     if (this.triageMedicalRequis()) {
       note += "\n\n" + (this.i18n ? this.i18n.t('regNotes.medTriageRequired') : (isEn ? "MEDICAL - TRIAGE BY MED CHU REQUIRED" : "MÉDICAL - TRIAGE PAR MED CHU REQUIS"));
     }

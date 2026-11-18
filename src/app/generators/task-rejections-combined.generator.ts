@@ -450,6 +450,7 @@ export function getCombinedPlainString(this: any, ignoreMerge: boolean = false):
       scenario.id === "inadmissibilite_pr_3ans" ||
       scenario.id === "verification_depot_releves_cmr" ||
       scenario.id === "pfor_trop_jeune" ||
+      scenario.id === "inadmissibilite_pfor_trop_jeune" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
       return this.sharedState.getCustomizedScenarioText(scenario.bodyText);
@@ -608,6 +609,7 @@ export function getCombinedRawHtmlString(this: any, ignoreMerge: boolean = false
       scenario.id === "inadmissibilite_pr_3ans" ||
       scenario.id === "verification_depot_releves_cmr" ||
       scenario.id === "pfor_trop_jeune" ||
+      scenario.id === "inadmissibilite_pfor_trop_jeune" ||
       (!this.isMedicalEvaluationActive() && !this.offreNormaleChecked() && !this.offreEtudesSubventionneesChecked() && !this.hasSelectedRejections())
     )) {
       return this.sharedState.getCustomizedScenarioHtml(scenario.bodyHtml);

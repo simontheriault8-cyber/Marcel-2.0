@@ -610,6 +610,9 @@ export function computeActiveEmailScenario(this: any): EmailScenario | null {
     if (this.selectedEmailBankTemplate() === "pfor_trop_jeune") {
       return this.emailScenariosService.getScenario("pfor_trop_jeune") || null;
     }
+    if (this.selectedEmailBankTemplate() === "inadmissibilite_pfor_trop_jeune") {
+      return this.emailScenariosService.getScenario("inadmissibilite_pfor_trop_jeune") || null;
+    }
 
     if (
       this.forceGeneralReminder() &&
