@@ -607,6 +607,9 @@ export function computeActiveEmailScenario(this: any): EmailScenario | null {
     if (this.selectedEmailBankTemplate() === "verification_depot_releves_cmr") {
       return this.emailScenariosService.getScenario("verification_depot_releves_cmr") || null;
     }
+    if (this.selectedEmailBankTemplate() === "pfor_trop_jeune") {
+      return this.emailScenariosService.getScenario("pfor_trop_jeune") || null;
+    }
 
     if (
       this.forceGeneralReminder() &&

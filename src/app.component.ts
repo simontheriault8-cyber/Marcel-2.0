@@ -1350,7 +1350,7 @@ export class AppComponent implements OnInit {
   });
 
   isPforCompliant = computed(() => {
-    return this.selectedRole() === 'recruiter' && this.sharedState.isPostulantPfor() && this.allTasksCompliant();
+    return this.selectedRole() === 'recruiter' && this.sharedState.isPostulantPfor() && this.allTasksCompliant() && !this.selectedEmailBankTemplate();
   });
 
   generatedPforCaf101EmailHtml = computed((): SafeHtml => {

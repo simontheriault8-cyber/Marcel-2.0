@@ -34,11 +34,13 @@ export const EMAILS_SUBJECTS_HEADERS_FR: TranslationDictionary = {
   'emailSubject.demandeSdpmConjointMil': 'Demande SDPM pour conjoint militaire',
   'emailSubject.testEsomConfirmation': 'TEST ESOM / Confirmation de rendez-vous',
   'emailSubject.verifDepotRelevesCmr': 'Forces armées canadiennes/Canadian Armed Forces',
+  'emailSubject.pforTropJeune': "Mise à jour de l'exigence d'âge pour l'admission au Collège militaire royal du Canada (CMR) / Royal Military College of Canada (RMC) Admission Age Requirement Update",
 
   // Subject aliases for getEmailSubject
   'subject.candidate_email_outlook': 'Forces armées canadiennes/Canadian Armed Forces',
   'subject.compliant_big_ace': 'Forces armées canadiennes/Canadian Armed Forces',
   'subject.bank_verif_depot_releves_cmr': 'Forces armées canadiennes/Canadian Armed Forces',
+  'subject.bank_pfor_trop_jeune': "Mise à jour de l'exigence d'âge pour l'admission au Collège militaire royal du Canada (CMR) / Royal Military College of Canada (RMC) Admission Age Requirement Update",
   'subject.pfor_caf101': "(1/2) Collège militaire canadien - Séance d'information virtuelle/Canadian Military College - Virtual information session",
   'subject.pfor_lien_pa': "(2/2) Collège militaire canadien - Portail d'admission/Canadian Military College - Admission Portal",
   'subject.bank_nav_tan': 'Demande de numéro de NAV/TAN et création de compte claims X - CSPN partie 1',
@@ -109,11 +111,13 @@ export const EMAILS_SUBJECTS_HEADERS_EN: TranslationDictionary = {
   'emailSubject.demandeSdpmConjointMil': 'MSPD Request for Military Spouse',
   'emailSubject.testEsomConfirmation': 'MOST TEST / Appointment Confirmation',
   'emailSubject.verifDepotRelevesCmr': 'Canadian Armed Forces/Forces armées canadiennes',
+  'emailSubject.pforTropJeune': "Royal Military College of Canada (RMC) Admission Age Requirement Update / Mise à jour de l'exigence d'âge pour l'admission au Collège militaire royal du Canada (CMR)",
 
   // Subject aliases for getEmailSubject
   'subject.candidate_email_outlook': 'Canadian Armed Forces/Forces armées canadiennes',
   'subject.compliant_big_ace': 'Canadian Armed Forces/Forces armées canadiennes',
   'subject.bank_verif_depot_releves_cmr': 'Canadian Armed Forces/Forces armées canadiennes',
+  'subject.bank_pfor_trop_jeune': "Royal Military College of Canada (RMC) Admission Age Requirement Update / Mise à jour de l'exigence d'âge pour l'admission au Collège militaire royal du Canada (CMR)",
   'subject.pfor_caf101': "(1/2) Canadian Military College - Virtual information session/Collège militaire canadien - Séance d'information virtuelle",
   'subject.pfor_lien_pa': "(2/2) Canadian Military College - Admission Portal/Collège militaire canadien - Portail d'admission",
   'subject.bank_nav_tan': 'NAV/TAN Number and Claims X Account Creation Request - NCPS Part 1',

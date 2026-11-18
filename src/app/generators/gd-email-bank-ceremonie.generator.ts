@@ -756,6 +756,10 @@ export function getEmailSubject(this: any): string {
       return getInapteMedicalSubject.call(this);
     }
 
+    if (this.selectedEmailBankTemplate() === "pfor_trop_jeune") {
+      return t('subject.bank_pfor_trop_jeune', "Mise à jour de l'exigence d'âge pour l'admission au Collège militaire royal du Canada (CMR) / Royal Military College of Canada (RMC) Admission Age Requirement Update");
+    }
+
     // 2. Tous les courriels destinés aux candidats (dossier conforme, rejets de tâches, offres, avis de fermeture, etc.)
     return t('subject.candidate_email_outlook', candidateDefaultSubject);
   }

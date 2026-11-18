@@ -297,6 +297,11 @@ export function getRejectionAndReminderNoteText(this: any): string {
       ? "Step 1 (In progress) - Email verifying transcript upload to the RMC portal, Transcripts task reassigned."
       : "Étape 1 (en cours) - Courriel de vérification de dépôt des relevés de notes dans le portail du CMR, tâche Relevés de notes réattribuées.");
   }
+  if (this.selectedEmailBankTemplate() === "pfor_trop_jeune") {
+    return this.i18n ? this.i18n.t("regNotes.pforTropJeune") : (isEn
+      ? "Step 1 (In progress) - ROTP applicant too young (< 17 years old by August 1, 2027): Email sent informing of the RMC admission age requirement update and ongoing processing pending an official decision."
+      : "Étape 1 (en cours) - Postulant PFOR trop jeune (< 17 ans au 1er août 2027) : Courriel envoyé informant de la mise à jour de l'exigence d'âge du CMR et du traitement continu en attente d'une décision officielle.");
+  }
 
   const closureSuffix = " " + (this.i18n
     ? this.i18n.t("regNotes.closureWarning30Days")
@@ -499,6 +504,19 @@ export function computeGeneratedNote(this: any): string {
       : (isEn
         ? "Step 1 (In progress) - Email verifying transcript upload to the RMC portal, Transcripts task reassigned."
         : "Étape 1 (en cours) - Courriel de vérification de dépôt des relevés de notes dans le portail du CMR, tâche Relevés de notes réattribuées.");
+    if (this.triageMedicalRequis()) {
+      note += "\n\n" + (this.i18n ? this.i18n.t('regNotes.medTriageRequired') : (isEn ? "MEDICAL - TRIAGE BY MED CHU REQUIRED" : "MÉDICAL - TRIAGE PAR MED CHU REQUIS"));
+    }
+    return note;
+  }
+
+  // 3.56 Postulant PFOR trop jeune (Volet Recruteur)
+  if (this.selectedEmailBankTemplate() === 'pfor_trop_jeune') {
+    let note = this.i18n
+      ? this.i18n.t('regNotes.pforTropJeune')
+      : (isEn
+        ? "Step 1 (In progress) - ROTP applicant too young (< 17 years old by August 1, 2027): Email sent informing of the RMC admission age requirement update and ongoing processing pending an official decision."
+        : "Étape 1 (en cours) - Postulant PFOR trop jeune (< 17 ans au 1er août 2027) : Courriel envoyé informant de la mise à jour de l'exigence d'âge du CMR et du traitement continu en attente d'une décision officielle.");
     if (this.triageMedicalRequis()) {
       note += "\n\n" + (this.i18n ? this.i18n.t('regNotes.medTriageRequired') : (isEn ? "MEDICAL - TRIAGE BY MED CHU REQUIRED" : "MÉDICAL - TRIAGE PAR MED CHU REQUIS"));
     }
