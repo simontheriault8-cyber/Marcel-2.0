@@ -1,4 +1,5 @@
 import { RoleSnapshot, getTodayDateString } from "../models/app-role-snapshot.models";
+import { createDefaultFollowUpNoteValues } from "../data/follow-up-note.data";
 import { DEFAULT_SIG_FR, DEFAULT_SIG_EN, DEFAULT_SIG_OTA_FR, DEFAULT_SIG_OTA_EN } from "../../services/shared-state.service";
 
 export function createSnapshot(this: any): RoleSnapshot {
@@ -47,13 +48,8 @@ export function createSnapshot(this: any): RoleSnapshot {
       premierContactIptad: this.premierContactIptad(),
       premierContactSeaf: this.premierContactSeaf(),
       premierContactSubPanelMode: this.premierContactSubPanelMode(),
-      premierContactNoteIptad: this.premierContactNoteIptad(),
-      premierContactNoteSeaf: this.premierContactNoteSeaf(),
-      premierContactNoteEntrevue: this.premierContactNoteEntrevue(),
-      premierContactNoteMedical: this.premierContactNoteMedical(),
-      premierContactNotePsps: this.premierContactNotePsps(),
-      premierContactNoteGambit: this.premierContactNoteGambit(),
-      premierContactNoteAnxQ: this.premierContactNoteAnxQ(),
+      followUpNoteValues: JSON.parse(JSON.stringify(this.followUpNoteValues())),
+      followUpNoteOther: this.followUpNoteOther(),
       avisFermetureCourriel: this.avisFermetureCourriel(),
       avisFermetureDelaiJours: this.avisFermetureDelaiJours(),
       avisFermetureDate: this.avisFermetureDate(),
@@ -144,13 +140,8 @@ export function applySnapshot(this: any, snapshot: RoleSnapshot) {
     this.premierContactIptad.set(snapshot.premierContactIptad || false);
     this.premierContactSeaf.set(snapshot.premierContactSeaf || false);
     this.premierContactSubPanelMode.set(snapshot.premierContactSubPanelMode || 'courriel');
-    this.premierContactNoteIptad.set(snapshot.premierContactNoteIptad || 'Complété');
-    this.premierContactNoteSeaf.set(snapshot.premierContactNoteSeaf || 'Complété');
-    this.premierContactNoteEntrevue.set(snapshot.premierContactNoteEntrevue || 'À faire');
-    this.premierContactNoteMedical.set(snapshot.premierContactNoteMedical || 'À faire');
-    this.premierContactNotePsps.set(snapshot.premierContactNotePsps || 'À faire');
-    this.premierContactNoteGambit.set(snapshot.premierContactNoteGambit || 'En attente (type 28)');
-    this.premierContactNoteAnxQ.set(snapshot.premierContactNoteAnxQ || 'À faire');
+    this.followUpNoteValues.set(snapshot.followUpNoteValues ? JSON.parse(JSON.stringify(snapshot.followUpNoteValues)) : createDefaultFollowUpNoteValues());
+    this.followUpNoteOther.set(snapshot.followUpNoteOther || '');
 
     this.avisFermetureCourriel.set(snapshot.avisFermetureCourriel || false);
     this.avisFermetureDelaiJours.set(snapshot.avisFermetureDelaiJours || '14');
@@ -274,13 +265,8 @@ export function createFreshSnapshot(this: any, role: 'recruiter' | 'gestionnaire
       premierContactIptad: false,
       premierContactSeaf: false,
       premierContactSubPanelMode: 'courriel',
-      premierContactNoteIptad: 'Complété',
-      premierContactNoteSeaf: 'Complété',
-      premierContactNoteEntrevue: 'À faire',
-      premierContactNoteMedical: 'À faire',
-      premierContactNotePsps: 'À faire',
-      premierContactNoteGambit: 'En attente (type 28)',
-      premierContactNoteAnxQ: 'À faire',
+      followUpNoteValues: createDefaultFollowUpNoteValues(),
+      followUpNoteOther: '',
       avisFermetureCourriel: false,
       avisFermetureDelaiJours: '14',
       avisFermetureDate: '',

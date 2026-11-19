@@ -1162,7 +1162,11 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                {{ i18n.t('preview.gdEmailAndNote') }}
+                @if (generatedEmailPlain().trim().length === 0) {
+                  {{ i18n.t('preview.gdNoteOnly') }}
+                } @else {
+                  {{ i18n.t('preview.gdEmailAndNote') }}
+                }
               </h2>
 
               <div class="flex items-center gap-3">
@@ -1279,25 +1283,27 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                   }
                 </button>
 
-                <button
-                  (click)="exportToOutlook()"
-                  class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
-                  [class.bg-slate-800]="!copiedEmail()"
-                  [class.hover:bg-slate-700]="!copiedEmail()"
-                  [class.bg-green-600]="copiedEmail()"
-                >
-                  @if (copiedEmail()) {
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    {{ i18n.t('preview.copiedOpeningOutlook') }}
-                  } @else {
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    {{ i18n.t('preview.exportToOutlook') }}
-                  }
-                </button>
+                @if (generatedEmailPlain().trim().length > 0) {
+                  <button
+                    (click)="exportToOutlook()"
+                    class="text-xs text-white px-4 py-1.5 rounded-md shadow-md font-medium transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+                    [class.bg-slate-800]="!copiedEmail()"
+                    [class.hover:bg-slate-700]="!copiedEmail()"
+                    [class.bg-green-600]="copiedEmail()"
+                  >
+                    @if (copiedEmail()) {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
+                      {{ i18n.t('preview.copiedOpeningOutlook') }}
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      {{ i18n.t('preview.exportToOutlook') }}
+                    }
+                  </button>
+                }
               </div>
             </div>
 
@@ -1375,39 +1381,45 @@ export const APP_PREVIEW_MODALS_TEMPLATE = `
                     </div>
                   </div>
                   <div class="p-4 bg-slate-50">
-                    <div
-                      class="w-full bg-transparent text-xs font-mono text-slate-600 select-text leading-relaxed whitespace-pre-wrap break-words"
-                    >{{ displayedNote() }}</div>
+                    @if (displayedNote().trim().length > 0) {
+                      <div
+                        class="w-full bg-transparent text-xs font-mono text-slate-600 select-text leading-relaxed whitespace-pre-wrap break-words"
+                      >{{ displayedNote() }}</div>
+                    } @else {
+                      <p class="text-xs italic text-slate-400">{{ i18n.t('followUpNote.emptyNoteHint') }}</p>
+                    }
                   </div>
                 </div>
 
                 <!-- 2. Email Section (Single unified email) -->
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-                  <div class="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
-                    <div class="flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">
-                        @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
-                          {{ i18n.t('preview.emailRecipientCrfcQc') }}
-                        } @else if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
-                          {{ i18n.t('preview.emailRecipientCadet') }}
-                        } @else if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
-                          {{ i18n.t('preview.emailRecipientSdpm') }}
-                        } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
-                          {{ i18n.t('preview.emailDemandeAutorisationCspn') }}
-                        } @else {
-                          {{ i18n.t('preview.emailApplicantBilingual') }}
-                        }
-                      </h3>
+                @if (generatedEmailPlain().trim().length > 0) {
+                  <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+                    <div class="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex justify-between items-center backdrop-blur-sm">
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">
+                          @if (selectedEmailBankTemplate() === 'demande_nav_tan') {
+                            {{ i18n.t('preview.emailRecipientCrfcQc') }}
+                          } @else if (selectedEmailBankTemplate() === 'verification_dossier_cadet') {
+                            {{ i18n.t('preview.emailRecipientCadet') }}
+                          } @else if (selectedEmailBankTemplate() === 'demande_sdpm_conjoint_militaire') {
+                            {{ i18n.t('preview.emailRecipientSdpm') }}
+                          } @else if (selectedEmailBankTemplate() === 'demande_autorisation_cspn') {
+                            {{ i18n.t('preview.emailDemandeAutorisationCspn') }}
+                          } @else {
+                            {{ i18n.t('preview.emailApplicantBilingual') }}
+                          }
+                        </h3>
+                      </div>
                     </div>
+                    <div
+                      class="p-6 bg-white text-xs text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
+                      [innerHTML]="generatedEmailHtml()"
+                    ></div>
                   </div>
-                  <div
-                    class="p-6 bg-white text-xs text-slate-800 leading-relaxed font-sans border-none focus:outline-none"
-                    [innerHTML]="generatedEmailHtml()"
-                  ></div>
-                </div>
+                }
               }
             </div>
           </section>

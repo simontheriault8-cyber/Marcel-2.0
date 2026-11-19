@@ -314,6 +314,12 @@ export const GESTIONNAIRE_TASKS_DATA: Task[] = [
         nameEn: "Notice of file closure",
         documents: [],
       },
+      {
+        section: "Suivi de dossier",
+        nameFr: "Note de suivi",
+        nameEn: "Follow-up note",
+        documents: [],
+      },
       // Retour PSPS
       {
         section: "Retour PSPS",

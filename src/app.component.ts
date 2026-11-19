@@ -27,6 +27,9 @@ import { UnitPickerComponent } from "./app/components/unit-picker.component";
 import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
 import { AdminPortalComponent } from "./app/components/admin/admin-portal.component";
 import { AorSelectionComponent } from "./app/components/aor-selection.component";
+import { FollowUpNoteBuilderComponent } from "./app/components/shared/follow-up-note-builder.component";
+import { FollowUpNoteValues } from "./app/models/follow-up-note.models";
+import { createDefaultFollowUpNoteValues } from "./app/data/follow-up-note.data";
 import { AdminAuthService } from "./services/admin-auth.service";
 import { AorService } from "./services/aor.service";
 import { UnitSession, UNITS_LIST } from "./app/data/units.data";
@@ -58,7 +61,7 @@ import { TranslationService } from "./app/i18n";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, AorSelectionComponent, FormsModule],
+  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, AorSelectionComponent, FollowUpNoteBuilderComponent, FormsModule],
   template: APP_COMPONENT_TEMPLATE,
   host: { '(document:click)': 'onDocumentClick($event)' },
   styles: [],
@@ -80,23 +83,15 @@ export class AppComponent implements OnInit {
   dossierDropdownOpen2 = signal<boolean>(false);
   dossierDropdownOpen3 = signal<boolean>(false);
 
-  // Premier Contact State
+  // Premier Contact & Note de suivi State
   premierContactSubPanelMode = signal<'courriel' | 'note'>('courriel');
-  readonly premierContactIptadOptions: string[] = ['Complété', 'À faire', 'Attribué'];
-  readonly premierContactSeafOptions: string[] = ['Complété', 'Attribué'];
-  readonly premierContactEntrevueOptions: string[] = ['À faire', 'Complété', 'Attribué'];
-  readonly premierContactMedicalOptions: string[] = ['À faire', 'Complété', 'Attribué'];
-  readonly premierContactPspsOptions: string[] = ['À faire', 'Complété', 'Initié'];
-  readonly premierContactGambitOptions: string[] = ['En attente (type 28)', 'En attente (dossier soumis)', 'Concluant favorable', 'Concluant défavorable', 'Non Concluant'];
-  readonly premierContactAnxQOptions: string[] = ['À faire', 'Complété'];
+  followUpNoteValues = signal<FollowUpNoteValues>(createDefaultFollowUpNoteValues());
+  followUpNoteOther = signal<string>('');
 
-  premierContactNoteIptad = signal<string>('Complété');
-  premierContactNoteSeaf = signal<string>('Complété');
-  premierContactNoteEntrevue = signal<string>('À faire');
-  premierContactNoteMedical = signal<string>('À faire');
-  premierContactNotePsps = signal<string>('À faire');
-  premierContactNoteGambit = signal<string>('En attente (type 28)');
-  premierContactNoteAnxQ = signal<string>('À faire');
+  resetFollowUpNote() {
+    this.followUpNoteValues.set(createDefaultFollowUpNoteValues());
+    this.followUpNoteOther.set('');
+  }
 
   premierContactCourriel = signal<boolean>(false);
   premierContactMedical = signal<boolean>(false);
@@ -863,6 +858,7 @@ export class AppComponent implements OnInit {
     return (
       this.isPremierContactActive() ||
       (this.selectedTask()?.nameFr === 'Premier contact' && this.premierContactSubPanelMode() === 'note') ||
+      this.selectedTask()?.nameFr === 'Note de suivi' ||
       (this.selectedTask()?.nameFr?.includes('Offre') && this.offreSubPanelMode() === 'note') ||
       this.isAvisFermetureActive() ||
       this.isAnnexeQActive() ||

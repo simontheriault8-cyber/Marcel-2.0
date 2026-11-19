@@ -1,4 +1,5 @@
 import { Task } from "../data/recruitment-tasks/recruitment-tasks.models";
+import { FollowUpNoteValues } from "./follow-up-note.models";
 
 export interface UniteAffectation {
   id: string;
@@ -89,13 +90,8 @@ export interface RoleSnapshot {
   premierContactIptad?: boolean;
   premierContactSeaf?: boolean;
   premierContactSubPanelMode?: 'courriel' | 'note';
-  premierContactNoteIptad?: string;
-  premierContactNoteSeaf?: string;
-  premierContactNoteEntrevue?: string;
-  premierContactNoteMedical?: string;
-  premierContactNotePsps?: string;
-  premierContactNoteGambit?: string;
-  premierContactNoteAnxQ?: string;
+  followUpNoteValues?: FollowUpNoteValues;
+  followUpNoteOther?: string;
   avisFermetureCourriel?: boolean;
   avisFermetureDelaiJours?: string;
   avisFermetureDate?: string;

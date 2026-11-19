@@ -448,13 +448,7 @@ export function restartApp(this: any, triggerShared: boolean = true) {
     this.premierContactIptad.set(false);
     this.premierContactSeaf.set(false);
     this.premierContactSubPanelMode.set('courriel');
-    this.premierContactNoteIptad.set('Complété');
-    this.premierContactNoteSeaf.set('Complété');
-    this.premierContactNoteEntrevue.set('À faire');
-    this.premierContactNoteMedical.set('À faire');
-    this.premierContactNotePsps.set('À faire');
-    this.premierContactNoteGambit.set('En attente (type 28)');
-    this.premierContactNoteAnxQ.set('À faire');
+    this.resetFollowUpNote();
 
     this.avisFermetureCourriel.set(false);
     this.avisFermetureDelaiJours.set('14');

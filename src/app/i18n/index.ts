@@ -10,3 +10,5 @@ export * from './dictionaries/jobs.dict';
 export * from './dictionaries/university-degrees.dict';
 export * from './dictionaries/emails-pfor.dict';
 export * from './dictionaries/emails-reorientation.dict';
+export * from './dictionaries/follow-up-note.dict';
+

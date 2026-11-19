@@ -1,6 +1,8 @@
 import { JobEntry } from "../../services/jobs-data";
 import { Task, DocumentItem, RejectionReason } from "../../services/recruitment-data.service";
 import { getInapteMedicalNote } from "./gd-inapte-medical-email.generator";
+import { formatFollowUpNote } from "../data/follow-up-note.data";
+import { FOLLOW_UP_NOTE_FR, FOLLOW_UP_NOTE_EN } from "../i18n/dictionaries/follow-up-note.dict";
 
 export function getStructuredRejections(this: any) {
   const selectedKeys = this.selectedRejectionKeys();
@@ -395,26 +397,22 @@ export function computeGeneratedNote(this: any): string {
   const isEn = this.i18n ? this.i18n.isEn() : false;
   const notes: string[] = [];
 
-  // 0. Premier Contact Note
-  if (this.premierContactSubPanelMode() === 'note' && this.selectedTask()?.nameFr === 'Premier contact') {
-    const noteLines: string[] = isEn ? [
-      `IPTAD : ${this.premierContactNoteIptad()}`,
-      `SEAF : ${this.premierContactNoteSeaf()}`,
-      `Interview : ${this.premierContactNoteEntrevue()}`,
-      `Medical : ${this.premierContactNoteMedical()}`,
-      `PSPS : ${this.premierContactNotePsps()}`,
-      `Gambit : ${this.premierContactNoteGambit()}`,
-      `ANX Q : ${this.premierContactNoteAnxQ()}`
-    ] : [
-      `IPTAD : ${this.premierContactNoteIptad()}`,
-      `SEAF : ${this.premierContactNoteSeaf()}`,
-      `Entrevue : ${this.premierContactNoteEntrevue()}`,
-      `Médical : ${this.premierContactNoteMedical()}`,
-      `PSPS : ${this.premierContactNotePsps()}`,
-      `Gambit : ${this.premierContactNoteGambit()}`,
-      `ANX Q : ${this.premierContactNoteAnxQ()}`
-    ];
-    notes.push(noteLines.join('\n'));
+  // 0. Follow-up Note (Note de suivi & Premier Contact Note mode)
+  const isFollowUpNoteTask = this.selectedTask()?.nameFr === 'Note de suivi';
+  const isPremierContactNote = this.premierContactSubPanelMode() === 'note' && this.selectedTask()?.nameFr === 'Premier contact';
+  if (isFollowUpNoteTask || isPremierContactNote) {
+    const translate = (key: string) => {
+      if (this.i18n?.t) return this.i18n.t(key);
+      return (isEn ? FOLLOW_UP_NOTE_EN[key] : FOLLOW_UP_NOTE_FR[key]) ?? key;
+    };
+    const formattedFollowUp = formatFollowUpNote(
+      this.followUpNoteValues(),
+      this.followUpNoteOther(),
+      translate
+    );
+    if (formattedFollowUp) {
+      notes.push(formattedFollowUp);
+    }
   } else if (this.isPremierContactActive()) {
     let msg = isEn
       ? "Initial contact email sent to applicant."

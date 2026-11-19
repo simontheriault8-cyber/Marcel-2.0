@@ -11,6 +11,7 @@ import { UNIVERSITY_DEGREES_FR, UNIVERSITY_DEGREES_EN } from './dictionaries/uni
 import { CRITERIA_MATRIX_DICT_FR, CRITERIA_MATRIX_DICT_EN } from './dictionaries/criteria-matrix.dict';
 import { EMAILS_PFOR_FR, EMAILS_PFOR_EN } from './dictionaries/emails-pfor.dict';
 import { EMAILS_REORIENTATION_FR, EMAILS_REORIENTATION_EN } from './dictionaries/emails-reorientation.dict';
+import { FOLLOW_UP_NOTE_FR, FOLLOW_UP_NOTE_EN } from './dictionaries/follow-up-note.dict';
 
 const STORAGE_KEY = 'marcel_app_lang';
 
@@ -49,6 +50,7 @@ export class TranslationService {
       ...CRITERIA_MATRIX_DICT_FR,
       ...EMAILS_PFOR_FR,
       ...EMAILS_REORIENTATION_FR,
+      ...FOLLOW_UP_NOTE_FR,
     },
     en: {
       ...UI_COMMON_EN,
@@ -62,6 +64,7 @@ export class TranslationService {
       ...CRITERIA_MATRIX_DICT_EN,
       ...EMAILS_PFOR_EN,
       ...EMAILS_REORIENTATION_EN,
+      ...FOLLOW_UP_NOTE_EN,
     },
   };
 

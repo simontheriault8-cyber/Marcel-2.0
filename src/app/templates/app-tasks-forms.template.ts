@@ -491,112 +491,40 @@ export const APP_TASKS_FORMS_TEMPLATE = `
                         </div>
                       } @else {
                         <!-- Premier contact Note Sub-Panel -->
-                        <div class="p-4 space-y-4 rounded-b-xl">
-                          <div class="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs text-indigo-900 mb-2">
-                            {{ i18n.t('premierContact.noteDesc') }}
-                          </div>
-
-                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <!-- IPTAD -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">IPTAD :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteIptad()"
-                                (change)="premierContactNoteIptad.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactIptadOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- SEAF -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">SEAF :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteSeaf()"
-                                (change)="premierContactNoteSeaf.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactSeafOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- Entrevue -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">{{ i18n.t('premierContact.lblEntrevue') }} :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteEntrevue()"
-                                (change)="premierContactNoteEntrevue.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactEntrevueOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- Médical -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">{{ i18n.t('premierContact.lblMedical') }} :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteMedical()"
-                                (change)="premierContactNoteMedical.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactMedicalOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- PSPS -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">PSPS :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNotePsps()"
-                                (change)="premierContactNotePsps.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactPspsOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- Gambit -->
-                            <div>
-                              <label class="block font-semibold text-slate-700 mb-1">Gambit :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteGambit()"
-                                (change)="premierContactNoteGambit.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactGambitOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-
-                            <!-- ANX Q -->
-                            <div class="sm:col-span-2">
-                              <label class="block font-semibold text-slate-700 mb-1">ANX Q :</label>
-                              <select
-                                class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 focus:bg-white transition-all cursor-pointer font-medium text-slate-800 shadow-xs"
-                                [value]="premierContactNoteAnxQ()"
-                                (change)="premierContactNoteAnxQ.set($any($event.target).value)"
-                              >
-                                @for (opt of premierContactAnxQOptions; track opt) {
-                                  <option [value]="opt">{{ opt }}</option>
-                                }
-                              </select>
-                            </div>
-                          </div>
-                        </div>
+                        <app-follow-up-note-builder
+                          [values]="followUpNoteValues()"
+                          [otherText]="followUpNoteOther()"
+                          subtitleKey="followUpNote.premierContactDesc"
+                          (valuesChange)="followUpNoteValues.set($event)"
+                          (otherTextChange)="followUpNoteOther.set($event)"
+                          (resetAll)="resetFollowUpNote()"
+                        ></app-follow-up-note-builder>
                       }
+                    </div>
+
+                  } @else if (task.nameFr === "Note de suivi") {
+                    <!-- Note de suivi workspace panel -->
+                    <div class="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-300">
+                      <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2 rounded-t-xl">
+                        <div class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span>{{ i18n.t('followUpNote.title') }}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-[11px] font-semibold text-indigo-700">
+                          {{ i18n.t('followUpNote.noteOnlyBadge') }}
+                        </span>
+                      </div>
+
+                      <app-follow-up-note-builder
+                        [values]="followUpNoteValues()"
+                        [otherText]="followUpNoteOther()"
+                        subtitleKey="followUpNote.desc"
+                        (valuesChange)="followUpNoteValues.set($event)"
+                        (otherTextChange)="followUpNoteOther.set($event)"
+                        (resetAll)="resetFollowUpNote()"
+                      ></app-follow-up-note-builder>
                     </div>
 
                   } @else if (task.nameFr === "Avis de fermeture" || task.section === "Suivi de dossier") {
