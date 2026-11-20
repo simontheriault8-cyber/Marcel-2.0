@@ -266,9 +266,9 @@ export const TASKS_SCOLARITE: Task[] = [
               labelFr: "Inexistant au dossier",
               labelEn: "Missing from file",
               instructionFr:
-                "Le relevé de notes d'études faites à l'étranger traduit dans une langue officielle n'est pas à votre dossier. Veuillez prendre une photo ou numériser le document officiel et le téléverser dans votre portail du postulant. Assurez-vous que l'image est nette, sans reflet et que toutes les informations sont clairement visibles.",
+                "Merci de nous avoir fourni votre évaluation comparative de vos études. Par contre, pour confirmer votre admissibilité académique aux métiers que vous avez choisis, nous aurons besoin que vous téléversiez dans votre portail du postulant vos relevés de notes étrangers originaux s'ils sont écrits en français ou en anglais. Sinon, veuillez les faire traduire avant de les téléverser dans votre portail. Assurez-vous que l'image est nette, sans reflet et que toutes les informations sont clairement visibles.",
               instructionEn:
-                "The foreign study transcript translated into an official language is not in your file. Please take a photo or scan the official document and upload it to your applicant portal. Ensure the image is sharp, without glare, and all information is clearly visible.",
+                "Thank you for providing your comparative evaluation of your studies. However, to confirm your academic eligibility for the occupations you have chosen, we will need you to upload your original foreign transcripts to your applicant portal if they are written in French or English. Otherwise, please have them translated before uploading them to your portal. Ensure the image is sharp, without glare, and all information is clearly visible.",
               logNoteFr: "Aucun relevé de notes d'études à l'étranger traduit au dossier",
             },
             {
