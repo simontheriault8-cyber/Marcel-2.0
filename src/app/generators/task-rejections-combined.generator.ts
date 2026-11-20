@@ -5,6 +5,7 @@ import {
   getInapteMedicalEmailHtml
 } from "./gd-inapte-medical-email.generator";
 import { PORTAL_CANDIDATE_URL } from "../data/app-links.data";
+import { getRejectionInstructionText } from "../helpers/rejection-instruction.helper";
 
 export function getRejectionPlainBodyFr(this: any): string {
     const structure = this.getStructuredRejections();
@@ -61,9 +62,10 @@ export function getRejectionPlainBodyFr(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n      → ${this.cleanInstructionForText(item.reason.instructionFr, '        ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailFr += `\n      → ${this.cleanInstructionForText(instr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -105,9 +107,10 @@ export function getRejectionPlainBodyFr(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailFr += `\n  → ${this.cleanInstructionForText(instr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -151,9 +154,10 @@ export function getRejectionPlainBodyFr(this: any): string {
           emailFr += `\n\n• ${doc.nameFr}`;
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              emailFr += `\n  → ${this.cleanInstructionForText(item.reason.instructionFr, '    ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailFr += `\n  → ${this.cleanInstructionForText(instr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -263,9 +267,10 @@ export function getRejectionPlainBodyEn(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n      → ${this.cleanInstructionForText(item.reason.instructionEn, '        ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailEn += `\n      → ${this.cleanInstructionForText(instr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -307,9 +312,10 @@ export function getRejectionPlainBodyEn(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailEn += `\n  → ${this.cleanInstructionForText(instr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -353,9 +359,10 @@ export function getRejectionPlainBodyEn(this: any): string {
           emailEn += `\n\n• ${doc.nameEn}`;
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              emailEn += `\n  → ${this.cleanInstructionForText(item.reason.instructionEn, '    ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              emailEn += `\n  → ${this.cleanInstructionForText(instr, '    ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -790,9 +797,10 @@ export function getRejectionHtmlFr(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -840,9 +848,10 @@ export function getRejectionHtmlFr(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -890,9 +899,10 @@ export function getRejectionHtmlFr(this: any): string {
           html += `<span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameFr}</strong></span>`;
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -1011,9 +1021,10 @@ export function getRejectionHtmlEn(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -1061,9 +1072,10 @@ export function getRejectionHtmlEn(this: any): string {
           
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -1111,9 +1123,10 @@ export function getRejectionHtmlEn(this: any): string {
           html += `<span style="background-color: yellow; padding: 0 2px;"><strong>${doc.nameEn}</strong></span>`;
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionEn)) {
-              uniqueInstructions.add(item.reason.instructionEn);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionEn.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();

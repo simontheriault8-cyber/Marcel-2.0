@@ -70,6 +70,8 @@ export const EMAILS_PFOR_FR: TranslationDictionary = {
     "(Veuillez renseigner les critères de scolarité et d'expérience dans les panneaux ci-dessus pour afficher les métiers admissibles)",
   'pforEmail.list.emptyOffPrompt':
     "Aucun métier PFOR ouvert correspondant n'est disponible actuellement pour la sélection effectuée.",
+  'pforEmail.relevInexistPforNote':
+    "Pour vérifier votre admissibilité au Programme de formation des officiers de la régulière (PFOR), nous devons évaluer vos résultats académiques.",
 };
 
 export const EMAILS_PFOR_EN: TranslationDictionary = {
@@ -142,4 +144,6 @@ export const EMAILS_PFOR_EN: TranslationDictionary = {
     '(Please fill out the education and experience criteria in the panels above to display eligible occupations)',
   'pforEmail.list.emptyOffPrompt':
     'No open ROTP occupations currently available for the selected profile.',
+  'pforEmail.relevInexistPforNote':
+    'To verify your eligibility for the Regular Officer Training Plan (ROTP), we must evaluate your academic results.',
 };

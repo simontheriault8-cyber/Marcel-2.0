@@ -14,6 +14,7 @@ import {
   getEligibleProgramsCmrUrl,
   getBasicTrainingUrl,
 } from "../data/app-links.data";
+import { getRejectionInstructionText } from "../helpers/rejection-instruction.helper";
 
 export function cleanInstructionForText(this: any, instruction: string, indent: string = '        '): string {
     if (!instruction) return '';
@@ -88,9 +89,10 @@ export function getCompliantNonMandatoryTasksPlain(this: any, lang: 'fr' | 'en' 
 
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              text += `\n      → ${this.cleanInstructionForText(item.reason.instructionFr, '        ')}`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              text += `\n      → ${this.cleanInstructionForText(instr, '        ')}`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -143,7 +145,7 @@ export function getCompliantNonMandatoryTasksPlain(this: any, lang: 'fr' | 'en' 
 
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            const instr = item.reason.instructionEn || item.reason.instructionFr;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
             if (!uniqueInstructions.has(instr)) {
               uniqueInstructions.add(instr);
               text += `\n      → ${this.cleanInstructionForText(instr, '        ')}`;
@@ -230,9 +232,10 @@ export function getCompliantNonMandatoryTasksHtml(this: any, lang: 'fr' | 'en' =
 
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            if (!uniqueInstructions.has(item.reason.instructionFr)) {
-              uniqueInstructions.add(item.reason.instructionFr);
-              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${item.reason.instructionFr.replace(/\n/g, "<br>")}</div>`;
+            const instr = getRejectionInstructionText(this, item.reason, 'fr');
+            if (!uniqueInstructions.has(instr)) {
+              uniqueInstructions.add(instr);
+              html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
             }
           }
           const uniqueLinks = new Set<string>();
@@ -292,7 +295,7 @@ export function getCompliantNonMandatoryTasksHtml(this: any, lang: 'fr' | 'en' =
 
           const uniqueInstructions = new Set<string>();
           for (const item of docItems) {
-            const instr = item.reason.instructionEn || item.reason.instructionFr;
+            const instr = getRejectionInstructionText(this, item.reason, 'en');
             if (!uniqueInstructions.has(instr)) {
               uniqueInstructions.add(instr);
               html += `<div style="margin-left: 20px; margin-top: 6px; margin-bottom: 8px; line-height: 1.5; color: #000000;">&rarr; ${instr.replace(/\n/g, "<br>")}</div>`;
