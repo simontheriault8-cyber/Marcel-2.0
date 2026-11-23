@@ -1,5 +1,5 @@
 {
-  "date": "16/11/2026",
+  "date": "23/11/2026",
   "programs": {
     "00003": {
       "aucun": {
@@ -33,6 +33,12 @@
         "traitement": "f"
       }
     },
+    "00021": {
+      "Qual": {
+        "admission": "o",
+        "traitement": "o"
+      }
+    },
     "00099": {
       "Non Qual": {
         "admission": "f",
@@ -56,7 +62,7 @@
     "00105": {
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Qual": {
         "admission": "o",
@@ -108,7 +114,7 @@
       },
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00129": {
@@ -132,7 +138,7 @@
     "00130": {
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Qual": {
         "admission": "o",
@@ -142,7 +148,7 @@
     "00134": {
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Non Qual": {
         "admission": "f",
@@ -188,7 +194,7 @@
     "00137": {
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Semi-qual": {
         "admission": "f",
@@ -240,7 +246,7 @@
     "00153": {
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "PFS-MR": {
         "admission": "f",
@@ -289,6 +295,10 @@
       "Semi-qual": {
         "admission": "f",
         "traitement": "f"
+      },
+      "Qual": {
+        "admission": "f",
+        "traitement": "f"
       }
     },
     "00167": {
@@ -310,7 +320,7 @@
     "00169": {
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00170": {
@@ -320,7 +330,7 @@
       },
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00171": {
@@ -340,7 +350,7 @@
       },
       "EDO": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00179": {
@@ -504,7 +514,7 @@
     "00197": {
       "EDO": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00198": {
@@ -514,7 +524,7 @@
       },
       "PFOS": {
         "admission": "f",
-        "traitement": "f"
+        "traitement": "o"
       },
       "EDO": {
         "admission": "f",
@@ -602,7 +612,7 @@
     "00238": {
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Non Qual": {
         "admission": "f",
@@ -617,9 +627,15 @@
         "traitement": "o"
       }
     },
+    "00240": {
+      "PFACA": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
     "00261": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -629,8 +645,8 @@
         "traitement": "o"
       },
       "Semi-qual": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       },
       "Non Qual": {
         "admission": "o",
@@ -640,7 +656,7 @@
     "00301": {
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "PFS-MR": {
         "admission": "o",
@@ -658,7 +674,7 @@
       },
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Non Qual": {
         "admission": "f",
@@ -667,7 +683,7 @@
     },
     "00303": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "PFS-MR": {
@@ -676,7 +692,7 @@
       },
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00304": {
@@ -695,7 +711,7 @@
     },
     "00305": {
       "Non Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Semi-qual": {
@@ -745,11 +761,11 @@
         "traitement": "o"
       },
       "Semi-qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       },
       "Qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -759,6 +775,20 @@
         "traitement": "o"
       },
       "EDO": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
+    "00334": {
+      "Semi-qual": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "Non Qual": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "PFS-MR": {
         "admission": "f",
         "traitement": "f"
       }
@@ -806,11 +836,17 @@
     "00341": {
       "EDO": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "PFOR": {
         "admission": "o",
         "traitement": "o"
+      }
+    },
+    "00342": {
+      "Non Qual": {
+        "admission": "f",
+        "traitement": "f"
       }
     },
     "00344": {
@@ -820,7 +856,7 @@
       },
       "EDO": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00345": {
@@ -840,9 +876,15 @@
       },
       "PFOS": {
         "admission": "f",
-        "traitement": "f"
+        "traitement": "o"
       },
       "EDO": {
+        "admission": "o",
+        "traitement": "o"
+      }
+    },
+    "00363": {
+      "Qual": {
         "admission": "o",
         "traitement": "o"
       }
@@ -861,7 +903,7 @@
         "traitement": "o"
       },
       "Semi-qual": {
-        "admission": "o",
+        "admission": "f",
         "traitement": "o"
       }
     },
@@ -908,7 +950,7 @@
     "00375": {
       "Non Qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       },
       "Qual": {
         "admission": "o",
@@ -943,6 +985,26 @@
         "traitement": "o"
       }
     },
+    "00379": {
+      "Semi-qual": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "PFS-MR": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "Non Qual": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
+    "00380": {
+      "Qual": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
     "00383": {
       "Qual": {
         "admission": "o",
@@ -960,7 +1022,7 @@
       },
       "Semi-qual": {
         "admission": "f",
-        "traitement": "o"
+        "traitement": "f"
       }
     },
     "00385": {
@@ -1067,8 +1129,8 @@
         "traitement": "o"
       },
       "Semi-qual": {
-        "admission": "o",
-        "traitement": "o"
+        "admission": "f",
+        "traitement": "f"
       },
       "PFS-MR": {
         "admission": "o",
@@ -1122,7 +1184,49 @@
       },
       "Non Qual": {
         "admission": "f",
+        "traitement": "f"
+      }
+    },
+    "00409": {
+      "Semi-qual": {
+        "admission": "o",
         "traitement": "o"
+      }
+    },
+    "00410": {
+      "EDO": {
+        "admission": "o",
+        "traitement": "o"
+      }
+    },
+    "00422": {
+      "Semi-qual": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "Non Qual": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
+    "00423": {
+      "Semi-qual": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "Non Qual": {
+        "admission": "f",
+        "traitement": "f"
+      }
+    },
+    "00424": {
+      "PFOS": {
+        "admission": "f",
+        "traitement": "f"
+      },
+      "EDO": {
+        "admission": "f",
+        "traitement": "f"
       }
     }
   },
