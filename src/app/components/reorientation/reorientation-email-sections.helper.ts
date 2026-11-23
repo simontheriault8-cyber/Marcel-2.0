@@ -11,6 +11,8 @@ import {
   renderReoEligibleJobsList,
 } from "./reorientation-email-lists.helper";
 
+import { buildPforToEdoProgramChangeEmailSection } from "./reorientation-pfor-to-edo.helper";
+
 export interface ReoEmailSectionContext {
   jobIds: string[];
   listNCM: string[];
@@ -25,6 +27,8 @@ export interface ReoEmailSectionContext {
   isPforApplicant: boolean;
   isPforCmr: boolean;
   isPforCivil: boolean;
+  isPforToEdo: boolean;
+  isPforToEdoProgramChangeOnly: boolean;
   isPilotEligible: boolean;
   isPRAdmissible: boolean;
   isCandidateTooOld: boolean;
@@ -36,30 +40,39 @@ function renderTraitementOptionBlock(
   jobs: string[],
   lang: AppLang,
   isHtml: boolean,
+  isPforToEdo = false,
 ): string {
   const isPlural = jobs.length > 1;
   const joined = jobs.join(", ");
+  const edoProgramFr = isPforToEdo ? " sous le programme EDO" : "";
+  const edoProgramEn = isPforToEdo ? " under the DEO entry plan" : "";
+  const edoFullFr = isPforToEdo
+    ? " sous le programme d'Entrée directe comme officier (EDO)"
+    : "";
+  const edoFullEn = isPforToEdo
+    ? " under the Direct Entry Officer (DEO) entry plan"
+    : "";
   const title =
     lang === "fr"
       ? isPlural
-        ? `Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mes choix de métiers (${joined})`
-        : `Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes pour mon choix de métier (${joined})`
+        ? `Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes${edoProgramFr} pour mes choix de métiers (${joined})`
+        : `Option 1 : Fermer mon dossier et attendre les prochaines positions ouvertes${edoProgramFr} pour mon choix de métier (${joined})`
       : isPlural
-        ? `Option 1: Close my file and wait for the next open positions for my occupational choices (${joined})`
-        : `Option 1: Close my file and wait for the next open positions for my occupational choice (${joined})`;
+        ? `Option 1: Close my file and wait for the next open positions${edoProgramEn} for my occupational choices (${joined})`
+        : `Option 1: Close my file and wait for the next open positions${edoProgramEn} for my occupational choice (${joined})`;
 
   if (isHtml) {
     const desc =
       lang === "fr"
-        ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (<strong>${joined}</strong>) et attendre que les prochaines positions ouvrent en avril prochain. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement</span>.`
-        : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (<strong>${joined}</strong>) and wait until next April for positions to open. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process</span>.`;
+        ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (<strong>${joined}</strong>)${edoFullFr} et attendre que les prochaines positions ouvrent en avril prochain. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement</span>.`
+        : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (<strong>${joined}</strong>)${edoFullEn} and wait until next April for positions to open. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process</span>.`;
     return `<p class="mt-2 text-sm"><strong>${title}</strong><br>${desc}</p>\n`;
   }
 
   const desc =
     lang === "fr"
-      ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (${joined}) et attendre que les prochaines positions ouvrent en avril prochain. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement.`
-      : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (${joined}) and wait until next April for positions to open. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process.`;
+      ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (${joined})${edoFullFr} et attendre que les prochaines positions ouvrent en avril prochain. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement au début du mois de mars prochain pour rouvrir votre dossier et poursuivre le processus de recrutement.`
+      : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (${joined})${edoFullEn} and wait until next April for positions to open. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre at the beginning of next March to reopen your file and continue the recruitment process.`;
   return `${title}\n${desc}\n\n`;
 }
 
@@ -68,31 +81,40 @@ function renderAdmissionOptionBlock(
   optionNumber: 1 | 2,
   lang: AppLang,
   isHtml: boolean,
+  isPforToEdo = false,
 ): string {
   const isPlural = jobs.length > 1;
   const joined = jobs.join(", ");
+  const edoProgramFr = isPforToEdo ? " sous le programme EDO" : "";
+  const edoProgramEn = isPforToEdo ? " under the DEO entry plan" : "";
+  const edoFullFr = isPforToEdo
+    ? " sous le programme d'Entrée directe comme officier (EDO)"
+    : "";
+  const edoFullEn = isPforToEdo
+    ? " under the Direct Entry Officer (DEO) entry plan"
+    : "";
   const title =
     lang === "fr"
       ? isPlural
-        ? `Option ${optionNumber} : Conserver mes choix de métiers (${joined}) au cas où une position se libérerait`
-        : `Option ${optionNumber} : Conserver mon choix de métier (${joined}) au cas où une position se libérerait`
+        ? `Option ${optionNumber} : Conserver mes choix de métiers${edoProgramFr} (${joined}) au cas où une position se libérerait`
+        : `Option ${optionNumber} : Conserver mon choix de métier${edoProgramFr} (${joined}) au cas où une position se libérerait`
       : isPlural
-        ? `Option ${optionNumber}: Retain my occupational choices (${joined}) in case a position opens up`
-        : `Option ${optionNumber}: Retain my occupational choice (${joined}) in case a position opens up`;
+        ? `Option ${optionNumber}: Retain my occupational choices${edoProgramEn} (${joined}) in case a position opens up`
+        : `Option ${optionNumber}: Retain my occupational choice${edoProgramEn} (${joined}) in case a position opens up`;
 
   if (isHtml) {
     const mtClass = optionNumber === 1 ? "mt-2" : "mt-4";
     const desc =
       lang === "fr"
-        ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (<strong>${joined}</strong>) au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois</span> pour savoir si des positions se seraient libérées pour ${isPlural ? "vos choix de métiers" : "votre choix de métier"} afin de poursuivre le processus de recrutement.`
-        : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (<strong>${joined}</strong>) in case another candidate already admitted does not complete the process and a position opens up. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre every three months</span> to find out if positions have opened up for ${isPlural ? "your occupational choices" : "your occupational choice"} in order to continue the recruitment process.`;
+        ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (<strong>${joined}</strong>)${edoFullFr} au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, <span style="background-color: #fef08a; font-weight: bold;">votre dossier sera fermé dès maintenant</span> et il sera de <span style="background-color: #fef08a; font-weight: bold;">votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois</span> pour savoir si des positions se seraient libérées pour ${isPlural ? "vos choix de métiers" : "votre choix de métier"} afin de poursuivre le processus de recrutement.`
+        : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (<strong>${joined}</strong>)${edoFullEn} in case another candidate already admitted does not complete the process and a position opens up. However, <span style="background-color: #fef08a; font-weight: bold;">your file will be closed immediately</span> and it will be <span style="background-color: #fef08a; font-weight: bold;">your sole responsibility to contact your recruiting centre every three months</span> to find out if positions have opened up for ${isPlural ? "your occupational choices" : "your occupational choice"} in order to continue the recruitment process.`;
     return `<p class="${mtClass} text-sm"><strong>${title}</strong><br>${desc}</p>\n`;
   }
 
   const desc =
     lang === "fr"
-      ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (${joined}) au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois pour savoir si des positions se seraient libérées pour ${isPlural ? "vos choix de métiers" : "votre choix de métier"} afin de poursuivre le processus de recrutement.`
-      : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (${joined}) in case another candidate already admitted does not complete the process and a position opens up. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre every three months to find out if positions have opened up for ${isPlural ? "your occupational choices" : "your occupational choice"} in order to continue the recruitment process.`;
+      ? `Vous pouvez conserver ${isPlural ? "vos choix de métiers" : "votre choix de métier"} (${joined})${edoFullFr} au cas où un autre postulant déjà admis ne termine pas le processus et qu’une position se libère. Cependant, votre dossier sera fermé dès maintenant et il sera de votre entière responsabilité de contacter votre centre de recrutement à tous les trois mois pour savoir si des positions se seraient libérées pour ${isPlural ? "vos choix de métiers" : "votre choix de métier"} afin de poursuivre le processus de recrutement.`
+      : `You can retain ${isPlural ? "your occupational choices" : "your occupational choice"} (${joined})${edoFullEn} in case another candidate already admitted does not complete the process and a position opens up. However, your file will be closed immediately and it will be your sole responsibility to contact your recruiting centre every three months to find out if positions have opened up for ${isPlural ? "your occupational choices" : "your occupational choice"} in order to continue the recruitment process.`;
   return `${title}\n${desc}\n\n`;
 }
 
@@ -116,22 +138,22 @@ function renderReoOptionsOrTooOldConclusion(
     : `${header}\n\n`;
 
   if (sec.hasTraitementClosed && sec.hasAdmissionClosed) {
-    out += renderTraitementOptionBlock(sec.closedTraitementJobs, lang, isHtml);
-    out += renderAdmissionOptionBlock(sec.closedAdmissionOnlyJobs, 2, lang, isHtml);
+    out += renderTraitementOptionBlock(sec.closedTraitementJobs, lang, isHtml, sec.isPforToEdo);
+    out += renderAdmissionOptionBlock(sec.closedAdmissionOnlyJobs, 2, lang, isHtml, sec.isPforToEdo);
     const opt3Title = i18n.tLang("reoEmail.options.chooseOtherTitleOpt3", lang);
     const opt3Desc = i18n.tLang("reoEmail.options.chooseOtherDescOptional", lang);
     out += isHtml
       ? `<p class="mt-4 text-sm"><strong>${opt3Title}</strong><br>${opt3Desc}</p>\n`
       : `${opt3Title}\n${opt3Desc}\n\n`;
   } else if (sec.hasTraitementClosed) {
-    out += renderTraitementOptionBlock(sec.closedTraitementJobs, lang, isHtml);
+    out += renderTraitementOptionBlock(sec.closedTraitementJobs, lang, isHtml, sec.isPforToEdo);
     const opt2Title = i18n.tLang("reoEmail.options.chooseOtherTitleOpt2", lang);
     const opt2Desc = i18n.tLang("reoEmail.options.chooseOtherDescOptional", lang);
     out += isHtml
       ? `<p class="mt-4 text-sm"><strong>${opt2Title}</strong><br>${opt2Desc}</p>\n`
       : `${opt2Title}\n${opt2Desc}\n\n`;
   } else if (sec.hasAdmissionClosed) {
-    out += renderAdmissionOptionBlock(sec.closedAdmissionOnlyJobs, 1, lang, isHtml);
+    out += renderAdmissionOptionBlock(sec.closedAdmissionOnlyJobs, 1, lang, isHtml, sec.isPforToEdo);
     const opt2Title = i18n.tLang("reoEmail.options.chooseOtherTitleOpt2", lang);
     const opt2Desc = i18n.tLang("reoEmail.options.chooseOtherDescOptional", lang);
     out += isHtml
@@ -177,6 +199,10 @@ function renderReoDossierStatus(
         intro = isHtml
           ? `${i18n.tLang("reoEmail.gen.status.civilHtml", lang)}\n`
           : `${i18n.tLang("reoEmail.gen.status.civilPlain", lang)}\n`;
+      } else if (sec.isPforToEdo) {
+        intro = isHtml
+          ? `${i18n.tLang("reoEmail.gen.status.pforToEdoHtml", lang)}\n`
+          : `${i18n.tLang("reoEmail.gen.status.pforToEdoPlain", lang)}\n`;
       } else {
         const msg = i18n.tLang("reoEmail.gen.status.regular", lang);
         intro = isHtml ? `<p class="mt-4">${msg}</p>\n` : `${msg}\n`;
@@ -190,9 +216,18 @@ function renderReoDossierStatus(
       const reasons: string[] = [];
       if (s.isJobClosed) {
         if (s.isClosedAdmissionOnly) {
-          reasons.push(i18n.tLang("reoEmail.status.closedAdmission", lang));
+          reasons.push(
+            i18n.tLang(
+              sec.isPforToEdo
+                ? "reoEmail.status.closedAdmissionEdo"
+                : "reoEmail.status.closedAdmission",
+              lang,
+            ),
+          );
         } else if (sec.isPforApplicant) {
           reasons.push(i18n.tLang("reoEmail.status.closedPfor", lang));
+        } else if (sec.isPforToEdo) {
+          reasons.push(i18n.tLang("reoEmail.status.closedEdo", lang));
         } else {
           reasons.push(i18n.tLang("reoEmail.status.closedRegular", lang));
         }
@@ -244,7 +279,11 @@ function renderReoDossierStatus(
   }
 
   if (!hasNoJobCode) {
-    const key = isPforCmr ? "reoEmail.gen.status.emptyCmr" : "reoEmail.gen.status.emptyRegular";
+    const key = isPforCmr
+      ? "reoEmail.gen.status.emptyCmr"
+      : sec.isPforToEdo
+        ? "reoEmail.gen.status.emptyPforToEdo"
+        : "reoEmail.gen.status.emptyRegular";
     const msg = i18n.tLang(key, lang);
     return isHtml ? `<p class="mt-4">${msg}</p>\n` : `${msg}\n\n`;
   }
@@ -257,6 +296,10 @@ export function buildReoEmailSection(
   lang: AppLang,
   isHtml: boolean,
 ): string {
+  if (sec.isPforToEdoProgramChangeOnly) {
+    return buildPforToEdoProgramChangeEmailSection(ctx, sec, lang, isHtml);
+  }
+
   const i18n: TranslationService = ctx.i18n;
   const isFr = lang === "fr";
   const cmrAdmitted = isFr ? sec.cmrAdmittedFr : sec.cmrAdmittedEn;
@@ -292,9 +335,13 @@ export function buildReoEmailSection(
             ? isHtml
               ? "reoEmail.gen.merge.civilHtml"
               : "reoEmail.gen.merge.civilPlain"
-            : isHtml
-              ? "reoEmail.gen.merge.regularHtml"
-              : "reoEmail.gen.merge.regularPlain";
+            : sec.isPforToEdo
+              ? isHtml
+                ? "reoEmail.gen.merge.pforToEdoHtml"
+                : "reoEmail.gen.merge.pforToEdoPlain"
+              : isHtml
+                ? "reoEmail.gen.merge.regularHtml"
+                : "reoEmail.gen.merge.regularPlain";
 
     out += isHtml
       ? `${i18n.tLang(mergeKey, lang)}\n`
@@ -316,6 +363,10 @@ export function buildReoEmailSection(
       out += isHtml
         ? `${i18n.tLang("reoEmail.gen.noJob.cmrHtml", lang)}\n`
         : `${i18n.tLang("reoEmail.gen.noJob.cmrPlain", lang)}\n\n`;
+    } else if (sec.isPforToEdo) {
+      out += isHtml
+        ? `${i18n.tLang("reoEmail.gen.noJob.pforToEdoHtml", lang)}\n`
+        : `${i18n.tLang("reoEmail.gen.noJob.pforToEdoPlain", lang)}\n\n`;
     } else {
       const msg = i18n.tLang("reoEmail.gen.noJob.regular", lang);
       out += isHtml ? `<p class="mt-4">${msg}</p>\n` : `${msg}\n\n`;

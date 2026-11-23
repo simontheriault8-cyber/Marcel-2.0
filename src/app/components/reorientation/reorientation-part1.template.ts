@@ -194,6 +194,32 @@ export const REORIENTATION_TEMPLATE_PART1 = `
                     {{ i18n.t('reo.includeTraitement') }}
                   </span>
                 </label>
+
+                <label
+                  class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 cursor-pointer select-none p-1.5 rounded-lg hover:bg-slate-50 transition-colors border-t border-slate-100 pt-2.5"
+                >
+                  <input
+                    type="checkbox"
+                    class="peer h-4 w-4 appearance-none rounded border border-slate-300 bg-white checked:bg-indigo-600 checked:border-indigo-600 focus:outline-none transition-all shrink-0 cursor-pointer"
+                    [checked]="isPforToEdo()"
+                    (change)="togglePforToEdo()"
+                  />
+                  <span class="relative flex items-center">
+                    <svg
+                      class="absolute -left-[1.25rem] w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {{ i18n.t('reo.pforToEdo') }}
+                  </span>
+                </label>
               </div>
             </div>
           }

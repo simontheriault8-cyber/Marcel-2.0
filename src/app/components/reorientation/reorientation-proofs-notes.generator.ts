@@ -1,4 +1,5 @@
 import { CMR_JOB_DOMAINS } from "../../data/reorientation-criteria.data";
+import { buildPforToEdoProgramChangeRegistryNote } from "./reorientation-pfor-to-edo.helper";
 export function getReoMissingProofs(this: any, jobId: string): { fr: string[]; en: string[] } {
     const proofs = { fr: [] as string[], en: [] as string[] };
     const selected = this.selectedCriteriaIds();
@@ -654,6 +655,10 @@ export function generateReoNoteRegistry(this: any): string {
         : "Étape 1 (En cours) - Résident permanent de moins de 3 ans (Inadmissible) : Courriel d'inadmissibilité envoyé (résultat du calculateur IRCC +3 ans ou citoyenneté requis avant de repostuler), fermeture du dossier.");
     }
 
+    if (this.isPforToEdoProgramChangeOnly()) {
+      return buildPforToEdoProgramChangeRegistryNote(this, isEn);
+    }
+
     const dossierIds = [
       this.selectedDossierJobId1(),
       this.selectedDossierJobId2(),
@@ -677,9 +682,29 @@ export function generateReoNoteRegistry(this: any): string {
           const reasonsList: string[] = [];
           if (s.isJobClosed) {
             if (s.isClosedAdmissionOnly) {
-              reasonsList.push(isEn ? "Closed admission" : "Fermé admission");
+              reasonsList.push(
+                this.isPforToEdo()
+                  ? isEn
+                    ? "Closed DEO admission"
+                    : "Fermé admission EDO"
+                  : isEn
+                    ? "Closed admission"
+                    : "Fermé admission",
+              );
             } else {
-              reasonsList.push(this.isPforApplicant() ? (isEn ? "Closed ROTP" : "Fermé PFOR") : (isEn ? "Closed" : "Fermé"));
+              reasonsList.push(
+                this.isPforApplicant()
+                  ? isEn
+                    ? "Closed ROTP"
+                    : "Fermé PFOR"
+                  : this.isPforToEdo()
+                    ? isEn
+                      ? "Closed DEO"
+                      : "Fermé EDO"
+                    : isEn
+                      ? "Closed"
+                      : "Fermé",
+              );
             }
           }
           if (!s.isAgeAdmissible) {
@@ -738,6 +763,12 @@ export function generateReoNoteRegistry(this: any): string {
       }
     } else if (this.isPforApplicant() && this.pforType() === "civil") {
       reoPrefix = isEn ? "Civil ROTP - Reorientation required as" : "PFOR Civil - Réorientation nécessaire car";
+    } else if (this.isPforToEdo()) {
+      reoPrefix = this.i18n
+        ? this.i18n.tLang("regNotes.pforToEdoReoPrefix", isEn ? "en" : "fr")
+        : isEn
+          ? "ROTP to DEO (university studies completed) - Reorientation required as"
+          : "PFOR vers EDO (études universitaires complétées) - Réorientation nécessaire car";
     }
 
     const reoNote = isEn

@@ -913,7 +913,7 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                 <h3
                   class="text-sm font-bold text-slate-800"
                 >
-                  {{ (citizenship() === 'PR < 3 years') ? i18n.t('reo.emailPrClosed') : (age() !== null && age()! >= 57) ? i18n.t('reo.emailAgeClosed') : i18n.t('reo.emailTitle') }}
+                  {{ (citizenship() === 'PR < 3 years') ? i18n.t('reo.emailPrClosed') : (age() !== null && age()! >= 57) ? i18n.t('reo.emailAgeClosed') : isPforToEdoProgramChangeOnly() ? i18n.t('reo.emailPforToEdoChange') : i18n.t('reo.emailTitle') }}
                 </h3>
                 @if (citizenship() === 'PR < 3 years') {
                   <span
@@ -926,6 +926,12 @@ export const REORIENTATION_TEMPLATE_PART3 = `
                     class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200"
                   >
                     {{ i18n.t('pfor.badgeInadmissibleAge') }}
+                  </span>
+                } @else if (isPforToEdoProgramChangeOnly()) {
+                  <span
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200"
+                  >
+                    {{ i18n.t('reo.badgePforToEdoChange') }}
                   </span>
                 } @else {
                   <div class="flex gap-2" *ngIf="eligibleJobs().length > 0">

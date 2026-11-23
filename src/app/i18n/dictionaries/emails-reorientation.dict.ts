@@ -43,8 +43,12 @@ export const EMAILS_REORIENTATION_FR: TranslationDictionary = {
   'reoEmail.status.current': 'Voici le statut des métiers actuellement inscrits à votre dossier :',
   'reoEmail.status.closedAdmission':
     'Nous avons déjà un nombre suffisant de candidatures pour combler toutes les positions restantes.',
+  'reoEmail.status.closedAdmissionEdo':
+    "Nous avons déjà un nombre suffisant de candidatures pour combler toutes les positions restantes pour ce métier dans le cadre du programme d'Entrée directe comme officier (EDO).",
   'reoEmail.status.closedPfor':
     "Il n'y a plus de postes disponibles pour ce métier dans le cadre du Programme de formation des officiers de la force régulière (PFOR).",
+  'reoEmail.status.closedEdo':
+    "Il n'y a plus de postes disponibles pour ce métier dans le cadre du programme d'Entrée directe comme officier (EDO).",
   'reoEmail.status.closedRegular': "Il n'y a plus de postes disponibles pour ce métier.",
   'reoEmail.status.noPr':
     "Pour diverses raisons, ce métier n'est pas accessible aux résidents permanents.",
@@ -102,6 +106,47 @@ export const EMAILS_REORIENTATION_FR: TranslationDictionary = {
     "Suite à l'analyse de votre dossier de candidature, nous constatons que vos choix de métiers actuels ne sont pas disponibles sous le PFOR ou requièrent un domaine d'études différent de votre admission au CMR.",
   'reoEmail.gen.status.emptyRegular':
     "Suite à l'analyse de votre dossier de candidature, nous constatons que vos choix de métiers actuels ne sont pas disponibles ou que vous n'y êtes pas admissible d'après nos critères.",
+
+  // PFOR vers EDO (Reorientation & Program Change Only)
+  'reoEmail.gen.merge.pforToEdoHtml':
+    "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que certaines actions de votre part sont requises. Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'<strong>Entrée directe comme officier (EDO)</strong> ou vers un autre métier admissible. Vous devez donc à la fois <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong> sur votre portail et faire l'objet d'une <strong>réorientation pour vos choix de métiers</strong>.</p>",
+  'reoEmail.gen.merge.pforToEdoPlain':
+    "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que certaines actions de votre part sont requises. Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'Entrée directe comme officier (EDO) ou vers un autre métier admissible. Vous devez donc à la fois apporter des corrections aux tâches qui vous ont été réattribuées sur votre portail et faire l'objet d'une réorientation pour vos choix de métiers.",
+  'reoEmail.gen.noJob.pforToEdoHtml':
+    "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'<strong>Entrée directe comme officier (EDO)</strong> ou vers un autre métier admissible. De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.</p>",
+  'reoEmail.gen.noJob.pforToEdoPlain':
+    "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que vous devez faire l'objet d'une réorientation. En effet, comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'Entrée directe comme officier (EDO) ou vers un autre métier admissible. De plus, aucun métier n'est actuellement sélectionné à votre dossier et le traitement de votre demande ne peut pas se poursuivre sans qu'un choix de métier ne soit fait de votre part.",
+  'reoEmail.gen.status.pforToEdoHtml':
+    "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que vous devez faire l'objet d'une réorientation. En effet, comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'<strong>Entrée directe comme officier (EDO)</strong> ou vers un autre métier admissible. Voici le statut des métiers actuellement inscrits à votre dossier :</p>",
+  'reoEmail.gen.status.pforToEdoPlain':
+    "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que vous devez faire l'objet d'une réorientation. En effet, comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'Entrée directe comme officier (EDO) ou vers un autre métier admissible. Voici le statut des métiers actuellement inscrits à votre dossier :",
+  'reoEmail.gen.status.emptyPforToEdo':
+    "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du PFOR et votre candidature doit être réorientée vers le programme d'Entrée directe comme officier (EDO) ou vers un autre métier admissible. De plus, vos choix de métiers actuels ne sont pas disponibles ou vous n'y êtes pas admissible d'après nos critères.",
+  'reoEmail.pforToEdoChange.sec2Title': "2. CHANGEMENT DE PROGRAMME D'ENRÔLEMENT (PFOR VERS EDO) :",
+  'reoEmail.pforToEdoChange.mergeIntroHtml':
+    "<p class=\"mt-4\">Suite à l'analyse de votre dossier de candidature pour le <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>, nous constatons que certaines actions de votre part sont requises concernant vos tâches sur le portail. Vous devez donc <strong>apporter des corrections aux tâches qui vous ont été réattribuées</strong>. De plus, nous vous informons d'un changement à votre programme d'enrôlement tel qu'expliqué ci-dessous.</p>",
+  'reoEmail.pforToEdoChange.mergeIntroPlain':
+    "Suite à l'analyse de votre dossier de candidature pour le Programme de formation des officiers de la force régulière (PFOR), nous constatons que certaines actions de votre part sont requises concernant vos tâches sur le portail. Vous devez donc apporter des corrections aux tâches qui vous ont été réattribuées. De plus, nous vous informons d'un changement à votre programme d'enrôlement tel qu'expliqué ci-dessous.",
+  'reoEmail.pforToEdoChange.bodySingleHtml':
+    "<p class=\"mt-4\">Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>. Toutefois, puisque votre choix de métier actuel répond déjà aux exigences d'admissibilité du programme d'<strong>Entrée directe comme officier (EDO)</strong>, aucune réorientation de métier n'est requise.</p>\n<p class=\"mt-3\">Votre dossier est donc simplement transféré du programme <strong>PFOR</strong> vers le programme <strong>EDO</strong> pour le métier suivant, et le traitement de votre candidature se poursuit en conséquence :</p>",
+  'reoEmail.pforToEdoChange.bodySinglePlain':
+    "Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du Programme de formation des officiers de la force régulière (PFOR). Toutefois, puisque votre choix de métier actuel répond déjà aux exigences d'admissibilité du programme d'Entrée directe comme officier (EDO), aucune réorientation de métier n'est requise.\n\nVotre dossier est donc simplement transféré du programme PFOR vers le programme EDO pour le métier suivant, et le traitement de votre candidature se poursuit en conséquence :",
+  'reoEmail.pforToEdoChange.bodyPluralHtml':
+    "<p class=\"mt-4\">Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du <strong>Programme de formation des officiers de la force régulière (PFOR)</strong>. Toutefois, puisque vos choix de métiers actuels répondent déjà aux exigences d'admissibilité du programme d'<strong>Entrée directe comme officier (EDO)</strong>, aucune réorientation de métier n'est requise.</p>\n<p class=\"mt-3\">Votre dossier est donc simplement transféré du programme <strong>PFOR</strong> vers le programme <strong>EDO</strong> pour les métiers suivants, et le traitement de votre candidature se poursuit en conséquence :</p>",
+  'reoEmail.pforToEdoChange.bodyPluralPlain':
+    "Comme vous avez déjà complété des études universitaires, vous ne pouvez pas intégrer les Forces armées canadiennes par l'entremise du Programme de formation des officiers de la force régulière (PFOR). Toutefois, puisque vos choix de métiers actuels répondent déjà aux exigences d'admissibilité du programme d'Entrée directe comme officier (EDO), aucune réorientation de métier n'est requise.\n\nVotre dossier est donc simplement transféré du programme PFOR vers le programme EDO pour les métiers suivants, et le traitement de votre candidature se poursuit en conséquence :",
+  'reoEmail.pforToEdoChange.eligibleBadge':
+    ' : Admissible sous le programme EDO (changement de programme PFOR vers EDO)',
+  'reoEmail.pforToEdoChange.proofsIntroHtml':
+    '<p class="mt-3 text-sm text-slate-700">De plus, pour la poursuite du traitement de votre dossier, veuillez également vous assurer de fournir les documents supplémentaires suivants sur votre portail :</p>',
+  'reoEmail.pforToEdoChange.proofsIntroPlain':
+    'De plus, pour la poursuite du traitement de votre dossier, veuillez également vous assurer de fournir les documents supplémentaires suivants sur votre portail :',
+  'reoEmail.pforToEdoChange.mergeClosing':
+    'Aucun choix de réorientation n’est requis de votre part : dès que vos tâches seront corrigées, le traitement de votre dossier se poursuivra sous le programme EDO.',
+  'reoEmail.pforToEdoChange.closingWithAction':
+    "Aucune réorientation n'est requise de votre part : dès que vos documents auront été déposés sur votre portail, le traitement de votre dossier se poursuivra normalement sous le programme d'Entrée directe comme officier (EDO). Nous vous remercions pour votre intérêt envers les Forces armées canadiennes.",
+  'reoEmail.pforToEdoChange.closingNoAction':
+    "Aucune démarche de réorientation n'est requise de votre part : le traitement de votre dossier se poursuit normalement sous le programme d'Entrée directe comme officier (EDO). Nous vous remercions pour votre intérêt envers les Forces armées canadiennes.",
 
   // Too Old Conclusion
   'reoEmail.gen.tooOldConclusionHeader': 'Conclusion :',
@@ -216,8 +261,12 @@ export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
   'reoEmail.status.current': 'Here is the status of the occupations currently on your file:',
   'reoEmail.status.closedAdmission':
     'We already have a sufficient number of applications to fill all remaining positions.',
+  'reoEmail.status.closedAdmissionEdo':
+    'We already have a sufficient number of applications to fill all remaining positions for this occupation under the Direct Entry Officer (DEO) entry plan.',
   'reoEmail.status.closedPfor':
     'There are no longer positions available for this occupation under the Regular Officer Training Plan (ROTP).',
+  'reoEmail.status.closedEdo':
+    'There are no longer positions available for this occupation under the Direct Entry Officer (DEO) entry plan.',
   'reoEmail.status.closedRegular': 'There are no longer positions available for this occupation.',
   'reoEmail.status.noPr':
     'For various reasons, this occupation is not open to permanent residents.',
@@ -275,6 +324,47 @@ export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
     'Following the analysis of your application file, your current occupational choices are unavailable under ROTP or require a field of study different from your RMC admission.',
   'reoEmail.gen.status.emptyRegular':
     'Following the analysis of your application file, we have determined that your current occupational choices are currently unavailable or you do not qualify for them based on our criteria.',
+
+  // ROTP to DEO (Reorientation & Entry Plan Change Only)
+  'reoEmail.gen.merge.pforToEdoHtml':
+    '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we have determined that actions are required on your part. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the <strong>Direct Entry Officer (DEO)</strong> entry plan or another eligible occupation. Specifically, you must both <strong>correct the reassigned tasks</strong> on your portal and undergo a <strong>reorientation of your occupational choices</strong>.</p>',
+  'reoEmail.gen.merge.pforToEdoPlain':
+    'Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we have determined that actions are required on your part. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the Direct Entry Officer (DEO) entry plan or another eligible occupation. Specifically, you must both correct the reassigned tasks on your portal and undergo a reorientation of your occupational choices.',
+  'reoEmail.gen.noJob.pforToEdoHtml':
+    '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we have determined that you must undergo a reorientation. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the <strong>Direct Entry Officer (DEO)</strong> entry plan or another eligible occupation. In addition, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.</p>',
+  'reoEmail.gen.noJob.pforToEdoPlain':
+    'Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we have determined that you must undergo a reorientation. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the Direct Entry Officer (DEO) entry plan or another eligible occupation. In addition, no occupation is currently selected in your file, and the processing of your application cannot continue without an occupation choice from you.',
+  'reoEmail.gen.status.pforToEdoHtml':
+    '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we have determined that you must undergo a reorientation. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the <strong>Direct Entry Officer (DEO)</strong> entry plan or another eligible occupation. Here is the current status of the occupations currently in your file:</p>',
+  'reoEmail.gen.status.pforToEdoPlain':
+    'Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we have determined that you must undergo a reorientation. Because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the Direct Entry Officer (DEO) entry plan or another eligible occupation. Here is the current status of the occupations currently in your file:',
+  'reoEmail.gen.status.emptyPforToEdo':
+    'Following the analysis of your application file for the Regular Officer Training Plan (ROTP), because you have already completed university studies, you cannot enter the Canadian Armed Forces through ROTP and your application must be redirected to the Direct Entry Officer (DEO) entry plan or another eligible occupation. In addition, your current occupational choices are currently unavailable or you do not qualify for them based on our criteria.',
+  'reoEmail.pforToEdoChange.sec2Title': '2. ENTRY PLAN CHANGE (ROTP TO DEO):',
+  'reoEmail.pforToEdoChange.mergeIntroHtml':
+    '<p class="mt-4">Following the analysis of your application file for the <strong>Regular Officer Training Plan (ROTP)</strong>, we have determined that actions are required on your part regarding your portal tasks. Specifically, you must <strong>correct the reassigned tasks</strong> on your portal. In addition, please note the change to your entry plan as explained below.</p>',
+  'reoEmail.pforToEdoChange.mergeIntroPlain':
+    'Following the analysis of your application file for the Regular Officer Training Plan (ROTP), we have determined that actions are required on your part regarding your portal tasks. Specifically, you must correct the reassigned tasks on your portal. In addition, please note the change to your entry plan as explained below.',
+  'reoEmail.pforToEdoChange.bodySingleHtml':
+    '<p class="mt-4">Because you have already completed university studies, you cannot enter the Canadian Armed Forces through the <strong>Regular Officer Training Plan (ROTP)</strong>. However, since your current occupational choice already meets the eligibility requirements for the <strong>Direct Entry Officer (DEO)</strong> entry plan, no occupational reorientation is required.</p>\n<p class="mt-3">Your file is therefore simply being switched from <strong>ROTP</strong> to the <strong>DEO</strong> entry plan for the following occupation, and the processing of your application will continue accordingly:</p>',
+  'reoEmail.pforToEdoChange.bodySinglePlain':
+    'Because you have already completed university studies, you cannot enter the Canadian Armed Forces through the Regular Officer Training Plan (ROTP). However, since your current occupational choice already meets the eligibility requirements for the Direct Entry Officer (DEO) entry plan, no occupational reorientation is required.\n\nYour file is therefore simply being switched from ROTP to the DEO entry plan for the following occupation, and the processing of your application will continue accordingly:',
+  'reoEmail.pforToEdoChange.bodyPluralHtml':
+    '<p class="mt-4">Because you have already completed university studies, you cannot enter the Canadian Armed Forces through the <strong>Regular Officer Training Plan (ROTP)</strong>. However, since your current occupational choices already meet the eligibility requirements for the <strong>Direct Entry Officer (DEO)</strong> entry plan, no occupational reorientation is required.</p>\n<p class="mt-3">Your file is therefore simply being switched from <strong>ROTP</strong> to the <strong>DEO</strong> entry plan for the following occupations, and the processing of your application will continue accordingly:</p>',
+  'reoEmail.pforToEdoChange.bodyPluralPlain':
+    'Because you have already completed university studies, you cannot enter the Canadian Armed Forces through the Regular Officer Training Plan (ROTP). However, since your current occupational choices already meet the eligibility requirements for the Direct Entry Officer (DEO) entry plan, no occupational reorientation is required.\n\nYour file is therefore simply being switched from ROTP to the DEO entry plan for the following occupations, and the processing of your application will continue accordingly:',
+  'reoEmail.pforToEdoChange.eligibleBadge':
+    ' : Eligible under the DEO entry plan (entry plan change from ROTP to DEO)',
+  'reoEmail.pforToEdoChange.proofsIntroHtml':
+    '<p class="mt-3 text-sm text-slate-700">Additionally, to continue processing your application, please also ensure you provide the following additional documents on your portal:</p>',
+  'reoEmail.pforToEdoChange.proofsIntroPlain':
+    'Additionally, to continue processing your application, please also ensure you provide the following additional documents on your portal:',
+  'reoEmail.pforToEdoChange.mergeClosing':
+    'No reorientation choice is required from you: once your tasks are corrected, the processing of your file will continue under the DEO entry plan.',
+  'reoEmail.pforToEdoChange.closingWithAction':
+    'No reorientation is required from you: once your documents have been uploaded to your portal, the processing of your file will continue normally under the Direct Entry Officer (DEO) entry plan. Thank you for your interest in the Canadian Armed Forces.',
+  'reoEmail.pforToEdoChange.closingNoAction':
+    'No reorientation action is required from you: the processing of your file continues normally under the Direct Entry Officer (DEO) entry plan. Thank you for your interest in the Canadian Armed Forces.',
 
   // Too Old Conclusion
   'reoEmail.gen.tooOldConclusionHeader': 'Conclusion:',

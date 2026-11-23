@@ -94,6 +94,8 @@ export function buildReoBilingualEmail(this: any, isHtml: boolean): string {
     isPforApplicant,
     isPforCmr: isPforApplicant && this.pforType() === "cmr",
     isPforCivil: isPforApplicant && this.pforType() === "civil",
+    isPforToEdo: this.isPforToEdo(),
+    isPforToEdoProgramChangeOnly: this.isPforToEdoProgramChangeOnly(),
     isPilotEligible: jobIds.includes("00183"),
     isPRAdmissible: this.citizenship() === "PR > 3 years",
     isCandidateTooOld: this.isCandidateTooOld(),

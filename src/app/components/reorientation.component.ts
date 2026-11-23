@@ -27,6 +27,7 @@ import {
 } from "./reorientation/reorientation-admissibility.helper";
 import { getReoMissingProofs, generateReoNoteText, generateReoNoteRegistry } from "./reorientation/reorientation-proofs-notes.generator";
 import { buildReoBilingualEmail } from "./reorientation/reorientation-email.generator";
+import { isReoPforToEdoProgramChangeOnly } from "./reorientation/reorientation-pfor-to-edo.helper";
 import { ReorientationRulesService } from "../../services/reorientation/reorientation-rules.service";
 import { TranslationService } from "../i18n";
 import { REORIENTATION_TEMPLATE } from "./reorientation/reorientation.template";
@@ -55,6 +56,7 @@ export class ReorientationComponent {
     if (this.hasMedicalLimitation()) count++;
     if (this.isPforApplicant()) count++;
     if (this.includeTraitement()) count++;
+    if (this.isPforToEdo()) count++;
     return count;
   });
 
@@ -136,6 +138,21 @@ export class ReorientationComponent {
   toggleMedicalLimitation() {
     this.hasMedicalLimitation.update((v) => !v);
   }
+
+  isPforToEdo = signal<boolean>(false);
+
+  togglePforToEdo() {
+    const next = !this.isPforToEdo();
+    this.isPforToEdo.set(next);
+    if (next && this.isPforApplicant()) {
+      this.isPforApplicant.set(false);
+      this.sharedState.isPostulantPfor.set(false);
+    }
+  }
+
+  isPforToEdoProgramChangeOnly = computed<boolean>(() =>
+    isReoPforToEdoProgramChangeOnly(this),
+  );
 
   medicalV = signal<string>("");
   medicalCV = signal<string>("");
@@ -322,6 +339,7 @@ export class ReorientationComponent {
     this.showOptionsDropdown.set(false);
     this.ignoreSip.set(false);
     this.includeTraitement.set(false);
+    this.isPforToEdo.set(false);
     this.testEcePassed.set(false);
     this.testEceNotCompleted.set(false);
     this.testEsomPassed.set(false);
@@ -878,6 +896,7 @@ export class ReorientationComponent {
     this.citizenship.set("Canadian Citizen");
     this.hasMedicalLimitation.set(false);
     this.includeTraitement.set(false);
+    this.isPforToEdo.set(false);
     this.isPforApplicant.set(false);
     this.sharedState.isPostulantPfor.set(false);
     this.pforType.set("cmr");

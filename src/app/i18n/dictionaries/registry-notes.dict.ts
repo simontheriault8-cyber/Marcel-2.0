@@ -100,6 +100,8 @@ export const REGISTRY_NOTES_FR: TranslationDictionary = {
   'regNotes.pforTradeOngoingProcessing': 'Traitement continu, possible changement de métier selon choix du postulant.',
   'regNotes.pforCmrRefusalReoPrefix': "Refus d'admission CMR - Réorientation nécessaire",
   'regNotes.pforCmrMinCriteriaReoPrefix': 'Critère minimal PFOR non rencontré (DES manquant) - Réorientation nécessaire',
+  'regNotes.pforToEdoReoPrefix': 'PFOR vers EDO (études universitaires complétées) - Réorientation nécessaire car',
+  'regNotes.pforToEdoChangePart': 'Changement de programme PFOR vers EDO pour {jobs} (études universitaires déjà complétées, métier(s) admissible(s) en EDO), courriel explicatif envoyé{prText}, traitement continu sous EDO.',
   'regNotes.missingProofsTitle': 'Preuves supplémentaires requises :',
   'regNotes.missingProofsForTrade': 'Pour le métier {trade} :',
 };
@@ -204,6 +206,8 @@ export const REGISTRY_NOTES_EN: TranslationDictionary = {
   'regNotes.pforTradeOngoingProcessing': "Ongoing processing, potential trade change based on candidate's choice.",
   'regNotes.pforCmrRefusalReoPrefix': 'RMC admission refusal - Reorientation required',
   'regNotes.pforCmrMinCriteriaReoPrefix': 'ROTP minimum criteria not met (Missing high school diploma) - Reorientation required',
+  'regNotes.pforToEdoReoPrefix': 'ROTP to DEO (university studies completed) - Reorientation required as',
+  'regNotes.pforToEdoChangePart': 'Entry plan change from ROTP to DEO for {jobs} (university studies already completed, occupation(s) eligible under DEO), explanatory email sent{prText}, ongoing processing under DEO.',
   'regNotes.missingProofsTitle': 'Additional required proofs:',
   'regNotes.missingProofsForTrade': 'For trade {trade}:',
 };
