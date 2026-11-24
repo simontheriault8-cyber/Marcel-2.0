@@ -511,11 +511,17 @@ export const PFOR_TEMPLATE = `
                   </div>
                   <select
                     [ngModel]="selectedDossierJobId1()"
-                    (ngModelChange)="selectedDossierJobId1.set($event)"
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                    (ngModelChange)="onDossierJobChange(1, $event)"
+                    [disabled]="isDossierFieldDisabled(1)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm disabled:bg-slate-100 disabled:text-slate-400"
                   >
                     <option value="">{{ i18n.t('pfor.noChoice1Selected') }}</option>
                     <option value="00003">{{ i18n.t('pfor.withoutJob') }}</option>
+                    @if (getExtraDossierJobOption(selectedDossierJobId1()); as extra1) {
+                      <option [value]="extra1.id">
+                        {{ jobService.getJobDisplayLabel(extra1, i18n.lang()) }}
+                      </option>
+                    }
                     @for (job of allPforJobs(); track job.id) {
                       <option [value]="job.id">
                         {{ jobService.getJobDisplayLabel(job, i18n.lang()) }}
@@ -558,10 +564,16 @@ export const PFOR_TEMPLATE = `
                   </div>
                   <select
                     [ngModel]="selectedDossierJobId2()"
-                    (ngModelChange)="selectedDossierJobId2.set($event)"
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                    (ngModelChange)="onDossierJobChange(2, $event)"
+                    [disabled]="isDossierFieldDisabled(2)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm disabled:bg-slate-100 disabled:text-slate-400"
                   >
                     <option value="">{{ i18n.t('pfor.noChoice2Selected') }}</option>
+                    @if (getExtraDossierJobOption(selectedDossierJobId2()); as extra2) {
+                      <option [value]="extra2.id">
+                        {{ jobService.getJobDisplayLabel(extra2, i18n.lang()) }}
+                      </option>
+                    }
                     @for (job of allPforJobs(); track job.id) {
                       <option [value]="job.id">
                         {{ jobService.getJobDisplayLabel(job, i18n.lang()) }}
@@ -604,10 +616,16 @@ export const PFOR_TEMPLATE = `
                   </div>
                   <select
                     [ngModel]="selectedDossierJobId3()"
-                    (ngModelChange)="selectedDossierJobId3.set($event)"
-                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                    (ngModelChange)="onDossierJobChange(3, $event)"
+                    [disabled]="isDossierFieldDisabled(3)"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm disabled:bg-slate-100 disabled:text-slate-400"
                   >
                     <option value="">{{ i18n.t('pfor.noChoice3Selected') }}</option>
+                    @if (getExtraDossierJobOption(selectedDossierJobId3()); as extra3) {
+                      <option [value]="extra3.id">
+                        {{ jobService.getJobDisplayLabel(extra3, i18n.lang()) }}
+                      </option>
+                    }
                     @for (job of allPforJobs(); track job.id) {
                       <option [value]="job.id">
                         {{ jobService.getJobDisplayLabel(job, i18n.lang()) }}

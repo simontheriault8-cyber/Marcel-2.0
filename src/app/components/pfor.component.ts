@@ -88,9 +88,64 @@ export class PforComponent {
   cmrMinCriteriaNotMet = signal<boolean>(false);
   cmrNotYetEvaluated = signal<boolean>(false);
 
-  selectedDossierJobId1 = signal<string>("");
-  selectedDossierJobId2 = signal<string>("");
-  selectedDossierJobId3 = signal<string>("");
+  selectedDossierJobId1 = this.sharedState.selectedDossierJobId1;
+  selectedDossierJobId2 = this.sharedState.selectedDossierJobId2;
+  selectedDossierJobId3 = this.sharedState.selectedDossierJobId3;
+
+  isDossierFieldDisabled(index: 1 | 2 | 3): boolean {
+    const id1 = this.selectedDossierJobId1();
+    const id2 = this.selectedDossierJobId2();
+    const id3 = this.selectedDossierJobId3();
+    if (index === 1) return id2 === "00003" || id3 === "00003";
+    if (index === 2) return id1 === "00003" || id3 === "00003";
+    if (index === 3) return id1 === "00003" || id2 === "00003";
+    return false;
+  }
+
+  getExtraDossierJobOption(jobId: string): JobEntry | undefined {
+    if (!jobId || jobId === "00003") return undefined;
+    if (this.allPforJobs().some((j) => j.id === jobId)) return undefined;
+    return this.jobService.getJobById(jobId);
+  }
+
+  onDossierJobChange(index: 1 | 2 | 3, jobId: string) {
+    if (jobId === "00003") {
+      if (index !== 1) {
+        this.selectedDossierJobId1.set("");
+        this.sharedState.searchDossierQuery1.set("");
+        this.sharedState.dossierJobFailedCe1.set(false);
+      }
+      if (index !== 2) {
+        this.selectedDossierJobId2.set("");
+        this.sharedState.searchDossierQuery2.set("");
+        this.sharedState.dossierJobFailedCe2.set(false);
+      }
+      if (index !== 3) {
+        this.selectedDossierJobId3.set("");
+        this.sharedState.searchDossierQuery3.set("");
+        this.sharedState.dossierJobFailedCe3.set(false);
+      }
+    }
+
+    const job = jobId ? this.jobService.getJobById(jobId) : undefined;
+    const queryValue = job
+      ? `${job.id} - ${this.jobService.getJobTitle(job, this.i18n.lang())}`
+      : "";
+
+    if (index === 1) {
+      this.selectedDossierJobId1.set(jobId);
+      this.sharedState.searchDossierQuery1.set(queryValue);
+      if (!jobId) this.sharedState.dossierJobFailedCe1.set(false);
+    } else if (index === 2) {
+      this.selectedDossierJobId2.set(jobId);
+      this.sharedState.searchDossierQuery2.set(queryValue);
+      if (!jobId) this.sharedState.dossierJobFailedCe2.set(false);
+    } else if (index === 3) {
+      this.selectedDossierJobId3.set(jobId);
+      this.sharedState.searchDossierQuery3.set(queryValue);
+      if (!jobId) this.sharedState.dossierJobFailedCe3.set(false);
+    }
+  }
 
   attentesJobsInDossier = computed(() => {
     const dossierIds = [
@@ -723,6 +778,12 @@ export class PforComponent {
     this.selectedDossierJobId1.set("");
     this.selectedDossierJobId2.set("");
     this.selectedDossierJobId3.set("");
+    this.sharedState.searchDossierQuery1.set("");
+    this.sharedState.searchDossierQuery2.set("");
+    this.sharedState.searchDossierQuery3.set("");
+    this.sharedState.dossierJobFailedCe1.set(false);
+    this.sharedState.dossierJobFailedCe2.set(false);
+    this.sharedState.dossierJobFailedCe3.set(false);
     this.ignoreSip.set(false);
     this.includeTraitement.set(false);
     this.hasMedicalLimitation.set(false);
