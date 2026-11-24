@@ -8,6 +8,7 @@ import {
 import {
   renderHighlyCompetitiveBadge,
   renderHighlyCompetitiveNote,
+  renderMergedTasksBoxFromState,
 } from "../shared/email-blocks.helper";
 
 export function getPforCmrMinMissingCriteriaFr(this: any): string[] {
@@ -98,9 +99,15 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
     const ncmEval = this.eligibleNcmEvaluation();
     const openJobs = ncmEval.openJobs;
     const closedJobs = ncmEval.closedJobs;
-    const mergeTasks =
-      this.sharedState.includeLinkedEmail() &&
+    const rawHtml = this.sharedState.taskEmailHtmlFr();
+    const rawTxt = this.sharedState.taskEmailFr();
+    const hasTasks =
+      !!(rawHtml || rawTxt) &&
       this.sharedState.hasReassignedTasks();
+    const mergeTasks =
+      (this.sharedState.includeLinkedEmail() ||
+        (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) &&
+      hasTasks;
     const isEn = this.i18n?.isEn ? this.i18n.isEn() : (this.i18n?.lang?.() === 'en');
 
     const displayedJobs = [...openJobs, ...(this.ignoreSip() ? closedJobs : [])];
@@ -168,32 +175,9 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
 
       // Optional Linked Tasks if active
       if (mergeTasks) {
-        let taskPartHtml = "";
-        const rawHtml = this.sharedState.taskEmailHtmlFr();
-        if (rawHtml.includes("<!-- START_TASK_BODY_FR -->")) {
-          const frParts = rawHtml.split("<!-- START_TASK_BODY_FR -->");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
-            if (frBodyPart.length > 0) taskPartHtml = frBodyPart[0].trim();
-          }
-        } else {
-          const frParts = rawHtml.split("<p>Bonjour,</p>");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("<p>En raison du volume");
-            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
-              taskPartHtml = frBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartHtml) {
-          h +=
-            '<div class="mb-6 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-sm">\n';
-          h +=
-            '<p class="font-bold text-amber-950 border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #78350f;">TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :</p>\n';
-          h += taskPartHtml + "\n";
-          h += "</div>\n";
-        }
+        h += renderMergedTasksBoxFromState(this, "fr", true, {
+          htmlSpacingClass: "mb-6",
+        });
       }
 
       // ======================================
@@ -273,32 +257,9 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       // Optional Linked Tasks (English) if active
       let hEn = "";
       if (mergeTasks) {
-        let taskPartHtmlEn = "";
-        const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
-        if (rawHtmlEn.includes("<!-- START_TASK_BODY_EN -->")) {
-          const enParts = rawHtmlEn.split("<!-- START_TASK_BODY_EN -->");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
-            if (enBodyPart.length > 0) taskPartHtmlEn = enBodyPart[0].trim();
-          }
-        } else {
-          const enParts = rawHtmlEn.split("<p>Hello,</p>");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("<p>Due to a high volume");
-            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
-              taskPartHtmlEn = enBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartHtmlEn) {
-          hEn +=
-            '<div class="mb-6 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-sm">\n';
-          hEn +=
-            '<p class="font-bold text-amber-950 border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #78350f;">TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:</p>\n';
-          hEn += taskPartHtmlEn + "\n";
-          hEn += "</div>\n";
-        }
+        hEn += renderMergedTasksBoxFromState(this, "en", true, {
+          htmlSpacingClass: "mb-6",
+        });
       }
 
       // ======================================
@@ -393,30 +354,7 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
       let t = "";
 
       if (mergeTasks) {
-        let taskPartTxt = "";
-        const rawTxt = this.sharedState.taskEmailFr();
-        if (rawTxt.includes("<!-- START_TASK_BODY_FR -->")) {
-          const frParts = rawTxt.split("<!-- START_TASK_BODY_FR -->");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
-            if (frBodyPart.length > 0) taskPartTxt = frBodyPart[0].trim();
-          }
-        } else {
-          const frParts = rawTxt.split("Bonjour,");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("En raison du volume");
-            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
-              taskPartTxt = frBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartTxt) {
-          t += "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
-          t +=
-            "----------------------------------------------------------------------\n";
-          t += taskPartTxt + "\n\n";
-        }
+        t += renderMergedTasksBoxFromState(this, "fr", false);
       }
 
       t += "Bonjour,\n\n";
@@ -484,30 +422,7 @@ export function buildPforCmrRefusalEmail(this: any, isHtml: boolean): string {
 
       let tEn = "";
       if (mergeTasks) {
-        let taskPartTxtEn = "";
-        const rawTxtEn = this.sharedState.taskEmailEn();
-        if (rawTxtEn.includes("<!-- START_TASK_BODY_EN -->")) {
-          const enParts = rawTxtEn.split("<!-- START_TASK_BODY_EN -->");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
-            if (enBodyPart.length > 0) taskPartTxtEn = enBodyPart[0].trim();
-          }
-        } else {
-          const enParts = rawTxtEn.split("Hello,");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("Due to a high volume");
-            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
-              taskPartTxtEn = enBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartTxtEn) {
-          tEn += "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:\n";
-          tEn +=
-            "----------------------------------------------------------------------\n";
-          tEn += taskPartTxtEn + "\n\n";
-        }
+        tEn += renderMergedTasksBoxFromState(this, "en", false);
       }
 
       tEn += "Hello,\n\n";

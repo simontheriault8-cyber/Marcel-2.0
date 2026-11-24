@@ -3,6 +3,7 @@ import { JOB_URLS } from "../../data/job-urls.data";
 import {
   renderHighlyCompetitiveBadge,
   renderHighlyCompetitiveNote,
+  renderMergedTasksBoxFromState,
 } from "../shared/email-blocks.helper";
 
 /**
@@ -120,6 +121,14 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
     this.jobService.isJobHighlyCompetitive(id),
   );
 
+  const rawHtml = this.sharedState.taskEmailHtmlFr();
+  const rawTxt = this.sharedState.taskEmailFr();
+  const hasTasks = !!(rawHtml || rawTxt) && this.sharedState.hasReassignedTasks();
+  const mergeTasks =
+    (this.sharedState.includeLinkedEmail() ||
+      (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) &&
+    hasTasks;
+
   // Helper for bullet list items
   const formatBulletItem = (id: string, isFrench: boolean): string => {
     const lang = isFrench ? "fr" : "en";
@@ -170,8 +179,20 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
     const listItemsFr = cmrJobIds.map((id) => formatBulletItem(id, true)).join("\n");
     const listItemsEn = cmrJobIds.map((id) => formatBulletItem(id, false)).join("\n");
 
+    const mergedBlockHtmlFr = mergeTasks
+      ? renderMergedTasksBoxFromState(this, "fr", true, {
+          htmlSpacingClass: "mb-6",
+        })
+      : "";
+    const mergedBlockHtmlEn = mergeTasks
+      ? renderMergedTasksBoxFromState(this, "en", true, {
+          htmlSpacingClass: "mb-6",
+        })
+      : "";
+
     const frHtml =
       '<p class="mt-4">Bonjour,</p>\n' +
+      mergedBlockHtmlFr +
       '<p class="mt-4">Ceci est un courriel de suivi concernant les choix de métiers que vous avez sélectionnés. Votre dossier n’a toujours pas été évalué par les Collèges militaires canadiens (CMC). Toutefois, un ou plusieurs des métiers que vous avez choisis sont déjà considérés comme complets pour la présente année en raison du grand nombre de candidatures reçues jusqu’à maintenant.</p>\n' +
       '<p class="mt-4">Si vous recevez ce courriel, c’est parce que ces métiers constituaient les seuls choix figurant à votre dossier. Vous avez donc les deux options suivantes :</p>\n' +
       '<ol style="list-style-type: decimal; padding-left: 24px; margin-top: 16px; margin-bottom: 16px;">\n' +
@@ -190,6 +211,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
 
     const enHtml =
       '<p class="mt-4">Hello,</p>\n' +
+      mergedBlockHtmlEn +
       '<p class="mt-4">This is a follow-up email regarding the occupational choices you have selected. Your file has not yet been evaluated by the Canadian Military Colleges (CMC). However, one or more of the occupations you have chosen are already considered full for the current year due to the high volume of applications received so far.</p>\n' +
       '<p class="mt-4">If you are receiving this email, it is because these occupations were the only choices appearing in your file. You therefore have the following two options:</p>\n' +
       '<ol style="list-style-type: decimal; padding-left: 24px; margin-top: 16px; margin-bottom: 16px;">\n' +
@@ -219,8 +241,16 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
     const listItemsFr = cmrJobIds.map((id) => formatBulletItem(id, true)).join("\n");
     const listItemsEn = cmrJobIds.map((id) => formatBulletItem(id, false)).join("\n");
 
+    const mergedBlockPlainFr = mergeTasks
+      ? renderMergedTasksBoxFromState(this, "fr", false)
+      : "";
+    const mergedBlockPlainEn = mergeTasks
+      ? renderMergedTasksBoxFromState(this, "en", false)
+      : "";
+
     const frPlain =
       "Bonjour,\n\n" +
+      mergedBlockPlainFr +
       "Ceci est un courriel de suivi concernant les choix de métiers que vous avez sélectionnés. Votre dossier n’a toujours pas été évalué par les Collèges militaires canadiens (CMC). Toutefois, un ou plusieurs des métiers que vous avez choisis sont déjà considérés comme complets pour la présente année en raison du grand nombre de candidatures reçues jusqu’à maintenant.\n\n" +
       "Si vous recevez ce courriel, c’est parce que ces métiers constituaient les seuls choix figurant à votre dossier. Vous avez donc les deux options suivantes :\n\n" +
       "1. Conserver votre ou vos choix actuels de métiers\n" +
@@ -240,6 +270,7 @@ export function buildPforNotYetEvaluatedEmail(this: any, isHtml: boolean): strin
 
     const enPlain =
       "Hello,\n\n" +
+      mergedBlockPlainEn +
       "This is a follow-up email regarding the occupational choices you have selected. Your file has not yet been evaluated by the Canadian Military Colleges (CMC). However, one or more of the occupations you have chosen are already considered full for the current year due to the high volume of applications received so far.\n\n" +
       "If you are receiving this email, it is because these occupations were the only choices appearing in your file. You therefore have the following two options:\n\n" +
       "1. Maintain your current occupation choice(s)\n" +

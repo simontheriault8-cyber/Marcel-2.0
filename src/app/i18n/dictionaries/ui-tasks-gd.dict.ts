@@ -18,6 +18,8 @@ export const UI_TASKS_GD_FR: TranslationDictionary = {
   'tasks.modeCourriel': 'Courriel',
   'tasks.modeNote': 'Note',
   'tasks.triageMedicalRequis': 'Triage médical requis',
+  'tasks.minorRejectionsCarriedTitle': 'Motifs mineurs conservés (Consentement parental)',
+  'tasks.editMinorBtn': 'Modifier',
 
   // GD Task Groups
   'tasks.gdGroup.reception': "Réception d'un postulant",
@@ -283,6 +285,8 @@ export const UI_TASKS_GD_EN: TranslationDictionary = {
   'tasks.modeCourriel': 'Email',
   'tasks.modeNote': 'Note',
   'tasks.triageMedicalRequis': 'Medical triage required',
+  'tasks.minorRejectionsCarriedTitle': 'Minor rejections carried over (Parental Consent)',
+  'tasks.editMinorBtn': 'Edit',
 
   // GD Task Groups
   'tasks.gdGroup.reception': 'Applicant Intake',

@@ -555,18 +555,39 @@ export function setAllCompliant(this: any) {
     } else {
       // Toggle ON: marquer toutes les tâches standard visibles conformes
       const currentKeys = new Set(this.compliantDocKeys());
-      this.visibleTasks().forEach((task) => {
+      const currentNotCompleted = new Set(this.taskNotCompletedKeys());
+      const currentRejections = new Set(this.selectedRejectionKeys());
+      const dossierJobs = this.getDossierJobObjects();
+
+      this.visibleTasks().forEach((task: Task) => {
+        currentNotCompleted.delete(task.nameFr);
+
         if (!task.nameFr.includes("Documents Supplémentaires")) {
           task.documents.forEach((doc) => {
             currentKeys.add(this.getDocKey(task, doc));
+            doc.reasons.forEach((reason) => {
+              currentRejections.delete(this.getReasonKey(doc, reason));
+              dossierJobs.forEach((j: JobEntry) => {
+                currentRejections.delete(this.getJobReasonKey(j, doc, reason));
+              });
+            });
           });
         } else {
           currentKeys.add(`${task.nameFr}::metiers_docs`);
+          task.documents.forEach((doc) => {
+            doc.reasons.forEach((reason) => {
+              currentRejections.delete(this.getReasonKey(doc, reason));
+              dossierJobs.forEach((j: JobEntry) => {
+                currentRejections.delete(this.getJobReasonKey(j, doc, reason));
+              });
+            });
+          });
         }
       });
+
       this.compliantDocKeys.set(currentKeys);
-      this.taskNotCompletedKeys.set(new Set());
-      this.selectedRejectionKeys.set(new Set());
+      this.taskNotCompletedKeys.set(currentNotCompleted);
+      this.selectedRejectionKeys.set(currentRejections);
       this.selectedEmailBankTemplate.set('');
     }
   }
@@ -919,53 +940,75 @@ export function isRecruiterMandatoryTask(this: any, task: Task): boolean {
     return false;
   }
 
+export function hasMinorConsentRejections(this: any): boolean {
+    if (this.selectedRole() !== "recruiter" || !this.isUnderAge()) {
+      return false;
+    }
+    const consentTask = this.allTasks().find((t: Task) =>
+      t.nameFr.includes("Consentement du parent"),
+    );
+    if (!consentTask) return false;
+    return this.hasTaskRejections(consentTask);
+  }
+
+export function areVisibleRecruiterMandatoryTasksCompliant(this: any): boolean {
+    const tasks = this.visibleTasks();
+    if (tasks.length === 0) return false;
+
+    const mandatoryTasks = tasks.filter((t: Task) => this.isRecruiterMandatoryTask(t));
+    if (mandatoryTasks.length === 0) return false;
+
+    return mandatoryTasks.every((task: Task) => {
+      // Tâche non complétée bloque la conformité
+      if (this.isTaskNotCompleted(task)) {
+        return false;
+      }
+
+      const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
+      if (isIdentity) {
+        // Doit avoir au moins une pièce d'identité valide (hors selfie) marquée conforme
+        const hasCompliantId = task.documents.some(
+          (d) =>
+            !d.nameFr.toLowerCase().includes("selfie") &&
+            !d.nameFr.toLowerCase().includes("invalide") &&
+            this.isCompliant(task, d)
+        );
+        if (!hasCompliantId) return false;
+
+        // Aucun motif de rejet bloquant sur les pièces d'identité (hors selfie)
+        const hasBlockingIdRejection = task.documents.some(
+          (d) =>
+            !d.nameFr.toLowerCase().includes("selfie") &&
+            this.hasRejections(d)
+        );
+        if (hasBlockingIdRejection) return false;
+
+        return true;
+      }
+
+      // Pour Relevés de notes et Certificat de naissance (ou Consentement parent si mineur) :
+      // Aucun motif de rejet permis
+      if (task.documents.some((d) => this.hasRejections(d))) {
+        return false;
+      }
+
+      // Doit être conforme
+      return this.isTaskCompliant(task);
+    });
+  }
+
 export function computeAllTasksCompliant(this: any): boolean {
     const tasks = this.visibleTasks();
     if (tasks.length === 0) return false;
 
     if (this.selectedRole() === "recruiter") {
-      // Dans le volet recruteur, dans la vérification des documents, les seuls tâches au portail
-      // qui ne permettent plus au postulant d'être conforme sont : relevés de notes, pièce d'identité et certificat de naissance canadien.
-      const mandatoryTasks = tasks.filter((t) => this.isRecruiterMandatoryTask(t));
-      if (mandatoryTasks.length === 0) return false;
+      // Si un postulant mineur a des motifs de rejet ou tâche non complétée au niveau du consentement parental
+      // (tâche masquée à l'étape principale), ceux-ci continuent de bloquer la conformité finale.
+      if (this.stage() !== "minor-check" && hasMinorConsentRejections.call(this)) {
+        return false;
+      }
 
-      return mandatoryTasks.every((task) => {
-        // Tâche non complétée bloque la conformité
-        if (this.isTaskNotCompleted(task)) {
-          return false;
-        }
-
-        const isIdentity = task.nameFr.startsWith("Pièce d'identité avec photo");
-        if (isIdentity) {
-          // Doit avoir au moins une pièce d'identité valide (hors selfie) marquée conforme
-          const hasCompliantId = task.documents.some(
-            (d) =>
-              !d.nameFr.toLowerCase().includes("selfie") &&
-              !d.nameFr.toLowerCase().includes("invalide") &&
-              this.isCompliant(task, d)
-          );
-          if (!hasCompliantId) return false;
-
-          // Aucun motif de rejet bloquant sur les pièces d'identité (hors selfie)
-          const hasBlockingIdRejection = task.documents.some(
-            (d) =>
-              !d.nameFr.toLowerCase().includes("selfie") &&
-              this.hasRejections(d)
-          );
-          if (hasBlockingIdRejection) return false;
-
-          return true;
-        }
-
-        // Pour Relevés de notes et Certificat de naissance (ou Consentement parent si mineur) :
-        // Aucun motif de rejet permis
-        if (task.documents.some((d) => this.hasRejections(d))) {
-          return false;
-        }
-
-        // Doit être conforme
-        return this.isTaskCompliant(task);
-      });
+      return areVisibleRecruiterMandatoryTasksCompliant.call(this);
     }
 
     return tasks.every((task) => {

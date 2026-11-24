@@ -4,6 +4,7 @@ import {
   extractMergedTasksBody,
   renderHighlyCompetitiveBadge,
   renderHighlyCompetitiveNote,
+  renderMergedTasksContainer,
 } from "../shared/email-blocks.helper";
 import { ReoEmailSectionContext } from "./reorientation-email-sections.helper";
 
@@ -101,29 +102,14 @@ export function buildPforToEdoProgramChangeEmailSection(
       ? ctx.sharedState.taskEmailHtmlFr()
       : ctx.sharedState.taskEmailFr();
     const taskBody = extractMergedTasksBody(rawTasksSource, lang, isHtml, true);
-
-    const sec1Title = i18n.tLang("reoEmail.tasks.sec1Title", lang);
-    const sec2Title = i18n.tLang("reoEmail.pforToEdoChange.sec2Title", lang);
-    if (isHtml) {
-      if (taskBody) {
-        out +=
-          '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n' +
-          `<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">${sec1Title}</p>\n` +
-          `${taskBody}\n` +
-          "</div>\n";
-      }
-      out += `<p class="mt-6 font-bold text-slate-900 border-b border-slate-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">${sec2Title}</p>\n`;
-    } else {
-      if (taskBody) {
-        out += "==================================================\n";
-        out += `${sec1Title}\n`;
-        out += "==================================================\n\n";
-        out += `${taskBody}\n\n`;
-      }
-      out += "==================================================\n";
-      out += `${sec2Title}\n`;
-      out += "==================================================\n\n";
-    }
+    out += renderMergedTasksContainer(
+      taskBody,
+      lang,
+      isHtml,
+      i18n,
+      "equals",
+      "reoEmail.pforToEdoChange.sec2Title",
+    );
   }
 
   const bodyKey = isPlural

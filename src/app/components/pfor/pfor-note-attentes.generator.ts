@@ -3,6 +3,7 @@ import { CMR_JOB_DOMAINS } from "../../data/reorientation-criteria.data";
 import {
   renderHighlyCompetitiveBadge,
   renderHighlyCompetitiveNote,
+  renderMergedTasksBoxFromState,
 } from "../shared/email-blocks.helper";
 import { generatePforNotYetEvaluatedNote } from "./pfor-not-yet-evaluated.generator";
 
@@ -202,9 +203,9 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
     const rawHtml = this.sharedState.taskEmailHtmlFr();
     const rawTxt = this.sharedState.taskEmailFr();
     const hasTasks =
-      !!rawHtml &&
+      !!(rawHtml || rawTxt) &&
       this.sharedState.hasReassignedTasks() &&
-      rawHtml.includes("Bonjour,");
+      (rawHtml.includes("Bonjour,") || rawHtml.includes("<!-- START_TASK_BODY_") || rawTxt.includes("Bonjour,"));
     const mergeTasks = (this.sharedState.includeLinkedEmail() || (this.sharedState.hasReassignedTasks() && this.showResultsPanel())) && hasTasks;
 
     const allEligibleJobs = this.eligiblePforJobs().filter(
@@ -243,33 +244,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       }
 
       if (mergeTasks) {
-        let taskPartHtml = "";
-        if (rawHtml.includes("<!-- START_TASK_BODY_FR -->")) {
-          const frParts = rawHtml.split("<!-- START_TASK_BODY_FR -->");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("<!-- END_TASK_BODY_FR -->");
-            if (frBodyPart.length > 0) {
-              taskPartHtml = frBodyPart[0].trim();
-            }
-          }
-        } else {
-          const frParts = rawHtml.split("<p>Bonjour,</p>");
-          if (frParts.length > 1) {
-            const frBodyPart = frParts[1].split("<p>En raison du volume");
-            if (frBodyPart.length > 0 && frBodyPart[0].trim().length > 0) {
-              taskPartHtml = frBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartHtml) {
-          h +=
-            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
-          h +=
-            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :</p>\n';
-          h += taskPartHtml + "\n";
-          h += "</div>\n";
-        }
+        h += renderMergedTasksBoxFromState(this, "fr", true);
       }
 
       if (this.pforType() === "cmr" && cmrAdmittedFr) {
@@ -351,34 +326,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       }
 
       if (mergeTasks) {
-        const rawHtmlEn = this.sharedState.taskEmailHtmlEn();
-        let taskPartHtmlEn = "";
-        if (rawHtmlEn.includes("<!-- START_TASK_BODY_EN -->")) {
-          const enParts = rawHtmlEn.split("<!-- START_TASK_BODY_EN -->");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("<!-- END_TASK_BODY_EN -->");
-            if (enBodyPart.length > 0) {
-              taskPartHtmlEn = enBodyPart[0].trim();
-            }
-          }
-        } else {
-          const enParts = rawHtmlEn.split("<p>Hello,</p>");
-          if (enParts.length > 1) {
-            const enBodyPart = enParts[1].split("<p>Due to a high volume");
-            if (enBodyPart.length > 0 && enBodyPart[0].trim().length > 0) {
-              taskPartHtmlEn = enBodyPart[0].trim();
-            }
-          }
-        }
-
-        if (taskPartHtmlEn) {
-          hEn +=
-            '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n';
-          hEn +=
-            '<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:</p>\n';
-          hEn += taskPartHtmlEn + "\n";
-          hEn += "</div>\n";
-        }
+        hEn += renderMergedTasksBoxFromState(this, "en", true);
       }
 
       if (this.pforType() === "cmr" && cmrAdmittedEn) {
@@ -475,21 +423,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       }
 
       if (mergeTasks && rawTxt) {
-        let taskPartTxt = "";
-        if (rawTxt.includes("--- DÉBUT DES TÂCHES ---")) {
-          const parts = rawTxt.split("--- DÉBUT DES TÂCHES ---");
-          if (parts.length > 1) {
-            const body = parts[1].split("--- FIN DES TÂCHES ---");
-            if (body.length > 0) {
-              taskPartTxt = body[0].trim();
-            }
-          }
-        }
-        if (taskPartTxt) {
-          t += "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :\n";
-          t += "----------------------------------------------------------------------\n";
-          t += taskPartTxt + "\n\n";
-        }
+        t += renderMergedTasksBoxFromState(this, "fr", false);
       }
 
       if (this.pforType() === "cmr" && cmrAdmittedFr) {
@@ -563,22 +497,7 @@ export function buildPforGestionDesAttentesEmail(this: any, isHtml: boolean): st
       }
 
       if (mergeTasks) {
-        const rawTxtEn = this.sharedState.taskEmailEn();
-        let taskPartTxtEn = "";
-        if (rawTxtEn.includes("--- START OF TASKS ---")) {
-          const parts = rawTxtEn.split("--- START OF TASKS ---");
-          if (parts.length > 1) {
-            const body = parts[1].split("--- END OF TASKS ---");
-            if (body.length > 0) {
-              taskPartTxtEn = body[0].trim();
-            }
-          }
-        }
-        if (taskPartTxtEn) {
-          tEn += "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:\n";
-          tEn += "----------------------------------------------------------------------\n";
-          tEn += taskPartTxtEn + "\n\n";
-        }
+        tEn += renderMergedTasksBoxFromState(this, "en", false);
       }
 
       if (this.pforType() === "cmr" && cmrAdmittedEn) {

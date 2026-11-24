@@ -35,6 +35,7 @@ export const EMAILS_REORIENTATION_FR: TranslationDictionary = {
     'Nous vous remercions sincèrement de votre intérêt envers les Forces armées canadiennes.',
 
   // Merged Tasks Headers
+  'reoEmail.tasks.standaloneTitle': 'TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :',
   'reoEmail.tasks.sec1Title': '1. TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :',
   'reoEmail.tasks.sec2Title': '2. STATUT DE VOS CHOIX DE MÉTIERS ACTUELS ET RÉORIENTATION REQUISE :',
 
@@ -252,6 +253,7 @@ export const EMAILS_REORIENTATION_EN: TranslationDictionary = {
   'reoEmail.prUnder3.closing2': 'Thank you for your interest in the Canadian Armed Forces.',
 
   // Merged Tasks Headers
+  'reoEmail.tasks.standaloneTitle': 'TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:',
   'reoEmail.tasks.sec1Title': '1. TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:',
   'reoEmail.tasks.sec2Title':
     '2. STATUS OF YOUR CURRENT OCCUPATION CHOICES AND REQUIRED REORIENTATION:',

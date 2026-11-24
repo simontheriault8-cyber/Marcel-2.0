@@ -1151,6 +1151,75 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             </div>
           </div>
 
+          @if (selectedRole() === 'recruiter' && stage() === 'minor-check') {
+            <!-- Minor Check Panel (replaces Métiers au dossier du postulant while keeping AOR & Role buttons) -->
+            <div
+              class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between gap-2 flex-1 min-w-[320px]"
+            >
+              <div class="flex items-center justify-between border-b border-slate-100 pb-1.5 px-1">
+                <span
+                  class="bg-indigo-700 text-white px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider"
+                >
+                  {{ i18n.t('minorBanner.badge') }}
+                </span>
+
+                <div class="flex items-center gap-3">
+                  <button
+                    type="button"
+                    (click)="switchAor()"
+                    class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{{ i18n.t('header.switchAor') }}@if (currentAorLabel()) { ({{ currentAorLabel() }})}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="switchRole()"
+                    class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    <span>{{ i18n.t('header.switchRole') }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="bg-indigo-900 text-white p-3 rounded-xl shadow-sm flex justify-between items-center gap-3 flex-1"
+              >
+                <span class="text-sm font-medium opacity-90">
+                  {{ i18n.t('minorBanner.text') }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="startMainProgram()"
+                  class="px-4 py-2 bg-white text-indigo-900 rounded-lg text-sm font-bold shadow-sm transition-all hover:bg-indigo-50 active:scale-95 flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <span>{{ i18n.t('minorBanner.proceed') }}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          } @else {
           <!-- Panel: Métiers au dossier du postulant -->
           <div
             class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col gap-2 flex-1 min-w-[320px]"
@@ -1527,43 +1596,6 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               </div>
             </div>
           </div>
-
-          <!-- Minor Check Banner (if active) -->
-          @if (stage() === "minor-check") {
-            <div
-              class="bg-indigo-900 text-white p-3.5 rounded-2xl shadow-md flex justify-between items-center flex-1 self-center"
-            >
-              <div class="flex items-center gap-3">
-                <span
-                  class="bg-indigo-700 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider"
-                  >{{ i18n.t('minorBanner.badge') }}</span
-                >
-                <span class="text-sm font-medium opacity-90"
-                  >{{ i18n.t('minorBanner.text') }}</span
-                >
-              </div>
-
-              <button
-                (click)="startMainProgram()"
-                class="px-4 py-2 bg-white text-indigo-900 rounded-lg text-sm font-bold shadow-sm transition-all hover:bg-indigo-50 active:scale-95 flex items-center gap-2 whitespace-nowrap ml-4 shrink-0 cursor-pointer"
-              >
-                <span>{{ i18n.t('minorBanner.proceed') }}</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </button>
-            </div>
           }
         </div>
 
@@ -1611,6 +1643,23 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               }
             </div>
             <div class="p-3 space-y-4">
+              @if (selectedRole() === 'recruiter' && stage() === 'main' && hasMinorConsentRejections()) {
+                <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+                  <div class="flex items-center gap-2 min-w-0 font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="truncate">{{ i18n.t('tasks.minorRejectionsCarriedTitle') }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="backToRecruiterMinorCheck()"
+                    class="px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border border-amber-300 shrink-0 transition-colors cursor-pointer"
+                  >
+                    {{ i18n.t('tasks.editMinorBtn') }}
+                  </button>
+                </div>
+              }
               @for (group of groupedVisibleTasks().groups; track group.id) {
                 <div class="space-y-1 bg-slate-100/70 p-2 rounded-xl border-2 border-slate-200/90 shadow-xs">
                   <!-- Collapsible Header -->

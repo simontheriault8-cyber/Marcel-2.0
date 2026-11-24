@@ -551,7 +551,9 @@ export class AppComponent implements OnInit {
       untracked(() => {
         this.sharedState.taskNote.set(note);
         this.sharedState.taskEmailHtmlFr.set(rawHtml);
+        this.sharedState.taskEmailHtmlEn.set(rawHtml);
         this.sharedState.taskEmailFr.set(rawPlain);
+        this.sharedState.taskEmailEn.set(rawPlain);
         this.sharedState.hasReassignedTasks.set(hasReassigned);
       });
     });
@@ -583,7 +585,7 @@ export class AppComponent implements OnInit {
 
   areAllDocsCompliant = computed(() => {
     if (this.selectedRole() === "recruiter") {
-      return this.allTasksCompliant();
+      return TaskComplianceHelper.areVisibleRecruiterMandatoryTasksCompliant.call(this);
     }
     const tasks = this.visibleTasks().filter((t) => !t.nameFr.includes("Documents Supplémentaires"));
     if (tasks.length === 0) return false;
@@ -818,6 +820,7 @@ export class AppComponent implements OnInit {
   isTaskCompliant(task: Task) { return TaskComplianceHelper.isTaskCompliant.call(this, task); }
   isRecruiterMandatoryTask(task: Task) { return TaskComplianceHelper.isRecruiterMandatoryTask.call(this, task); }
   allTasksCompliant = computed(() => TaskComplianceHelper.computeAllTasksCompliant.call(this));
+  hasMinorConsentRejections = computed(() => TaskComplianceHelper.hasMinorConsentRejections.call(this));
 
   hasSelectedRejections = computed(() => {
     return this.selectedRejectionKeys().size > 0 || this.taskNotCompletedKeys().size > 0;

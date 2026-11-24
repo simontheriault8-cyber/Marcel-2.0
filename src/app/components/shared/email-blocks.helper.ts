@@ -156,19 +156,36 @@ export function extractMergedTasksBody(
     }
   } else if (isHtml) {
     const greetingTag = lang === "fr" ? "<p>Bonjour,</p>" : "<p>Hello,</p>";
-    const volumeTag =
-      lang === "fr" ? "<p>En raison du volume" : "<p>Due to a high volume";
     const parts = rawContent.split(greetingTag);
     if (parts.length > 1) {
-      const bodyPart = parts[1].split(volumeTag);
-      if (bodyPart.length > 0 && bodyPart[0].trim().length > 0) {
-        extracted = bodyPart[0].trim();
+      let langSegment = parts[1].split(/<hr\b/i)[0];
+      const volumeTag =
+        lang === "fr" ? "<p>En raison du volume" : "<p>Due to a high volume";
+      const volumeTagAlt =
+        lang === "fr" ? "<p>En raison du volume" : "<p>Due to the high volume";
+      const sigTag = lang === "fr" ? "<p>Cordialement" : "<p>Sincerely";
+      if (langSegment.includes(volumeTag)) {
+        langSegment = langSegment.split(volumeTag)[0];
+      } else if (langSegment.includes(volumeTagAlt)) {
+        langSegment = langSegment.split(volumeTagAlt)[0];
+      } else if (langSegment.includes(sigTag)) {
+        langSegment = langSegment.split(sigTag)[0];
+      }
+      if (langSegment.trim().length > 0) {
+        extracted = langSegment.trim();
       }
     }
   } else {
     const greeting = lang === "fr" ? "Bonjour," : "Hello,";
     const parts = rawContent.split(greeting);
     if (parts.length > 1) {
+      let langSegment = parts[1].split(/\n\n_{10,}/)[0];
+      const sigMarker = lang === "fr" ? "\n\nCordialement," : "\n\nSincerely,";
+      const teamMarker =
+        lang === "fr"
+          ? "\n\nL’équipe de recrutement"
+          : "\n\nThe Canadian Armed Forces Recruiting Team";
+
       if (stripEvalAndWarning) {
         const warningMarker =
           lang === "fr"
@@ -176,19 +193,29 @@ export function extractMergedTasksBody(
             : "If you take no action, your file will be automatically deactivated";
         const volumeMarker =
           lang === "fr" ? "\n\nEn raison du volume" : "\n\nDue to the high volume";
-        const bodyPart = parts[1].includes(warningMarker)
-          ? parts[1].split(warningMarker)
-          : parts[1].split(volumeMarker);
-        if (bodyPart.length > 0 && bodyPart[0].trim().length > 0) {
-          extracted = bodyPart[0].trim();
+        const volumeMarkerAlt =
+          lang === "fr" ? "\n\nEn raison du volume" : "\n\nDue to a high volume";
+        if (langSegment.includes(warningMarker)) {
+          langSegment = langSegment.split(warningMarker)[0];
+        } else if (langSegment.includes(volumeMarker)) {
+          langSegment = langSegment.split(volumeMarker)[0];
+        } else if (langSegment.includes(volumeMarkerAlt)) {
+          langSegment = langSegment.split(volumeMarkerAlt)[0];
+        } else if (langSegment.includes(sigMarker)) {
+          langSegment = langSegment.split(sigMarker)[0];
+        } else if (langSegment.includes(teamMarker)) {
+          langSegment = langSegment.split(teamMarker)[0];
         }
       } else {
-        const volumeMarker =
-          lang === "fr" ? "En raison du volume" : "Due to a high volume";
-        const bodyPart = parts[1].split(volumeMarker);
-        if (bodyPart.length > 0 && bodyPart[0].trim().length > 0) {
-          extracted = bodyPart[0].trim();
+        if (langSegment.includes(sigMarker)) {
+          langSegment = langSegment.split(sigMarker)[0];
+        } else if (langSegment.includes(teamMarker)) {
+          langSegment = langSegment.split(teamMarker)[0];
         }
+      }
+
+      if (langSegment.trim().length > 0) {
+        extracted = langSegment.trim();
       }
     }
   }
@@ -238,47 +265,94 @@ export function extractMergedTasksBody(
   return extracted;
 }
 
+export function renderMergedTasksBox(
+  taskBody: string,
+  title: string,
+  isHtml: boolean,
+  plainSeparatorStyle: "dashes" | "equals",
+  htmlSpacingClass = "mt-4",
+): string {
+  if (!taskBody) return "";
+  if (isHtml) {
+    return (
+      `<div class="${htmlSpacingClass} p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-sm">\n` +
+      `<p class="font-bold text-amber-950 border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #78350f;">${title}</p>\n` +
+      `${taskBody}\n` +
+      "</div>\n"
+    );
+  }
+  if (plainSeparatorStyle === "equals") {
+    return (
+      "==================================================\n" +
+      `${title}\n` +
+      "==================================================\n\n" +
+      `${taskBody}\n\n`
+    );
+  }
+  return (
+    `${title}\n` +
+    "----------------------------------------------------------------------\n" +
+    `${taskBody}\n\n`
+  );
+}
+
+export function renderMergedTasksBoxFromState(
+  ctx: any,
+  lang: AppLang,
+  isHtml: boolean,
+  opts?: {
+    stripEvalAndWarning?: boolean;
+    titleKey?: string;
+    plainSeparatorStyle?: "dashes" | "equals";
+    htmlSpacingClass?: string;
+  },
+): string {
+  const strip = opts?.stripEvalAndWarning ?? false;
+  const rawSource = isHtml
+    ? lang === "fr"
+      ? ctx.sharedState.taskEmailHtmlFr()
+      : ctx.sharedState.taskEmailHtmlEn()
+    : lang === "fr"
+      ? ctx.sharedState.taskEmailFr()
+      : ctx.sharedState.taskEmailEn();
+  const taskBody = extractMergedTasksBody(rawSource, lang, isHtml, strip);
+  if (!taskBody) return "";
+  const title = ctx.i18n
+    ? ctx.i18n.tLang(opts?.titleKey ?? "reoEmail.tasks.standaloneTitle", lang)
+    : lang === "fr"
+      ? "TÂCHES ET COMMUNICATIONS À CORRIGER SUR VOTRE PORTAIL :"
+      : "TASKS AND COMMUNICATIONS TO CORRECT ON YOUR PORTAL:";
+  return renderMergedTasksBox(
+    taskBody,
+    title,
+    isHtml,
+    opts?.plainSeparatorStyle ?? "dashes",
+    opts?.htmlSpacingClass ?? "mt-4",
+  );
+}
+
 export function renderMergedTasksContainer(
   taskBody: string,
   lang: AppLang,
   isHtml: boolean,
   i18n: TranslationService,
   plainSeparatorStyle: "dashes" | "equals",
+  sec2TitleKey = "reoEmail.tasks.sec2Title",
 ): string {
   const sec1Title = i18n.tLang("reoEmail.tasks.sec1Title", lang);
-  const sec2Title = i18n.tLang("reoEmail.tasks.sec2Title", lang);
+  const sec2Title = i18n.tLang(sec2TitleKey, lang);
+  let out = renderMergedTasksBox(taskBody, sec1Title, isHtml, plainSeparatorStyle, "mt-4");
 
   if (isHtml) {
-    let out = "";
-    if (taskBody) {
-      out +=
-        '<div class="mt-4 p-4 bg-amber-50/50 border border-amber-200 rounded-lg text-sm">\n' +
-        `<p class="font-bold text-black border-b border-amber-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">${sec1Title}</p>\n` +
-        `${taskBody}\n` +
-        "</div>\n";
-    }
     out += `<p class="mt-6 font-bold text-slate-900 border-b border-slate-200 pb-1 mb-2 text-base" style="font-size: 15px; font-weight: bold; color: #000000;">${sec2Title}</p>\n`;
     return out;
   }
 
-  let out = "";
   if (plainSeparatorStyle === "equals") {
-    if (taskBody) {
-      out += "==================================================\n";
-      out += `${sec1Title}\n`;
-      out += "==================================================\n\n";
-      out += `${taskBody}\n\n`;
-    }
     out += "==================================================\n";
     out += `${sec2Title}\n`;
     out += "==================================================\n\n";
   } else {
-    if (taskBody) {
-      out += `${sec1Title}\n`;
-      out +=
-        "----------------------------------------------------------------------\n";
-      out += `${taskBody}\n\n`;
-    }
     out += `${sec2Title}\n`;
     out +=
       "----------------------------------------------------------------------\n";
