@@ -115,23 +115,41 @@ export function getPforCompliantNoteClean(this: any): string {
 
   let jobsText = isEn ? "trade XXX" : "le métier XXX";
   if (jobSlots.length > 0) {
-    const admissibleJobIds: string[] = [];
+    const keptJobIds: string[] = [];
+    const closedJobIds: string[] = [];
     for (const slot of jobSlots) {
-      if (!slot.failedCe && !this.isJobClosed(slot.job.id)) {
-        admissibleJobIds.push(slot.job.id);
+      if (!slot.failedCe) {
+        keptJobIds.push(slot.job.id);
+        const isClosed = this.jobService?.isPforJobClosed
+          ? this.jobService.isPforJobClosed(slot.job.id, 'admission')
+          : this.isJobClosed(slot.job.id);
+        if (isClosed) {
+          closedJobIds.push(slot.job.id);
+        }
       }
     }
-    if (admissibleJobIds.length > 0) {
-      const label = isEn
-        ? (admissibleJobIds.length > 1 ? "trades" : "trade")
-        : (admissibleJobIds.length > 1 ? "les métiers" : "le métier");
-      jobsText = `${label} ${admissibleJobIds.join(", ")}`;
-    } else {
-      const allJobIds = jobSlots.map(s => s.job.id);
-      const label = isEn
-        ? (allJobIds.length > 1 ? "trades" : "trade")
-        : (allJobIds.length > 1 ? "les métiers" : "le métier");
-      jobsText = `${label} ${allJobIds.join(", ")}`;
+
+    const displayJobIds = keptJobIds.length > 0 ? keptJobIds : jobSlots.map(s => s.job.id);
+    const label = isEn
+      ? (displayJobIds.length > 1 ? "trades" : "trade")
+      : (displayJobIds.length > 1 ? "les métiers" : "le métier");
+    jobsText = `${label} ${displayJobIds.join(", ")}`;
+
+    if (closedJobIds.length > 0) {
+      const closedJobsStr = closedJobIds.join(", ");
+      const closedText = this.i18n
+        ? this.i18n.t(
+            closedJobIds.length > 1 ? 'regNotes.pforClosedAtAdmissionPlural' : 'regNotes.pforClosedAtAdmissionSingle',
+            { jobs: closedJobsStr }
+          )
+        : (isEn
+            ? (closedJobIds.length > 1
+                ? `trades ${closedJobsStr} are closed for admission`
+                : `trade ${closedJobsStr} is closed for admission`)
+            : (closedJobIds.length > 1
+                ? `les métiers ${closedJobsStr} sont fermés à l'admission`
+                : `le métier ${closedJobsStr} est fermé à l'admission`));
+      jobsText += ` (${closedText})`;
     }
   }
 
@@ -162,82 +180,80 @@ export function getBigAceCompliantNoteClean(this: any): string {
       ? "Step 1 (In progress) - Big ACE eligible for trades xxx, xxx, xxx."
       : "Étape 1 (En cours) - Big ACE admissible pour les métiers xxx, xxx, xxx.";
   } else {
-    const admissibleJobIds: string[] = [];
+    const keptJobIds: string[] = [];
     const failedCeJobIds: string[] = [];
     const closedJobIds: string[] = [];
 
     for (const slot of jobSlots) {
       if (slot.failedCe) {
         failedCeJobIds.push(slot.job.id);
-      } else if (this.isJobClosed(slot.job.id)) {
-        closedJobIds.push(slot.job.id);
       } else {
-        admissibleJobIds.push(slot.job.id);
+        keptJobIds.push(slot.job.id);
+        const isClosed = this.jobService?.isJobClosed
+          ? this.jobService.isJobClosed(slot.job.id, 'admission')
+          : this.isJobClosed(slot.job.id);
+        if (isClosed) {
+          closedJobIds.push(slot.job.id);
+        }
       }
     }
 
     const parts: string[] = [];
 
     if (isEn) {
-      if (admissibleJobIds.length > 0) {
-        const label = admissibleJobIds.length > 1 ? "trades" : "trade";
-        parts.push(`Big ACE eligible for ${label} ${admissibleJobIds.join(", ")}.`);
+      if (keptJobIds.length > 0) {
+        const label = keptJobIds.length > 1 ? "trades" : "trade";
+        parts.push(`Big ACE eligible for ${label} ${keptJobIds.join(", ")}.`);
       }
 
-      const hasFailedCe = failedCeJobIds.length > 0;
-      const hasClosed = closedJobIds.length > 0;
+      if (closedJobIds.length > 0) {
+        const closedJobsStr = closedJobIds.join(", ");
+        parts.push(
+          this.i18n
+            ? this.i18n.t(
+                closedJobIds.length > 1 ? 'regNotes.closedAtAdmissionPlural' : 'regNotes.closedAtAdmissionSingle',
+                { jobs: closedJobsStr }
+              )
+            : (closedJobIds.length > 1
+                ? `Trades ${closedJobsStr} are closed for admission.`
+                : `Trade ${closedJobsStr} is closed for admission.`)
+        );
+      }
 
-      if (hasFailedCe && hasClosed) {
-        const cePart = failedCeJobIds.length > 1
-          ? `trades ${failedCeJobIds.join(", ")} (do not meet EC)`
-          : `trade ${failedCeJobIds[0]} (does not meet EC)`;
-        const closedPart = closedJobIds.length > 1
-          ? `trades ${closedJobIds.join(", ")} (closed)`
-          : `trade ${closedJobIds[0]} (closed)`;
-        parts.push(`Ineligible for ${cePart} and ${closedPart}, removed from file.`);
-      } else if (hasFailedCe) {
+      if (failedCeJobIds.length > 0) {
         if (failedCeJobIds.length === 1) {
           parts.push(`Ineligible for trade ${failedCeJobIds[0]} because it does not meet EC and was removed from file.`);
         } else {
           parts.push(`Ineligible for trades ${failedCeJobIds.join(", ")} because they do not meet EC and were removed from file.`);
         }
-      } else if (hasClosed) {
-        if (closedJobIds.length === 1) {
-          parts.push(`Ineligible for trade ${closedJobIds[0]} because it is closed and was removed from file.`);
-        } else {
-          parts.push(`Ineligible for trades ${closedJobIds.join(", ")} because they are closed and were removed from file.`);
-        }
       }
 
       firstLine = `Step 1 (In progress) - ${parts.join(" ")}`;
     } else {
-      if (admissibleJobIds.length > 0) {
-        const label = admissibleJobIds.length > 1 ? "les métiers" : "le métier";
-        parts.push(`Big ACE admissible pour ${label} ${admissibleJobIds.join(", ")}.`);
+      if (keptJobIds.length > 0) {
+        const label = keptJobIds.length > 1 ? "les métiers" : "le métier";
+        parts.push(`Big ACE admissible pour ${label} ${keptJobIds.join(", ")}.`);
       }
 
-      const hasFailedCe = failedCeJobIds.length > 0;
-      const hasClosed = closedJobIds.length > 0;
+      if (closedJobIds.length > 0) {
+        const closedJobsStr = closedJobIds.join(", ");
+        parts.push(
+          this.i18n
+            ? this.i18n.t(
+                closedJobIds.length > 1 ? 'regNotes.closedAtAdmissionPlural' : 'regNotes.closedAtAdmissionSingle',
+                { jobs: closedJobsStr }
+              )
+            : (closedJobIds.length > 1
+                ? `Les métiers ${closedJobsStr} sont fermés à l'admission.`
+                : `Le métier ${closedJobsStr} est fermé à l'admission.`)
+        );
+      }
 
-      if (hasFailedCe && hasClosed) {
-        const cePart = failedCeJobIds.length > 1
-          ? `les métiers ${failedCeJobIds.join(", ")} (ne rencontrent pas les CE)`
-          : `le métier ${failedCeJobIds[0]} (ne rencontre pas les CE)`;
-        const closedPart = closedJobIds.length > 1
-          ? `les métiers ${closedJobIds.join(", ")} (fermé)`
-          : `le métier ${closedJobIds[0]} (fermé)`;
-        parts.push(`Inadmissible pour ${cePart} et ${closedPart}, retirés du dossier.`);
-      } else if (hasFailedCe) {
+      if (failedCeJobIds.length > 0) {
         if (failedCeJobIds.length === 1) {
           parts.push(`Inadmissible pour le métier ${failedCeJobIds[0]} car il ne rencontre pas les CE et a été retiré du dossier.`);
         } else {
           parts.push(`Inadmissible pour les métiers ${failedCeJobIds.join(", ")} car ils ne rencontrent pas les CE et ont été retirés du dossier.`);
-        }
-      } else if (hasClosed) {
-        if (closedJobIds.length === 1) {
-          parts.push(`Inadmissible pour le métier ${closedJobIds[0]} car il est fermé et a été retiré du dossier.`);
-        } else {
-          parts.push(`Inadmissible pour les métiers ${closedJobIds.join(", ")} car ils sont fermés et ont été retirés du dossier.`);
         }
       }
 

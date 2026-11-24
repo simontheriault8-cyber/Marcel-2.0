@@ -104,6 +104,10 @@ export const REGISTRY_NOTES_FR: TranslationDictionary = {
   'regNotes.pforToEdoChangePart': 'Changement de programme PFOR vers EDO pour {jobs} (études universitaires déjà complétées, métier(s) admissible(s) en EDO), courriel explicatif envoyé{prText}, traitement continu sous EDO.',
   'regNotes.missingProofsTitle': 'Preuves supplémentaires requises :',
   'regNotes.missingProofsForTrade': 'Pour le métier {trade} :',
+  'regNotes.closedAtAdmissionSingle': "Le métier {jobs} est fermé à l'admission.",
+  'regNotes.closedAtAdmissionPlural': "Les métiers {jobs} sont fermés à l'admission.",
+  'regNotes.pforClosedAtAdmissionSingle': "le métier {jobs} est fermé à l'admission",
+  'regNotes.pforClosedAtAdmissionPlural': "les métiers {jobs} sont fermés à l'admission",
 };
 
 export const REGISTRY_NOTES_EN: TranslationDictionary = {
@@ -210,6 +214,10 @@ export const REGISTRY_NOTES_EN: TranslationDictionary = {
   'regNotes.pforToEdoChangePart': 'Entry plan change from ROTP to DEO for {jobs} (university studies already completed, occupation(s) eligible under DEO), explanatory email sent{prText}, ongoing processing under DEO.',
   'regNotes.missingProofsTitle': 'Additional required proofs:',
   'regNotes.missingProofsForTrade': 'For trade {trade}:',
+  'regNotes.closedAtAdmissionSingle': 'Trade {jobs} is closed for admission.',
+  'regNotes.closedAtAdmissionPlural': 'Trades {jobs} are closed for admission.',
+  'regNotes.pforClosedAtAdmissionSingle': 'trade {jobs} is closed for admission',
+  'regNotes.pforClosedAtAdmissionPlural': 'trades {jobs} are closed for admission',
 };
 
 /**
