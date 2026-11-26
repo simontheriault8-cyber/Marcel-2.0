@@ -529,8 +529,9 @@ export function restartApp(this: any, triggerShared: boolean = true) {
     this.dossierDropdownOpen3.set(false);
 
     const current = this.selectedRole();
-    if (current === 'recruiter' || current === 'gestionnaire') {
-      this.roleSnapshots[current] = this.createFreshSnapshot(current);
+    const currentKey = this.getCurrentSnapshotKey();
+    if (currentKey && (current === 'recruiter' || current === 'gestionnaire')) {
+      this.roleSnapshots[currentKey] = this.createFreshSnapshot(current);
     }
   }
 

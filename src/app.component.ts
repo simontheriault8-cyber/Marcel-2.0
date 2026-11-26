@@ -27,6 +27,7 @@ import { UnitPickerComponent } from "./app/components/unit-picker.component";
 import { TutoMarcelComponent } from "./app/components/tuto-marcel.component";
 import { AdminPortalComponent } from "./app/components/admin/admin-portal.component";
 import { AorSelectionComponent } from "./app/components/aor-selection.component";
+import { RoleSelectionComponent } from "./app/components/role-selection.component";
 import { FollowUpNoteBuilderComponent } from "./app/components/shared/follow-up-note-builder.component";
 import { FollowUpNoteValues } from "./app/models/follow-up-note.models";
 import { createDefaultFollowUpNoteValues } from "./app/data/follow-up-note.data";
@@ -61,7 +62,7 @@ import { TranslationService } from "./app/i18n";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, AorSelectionComponent, FollowUpNoteBuilderComponent, FormsModule],
+  imports: [CommonModule, JobSearchModalComponent, CalendarPickerComponent, CourseSeriesPickerComponent, UnitPickerComponent, TutoMarcelComponent, AdminPortalComponent, AorSelectionComponent, RoleSelectionComponent, FollowUpNoteBuilderComponent, FormsModule],
   template: APP_COMPONENT_TEMPLATE,
   host: { '(document:click)': 'onDocumentClick($event)' },
   styles: [],
@@ -298,7 +299,24 @@ export class AppComponent implements OnInit {
   showPassword = signal<boolean>(false);
 
   selectedRole = signal<'none' | 'recruiter' | 'gestionnaire'>('none');
-  private roleSnapshots: Partial<Record<'recruiter' | 'gestionnaire', RoleSnapshot>> = {};
+  selectedHqBordenRole = signal<'pas' | 'customer-service' | null>(null);
+  private roleSnapshots: Partial<Record<string, RoleSnapshot>> = {};
+
+  private getSnapshotKey(
+    role: 'recruiter' | 'gestionnaire',
+    hqBordenRole: 'pas' | 'customer-service' | null = this.selectedHqBordenRole()
+  ): string {
+    const aor = this.aorService.selectedAor() ?? 'default';
+    return `${aor}:${role}${hqBordenRole ? ':' + hqBordenRole : ''}`;
+  }
+
+  private getCurrentSnapshotKey(): string | null {
+    const current = this.selectedRole();
+    if (current !== 'recruiter' && current !== 'gestionnaire') {
+      return null;
+    }
+    return this.getSnapshotKey(current, this.selectedHqBordenRole());
+  }
 
   private createSnapshot() { return RoleSnapshotHelper.createSnapshot.call(this); }
   private applySnapshot(snapshot: RoleSnapshot) { return RoleSnapshotHelper.applySnapshot.call(this, snapshot); }
@@ -311,16 +329,21 @@ export class AppComponent implements OnInit {
     }
   }
 
-  selectRole(role: 'recruiter' | 'gestionnaire') {
-    const current = this.selectedRole();
-    if (current === 'recruiter' || current === 'gestionnaire') {
-      this.roleSnapshots[current] = this.createSnapshot();
+  selectRole(role: 'recruiter' | 'gestionnaire', hqBordenRole?: 'pas' | 'customer-service') {
+    const prevKey = this.getCurrentSnapshotKey();
+    if (prevKey) {
+      this.roleSnapshots[prevKey] = this.createSnapshot();
     }
 
+    const nextHqBordenRole = hqBordenRole ?? null;
+    this.selectedHqBordenRole.set(nextHqBordenRole);
     this.selectedRole.set(role);
+    this.showTutoMarcel.set(false);
+    this.showAdminPortal.set(false);
     localStorage.setItem('marcel_role', role);
 
-    const existing = this.roleSnapshots[role];
+    const nextKey = this.getSnapshotKey(role, nextHqBordenRole);
+    const existing = this.roleSnapshots[nextKey];
     if (existing) {
       this.applySnapshot(existing);
     } else {
@@ -332,25 +355,46 @@ export class AppComponent implements OnInit {
     }
   }
 
+  recruiterHeaderRoleLabel = computed(() => {
+    const subRole = this.selectedHqBordenRole();
+    if (this.aorService.selectedAor() === 'hq-borden' && subRole) {
+      const subLabel = this.i18n.t(
+        subRole === 'pas' ? 'roleSelect.pas' : 'roleSelect.customerService'
+      );
+      return this.i18n.t('header.roleRecruiterSub', { subRole: subLabel });
+    }
+    return this.i18n.t('header.roleRecruiter');
+  });
+
   currentAorLabel = computed(() => {
     const aor = this.aorService.currentAor();
     return aor ? this.i18n.t(aor.labelKey) : '';
   });
 
   switchRole() {
-    const current = this.selectedRole();
-    if (current === 'recruiter' || current === 'gestionnaire') {
-      this.roleSnapshots[current] = this.createSnapshot();
+    const currentKey = this.getCurrentSnapshotKey();
+    if (currentKey) {
+      this.roleSnapshots[currentKey] = this.createSnapshot();
     }
+    this.showSignaturePage.set(false);
+    this.showJobSearch.set(false);
+    this.showTutoMarcel.set(false);
+    this.showAdminPortal.set(false);
+    this.selectedHqBordenRole.set(null);
     this.selectedRole.set('none');
     localStorage.removeItem('marcel_role');
   }
 
   switchAor() {
-    const current = this.selectedRole();
-    if (current === 'recruiter' || current === 'gestionnaire') {
-      this.roleSnapshots[current] = this.createSnapshot();
+    const currentKey = this.getCurrentSnapshotKey();
+    if (currentKey) {
+      this.roleSnapshots[currentKey] = this.createSnapshot();
     }
+    this.showSignaturePage.set(false);
+    this.showJobSearch.set(false);
+    this.showTutoMarcel.set(false);
+    this.showAdminPortal.set(false);
+    this.selectedHqBordenRole.set(null);
     this.selectedRole.set('none');
     localStorage.removeItem('marcel_role');
     this.aorService.clearAor();
@@ -358,6 +402,11 @@ export class AppComponent implements OnInit {
 
   lockSession() {
     this.isAuthenticated.set(false);
+    this.showSignaturePage.set(false);
+    this.showJobSearch.set(false);
+    this.showTutoMarcel.set(false);
+    this.showAdminPortal.set(false);
+    this.selectedHqBordenRole.set(null);
     this.selectedRole.set('none');
     localStorage.removeItem('marcel_auth');
     localStorage.removeItem('marcel_role');
@@ -390,6 +439,7 @@ export class AppComponent implements OnInit {
   showTutoMarcel = signal<boolean>(false);
 
   openTutoMarcel() {
+    this.showAdminPortal.set(false);
     this.showTutoMarcel.set(true);
   }
 
@@ -402,6 +452,7 @@ export class AppComponent implements OnInit {
   showAdminPortal = signal<boolean>(false);
 
   openAdminPortal() {
+    this.showTutoMarcel.set(false);
     this.showAdminPortal.set(true);
   }
 

@@ -357,7 +357,7 @@ export class PforComponent {
   // Options
   showOptionsDropdown = signal<boolean>(false);
   ignoreSip = signal<boolean>(false);
-  includeTraitement = signal<boolean>(false);
+  includeTraitement = this.sharedState.includeTraitement;
   hasMedicalLimitation = signal<boolean>(false);
 
   // Medical
@@ -383,6 +383,7 @@ export class PforComponent {
 
   activeHeaderOptionsCount = computed(() => {
     let count = 0;
+    if (this.includeTraitement()) count++;
     if (this.hasMedicalLimitation()) count++;
     return count;
   });
@@ -751,7 +752,7 @@ export class PforComponent {
   }
 
   toggleIncludeTraitement() {
-    this.includeTraitement.update((v) => !v);
+    this.sharedState.toggleIncludeTraitement();
   }
 
   toggleMedicalLimitation() {
@@ -786,6 +787,7 @@ export class PforComponent {
     this.sharedState.dossierJobFailedCe3.set(false);
     this.ignoreSip.set(false);
     this.includeTraitement.set(false);
+    this.sharedState.resetExtraTestStates();
     this.hasMedicalLimitation.set(false);
     this.reorientationCriteria.resetAll();
   }

@@ -13,7 +13,7 @@ export interface AdminTabItem {
   labelKey: string;
   descKey: string;
   iconName: 'matrix' | 'catalog' | 'mel' | 'extensions';
-  badge?: string;
+  badgeKey?: string;
 }
 
 @Component({
@@ -26,6 +26,34 @@ export interface AdminTabItem {
       <!-- AUTHENTICATION CARD (IF LOCKED) -->
       @if (!adminAuth.isAdminUnlocked()) {
         <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 p-8 flex flex-col gap-6 text-slate-800 animate-in fade-in zoom-in-95 duration-200">
+          <!-- Language Switcher -->
+          <div class="flex justify-end -mb-3">
+            <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1">
+              <button
+                type="button"
+                (click)="i18n.setLang('fr')"
+                [class.bg-indigo-600]="i18n.lang() === 'fr'"
+                [class.text-white]="i18n.lang() === 'fr'"
+                [class.font-black]="i18n.lang() === 'fr'"
+                [class.text-slate-600]="i18n.lang() !== 'fr'"
+                class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+              >
+                FR
+              </button>
+              <button
+                type="button"
+                (click)="i18n.setLang('en')"
+                [class.bg-indigo-600]="i18n.lang() === 'en'"
+                [class.text-white]="i18n.lang() === 'en'"
+                [class.font-black]="i18n.lang() === 'en'"
+                [class.text-slate-600]="i18n.lang() !== 'en'"
+                class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
           <!-- Icon Header -->
           <div class="flex flex-col items-center text-center gap-3">
             <div class="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 shadow-sm">
@@ -149,8 +177,33 @@ export interface AdminTabItem {
               </div>
             </div>
 
-            <!-- Top Actions: Lock & Close -->
+            <!-- Top Actions: Language, Lock & Close -->
             <div class="flex items-center gap-2">
+              <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-1 mr-1">
+                <button
+                  type="button"
+                  (click)="i18n.setLang('fr')"
+                  [class.bg-indigo-600]="i18n.lang() === 'fr'"
+                  [class.text-white]="i18n.lang() === 'fr'"
+                  [class.font-black]="i18n.lang() === 'fr'"
+                  [class.text-slate-300]="i18n.lang() !== 'fr'"
+                  class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+                >
+                  FR
+                </button>
+                <button
+                  type="button"
+                  (click)="i18n.setLang('en')"
+                  [class.bg-indigo-600]="i18n.lang() === 'en'"
+                  [class.text-white]="i18n.lang() === 'en'"
+                  [class.font-black]="i18n.lang() === 'en'"
+                  [class.text-slate-300]="i18n.lang() !== 'en'"
+                  class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+                >
+                  EN
+                </button>
+              </div>
+
               <button
                 type="button"
                 (click)="adminAuth.lock()"
@@ -209,9 +262,9 @@ export interface AdminTabItem {
                   </svg>
                 }
                 <span>{{ i18n.t(tab.labelKey) }}</span>
-                @if (tab.badge) {
+                @if (tab.badgeKey) {
                   <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">
-                    {{ tab.badge }}
+                    {{ i18n.t(tab.badgeKey) }}
                   </span>
                 }
               </button>
@@ -241,13 +294,13 @@ export interface AdminTabItem {
                 <p class="text-sm text-slate-500 max-w-lg mt-2 leading-relaxed">{{ i18n.t('admin.futureNotice') }}</p>
                 <div class="mt-6 flex flex-wrap gap-2 justify-center">
                   <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs">
-                    + Configuration des tables
+                    {{ i18n.t('admin.futureChipTables') }}
                   </span>
                   <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs">
-                    + Journaux d'audit
+                    {{ i18n.t('admin.futureChipAuditLogs') }}
                   </span>
                   <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs">
-                    + Gestion des rôles
+                    {{ i18n.t('admin.futureChipRoles') }}
                   </span>
                 </div>
               </div>
@@ -279,14 +332,14 @@ export class AdminPortalComponent implements AfterViewInit {
       labelKey: 'admin.tabMatrix',
       descKey: 'admin.tabMatrixDesc',
       iconName: 'matrix',
-      badge: 'Audit & Logique'
+      badgeKey: 'admin.badgeAuditLogic'
     },
     {
       id: 'catalog',
       labelKey: 'admin.tabCatalog',
       descKey: 'admin.tabCatalogDesc',
       iconName: 'catalog',
-      badge: '96 Métiers'
+      badgeKey: 'admin.badgeCatalogCount'
     },
     {
       id: 'mel',
@@ -299,7 +352,7 @@ export class AdminPortalComponent implements AfterViewInit {
       labelKey: 'admin.tabFuture',
       descKey: 'admin.tabFutureDesc',
       iconName: 'extensions',
-      badge: 'Extensible'
+      badgeKey: 'admin.badgeExtensible'
     }
   ];
 

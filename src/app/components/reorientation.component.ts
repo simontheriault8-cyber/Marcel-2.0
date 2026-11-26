@@ -29,6 +29,7 @@ import { getReoMissingProofs, generateReoNoteText, generateReoNoteRegistry } fro
 import { buildReoBilingualEmail } from "./reorientation/reorientation-email.generator";
 import { isReoPforToEdoProgramChangeOnly } from "./reorientation/reorientation-pfor-to-edo.helper";
 import { ReorientationRulesService } from "../../services/reorientation/reorientation-rules.service";
+import { evaluateExtraTestEligibility } from "../../services/reorientation/job-eligibility-evaluator";
 import { TranslationService } from "../i18n";
 import { REORIENTATION_TEMPLATE } from "./reorientation/reorientation.template";
 
@@ -123,10 +124,10 @@ export class ReorientationComponent {
     this.ignoreSip.update((v) => !v);
   }
 
-  includeTraitement = signal<boolean>(false);
+  includeTraitement = this.sharedState.includeTraitement;
 
   toggleIncludeTraitement() {
-    this.includeTraitement.update((v) => !v);
+    this.sharedState.toggleIncludeTraitement();
   }
 
   currentSipPhase = computed<'admission' | 'both'>(() =>
@@ -486,7 +487,8 @@ export class ReorientationComponent {
     this.dossierJobIds().some((id) => id === "00182" || id === "00183" || id === "00184")
   );
   hasAnyExtraTest = computed(() =>
-    this.hasEceJob() || this.hasEsomJob() || this.hasCeopmJob() || this.hasCspnJob()
+    this.includeTraitement() &&
+    (this.hasEceJob() || this.hasEsomJob() || this.hasCeopmJob() || this.hasCspnJob())
   );
 
   onEceMainToggle(checked: boolean) {
@@ -567,115 +569,24 @@ export class ReorientationComponent {
     reasonFr: string;
     reasonEn: string;
   } {
-    if (jobId === "00203") {
-      const isTested = this.hasEceJob();
-      const notCompleted = this.testEceNotCompleted();
-      const eligible = !isTested || (!notCompleted && this.testEcePassed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "ECE",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite de l'Évaluation des compétences en communication écrite (ECE).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Written Communication Skills Evaluation (ECE).",
-      };
-    }
-    if (jobId === "00207") {
-      const isTested = this.hasEsomJob();
-      const notCompleted = this.testEsomNotCompleted();
-      const eligible = !isTested || (!notCompleted && this.testEsomPassed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "ESOM",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite de l'Évaluation de sélection des officiers de marine (ESOM).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Naval Officer Selection Assessment (ESOM).",
-      };
-    }
-    if (jobId === "00214") {
-      const isTested = this.hasCeopmJob();
-      const notCompleted = this.testCeopmNotCompleted();
-      const eligible = !isTested || (!notCompleted && this.testCeopmPassed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "CEOPM",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite du Centre d’évaluation des officiers de la police militaire (CEOPM).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Military Police Officer Assessment Centre (CEOPM).",
-      };
-    }
-    if (jobId === "00182") {
-      const isTested = this.hasCspnJob();
-      const notCompleted = this.testCspnNotCompleted();
-      const eligible =
-        !isTested ||
-        (!notCompleted && this.testCspnPassed() && this.testCspn00182Passed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "CSPN",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00182 (Officier – Systèmes de combat).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00182 (Air Combat Systems Officer).",
-      };
-    }
-    if (jobId === "00183") {
-      const isTested = this.hasCspnJob();
-      const notCompleted = this.testCspnNotCompleted();
-      const eligible =
-        !isTested ||
-        (!notCompleted && this.testCspnPassed() && this.testCspn00183Passed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "CSPN",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00183 (Pilote).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00183 (Pilot).",
-      };
-    }
-    if (jobId === "00184") {
-      const isTested = this.hasCspnJob();
-      const notCompleted = this.testCspnNotCompleted();
-      const eligible =
-        !isTested ||
-        (!notCompleted && this.testCspnPassed() && this.testCspn00184Passed());
-      return {
-        isExtraTestRequired: isTested,
-        testName: "CSPN",
-        eligible,
-        reasonFr: eligible || notCompleted
-          ? ""
-          : "Échec ou non-réussite du test du Centre de sélection du personnel navigant (CSPN) pour le métier 00184 (Contrôle aérospatial).",
-        reasonEn: eligible || notCompleted
-          ? ""
-          : "Failed or did not pass the Aircrew Selection Centre (ASC/CSPN) test for occupation 00184 (Aerospace Control Officer).",
-      };
-    }
-    return {
-      isExtraTestRequired: false,
-      testName: "",
-      eligible: true,
-      reasonFr: "",
-      reasonEn: "",
-    };
+    return evaluateExtraTestEligibility(jobId, {
+      includeTraitement: this.includeTraitement(),
+      hasEceJob: this.hasEceJob(),
+      hasEsomJob: this.hasEsomJob(),
+      hasCeopmJob: this.hasCeopmJob(),
+      hasCspnJob: this.hasCspnJob(),
+      testEcePassed: this.testEcePassed(),
+      testEceNotCompleted: this.testEceNotCompleted(),
+      testEsomPassed: this.testEsomPassed(),
+      testEsomNotCompleted: this.testEsomNotCompleted(),
+      testCeopmPassed: this.testCeopmPassed(),
+      testCeopmNotCompleted: this.testCeopmNotCompleted(),
+      testCspnNotCompleted: this.testCspnNotCompleted(),
+      testCspnPassed: this.testCspnPassed(),
+      testCspn00182Passed: this.testCspn00182Passed(),
+      testCspn00183Passed: this.testCspn00183Passed(),
+      testCspn00184Passed: this.testCspn00184Passed(),
+    });
   }
 
   isJobExtraTestAdmissible(jobId: string): boolean {

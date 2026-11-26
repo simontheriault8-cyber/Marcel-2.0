@@ -23,6 +23,7 @@ export class ScolariteExperienceComponent {
   activeScolariteTab = this.criteriaService.activeScolariteTab;
   selectedProvince = this.criteriaService.selectedProvince;
   PROVINCES = this.criteriaService.PROVINCES;
+  includeTraitement = this.sharedState.includeTraitement;
 
   mathCoursesForProvince = this.criteriaService.mathCoursesForProvince;
   criteriaAnneeScolaire = this.criteriaService.criteriaAnneeScolaire;
@@ -132,10 +133,11 @@ export class ScolariteExperienceComponent {
   );
   hasAnyExtraTest = computed(
     () =>
-      this.hasEceJob() ||
-      this.hasEsomJob() ||
-      this.hasCeopmJob() ||
-      this.hasCspnJob()
+      this.includeTraitement() &&
+      (this.hasEceJob() ||
+        this.hasEsomJob() ||
+        this.hasCeopmJob() ||
+        this.hasCspnJob())
   );
 
   testEcePassed = this.sharedState.testEcePassed;

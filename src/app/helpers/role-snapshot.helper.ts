@@ -35,6 +35,7 @@ export function createSnapshot(this: any): RoleSnapshot {
       testCspn00182Passed: this.sharedState.testCspn00182Passed(),
       testCspn00183Passed: this.sharedState.testCspn00183Passed(),
       testCspn00184Passed: this.sharedState.testCspn00184Passed(),
+      includeTraitement: this.sharedState.includeTraitement(),
       includeLinkedEmail: this.sharedState.includeLinkedEmail(),
       reoMergedEmailHtml: this.sharedState.reoMergedEmailHtml(),
       reoMergedEmailPlain: this.sharedState.reoMergedEmailPlain(),
@@ -232,6 +233,7 @@ export function applySnapshot(this: any, snapshot: RoleSnapshot) {
     this.sharedState.testCspn00182Passed.set(snapshot.testCspn00182Passed || false);
     this.sharedState.testCspn00183Passed.set(snapshot.testCspn00183Passed || false);
     this.sharedState.testCspn00184Passed.set(snapshot.testCspn00184Passed || false);
+    this.sharedState.includeTraitement.set(snapshot.includeTraitement || false);
     this.sharedState.reoMergedEmailHtml.set(snapshot.reoMergedEmailHtml);
     this.sharedState.reoMergedEmailPlain.set(snapshot.reoMergedEmailPlain);
     this.sharedState.reoMergedNote.set(snapshot.reoMergedNote);
@@ -342,6 +344,7 @@ export function createFreshSnapshot(this: any, role: 'recruiter' | 'gestionnaire
       testCspn00182Passed: false,
       testCspn00183Passed: false,
       testCspn00184Passed: false,
+      includeTraitement: false,
       includeLinkedEmail: false,
       reoMergedEmailHtml: '',
       reoMergedEmailPlain: '',

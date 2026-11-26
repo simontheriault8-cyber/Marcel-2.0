@@ -1,41 +1,71 @@
 export const APP_HEADER_SIDEBAR_TEMPLATE = `
     @if (!isAuthenticated()) {
-      <div class="h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-slate-200">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h2 class="text-2xl font-bold text-slate-800 mb-2">{{ i18n.t('auth.restrictedAccess') }}</h2>
-          <p class="text-sm text-slate-500 mb-6">{{ i18n.t('auth.enterPasswordDesc') }}</p>
-          <form (submit)="checkPassword($event)">
-            <div class="relative mb-4">
-              <input [type]="showPassword() ? 'text' : 'password'" [ngModel]="passwordInput()" (ngModelChange)="passwordInput.set($event)" [ngModelOptions]="{standalone: true}" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12" [placeholder]="i18n.t('auth.passwordPlaceholder')" />
-              <button type="button" (click)="showPassword.set(!showPassword())" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none">
-                @if (showPassword()) {
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                  </svg>
-                } @else {
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                }
-              </button>
-            </div>
-            @if (authError()) {
-              <p class="text-red-500 text-sm mb-4 font-medium animate-pulse">{{ i18n.t('auth.invalidPassword') }}</p>
-            }
-            <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-bold shadow-md active:scale-95 flex justify-center items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-              {{ i18n.t('auth.unlock') }}
+      <div class="min-h-screen w-full bg-slate-100 flex flex-col justify-between p-4 sm:p-6">
+        <div class="w-full flex items-center justify-end">
+          <div class="flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
+            <button
+              type="button"
+              (click)="i18n.setLang('fr')"
+              [class.bg-indigo-600]="i18n.lang() === 'fr'"
+              [class.text-white]="i18n.lang() === 'fr'"
+              [class.font-black]="i18n.lang() === 'fr'"
+              [class.text-slate-600]="i18n.lang() !== 'fr'"
+              class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              FR
             </button>
-          </form>
+            <button
+              type="button"
+              (click)="i18n.setLang('en')"
+              [class.bg-indigo-600]="i18n.lang() === 'en'"
+              [class.text-white]="i18n.lang() === 'en'"
+              [class.font-black]="i18n.lang() === 'en'"
+              [class.text-slate-600]="i18n.lang() !== 'en'"
+              class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              EN
+            </button>
+          </div>
         </div>
+
+        <div class="flex-1 flex items-center justify-center">
+          <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-slate-200">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">{{ i18n.t('auth.restrictedAccess') }}</h2>
+            <p class="text-sm text-slate-500 mb-6">{{ i18n.t('auth.enterPasswordDesc') }}</p>
+            <form (submit)="checkPassword($event)">
+              <div class="relative mb-4">
+                <input [type]="showPassword() ? 'text' : 'password'" [ngModel]="passwordInput()" (ngModelChange)="passwordInput.set($event)" [ngModelOptions]="{standalone: true}" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-center text-lg tracking-widest transition-all pr-12" [placeholder]="i18n.t('auth.passwordPlaceholder')" />
+                <button type="button" (click)="showPassword.set(!showPassword())" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  @if (showPassword()) {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (authError()) {
+                <p class="text-red-500 text-sm mb-4 font-medium animate-pulse">{{ i18n.t('auth.invalidPassword') }}</p>
+              }
+              <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-bold shadow-md active:scale-95 flex justify-center items-center gap-2 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                {{ i18n.t('auth.unlock') }}
+              </button>
+            </form>
+          </div>
+        </div>
+        <div></div>
       </div>
     } @else if (!aorService.selectedAor()) {
       <app-aor-selection />
@@ -45,162 +75,12 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
       } @else if (showAdminPortal()) {
         <app-admin-portal (closePortal)="closeAdminPortal()" />
       } @else {
-        <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
-          <!-- Top Left: Tuto Marcel Button -->
-          <div class="absolute top-6 left-6 z-10">
-            <button
-              (click)="openTutoMarcel()"
-              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-            >
-              <div class="w-7 h-7 rounded-xl bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 flex items-center justify-center transition-colors shadow-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <span>{{ i18n.t('roleSelect.tutoMarcel') }}</span>
-            </button>
-          </div>
-
-          <!-- Top Right: Switch AOR + Language Switcher (FR | EN) -->
-          <div class="absolute top-6 right-6 z-10 flex items-center gap-3">
-            <button
-              type="button"
-              (click)="switchAor()"
-              class="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-indigo-50 border-2 border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-xs cursor-pointer active:scale-95"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>{{ i18n.t('header.switchAor') }}</span>
-              @if (currentAorLabel()) {
-                <span class="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold text-[11px]">{{ currentAorLabel() }}</span>
-              }
-            </button>
-
-            <div class="flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
-              <button
-                type="button"
-                (click)="i18n.setLang('fr')"
-                [class.bg-indigo-600]="i18n.lang() === 'fr'"
-                [class.text-white]="i18n.lang() === 'fr'"
-                [class.shadow-xs]="i18n.lang() === 'fr'"
-                [class.font-black]="i18n.lang() === 'fr'"
-                [class.text-slate-600]="i18n.lang() !== 'fr'"
-                [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
-                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-              >
-                FR
-              </button>
-              <button
-                type="button"
-                (click)="i18n.setLang('en')"
-                [class.bg-indigo-600]="i18n.lang() === 'en'"
-                [class.text-white]="i18n.lang() === 'en'"
-                [class.shadow-xs]="i18n.lang() === 'en'"
-                [class.font-black]="i18n.lang() === 'en'"
-                [class.text-slate-600]="i18n.lang() !== 'en'"
-                [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
-                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-              >
-                EN
-              </button>
-            </div>
-          </div>
-
-          <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
-            
-            <!-- MARCEL Title with Hover Animation -->
-            <div class="flex justify-center w-full">
-              <div
-                class="group relative flex items-center justify-center overflow-hidden rounded-full bg-indigo-50 border-2 border-indigo-200/50 transition-all duration-500 hover:bg-white hover:border-indigo-300 hover:shadow-2xl shadow-lg h-16 w-72 sm:w-80 hover:w-full max-w-2xl cursor-default"
-              >
-                <div class="absolute flex w-full items-center justify-center px-4">
-                  <span
-                    class="font-black text-3xl sm:text-4xl tracking-wider text-indigo-700 transition-all duration-500 group-hover:-translate-y-16 group-hover:opacity-0 absolute drop-shadow-sm whitespace-nowrap"
-                    >{{ i18n.t('roleSelect.marcelTitle') }}</span
-                  >
-                  <span
-                    class="text-[10px] sm:text-[11px] md:text-xs leading-none uppercase tracking-wider font-semibold text-slate-500 text-center transition-all duration-500 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 absolute w-full px-3 whitespace-nowrap"
-                  >
-                    @if (i18n.lang() === 'en') {
-                      <span class="font-black text-indigo-700">M</span>odule for
-                      <span class="font-black text-indigo-700">A</span>nalysis and
-                      <span class="font-black text-indigo-700">R</span>eorientation of
-                      <span class="font-black text-indigo-700">C</span>andidates for
-                      <span class="font-black text-indigo-700">E</span>nrolment for the
-                      <span class="font-black text-indigo-700">L</span>azy
-                    } @else {
-                      <span class="font-black text-indigo-700">M</span>odule
-                      d'<span class="font-black text-indigo-700">A</span>nalyse et de
-                      <span class="font-black text-indigo-700">R</span>éorientation
-                      des
-                      <span class="font-black text-indigo-700">C</span>andidats à l'<span class="font-black text-indigo-700">E</span>nrôlement pour les
-                      <span class="font-black text-indigo-700">L</span>âches
-                    }
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">{{ i18n.t('roleSelect.title') }}</h1>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
-              <!-- Left: Gestionnaire de dossier -->
-              <div 
-                (click)="selectRole('gestionnaire')"
-                class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
-              >
-                <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">{{ i18n.t('roleSelect.fileManager') }}</h3>
-              </div>
-
-              <!-- Right: Recruteur -->
-              <div 
-                (click)="selectRole('recruiter')"
-                class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-4"
-              >
-                <div class="w-14 h-14 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-indigo-900">{{ i18n.t('roleSelect.recruiter') }}</h3>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Bottom Left: Admin Portal Button -->
-          <div class="absolute bottom-6 left-6 z-10">
-            <button
-              type="button"
-              (click)="openAdminPortal()"
-              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-400 text-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all font-bold text-sm cursor-pointer active:scale-95 group"
-            >
-              <div class="w-7 h-7 rounded-xl bg-slate-100 group-hover:bg-slate-800 group-hover:text-white text-slate-700 flex items-center justify-center transition-colors shadow-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <span>{{ i18n.t('admin.buttonLabel') }}</span>
-              @if (!adminAuth.isAdminUnlocked()) {
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                </svg>
-              } @else {
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
-                </svg>
-              }
-            </button>
-          </div>
-        </div>
+        <app-role-selection
+          (roleSelected)="selectRole($event.role, $event.hqBordenRole)"
+          (switchAor)="switchAor()"
+          (openTutoMarcel)="openTutoMarcel()"
+          (openAdminPortal)="openAdminPortal()"
+        />
       }
     } @else {
     @if (showSignaturePage()) {
@@ -208,7 +88,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
         <!-- Header -->
         <div class="max-w-5xl w-full mx-auto flex items-center justify-between mb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 shrink-0">
           <div class="flex items-center gap-4">
-            <button (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer">
+            <button type="button" (click)="closeSignaturePage()" class="p-2.5 hover:bg-slate-100 rounded-full transition-colors text-slate-600 border border-transparent hover:border-slate-200 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -221,13 +101,37 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <button (click)="resetSignatures()" class="px-4 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 rounded-xl transition-all text-sm font-semibold flex items-center gap-2 active:scale-95 cursor-pointer">
+            <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1">
+              <button
+                type="button"
+                (click)="i18n.setLang('fr')"
+                [class.bg-indigo-600]="i18n.lang() === 'fr'"
+                [class.text-white]="i18n.lang() === 'fr'"
+                [class.font-black]="i18n.lang() === 'fr'"
+                [class.text-slate-600]="i18n.lang() !== 'fr'"
+                class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+              >
+                FR
+              </button>
+              <button
+                type="button"
+                (click)="i18n.setLang('en')"
+                [class.bg-indigo-600]="i18n.lang() === 'en'"
+                [class.text-white]="i18n.lang() === 'en'"
+                [class.font-black]="i18n.lang() === 'en'"
+                [class.text-slate-600]="i18n.lang() !== 'en'"
+                class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+              >
+                EN
+              </button>
+            </div>
+            <button type="button" (click)="resetSignatures()" class="px-4 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 rounded-xl transition-all text-sm font-semibold flex items-center gap-2 active:scale-95 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15H17M4 9a8.001 8.001 0 0113.313-2.24L20 9" />
               </svg>
               {{ i18n.t('sigPage.resetActive') }}
             </button>
-            <button (click)="saveSignatures()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all text-sm font-semibold flex items-center gap-2 shadow-md active:scale-95 cursor-pointer">
+            <button type="button" (click)="saveSignatures()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all text-sm font-semibold flex items-center gap-2 shadow-md active:scale-95 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
@@ -240,6 +144,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
         <div class="max-w-5xl w-full mx-auto mb-4 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 w-full sm:w-auto">
             <button
+              type="button"
               (click)="signatureSection.set('normal')"
               [class.bg-white]="signatureSection() === 'normal'"
               [class.text-indigo-700]="signatureSection() === 'normal'"
@@ -254,6 +159,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               {{ i18n.t('sigPage.tabNormal') }}
             </button>
             <button
+              type="button"
               (click)="signatureSection.set('ota')"
               [class.bg-white]="signatureSection() === 'ota'"
               [class.text-purple-700]="signatureSection() === 'ota'"
@@ -360,9 +266,36 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+        <div class="absolute top-4 right-4 flex flex-wrap items-center justify-end gap-3 z-50">
+          <!-- Language Switcher (Intro Recruiter) -->
+          <div class="flex items-center bg-white border border-slate-300 rounded-xl p-1 shadow-sm">
+            <button
+              type="button"
+              (click)="i18n.setLang('fr')"
+              [class.bg-indigo-600]="i18n.lang() === 'fr'"
+              [class.text-white]="i18n.lang() === 'fr'"
+              [class.font-black]="i18n.lang() === 'fr'"
+              [class.text-slate-600]="i18n.lang() !== 'fr'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="i18n.setLang('en')"
+              [class.bg-indigo-600]="i18n.lang() === 'en'"
+              [class.text-white]="i18n.lang() === 'en'"
+              [class.font-black]="i18n.lang() === 'en'"
+              [class.text-slate-600]="i18n.lang() !== 'en'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              EN
+            </button>
+          </div>
+
           <!-- Job Search Button (Intro) -->
           <button
+            type="button"
             (click)="toggleJobSearch()"
             class="bg-indigo-100 border border-indigo-200 text-indigo-800 hover:bg-indigo-200 h-10 w-10 rounded-full shadow-sm transition-all font-sans flex items-center justify-center text-sm font-black cursor-pointer active:scale-95"
           >
@@ -384,6 +317,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <!-- Switch Role Button (Intro Recruiter) -->
           <button
+            type="button"
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -435,12 +369,14 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <div class="grid grid-cols-2 gap-4">
             <button
+              type="button"
               (click)="startMinorCheck()"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer"
             >
               {{ i18n.t('intro.yes') }}
             </button>
             <button
+              type="button"
               (click)="onRecruiterMinorCheckNon()"
               class="py-4 px-6 bg-white text-slate-800 border-2 border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition-colors shadow-sm active:scale-95 cursor-pointer"
             >
@@ -453,8 +389,35 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+        <div class="absolute top-4 right-4 flex flex-wrap items-center justify-end gap-3 z-50">
+          <!-- Language Switcher (Recruiter Dossier Type) -->
+          <div class="flex items-center bg-white border border-slate-300 rounded-xl p-1 shadow-sm">
+            <button
+              type="button"
+              (click)="i18n.setLang('fr')"
+              [class.bg-indigo-600]="i18n.lang() === 'fr'"
+              [class.text-white]="i18n.lang() === 'fr'"
+              [class.font-black]="i18n.lang() === 'fr'"
+              [class.text-slate-600]="i18n.lang() !== 'fr'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="i18n.setLang('en')"
+              [class.bg-indigo-600]="i18n.lang() === 'en'"
+              [class.text-white]="i18n.lang() === 'en'"
+              [class.font-black]="i18n.lang() === 'en'"
+              [class.text-slate-600]="i18n.lang() !== 'en'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              EN
+            </button>
+          </div>
+
           <button
+            type="button"
             (click)="backToRecruiterMinorCheck()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -479,6 +442,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <!-- Switch Role Button -->
           <button
+            type="button"
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -530,12 +494,14 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <div class="grid grid-cols-2 gap-4">
             <button
+              type="button"
               (click)="selectRecruiterDossierType('normal')"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
               <span>{{ i18n.t('intro.normal') }}</span>
             </button>
             <button
+              type="button"
               (click)="selectRecruiterDossierType('pfor')"
               class="py-4 px-6 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
@@ -549,7 +515,33 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
         <!-- Switch AOR & Switch Role Buttons (Intro GD) -->
-        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+        <div class="absolute top-4 right-4 flex flex-wrap items-center justify-end gap-3 z-50">
+          <!-- Language Switcher (Intro GD) -->
+          <div class="flex items-center bg-white border border-slate-300 rounded-xl p-1 shadow-sm">
+            <button
+              type="button"
+              (click)="i18n.setLang('fr')"
+              [class.bg-indigo-600]="i18n.lang() === 'fr'"
+              [class.text-white]="i18n.lang() === 'fr'"
+              [class.font-black]="i18n.lang() === 'fr'"
+              [class.text-slate-600]="i18n.lang() !== 'fr'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="i18n.setLang('en')"
+              [class.bg-indigo-600]="i18n.lang() === 'en'"
+              [class.text-white]="i18n.lang() === 'en'"
+              [class.font-black]="i18n.lang() === 'en'"
+              [class.text-slate-600]="i18n.lang() !== 'en'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              EN
+            </button>
+          </div>
+
           <button
             type="button"
             (click)="switchAor()"
@@ -563,6 +555,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           </button>
 
           <button
+            type="button"
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -614,12 +607,14 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <div class="grid grid-cols-2 gap-4">
             <button
+              type="button"
               (click)="selectGdDossierType('Local')"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer"
             >
               {{ i18n.t('intro.local') }}
             </button>
             <button
+              type="button"
               (click)="selectGdDossierType('OTA')"
               class="py-4 px-6 bg-white text-slate-800 border-2 border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition-colors shadow-sm active:scale-95 cursor-pointer"
             >
@@ -632,9 +627,36 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
       <div
         class="h-screen w-full bg-slate-200 flex flex-col items-center justify-center p-4 relative"
       >
-        <div class="absolute top-4 right-4 flex items-center gap-3 z-50">
+        <div class="absolute top-4 right-4 flex flex-wrap items-center justify-end gap-3 z-50">
+          <!-- Language Switcher (GD OTA City) -->
+          <div class="flex items-center bg-white border border-slate-300 rounded-xl p-1 shadow-sm">
+            <button
+              type="button"
+              (click)="i18n.setLang('fr')"
+              [class.bg-indigo-600]="i18n.lang() === 'fr'"
+              [class.text-white]="i18n.lang() === 'fr'"
+              [class.font-black]="i18n.lang() === 'fr'"
+              [class.text-slate-600]="i18n.lang() !== 'fr'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              FR
+            </button>
+            <button
+              type="button"
+              (click)="i18n.setLang('en')"
+              [class.bg-indigo-600]="i18n.lang() === 'en'"
+              [class.text-white]="i18n.lang() === 'en'"
+              [class.font-black]="i18n.lang() === 'en'"
+              [class.text-slate-600]="i18n.lang() !== 'en'"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+            >
+              EN
+            </button>
+          </div>
+
           <!-- Back Button -->
           <button
+            type="button"
             (click)="backToGdDossierType()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -659,6 +681,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <!-- Switch Role Button -->
           <button
+            type="button"
             (click)="switchRole()"
             class="bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 h-10 px-4 rounded-xl shadow-sm transition-all font-sans flex items-center justify-center text-xs font-bold gap-2 cursor-pointer active:scale-95"
           >
@@ -715,12 +738,14 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
           <div class="grid grid-cols-2 gap-4">
             <button
+              type="button"
               (click)="selectGdOtaCity('Montréal')"
               class="py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
               <span>{{ i18n.t('intro.montreal') }}</span>
             </button>
             <button
+              type="button"
               (click)="selectGdOtaCity('Toronto')"
               class="py-4 px-6 bg-amber-600 text-white rounded-xl font-bold text-lg hover:bg-amber-700 transition-colors shadow-lg active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1"
             >
@@ -740,17 +765,44 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
           <div
             class="bg-white p-3 rounded-2xl shadow-md border border-slate-200 flex flex-col justify-between items-center gap-2 flex-1 min-w-[320px]"
           >
-            <h1
-              class="text-xs font-black tracking-wider uppercase text-center border-b border-slate-100 pb-1.5 w-full px-1"
-              [class.text-indigo-800]="selectedRole() === 'recruiter'"
-              [class.text-amber-800]="selectedRole() === 'gestionnaire'"
-            >
-              {{ selectedRole() === 'recruiter' ? i18n.t('header.roleRecruiter') : i18n.t('header.roleFileManager', { type: (evaluationMedicaleType() === 'Dossier OTA' ? (i18n.t('intro.ota') + ' (' + (otaSubCity() === 'Montréal' ? i18n.t('intro.montreal') : i18n.t('intro.toronto')) + ')') : i18n.t('intro.local')) }) }}
-            </h1>
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-1.5 w-full px-1">
+              <h1
+                class="text-xs font-black tracking-wider uppercase text-left truncate"
+                [class.text-indigo-800]="selectedRole() === 'recruiter'"
+                [class.text-amber-800]="selectedRole() === 'gestionnaire'"
+              >
+                {{ selectedRole() === 'recruiter' ? recruiterHeaderRoleLabel() : i18n.t('header.roleFileManager', { type: (evaluationMedicaleType() === 'Dossier OTA' ? (i18n.t('intro.ota') + ' (' + (otaSubCity() === 'Montréal' ? i18n.t('intro.montreal') : i18n.t('intro.toronto')) + ')') : i18n.t('intro.local')) }) }}
+              </h1>
+              <div class="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5 shrink-0">
+                <button
+                  type="button"
+                  (click)="i18n.setLang('fr')"
+                  [class.bg-indigo-600]="i18n.lang() === 'fr'"
+                  [class.text-white]="i18n.lang() === 'fr'"
+                  [class.font-black]="i18n.lang() === 'fr'"
+                  [class.text-slate-600]="i18n.lang() !== 'fr'"
+                  class="px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer select-none"
+                >
+                  FR
+                </button>
+                <button
+                  type="button"
+                  (click)="i18n.setLang('en')"
+                  [class.bg-indigo-600]="i18n.lang() === 'en'"
+                  [class.text-white]="i18n.lang() === 'en'"
+                  [class.font-black]="i18n.lang() === 'en'"
+                  [class.text-slate-600]="i18n.lang() !== 'en'"
+                  class="px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer select-none"
+                >
+                  EN
+                </button>
+              </div>
+            </div>
 
             <div class="grid grid-cols-2 gap-2 w-full flex-1">
               <!-- Top-Left: Reset -->
               <button
+                type="button"
                 (click)="restartApp()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
               >
@@ -772,6 +824,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
               <!-- Top-Right: Réo / Enrôlement -->
               <button
+                type="button"
                 (click)="toggleJobSearch()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold border border-indigo-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
               >
@@ -794,6 +847,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
 
               <!-- Bottom-Left: Signature -->
               <button
+                type="button"
                 (click)="toggleSignatureSettings()"
                 class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full"
               >
@@ -817,6 +871,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <!-- Bottom-Right: Banque de courriels Dropdown -->
               <div class="relative w-full h-full email-bank-dropdown-container">
                 <button
+                  type="button"
                   (click)="toggleEmailBankDropdown($event)"
                   class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer w-full h-full text-left"
                   [class.bg-indigo-600]="selectedEmailBankTemplate() !== ''"
@@ -1288,6 +1343,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
                 </button>
 
                 <button
+                  type="button"
                   (click)="switchRole()"
                   class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
@@ -1614,6 +1670,7 @@ export const APP_HEADER_SIDEBAR_TEMPLATE = `
               <!-- Tout Conforme Button -->
               @if (selectedRole() !== 'gestionnaire') {
                 <button
+                  type="button"
                   (click)="setAllCompliant()"
                   class="px-2 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5 font-bold text-xs border active:scale-95 cursor-pointer"
                   [class.bg-emerald-600]="areAllDocsCompliant()"

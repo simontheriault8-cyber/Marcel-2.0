@@ -20,6 +20,31 @@ import { TranslationService } from "../i18n";
             <p class="text-[11px] text-slate-500 mt-1">{{ i18n.t('tuto.subtitle') }}</p>
           </div>
         </div>
+
+        <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1">
+          <button
+            type="button"
+            (click)="i18n.setLang('fr')"
+            [class.bg-indigo-600]="i18n.lang() === 'fr'"
+            [class.text-white]="i18n.lang() === 'fr'"
+            [class.font-black]="i18n.lang() === 'fr'"
+            [class.text-slate-600]="i18n.lang() !== 'fr'"
+            class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+          >
+            FR
+          </button>
+          <button
+            type="button"
+            (click)="i18n.setLang('en')"
+            [class.bg-indigo-600]="i18n.lang() === 'en'"
+            [class.text-white]="i18n.lang() === 'en'"
+            [class.font-black]="i18n.lang() === 'en'"
+            [class.text-slate-600]="i18n.lang() !== 'en'"
+            class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer select-none"
+          >
+            EN
+          </button>
+        </div>
       </header>
 
       <!-- MAIN CONTENT (CENTERED CARD) -->

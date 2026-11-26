@@ -1,4 +1,4 @@
-export type AorId = 'pacific' | 'pn' | 'neon' | 'son' | 'quebec' | 'atlantic';
+export type AorId = 'pacific' | 'pn' | 'neon' | 'son' | 'quebec' | 'atlantic' | 'hq-borden';
 
 /**
  * Future-ready configuration for per-AOR differences in generated emails
@@ -76,6 +76,13 @@ export const AOR_DEFINITIONS: readonly AorDefinition[] = [
     id: 'atlantic',
     labelKey: 'aor.atlantic',
     code: 'ATL',
+    emailFormatting: {},
+    noteFormatting: {},
+  },
+  {
+    id: 'hq-borden',
+    labelKey: 'aor.hqBorden',
+    code: 'HQ/Borden',
     emailFormatting: {},
     noteFormatting: {},
   },

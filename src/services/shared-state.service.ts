@@ -77,6 +77,9 @@ export class SharedStateService {
   dossierJobFailedCe2 = signal<boolean>(false);
   dossierJobFailedCe3 = signal<boolean>(false);
 
+  // Shared "Postulant déjà Intaker" (Traitement SIP) option across Reorientation & PFOR tabs
+  includeTraitement = signal<boolean>(false);
+
   // Extra selection tests signals (ECE, ESOM, CEOPM, CSPN)
   testEcePassed = signal<boolean>(false);
   testEceNotCompleted = signal<boolean>(false);
@@ -152,6 +155,19 @@ export class SharedStateService {
     this.dossierJobFailedCe1.set(false);
     this.dossierJobFailedCe2.set(false);
     this.dossierJobFailedCe3.set(false);
+    this.includeTraitement.set(false);
+    this.resetExtraTestStates();
+  }
+
+  toggleIncludeTraitement() {
+    const next = !this.includeTraitement();
+    this.includeTraitement.set(next);
+    if (!next) {
+      this.resetExtraTestStates();
+    }
+  }
+
+  resetExtraTestStates() {
     this.testEcePassed.set(false);
     this.testEceNotCompleted.set(false);
     this.testEsomPassed.set(false);

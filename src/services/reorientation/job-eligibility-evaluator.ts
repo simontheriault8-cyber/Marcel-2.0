@@ -1,6 +1,7 @@
 import { JOB_RULES, MANUAL_CRITERIA, applyProvincialMathBaseCredits } from "../../app/data/reorientation-criteria.data";
 
 export interface ExtraTestContext {
+  includeTraitement: boolean;
   hasEceJob: boolean;
   hasEsomJob: boolean;
   hasCeopmJob: boolean;
@@ -25,6 +26,15 @@ export function evaluateExtraTestEligibility(jobId: string, ctx: ExtraTestContex
   reasonFr: string;
   reasonEn: string;
 } {
+    if (!ctx.includeTraitement) {
+      return {
+        isExtraTestRequired: false,
+        testName: "",
+        eligible: true,
+        reasonFr: "",
+        reasonEn: "",
+      };
+    }
     if (jobId === "00203") {
       const isTested = ctx.hasEceJob;
       const notCompleted = ctx.testEceNotCompleted;

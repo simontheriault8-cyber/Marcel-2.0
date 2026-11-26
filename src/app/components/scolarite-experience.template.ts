@@ -868,8 +868,8 @@ export const SCOLARITE_EXPERIENCE_TEMPLATE = `
                 </div>
               </div>
               <div class="p-4">
-                <!-- Section Test supplémentaire si au moins un métier au dossier requiert un test -->
-                @if (hasAnyExtraTest()) {
+                <!-- Section Test supplémentaire si Postulant déjà Intaker et qu'au moins un métier au dossier requiert un test -->
+                @if (includeTraitement() && hasAnyExtraTest()) {
                   <div class="mb-4 p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl space-y-2.5">
                     <div class="flex items-center justify-between pb-1.5 border-b border-indigo-100">
                       <div class="flex items-center gap-2">

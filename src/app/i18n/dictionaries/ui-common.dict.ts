@@ -23,6 +23,7 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'aor.son': 'SON',
   'aor.quebec': 'Québec',
   'aor.atlantic': 'Atlantic',
+  'aor.hqBorden': 'HQ/Borden',
 
   // Role Selection
   'roleSelect.title': 'Sélection du Rôle',
@@ -44,6 +45,8 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'roleSelect.acronymLaches': 'âches',
   'roleSelect.fileManager': 'Gestionnaire de dossier',
   'roleSelect.recruiter': 'Recruteur',
+  'roleSelect.pas': 'PAS',
+  'roleSelect.customerService': 'Équipe de service à la clientèle',
 
   // Admin Portal & Authentication
   'admin.buttonLabel': 'Admin',
@@ -77,9 +80,16 @@ export const UI_COMMON_FR: TranslationDictionary = {
   'admin.tabFutureDesc': 'Espace d’extension réservé pour de futurs modules administratifs',
   'admin.futureTitle': 'Espace d’extension prêt',
   'admin.futureNotice': 'Ce module est configuré pour accueillir de nouvelles fonctionnalités administratives (gestion des tables, utilisateurs, journaux d’audit, etc.).',
+  'admin.badgeAuditLogic': 'Audit & Logique',
+  'admin.badgeCatalogCount': '96 Métiers',
+  'admin.badgeExtensible': 'Extensible',
+  'admin.futureChipTables': '+ Configuration des tables',
+  'admin.futureChipAuditLogs': "+ Journaux d'audit",
+  'admin.futureChipRoles': '+ Gestion des rôles',
 
   // Top Header Row
   'header.roleRecruiter': 'Recruteur',
+  'header.roleRecruiterSub': 'Recruteur — {subRole}',
   'header.roleFileManager': 'Gestionnaire de dossier — {type}',
   'header.reset': 'Reset',
   'header.resetTitle': "Relancer l'application (Reset)",
@@ -272,6 +282,7 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'aor.son': 'SON',
   'aor.quebec': 'Quebec',
   'aor.atlantic': 'Atlantic',
+  'aor.hqBorden': 'HQ/Borden',
 
   // Role Selection
   'roleSelect.title': 'Role Selection',
@@ -293,6 +304,8 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'roleSelect.acronymLaches': 'azy',
   'roleSelect.fileManager': 'File Manager',
   'roleSelect.recruiter': 'Recruiter',
+  'roleSelect.pas': 'PAS',
+  'roleSelect.customerService': 'Customer Service',
 
   // Admin Portal & Authentication
   'admin.buttonLabel': 'Admin',
@@ -326,9 +339,16 @@ export const UI_COMMON_EN: TranslationDictionary = {
   'admin.tabFutureDesc': 'Extension space reserved for upcoming administrative modules',
   'admin.futureTitle': 'Extension Space Ready',
   'admin.futureNotice': 'This module is configured to host new administrative features (table management, users, audit logs, etc.).',
+  'admin.badgeAuditLogic': 'Audit & Logic',
+  'admin.badgeCatalogCount': '96 Trades',
+  'admin.badgeExtensible': 'Extensible',
+  'admin.futureChipTables': '+ Table Configuration',
+  'admin.futureChipAuditLogs': '+ Audit Logs',
+  'admin.futureChipRoles': '+ Role Management',
 
   // Top Header Row
   'header.roleRecruiter': 'Recruiter',
+  'header.roleRecruiterSub': 'Recruiter — {subRole}',
   'header.roleFileManager': 'File Manager — {type}',
   'header.reset': 'Reset',
   'header.resetTitle': 'Relaunch Application (Reset)',

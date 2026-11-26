@@ -77,6 +77,7 @@ export interface RoleSnapshot {
   testCspn00182Passed?: boolean;
   testCspn00183Passed?: boolean;
   testCspn00184Passed?: boolean;
+  includeTraitement?: boolean;
   includeLinkedEmail: boolean;
   reoMergedEmailHtml: string;
   reoMergedEmailPlain: string;

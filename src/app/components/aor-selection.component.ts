@@ -8,37 +8,40 @@ import { TranslationService } from '../i18n';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen w-full bg-slate-100 flex flex-col items-center justify-center p-6 relative">
-      <!-- Top Right: Language Switcher (FR | EN) -->
-      <div class="absolute top-6 right-6 z-10 flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
-        <button
-          type="button"
-          (click)="i18n.setLang('fr')"
-          [class.bg-indigo-600]="i18n.lang() === 'fr'"
-          [class.text-white]="i18n.lang() === 'fr'"
-          [class.shadow-xs]="i18n.lang() === 'fr'"
-          [class.font-black]="i18n.lang() === 'fr'"
-          [class.text-slate-600]="i18n.lang() !== 'fr'"
-          [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
-          class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-        >
-          FR
-        </button>
-        <button
-          type="button"
-          (click)="i18n.setLang('en')"
-          [class.bg-indigo-600]="i18n.lang() === 'en'"
-          [class.text-white]="i18n.lang() === 'en'"
-          [class.shadow-xs]="i18n.lang() === 'en'"
-          [class.font-black]="i18n.lang() === 'en'"
-          [class.text-slate-600]="i18n.lang() !== 'en'"
-          [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
-          class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
-        >
-          EN
-        </button>
+    <div class="min-h-screen w-full bg-slate-100 flex flex-col justify-between p-4 sm:p-6">
+      <!-- Top Bar: Language Switcher (FR | EN) -->
+      <div class="w-full flex items-center justify-end z-10">
+        <div class="flex items-center bg-white border-2 border-slate-200 rounded-2xl p-1 shadow-sm">
+          <button
+            type="button"
+            (click)="i18n.setLang('fr')"
+            [class.bg-indigo-600]="i18n.lang() === 'fr'"
+            [class.text-white]="i18n.lang() === 'fr'"
+            [class.shadow-xs]="i18n.lang() === 'fr'"
+            [class.font-black]="i18n.lang() === 'fr'"
+            [class.text-slate-600]="i18n.lang() !== 'fr'"
+            [class.hover:text-indigo-600]="i18n.lang() !== 'fr'"
+            class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+          >
+            FR
+          </button>
+          <button
+            type="button"
+            (click)="i18n.setLang('en')"
+            [class.bg-indigo-600]="i18n.lang() === 'en'"
+            [class.text-white]="i18n.lang() === 'en'"
+            [class.shadow-xs]="i18n.lang() === 'en'"
+            [class.font-black]="i18n.lang() === 'en'"
+            [class.text-slate-600]="i18n.lang() !== 'en'"
+            [class.hover:text-indigo-600]="i18n.lang() !== 'en'"
+            class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none"
+          >
+            EN
+          </button>
+        </div>
       </div>
 
+      <div class="flex-1 flex items-center justify-center py-6">
       <div class="max-w-3xl w-full bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-200 text-center space-y-8 animate-in fade-in zoom-in duration-200">
         <!-- MARCEL Title with Hover Animation -->
         <div class="flex justify-center w-full">
@@ -85,12 +88,12 @@ import { TranslationService } from '../i18n';
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-center">
+        <div class="flex flex-wrap justify-center gap-4 text-center">
           @for (aor of aorService.aorList; track aor.id) {
             <button
               type="button"
               (click)="aorService.selectAor(aor.id)"
-              class="group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-3 active:scale-95"
+              class="w-full sm:w-[calc(50%-0.5rem)] md:w-[calc((100%-2rem)/3)] group bg-slate-50 hover:bg-indigo-50/70 border-2 border-slate-200 hover:border-indigo-500 rounded-2xl p-6 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md flex flex-col items-center justify-center space-y-3 active:scale-95"
             >
               <div class="w-12 h-12 rounded-2xl bg-white group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white border border-slate-200 group-hover:border-indigo-600 flex items-center justify-center transition-colors shadow-xs">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -104,6 +107,7 @@ import { TranslationService } from '../i18n';
             </button>
           }
         </div>
+      </div>
       </div>
     </div>
   `,

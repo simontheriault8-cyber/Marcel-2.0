@@ -44,7 +44,7 @@ export class ReorientationCriteriaService {
   age = signal<number | null>(null);
   citizenship = signal<string>("Canadian Citizen");
   ignoreSip = signal<boolean>(false);
-  includeTraitement = signal<boolean>(false);
+  includeTraitement = this.sharedState.includeTraitement;
   currentSipPhase = computed<"admission" | "traitement" | "both">(() =>
     this.includeTraitement() ? "both" : "admission",
   );
@@ -217,6 +217,7 @@ export class ReorientationCriteriaService {
 
   checkJobExtraTestEligibility(jobId: string) {
     return evaluateExtraTestEligibility(jobId, {
+      includeTraitement: this.includeTraitement(),
       hasEceJob: this.hasEceJob(),
       hasEsomJob: this.hasEsomJob(),
       hasCeopmJob: this.hasCeopmJob(),
